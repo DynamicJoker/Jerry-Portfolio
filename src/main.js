@@ -149,23 +149,66 @@ function initializeContactInfo() {
     
     const emailEl = document.getElementById('contact-email');
     if (emailEl && siteContent.contactInfo.email) {
-        // Reassemble the obfuscated email address
-        const emailAddress = `${siteContent.contactInfo.email.user}@${siteContent.contactInfo.email.domain}`;
+        // Create an initial placeholder container for the hidden email
+        const container = document.createElement('div');
+        container.style.display = 'inline-flex';
+        container.style.alignItems = 'center';
+        container.style.gap = '10px';
+        container.style.cursor = 'pointer';
+        container.title = "Click to reveal";
         
-        // Create a clickable link
-        const mailLink = document.createElement('a');
-        mailLink.href = `mailto:${emailAddress}`;
-        mailLink.textContent = emailAddress;
-        mailLink.style.color = 'inherit';
-        mailLink.style.textDecoration = 'none';
+        // Add an eye-off icon to suggest hidden visibility
+        const iconHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
         
-        // Add hover effect via class or inline
-        mailLink.addEventListener('mouseenter', () => mailLink.style.color = 'var(--color-electric-blue)');
-        mailLink.addEventListener('mouseleave', () => mailLink.style.color = 'inherit');
-        mailLink.style.transition = 'color 0.3s ease';
+        // Use dummy characters that are heavily blurred to thwart OCR
+        const textSpan = document.createElement('span');
+        textSpan.textContent = '••••••••@••••••••.•••';
+        textSpan.style.filter = 'blur(4px)';
+        textSpan.style.opacity = '0.7';
+        textSpan.style.transition = 'filter 0.3s ease, opacity 0.3s ease';
         
+        container.innerHTML = iconHTML;
+        container.appendChild(textSpan);
+        
+        // Interactive hover effect to hint at reveal
+        container.addEventListener('mouseenter', () => {
+            textSpan.style.filter = 'blur(2px)';
+            textSpan.style.opacity = '1';
+            container.style.color = 'var(--color-electric-blue)';
+        });
+        container.addEventListener('mouseleave', () => {
+            textSpan.style.filter = 'blur(4px)';
+            textSpan.style.opacity = '0.7';
+            container.style.color = 'inherit';
+        });
+        
+        // Reveal the actual email on click
+        container.addEventListener('click', function revealEmail() {
+            const emailAddress = `${siteContent.contactInfo.email.user}@${siteContent.contactInfo.email.domain}`;
+            
+            const mailLink = document.createElement('a');
+            mailLink.href = `mailto:${emailAddress}`;
+            mailLink.textContent = emailAddress;
+            mailLink.style.color = 'inherit';
+            mailLink.style.textDecoration = 'none';
+            
+            // Add hover effect to the revealed link
+            mailLink.addEventListener('mouseenter', () => mailLink.style.color = 'var(--color-electric-blue)');
+            mailLink.addEventListener('mouseleave', () => mailLink.style.color = 'inherit');
+            
+            emailEl.innerHTML = '';
+            emailEl.appendChild(mailLink);
+            
+            // Smooth fade-in
+            mailLink.style.opacity = '0';
+            requestAnimationFrame(() => {
+                mailLink.style.transition = 'opacity 0.4s ease, color 0.3s ease';
+                mailLink.style.opacity = '1';
+            });
+        });
+
         emailEl.innerHTML = '';
-        emailEl.appendChild(mailLink);
+        emailEl.appendChild(container);
     }
     
     const linkedinEl = document.getElementById('contact-linkedin');
