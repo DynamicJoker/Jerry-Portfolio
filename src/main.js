@@ -53,7 +53,7 @@ const config = {
         scrollThreshold: 10 // Scroll threshold to change navbar style
     },
     scroll: { // New property
-        spyOffset: -100 // For determining the active navigation link
+        spyOffset: 0 // For determining the active navigation link
     },
     testimonials: {
         columns: 3,
@@ -140,7 +140,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeSmartGlow();
     initializeLogoCarousel();
     initializeExpandableHighlights();
-    cacheSectionPositions();
     console.log('Jerry James Portfolio initialized successfully! 🚀');
 });
 
@@ -247,35 +246,41 @@ function initializeSmartGlow() {
     });
 }
 
-let sectionData = [];
-function cacheSectionPositions() {
-    sectionData = Array.from(document.querySelectorAll('section[id]')).map(section => ({
-        id: section.getAttribute('id'),
-        top: section.offsetTop + config.scroll.spyOffset,
-        height: section.offsetHeight
-    }));
-}
-
 function updateActiveNavLink() {
     const scrollY = window.scrollY;
     let currentSectionId = '';
 
-    // Check if the user has scrolled to the bottom of the page.
-    const atBottom = (window.innerHeight + scrollY) >= document.documentElement.scrollHeight - 5;
+    // 1. Get all navigable sections
+    const sections = Array.from(document.querySelectorAll('section[id]')).filter(section => {
+        // Check if there is a nav link pointing to this section ID
+        return document.querySelector(`.nav-link[href="#${section.id}"]`);
+    });
+
+    if (sections.length === 0) return;
+
+    // 2. Check if at the very bottom
+    const atBottom = (window.innerHeight + scrollY) >= document.documentElement.scrollHeight - 20;
 
     if (atBottom) {
-        // If at the bottom, set the active section to the last one.
-        currentSectionId = sectionData[sectionData.length - 1].id;
+        currentSectionId = sections[sections.length - 1].id;
     } else {
-        // Otherwise, use the existing logic for all other sections.
-        for (const section of sectionData) {
-            if (scrollY >= section.top && scrollY < section.top + section.height) {
+        // 3. Find active section based on top-most candidate
+        // A section is active if its top has crossed the upper 30% of the viewport
+        const threshold = window.innerHeight * 0.3;
+        
+        for (const section of sections) {
+            const rect = section.getBoundingClientRect();
+            if (rect.top <= threshold) {
                 currentSectionId = section.id;
+            } else {
+                // Once we find a section whose top is below the threshold,
+                // we stop; the previous section remains the active one.
                 break;
             }
         }
     }
 
+    // 4. Update nav links
     navLinks.forEach(link => {
         link.classList.toggle('active', link.getAttribute('href') === `#${currentSectionId}`);
     });
@@ -550,7 +555,7 @@ function showNotification(message, type = 'info') {
 }
 
 
-window.addEventListener('resize', cacheSectionPositions);
+
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && document.getElementById('nav-menu').classList.contains('active')) {
         document.getElementById('hamburger').classList.remove('active');

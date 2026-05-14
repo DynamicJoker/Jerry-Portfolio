@@ -1,0 +1,27 @@
+{
+  "hash": "8361f419",
+  "configHash": "c282f898",
+  "lockfileHash": "4fefc63a",
+  "browserHash": "08af23c3",
+  "optimized": {
+    "gsap": {
+      "src": "../../node_modules/gsap/index.js",
+      "file": "gsap.js",
+      "fileHash": "73749123",
+      "needsInterop": false
+    },
+    "gsap/ScrollTrigger": {
+      "src": "../../node_modules/gsap/ScrollTrigger.js",
+      "file": "gsap_ScrollTrigger.js",
+      "fileHash": "861cfa0e",
+      "needsInterop": false
+    },
+    "gsap/ScrambleTextPlugin": {
+      "src": "../../node_modules/gsap/ScrambleTextPlugin.js",
+      "file": "gsap_ScrambleTextPlugin.js",
+      "fileHash": "52812a6d",
+      "needsInterop": false
+    }
+  },
+  "chunks": {}
+}
