@@ -493,12 +493,6 @@ function initializeContactForm() {
             return;
         }
 
-        // Check if hCaptcha is completed (Web3forms adds h-captcha-response to formData automatically if the widget is used)
-        if (!formData.get('h-captcha-response')) {
-            showNotification('Please complete the captcha verification.', 'error');
-            return;
-        }
-
         const submitButton = form.querySelector('button[type="submit"]');
         const originalText = submitButton.textContent;
         submitButton.textContent = 'Sending...';
