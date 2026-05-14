@@ -929,7 +929,7 @@ select.form-control {
 .hero-content {
   position: relative;
   z-index: 2;
-  padding: 0 16px;
+  padding: 0 var(--space-16);
   max-width: 50rem;
   /* Constrains the width of the text on large screens */
   margin: 0 auto;
@@ -1146,14 +1146,14 @@ section[id] {
 
 /* Logo Bar */
 .logo-bar-section {
-  padding: 32px 0;
+  padding: var(--space-32) 0;
   background: rgba(255, 255, 255, 0.03);
 }
 
 .logo-bar-wrapper {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 var(--space-20);
 }
 
 .logo-bar {
@@ -1253,7 +1253,7 @@ section[id] {
 
 .skill-tags .skill-tag {
   display: block;
-  padding: var(--space-8) 0 var(--space-8) 20px;
+  padding: var(--space-8) 0 var(--space-8) var(--space-20);
   font-size: var(--font-size-base);
   color: var(--color-text-secondary);
   position: relative;
@@ -1590,7 +1590,7 @@ section[id] {
   padding: 0 0 10px 30%;
   /* Align with bars, left padding = label width */
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  margin-bottom: 20px;
+  margin-bottom: var(--space-20);
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
 }
@@ -1604,7 +1604,7 @@ section[id] {
 
 .gantt-label {
   width: 30%;
-  padding-right: 20px;
+  padding-right: var(--space-20);
   flex-shrink: 0;
   text-align: right;
   transition: color 0.3s ease;
@@ -1723,7 +1723,7 @@ section[id] {
     background: rgba(255, 255, 255, 0.03);
     padding: 15px;
     border-radius: var(--radius-md);
-    margin-bottom: 20px;
+    margin-bottom: var(--space-20);
   }
 
   .gantt-label {
