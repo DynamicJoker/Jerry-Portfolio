@@ -150,9 +150,6 @@ function initializeContactInfo() {
     const emailEl = document.getElementById('contact-email');
     if (emailEl) emailEl.textContent = siteContent.contactInfo.email;
     
-    const phoneEl = document.getElementById('contact-phone');
-    if (phoneEl) phoneEl.textContent = siteContent.contactInfo.phone;
-    
     const linkedinEl = document.getElementById('contact-linkedin');
     if (linkedinEl && siteContent.contactInfo.linkedin) {
         linkedinEl.href = siteContent.contactInfo.linkedin.url;
