@@ -121,6 +121,7 @@ function updateUIOnScroll(scrollY) {
 
 // 3. Adding single, efficient event listener
 window.addEventListener('scroll', handleScroll, { passive: true });
+window.addEventListener('load', () => ScrollTrigger.refresh());
 
 document.addEventListener('DOMContentLoaded', () => {
     initializeLoadingScreen();
@@ -303,7 +304,7 @@ function initializeScrollAnimations() {
     document.querySelectorAll('.section').forEach(section => {
         ScrollTrigger.create({
             trigger: section,
-            start: `top bottom${config.scrollAnimations.intersectionRootMargin.replace('0px 0px ', '').replace(' 0px', '')}`,
+            start: 'top 85%',
             once: true,
             onEnter: () => section.classList.add('visible'),
         });
@@ -823,7 +824,7 @@ function generateGanttChart() {
     // Add scroll-triggered animation via ScrollTrigger
     ScrollTrigger.create({
         trigger: container,
-        start: `top bottom-=${config.experience.ganttChart.intersectionThreshold * 100}%`,
+        start: 'top 85%',
         once: true,
         onEnter: () => container.classList.add('visible'),
     });
