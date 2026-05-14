@@ -134,6 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeScrollAnimations();
     initializePortfolioFilters();
     initializeContactForm();
+    initializeContactInfo();
     updateYearsExperience();
     initializeHeroVisuals();
     initializeScrambleAnimation();
@@ -142,6 +143,22 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeExpandableHighlights();
     console.log('Jerry James Portfolio initialized successfully! 🚀');
 });
+
+function initializeContactInfo() {
+    if (!siteContent.contactInfo) return;
+    
+    const emailEl = document.getElementById('contact-email');
+    if (emailEl) emailEl.textContent = siteContent.contactInfo.email;
+    
+    const phoneEl = document.getElementById('contact-phone');
+    if (phoneEl) phoneEl.textContent = siteContent.contactInfo.phone;
+    
+    const linkedinEl = document.getElementById('contact-linkedin');
+    if (linkedinEl && siteContent.contactInfo.linkedin) {
+        linkedinEl.href = siteContent.contactInfo.linkedin.url;
+        linkedinEl.textContent = siteContent.contactInfo.linkedin.label;
+    }
+}
 
 
 // Loading Screen Animation

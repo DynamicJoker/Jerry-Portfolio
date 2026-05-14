@@ -207,5 +207,15 @@ export const siteContent = {
           quote: 'The marketing automation system Jerry put in place saved us countless hours and significantly increased our sales-ready leads.',
           image: 'https://i.pravatar.cc/100?u=chris-taylor'
       }
-  ]
+  ],
+
+  // Contact Info
+  contactInfo: {
+      email: 'jerry@placeholder.com',
+      phone: '+1 (555) 123-4567',
+      linkedin: {
+          url: 'https://linkedin.com/in/jerry-james-tech/',
+          label: 'Reach out via LinkedIn'
+      }
+  }
 };
