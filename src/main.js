@@ -1,5 +1,18 @@
 // Jerry James Portfolio - Interactive JavaScript
 
+// --- ES Module Imports ---
+import '@fontsource/geist/400.css';
+import '@fontsource/geist/500.css';
+import '@fontsource/geist/600.css';
+import '@fontsource/geist/700.css';
+import '../style.css';
+import { siteContent } from './content.js';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
+
+gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin);
+
 const config = {
     loadingScreenDuration: 2000,
     notificationDuration: 5000,
@@ -183,8 +196,7 @@ function initializeSmartGlow() {
     let titleData = [];
 
     function cacheTitlePositions() {
-        const titles = document.querySelectorAll('.hero-name, .section-title');
-        titleData = Array.from(titles).map(title => {
+        titleData = Array.from(document.querySelectorAll('.hero-name, .section-title')).map(title => {
             const rect = title.getBoundingClientRect();
             return { top: rect.top + window.scrollY, centerX: rect.left + rect.width / 2 };
         });
@@ -195,18 +207,8 @@ function initializeSmartGlow() {
     const peakGlow = { size: 300, opacity: 0.8 };
     const glowColorRgb = '0, 212, 255';
 
-    let lastGlowScroll = -1;
-
     function updateGlow() {
         const scrollY = window.scrollY;
-
-        // Fast abort to save performance if no scrolling occurred
-        if (scrollY === lastGlowScroll) {
-            requestAnimationFrame(updateGlow);
-            return;
-        }
-        lastGlowScroll = scrollY;
-
         const navBottom = scrollY + navbar.offsetHeight;
 
         let prevTitle = null, nextTitle = null;
@@ -230,12 +232,19 @@ function initializeSmartGlow() {
         navbar.style.setProperty('--glow-size', `${sizeX}px 5px`);
         navbar.style.setProperty('--glow-color', `rgba(${glowColorRgb}, ${opacity})`);
         navbar.style.setProperty('--glow-opacity', intensity);
-        requestAnimationFrame(updateGlow);
     }
 
     cacheTitlePositions();
-    requestAnimationFrame(updateGlow);
+    updateGlow(); // Initial call
     window.addEventListener('resize', cacheTitlePositions);
+
+    // Use ScrollTrigger instead of RAF loop — fires only on scroll
+    ScrollTrigger.create({
+        trigger: document.body,
+        start: 'top top',
+        end: 'bottom bottom',
+        onUpdate: updateGlow,
+    });
 }
 
 let sectionData = [];
@@ -286,17 +295,14 @@ function updateNavGlow() {
 }
 
 function initializeScrollAnimations() {
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-                observer.unobserve(entry.target);
-            }
+    document.querySelectorAll('.section').forEach(section => {
+        ScrollTrigger.create({
+            trigger: section,
+            start: `top bottom${config.scrollAnimations.intersectionRootMargin.replace('0px 0px ', '').replace(' 0px', '')}`,
+            once: true,
+            onEnter: () => section.classList.add('visible'),
         });
-    }, { threshold: config.scrollAnimations.intersectionThreshold, rootMargin: config.scrollAnimations.intersectionRootMargin }
-    );
-
-    document.querySelectorAll('.section').forEach(section => observer.observe(section));
+    });
 }
 
 // --- REBUILT: initializeHeroVisuals for the new "Vibrant Core Orb" ---
@@ -359,24 +365,20 @@ function initializeHeroVisuals() {
         virtualMouseX = lerp(virtualMouseX, mouseX, mouseFollowSpeed);
         virtualMouseY = lerp(virtualMouseY, mouseY, mouseFollowSpeed);
 
-        // --- NEW COLOR CYCLING LOGIC ---
+        // --- COLOR CYCLING LOGIC ---
         const { target, colorStops } = colors;
 
-        // 1. Determine the current and next colors in the sequence
         const colorIndex = Math.floor(colorTime) % colorStops.length;
         const nextColorIndex = (colorIndex + 1) % colorStops.length;
         const currentColor = colorStops[colorIndex];
         const nextColor = colorStops[nextColorIndex];
 
-        // 2. Calculate the progress (0 to 1) between the two colors
         const progress = colorTime % 1;
 
-        // 3. Interpolate HSL values for the idle color
         const idleHue = lerp(currentColor.h, nextColor.h, progress);
         const idleSaturation = lerp(currentColor.s, nextColor.s, progress);
         const idleLightness = lerp(currentColor.l, nextColor.l, progress);
 
-        // 4. Blend from the idle color to the target blue based on mouse velocity
         const velocityFactor = Math.min(mouseVelocity / 60, 1);
         const finalHue = lerp(idleHue, target.h, velocityFactor);
         const finalSaturation = lerp(idleSaturation, target.s, velocityFactor);
@@ -403,8 +405,6 @@ function initializeHeroVisuals() {
         const pathData = createBlobPath(generatedPoints);
         corePath.setAttribute('d', pathData);
         glowPath.setAttribute('d', pathData);
-
-        requestAnimationFrame(animate);
     }
 
     heroSection.addEventListener('mousemove', e => {
@@ -422,17 +422,19 @@ function initializeHeroVisuals() {
 
     blobGroup.style.transform = `translate(${centerX}px, ${centerY}px)`;
 
-    // Check if the hero section is on screen to pause the expensive math loop
-    const heroObserver = new IntersectionObserver((entries) => {
-        const wasVisible = isHeroVisible;
-        isHeroVisible = entries[0].isIntersecting;
-        if (isHeroVisible && !wasVisible) {
-            requestAnimationFrame(animate);
-        }
-    });
-    heroObserver.observe(heroSection);
+    // Use gsap.ticker instead of requestAnimationFrame loop
+    gsap.ticker.add(animate);
 
-    requestAnimationFrame(animate);
+    // Use ScrollTrigger instead of IntersectionObserver to pause/resume
+    ScrollTrigger.create({
+        trigger: heroSection,
+        start: 'top bottom',
+        end: 'bottom top',
+        onEnter: () => { isHeroVisible = true; },
+        onLeave: () => { isHeroVisible = false; },
+        onEnterBack: () => { isHeroVisible = true; },
+        onLeaveBack: () => { isHeroVisible = false; },
+    });
 }
 
 function initializePortfolioFilters() {
@@ -501,49 +503,19 @@ function initializeScrambleAnimation() {
     const texts = config.scrambleAnimation.texts;
     let textIndex = 0;
 
-    const runScrambleAnimation = (newText) => {
-        return new Promise((resolve) => {
-            const chars = '!<>-_\\/[]{}—=+*^?#________';
-            let frameRequest, frame = 0, queue = [];
-            const oldText = typingElement.innerText;
-            const length = Math.max(oldText.length, newText.length);
-            for (let i = 0; i < length; i++) {
-                const from = oldText[i] || '', to = newText[i] || '';
-                const start = Math.floor(Math.random() * 55), end = start + Math.floor(Math.random() * 55);
-                queue.push({ from, to, start, end, isSpace: to === ' ' || from === ' ' });
-            }
-
-            const update = () => {
-                let output = '', complete = 0;
-                for (let i = 0, n = queue.length; i < n; i++) {
-                    let { from, to, start, end, char, isSpace } = queue[i];
-                    if (frame >= end) { complete++; output += to; }
-                    else if (frame >= start) {
-                        if (isSpace) {
-                            output += to === ' ' ? ' ' : from; // Preserve space to avoid layout shift
-                        } else {
-                            if (!char || Math.random() < 0.28) {
-                                char = chars[Math.floor(Math.random() * chars.length)];
-                                queue[i].char = char;
-                            }
-                            output += `<span class="scramble-char">${char}</span>`;
-                        }
-                    } else output += from;
-                }
-                typingElement.innerHTML = output;
-                if (complete === queue.length) { resolve(); return; }
-                frameRequest = requestAnimationFrame(update);
-                frame++;
-            };
-            cancelAnimationFrame(frameRequest);
-            update();
+    function next() {
+        gsap.to(typingElement, {
+            duration: 1.5,
+            scrambleText: {
+                text: texts[textIndex],
+                chars: '!<>-_\\/[]{}—=+*^?#________',
+                speed: 0.5,
+            },
+            onComplete: () => {
+                textIndex = (textIndex + 1) % texts.length;
+                setTimeout(next, config.scrambleAnimation.delayBetweenTexts);
+            },
         });
-    };
-
-    async function next() {
-        await runScrambleAnimation(texts[textIndex]);
-        textIndex = (textIndex + 1) % texts.length;
-        setTimeout(next, config.scrambleAnimation.delayBetweenTexts);
     }
     setTimeout(next, config.scrambleAnimation.initialDelay);
 }
@@ -843,14 +815,11 @@ function generateGanttChart() {
 
     container.appendChild(fragment);
 
-    // Add scroll-triggered animation
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                container.classList.add('visible');
-                observer.unobserve(entry.target);
-            }
-        });
-    }, { threshold: config.experience.ganttChart.intersectionThreshold });
-    observer.observe(container);
+    // Add scroll-triggered animation via ScrollTrigger
+    ScrollTrigger.create({
+        trigger: container,
+        start: `top bottom-=${config.experience.ganttChart.intersectionThreshold * 100}%`,
+        once: true,
+        onEnter: () => container.classList.add('visible'),
+    });
 }

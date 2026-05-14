@@ -1,4 +1,4 @@
-const siteContent = {
+export const siteContent = {
     // Experience data
     experience: [
         {
