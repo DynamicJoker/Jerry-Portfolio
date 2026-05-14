@@ -148,7 +148,25 @@ function initializeContactInfo() {
     if (!siteContent.contactInfo) return;
     
     const emailEl = document.getElementById('contact-email');
-    if (emailEl) emailEl.textContent = siteContent.contactInfo.email;
+    if (emailEl && siteContent.contactInfo.email) {
+        // Reassemble the obfuscated email address
+        const emailAddress = `${siteContent.contactInfo.email.user}@${siteContent.contactInfo.email.domain}`;
+        
+        // Create a clickable link
+        const mailLink = document.createElement('a');
+        mailLink.href = `mailto:${emailAddress}`;
+        mailLink.textContent = emailAddress;
+        mailLink.style.color = 'inherit';
+        mailLink.style.textDecoration = 'none';
+        
+        // Add hover effect via class or inline
+        mailLink.addEventListener('mouseenter', () => mailLink.style.color = 'var(--color-electric-blue)');
+        mailLink.addEventListener('mouseleave', () => mailLink.style.color = 'inherit');
+        mailLink.style.transition = 'color 0.3s ease';
+        
+        emailEl.innerHTML = '';
+        emailEl.appendChild(mailLink);
+    }
     
     const linkedinEl = document.getElementById('contact-linkedin');
     if (linkedinEl && siteContent.contactInfo.linkedin) {

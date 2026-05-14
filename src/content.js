@@ -211,7 +211,10 @@ export const siteContent = {
 
     // Contact Info
     contactInfo: {
-        email: 'contact@jerryjames.me',
+        email: {
+            user: 'contact',
+            domain: 'jerryjames.me'
+        },
         linkedin: {
             url: 'https://linkedin.com/in/jerry-james-tech/',
             label: 'Reach out via LinkedIn'
