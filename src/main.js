@@ -486,6 +486,19 @@ function initializeContactForm() {
             return;
         }
 
+        // Basic email sanity check regex
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(formData.get('email'))) {
+            showNotification('Please enter a valid email address.', 'error');
+            return;
+        }
+
+        // Check if hCaptcha is completed (Web3forms adds h-captcha-response to formData automatically if the widget is used)
+        if (!formData.get('h-captcha-response')) {
+            showNotification('Please complete the captcha verification.', 'error');
+            return;
+        }
+
         const submitButton = form.querySelector('button[type="submit"]');
         const originalText = submitButton.textContent;
         submitButton.textContent = 'Sending...';
