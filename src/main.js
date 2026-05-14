@@ -478,8 +478,7 @@ function initializePortfolioFilters() {
 function initializeContactForm() {
     const form = document.getElementById('contact-form');
     if (!form) return;
-
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const formData = new FormData(form);
         if (!formData.get('name') || !formData.get('email') || !formData.get('message')) {
@@ -492,12 +491,27 @@ function initializeContactForm() {
         submitButton.textContent = 'Sending...';
         submitButton.disabled = true;
 
-        setTimeout(() => {
-            showNotification('Message sent successfully! I\'ll get back to you soon.', 'success');
-            form.reset();
+        try {
+            const response = await fetch('https://api.web3forms.com/submit', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                showNotification('Message sent successfully! I\'ll get back to you soon.', 'success');
+                form.reset();
+            } else {
+                showNotification('Something went wrong. Please try again.', 'error');
+                console.error('Web3Forms Error:', data);
+            }
+        } catch (error) {
+            showNotification('Network error. Please try again later.', 'error');
+            console.error('Form submission error:', error);
+        } finally {
             submitButton.textContent = originalText;
             submitButton.disabled = false;
-        }, config.contactForm.fakeSubmissionDelay);
+        }
     });
 }
 
