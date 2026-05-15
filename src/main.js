@@ -60,7 +60,9 @@ const config = {
             verticalOffset: 0.62,
             pulseAmplitude: 18,
             pulseSpeed: 2.4,
-            mouseInfluence: 0.12
+            mouseInfluence: 0.12,
+            wiggleThreshold: 180,
+            wiggleDecay: 0.92
         }
     },
     navbar: {
@@ -464,6 +466,7 @@ function initializeHeroVisuals() {
     let idleArrowTimer = null;
     let isIdleArrowActive = false;
     let idleArrowProgress = 0;
+    let idleArrowWiggleDistance = 0;
 
     const lerp = (start, end, amount) => start * (1 - amount) + end * amount;
 
@@ -527,6 +530,14 @@ function initializeHeroVisuals() {
         clearIdleArrowTimer();
         isIdleArrowActive = false;
         idleArrowProgress = 0;
+        idleArrowWiggleDistance = 0;
+    }
+
+    function dismissIdleArrow() {
+        clearIdleArrowTimer();
+        isIdleArrowActive = false;
+        idleArrowWiggleDistance = 0;
+        startIdleArrowTimer();
     }
 
     function startIdleArrowTimer() {
@@ -550,6 +561,7 @@ function initializeHeroVisuals() {
         // Increment both timers
         time += noiseSpeed;
         colorTime += colors.transitionSpeed;
+        idleArrowWiggleDistance *= idleArrow.wiggleDecay;
 
         const dx = mouseX - lastMouseX;
         const dy = mouseY - lastMouseY;
@@ -628,8 +640,21 @@ function initializeHeroVisuals() {
 
     heroSection.addEventListener('mousemove', e => {
         const currentRect = heroSection.getBoundingClientRect();
-        mouseX = e.clientX - currentRect.left;
-        mouseY = e.clientY - currentRect.top;
+        const nextMouseX = e.clientX - currentRect.left;
+        const nextMouseY = e.clientY - currentRect.top;
+        const movementX = Number.isFinite(e.movementX) ? e.movementX : nextMouseX - mouseX;
+        const movementY = Number.isFinite(e.movementY) ? e.movementY : nextMouseY - mouseY;
+        const movementDistance = Math.hypot(movementX, movementY);
+
+        if (isIdleArrowActive && idleArrowProgress > 0.5) {
+            idleArrowWiggleDistance += movementDistance;
+            if (idleArrowWiggleDistance >= idleArrow.wiggleThreshold) {
+                dismissIdleArrow();
+            }
+        }
+
+        mouseX = nextMouseX;
+        mouseY = nextMouseY;
     });
     heroSection.addEventListener('mouseleave', () => { mouseX = centerX; mouseY = centerY; });
     window.addEventListener('resize', () => {
