@@ -92,6 +92,7 @@ const config = {
         intersectionRootMargin: '0px 0px -50px 0px'
     }
 };
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 let navLinks = [];
 
 
@@ -151,6 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeContactForm();
     initializeContactInfo();
     updateYearsExperience();
+    updateFooterYear();
     initializeHeroVisuals();
     initializeScrambleAnimation();
     initializeSmartGlow();
@@ -253,9 +255,22 @@ function initializeNavigation() {
     const navbar = document.getElementById('navbar');
 
     if (hamburger && navMenu) {
+        const setNavOpen = (isOpen) => {
+            hamburger.classList.toggle('active', isOpen);
+            navMenu.classList.toggle('active', isOpen);
+            hamburger.setAttribute('aria-expanded', String(isOpen));
+            hamburger.setAttribute('aria-label', isOpen ? 'Close navigation menu' : 'Open navigation menu');
+        };
+
         hamburger.addEventListener('click', () => {
-            hamburger.classList.toggle('active');
-            navMenu.classList.toggle('active');
+            setNavOpen(!navMenu.classList.contains('active'));
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && navMenu.classList.contains('active')) {
+                setNavOpen(false);
+                hamburger.focus();
+            }
         });
     }
     navLinks.forEach(link => {
@@ -269,6 +284,8 @@ function initializeNavigation() {
             if (hamburger && navMenu) {
                 hamburger.classList.remove('active');
                 navMenu.classList.remove('active');
+                hamburger.setAttribute('aria-expanded', 'false');
+                hamburger.setAttribute('aria-label', 'Open navigation menu');
             }
         });
     });
@@ -409,16 +426,19 @@ function initializeHeroVisuals() {
     const neonCircle = document.querySelector('.neon-circle');
 
     if (!corePath || !glowPath || !blobGroup || !heroSection || !gradientStop || !neonCircle) return;
-    // Set initial size
-    function resize() {
+    function getHeroVisualSize() {
         if (window.innerWidth < config.breakpoints.md) {
-            config.heroVisuals.radius = 200; // Original was 300
-            config.heroVisuals.maxStretch = 120; // Original was 200
+            return { radius: 200, maxStretch: 120 };
         }
+        return {
+            radius: config.heroVisuals.radius,
+            maxStretch: config.heroVisuals.maxStretch
+        };
     }
 
     // Destructure properties from the config
-    const { radius, maxStretch, points, noiseFrequency, noiseSpeed, baseNoise, mouseFollowSpeed, velocityIntensity, colors } = config.heroVisuals;
+    const { points, noiseFrequency, noiseSpeed, baseNoise, mouseFollowSpeed, velocityIntensity, colors } = config.heroVisuals;
+    let visualSize = getHeroVisualSize();
 
     let time = 0;
     let colorTime = 0; // Use a separate timer for color transitions
@@ -488,13 +508,13 @@ function initializeHeroVisuals() {
         const mouseAngle = Math.atan2(virtualMouseY - centerY, virtualMouseX - centerX);
         const pullIntensity = Math.min(Math.hypot(virtualMouseX - centerX, virtualMouseY - centerY) / (rect.width / 3), 1);
         const dynamicNoiseAmount = baseNoise + mouseVelocity * velocityIntensity;
-        const dynamicMaxStretch = maxStretch + mouseVelocity * 0.5;
+        const dynamicMaxStretch = visualSize.maxStretch + mouseVelocity * 0.5;
 
         const generatedPoints = Array.from({ length: points }, (_, i) => {
             const angle = (i / points) * Math.PI * 2;
             const noiseFactor = 1 + dynamicNoiseAmount * Math.sin(time + angle * noiseFrequency);
             const stretch = pullIntensity * dynamicMaxStretch * (Math.cos(angle - mouseAngle) + 1) / 2;
-            const finalRadius = (radius + stretch) * noiseFactor;
+            const finalRadius = (visualSize.radius + stretch) * noiseFactor;
             return { x: Math.cos(angle) * finalRadius, y: Math.sin(angle) * finalRadius };
         });
 
@@ -510,6 +530,7 @@ function initializeHeroVisuals() {
     });
     heroSection.addEventListener('mouseleave', () => { mouseX = centerX; mouseY = centerY; });
     window.addEventListener('resize', () => {
+        visualSize = getHeroVisualSize();
         rect = heroSection.getBoundingClientRect();
         centerX = rect.width / 2; centerY = rect.height / 2;
         mouseX = virtualMouseX = centerX; mouseY = virtualMouseY = centerY;
@@ -517,6 +538,11 @@ function initializeHeroVisuals() {
     });
 
     blobGroup.style.transform = `translate(${centerX}px, ${centerY}px)`;
+
+    if (prefersReducedMotion) {
+        animate();
+        return;
+    }
 
     // Use gsap.ticker instead of requestAnimationFrame loop
     gsap.ticker.add(animate);
@@ -618,6 +644,11 @@ function initializeScrambleAnimation() {
     if (!typingElement) return;
 
     const texts = config.scrambleAnimation.texts;
+    if (prefersReducedMotion) {
+        typingElement.textContent = texts[0];
+        return;
+    }
+
     let textIndex = 0;
 
     function next() {
@@ -640,6 +671,11 @@ function initializeScrambleAnimation() {
 function updateYearsExperience() {
     const el = document.getElementById('years-experience');
     if (el) el.textContent = new Date().getFullYear() - config.experience.startYear;
+}
+
+function updateFooterYear() {
+    const el = document.getElementById('footer-year');
+    if (el) el.textContent = new Date().getFullYear();
 }
 
 function showNotification(message, type = 'info') {
@@ -667,13 +703,6 @@ function showNotification(message, type = 'info') {
 }
 
 
-
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && document.getElementById('nav-menu').classList.contains('active')) {
-        document.getElementById('hamburger').classList.remove('active');
-        document.getElementById('nav-menu').classList.remove('active');
-    }
-});
 
 function generateSkills() {
     const gridContainer = document.getElementById('skills-grid');
@@ -819,6 +848,9 @@ function initializeLogoCarousel() {
     const logos = document.querySelectorAll('.logo-bar .logo-item');
     if (logos.length === 0) return;
     let currentIndex = 0;
+    logos[currentIndex].classList.add('active');
+    if (prefersReducedMotion) return;
+
     setInterval(() => {
         logos.forEach((logo, index) => logo.classList.toggle('active', index === currentIndex));
         currentIndex = (currentIndex + 1) % logos.length;
@@ -828,6 +860,17 @@ function initializeLogoCarousel() {
 function initializeExpandableHighlights() {
     const container = document.querySelector('.about-highlights');
     if (!container) return;
+    const items = container.querySelectorAll('.highlight-item');
+
+    items.forEach(item => {
+        item.setAttribute('role', 'button');
+        item.setAttribute('aria-expanded', 'false');
+    });
+
+    const setExpanded = (item, isExpanded) => {
+        item.classList.toggle('expanded', isExpanded);
+        item.setAttribute('aria-expanded', String(isExpanded));
+    };
 
     const handleInteraction = (event) => {
         // Find the parent highlight-item that was clicked or activated by key
@@ -847,11 +890,11 @@ function initializeExpandableHighlights() {
 
         // Close any other item that might already be open
         if (currentlyExpanded && currentlyExpanded !== highlightItem) {
-            currentlyExpanded.classList.remove('expanded');
+            setExpanded(currentlyExpanded, false);
         }
 
         // Toggle the active state of the interacted item
-        highlightItem.classList.toggle('expanded');
+        setExpanded(highlightItem, !highlightItem.classList.contains('expanded'));
     };
 
     // Attach a single listener to the parent container for all clicks and key events
@@ -868,7 +911,7 @@ function initializeExpandableHighlights() {
         // If the click was outside, find and close any expanded item.
         const currentlyExpanded = container.querySelector('.expanded');
         if (currentlyExpanded) {
-            currentlyExpanded.classList.remove('expanded');
+            setExpanded(currentlyExpanded, false);
         }
     });
 }
@@ -913,6 +956,32 @@ function generateGanttChart() {
         clone.querySelector('.tooltip-period').textContent = job.period;
 
         const bar = clone.querySelector('.gantt-bar');
+        const barArea = clone.querySelector('.gantt-bar-area');
+        const closeOtherTooltips = () => {
+            container.querySelectorAll('.gantt-bar-area.active').forEach(activeArea => {
+                if (activeArea !== barArea) {
+                    activeArea.classList.remove('active');
+                    activeArea.setAttribute('aria-expanded', 'false');
+                }
+            });
+        };
+
+        barArea.tabIndex = 0;
+        barArea.setAttribute('role', 'button');
+        barArea.setAttribute('aria-expanded', 'false');
+        barArea.setAttribute('aria-label', `Show details for ${job.title} at ${job.company}`);
+        barArea.addEventListener('click', () => {
+            const isActive = barArea.classList.contains('active');
+            closeOtherTooltips();
+            barArea.classList.toggle('active', !isActive);
+            barArea.setAttribute('aria-expanded', String(!isActive));
+        });
+        barArea.addEventListener('keydown', (event) => {
+            if (!['Enter', ' '].includes(event.key)) return;
+            event.preventDefault();
+            barArea.click();
+        });
+
         bar.style.marginLeft = `${offset}%`;
         bar.style.width = `${width}%`;
         bar.style.animationDelay = `${index * config.experience.ganttChart.animationDelayIncrement}ms`;

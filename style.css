@@ -120,8 +120,13 @@
 }
 
 html, body {
-  overflow-x: hidden;
-  max-width: 100vw;
+  overflow-x: clip;
+}
+
+@supports not (overflow-x: clip) {
+  html, body {
+    overflow-x: hidden;
+  }
 }
 
 [data-color-scheme="dark"] {
@@ -713,8 +718,16 @@ select.form-control {
 .hamburger {
   display: none;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   gap: var(--space-4);
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  color: inherit;
 }
 
 .hamburger span {
@@ -782,6 +795,7 @@ select.form-control {
 /* Hero Section */
 .hero {
   min-height: 100vh;
+  min-height: 100svh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1237,7 +1251,7 @@ section[id] {
 /* Skills Section */
 .skills-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
   gap: var(--space-32);
 }
 
@@ -1330,7 +1344,7 @@ section[id] {
 /* Services Section */
 .services-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr));
   gap: var(--space-32);
 }
 
@@ -1494,7 +1508,7 @@ section[id] {
 
 .portfolio-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
   gap: var(--space-32);
 }
 
@@ -1627,6 +1641,8 @@ section[id] {
 .gantt-bar-area {
   width: 70%;
   position: relative;
+  border-radius: 6px;
+  cursor: pointer;
 }
 
 .gantt-bar {
@@ -1665,7 +1681,7 @@ section[id] {
   border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 15px;
   border-radius: var(--radius-lg);
-  width: 350px;
+  width: min(350px, calc(100vw - 32px));
   z-index: 10;
   opacity: 0;
   visibility: hidden;
@@ -1674,10 +1690,17 @@ section[id] {
   backdrop-filter: blur(5px);
 }
 
-.gantt-bar-area:hover .gantt-tooltip {
+.gantt-bar-area:hover .gantt-tooltip,
+.gantt-bar-area:focus .gantt-tooltip,
+.gantt-bar-area.active .gantt-tooltip {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
+}
+
+.gantt-bar-area:focus-visible {
+  outline: var(--focus-outline);
+  outline-offset: 4px;
 }
 
 .gantt-row:hover .gantt-label h3 {
@@ -1749,7 +1772,9 @@ section[id] {
     transform: translateX(-50%) translateY(10px);
   }
 
-  .gantt-bar-area:hover .gantt-tooltip {
+  .gantt-bar-area:hover .gantt-tooltip,
+  .gantt-bar-area:focus .gantt-tooltip,
+  .gantt-bar-area.active .gantt-tooltip {
     transform: translateX(-50%) translateY(0);
   }
 }
@@ -1868,6 +1893,7 @@ section[id] {
     left: 0;
     width: 100%;
     height: calc(100vh - var(--navbar-height));
+    height: calc(100dvh - var(--navbar-height));
     z-index: 1001;
 
     /* Start with the background and filter turned OFF */
@@ -2021,6 +2047,10 @@ section[id] {
   .testimonials-scroller-column:nth-child(n+2) {
     display: none;
   }
+
+  .highlight-item {
+    flex: 1 1 100%;
+  }
 }
 
 @media (max-width: 480px) {
@@ -2033,6 +2063,7 @@ section[id] {
   }
 
   .highlight-item {
+    flex: 1 1 100%;
     flex-direction: column;
     text-align: center;
   }
@@ -2208,4 +2239,48 @@ section[id] {
 .gantt-row {
   /* Smoothes the change when it switches from row to column on mobile */
   transition: padding 0.4s ease-in-out, background 0.4s ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
+  .section,
+  #gantt-chart-container {
+    opacity: 1;
+    transform: none;
+  }
+
+  .hero-background {
+    transform: none !important;
+  }
+
+  .hero-name,
+  .hero-subtitle,
+  .hero-buttons,
+  .scroll-indicator,
+  .loading-dot,
+  .neon-circle,
+  .testimonials-scroller-inner,
+  .shape-assembler i,
+  #gantt-chart-container.visible .gantt-bar {
+    animation: none !important;
+  }
+
+  .gantt-bar {
+    transform: none;
+  }
+
+  .shape-assembler i,
+  .loading-dot {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: none;
+  }
 }
