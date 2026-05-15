@@ -27,7 +27,8 @@ const config = {
             'Inbound Marketing Campaigns',
             'Content Marketing Wizard'
         ],
-        delayBetweenTexts: 2000,
+        duration: 1.1,
+        delayBetweenTexts: 1600,
         initialDelay: 2500
     },
     heroVisuals: {
@@ -653,11 +654,11 @@ function initializeScrambleAnimation() {
 
     function next() {
         gsap.to(typingElement, {
-            duration: 1.5,
+            duration: config.scrambleAnimation.duration,
             scrambleText: {
                 text: texts[textIndex],
                 chars: '!<>-_\\/[]{}—=+*^?#________',
-                speed: 0.5,
+                speed: 0.8,
             },
             onComplete: () => {
                 textIndex = (textIndex + 1) % texts.length;
