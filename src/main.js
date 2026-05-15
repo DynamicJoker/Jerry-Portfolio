@@ -51,6 +51,12 @@ const config = {
             ],
             // How fast it transitions from one color to the next (lower is slower)
             transitionSpeed: 0.001
+        },
+        idleArrow: {
+            enabled: true,
+            delay: 10000,
+            morphSpeed: 0.04,
+            minWidth: 768
         }
     },
     navbar: {
@@ -438,7 +444,7 @@ function initializeHeroVisuals() {
     }
 
     // Destructure properties from the config
-    const { points, noiseFrequency, noiseSpeed, baseNoise, mouseFollowSpeed, velocityIntensity, colors } = config.heroVisuals;
+    const { points, noiseFrequency, noiseSpeed, baseNoise, mouseFollowSpeed, velocityIntensity, colors, idleArrow } = config.heroVisuals;
     let visualSize = getHeroVisualSize();
 
     let time = 0;
@@ -451,6 +457,9 @@ function initializeHeroVisuals() {
     let lastMouseX = centerX, lastMouseY = centerY;
     let virtualMouseX = centerX, virtualMouseY = centerY;
     let mouseVelocity = 0;
+    let idleArrowTimer = null;
+    let isIdleArrowActive = false;
+    let idleArrowProgress = 0;
 
     const lerp = (start, end, amount) => start * (1 - amount) + end * amount;
 
@@ -463,7 +472,73 @@ function initializeHeroVisuals() {
         return d + ' Z';
     }
 
-    let isHeroVisible = true;
+    function pointOnSegment(start, end, progress) {
+        return {
+            x: lerp(start.x, end.x, progress),
+            y: lerp(start.y, end.y, progress)
+        };
+    }
+
+    function createArrowPoints(pointCount, size) {
+        const half = size * 0.45;
+        const shaftHalf = size * 0.15;
+        const top = -size * 0.55;
+        const shoulderY = size * 0.08;
+        const tipY = size * 0.58;
+        const polygon = [
+            { x: -shaftHalf, y: top },
+            { x: shaftHalf, y: top },
+            { x: shaftHalf, y: shoulderY },
+            { x: half, y: shoulderY },
+            { x: 0, y: tipY },
+            { x: -half, y: shoulderY },
+            { x: -shaftHalf, y: shoulderY }
+        ];
+        const segmentCount = polygon.length;
+
+        return Array.from({ length: pointCount }, (_, i) => {
+            const position = (i / pointCount) * segmentCount;
+            const segmentIndex = Math.floor(position);
+            const segmentProgress = position - segmentIndex;
+            const start = polygon[segmentIndex];
+            const end = polygon[(segmentIndex + 1) % segmentCount];
+            return pointOnSegment(start, end, segmentProgress);
+        });
+    }
+
+    function canRunIdleArrow() {
+        return idleArrow.enabled &&
+            !prefersReducedMotion &&
+            window.innerWidth >= idleArrow.minWidth;
+    }
+
+    function clearIdleArrowTimer() {
+        if (idleArrowTimer) {
+            clearTimeout(idleArrowTimer);
+            idleArrowTimer = null;
+        }
+    }
+
+    function resetIdleArrow() {
+        clearIdleArrowTimer();
+        isIdleArrowActive = false;
+        idleArrowProgress = 0;
+    }
+
+    function startIdleArrowTimer() {
+        clearIdleArrowTimer();
+        if (!isHeroVisible || !canRunIdleArrow()) return;
+
+        idleArrowTimer = setTimeout(() => {
+            idleArrowTimer = null;
+            if (isHeroVisible && canRunIdleArrow()) {
+                isIdleArrowActive = true;
+            }
+        }, idleArrow.delay);
+    }
+
+    let isHeroVisible = heroSection.getBoundingClientRect().bottom > 0 &&
+        heroSection.getBoundingClientRect().top < window.innerHeight;
 
     function animate() {
         if (!isHeroVisible) return;
@@ -519,7 +594,20 @@ function initializeHeroVisuals() {
             return { x: Math.cos(angle) * finalRadius, y: Math.sin(angle) * finalRadius };
         });
 
-        const pathData = createBlobPath(generatedPoints);
+        const targetIdleArrowProgress = isIdleArrowActive && canRunIdleArrow() ? 1 : 0;
+        idleArrowProgress = lerp(idleArrowProgress, targetIdleArrowProgress, idleArrow.morphSpeed);
+
+        const arrowPoints = idleArrowProgress > 0.001
+            ? createArrowPoints(points, visualSize.radius * 1.35)
+            : null;
+        const morphedPoints = arrowPoints
+            ? generatedPoints.map((point, index) => ({
+                x: lerp(point.x, arrowPoints[index].x, idleArrowProgress),
+                y: lerp(point.y, arrowPoints[index].y, idleArrowProgress)
+            }))
+            : generatedPoints;
+
+        const pathData = createBlobPath(morphedPoints);
         corePath.setAttribute('d', pathData);
         glowPath.setAttribute('d', pathData);
     }
@@ -536,6 +624,8 @@ function initializeHeroVisuals() {
         centerX = rect.width / 2; centerY = rect.height / 2;
         mouseX = virtualMouseX = centerX; mouseY = virtualMouseY = centerY;
         blobGroup.style.transform = `translate(${centerX}px, ${centerY}px)`;
+        if (!canRunIdleArrow()) resetIdleArrow();
+        else if (!isIdleArrowActive) startIdleArrowTimer();
     });
 
     blobGroup.style.transform = `translate(${centerX}px, ${centerY}px)`;
@@ -547,16 +637,29 @@ function initializeHeroVisuals() {
 
     // Use gsap.ticker instead of requestAnimationFrame loop
     gsap.ticker.add(animate);
+    startIdleArrowTimer();
 
     // Use ScrollTrigger instead of IntersectionObserver to pause/resume
     ScrollTrigger.create({
         trigger: heroSection,
         start: 'top bottom',
         end: 'bottom top',
-        onEnter: () => { isHeroVisible = true; },
-        onLeave: () => { isHeroVisible = false; },
-        onEnterBack: () => { isHeroVisible = true; },
-        onLeaveBack: () => { isHeroVisible = false; },
+        onEnter: () => {
+            isHeroVisible = true;
+            startIdleArrowTimer();
+        },
+        onLeave: () => {
+            isHeroVisible = false;
+            resetIdleArrow();
+        },
+        onEnterBack: () => {
+            isHeroVisible = true;
+            startIdleArrowTimer();
+        },
+        onLeaveBack: () => {
+            isHeroVisible = false;
+            resetIdleArrow();
+        },
     });
 }
 
