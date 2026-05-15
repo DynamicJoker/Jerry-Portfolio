@@ -56,7 +56,11 @@ const config = {
             enabled: true,
             delay: 10000,
             morphSpeed: 0.04,
-            minWidth: 768
+            minWidth: 768,
+            verticalOffset: 0.62,
+            pulseAmplitude: 18,
+            pulseSpeed: 2.4,
+            mouseInfluence: 0.12
         }
     },
     navbar: {
@@ -597,8 +601,18 @@ function initializeHeroVisuals() {
         const targetIdleArrowProgress = isIdleArrowActive && canRunIdleArrow() ? 1 : 0;
         idleArrowProgress = lerp(idleArrowProgress, targetIdleArrowProgress, idleArrow.morphSpeed);
 
+        const idleArrowPulse = Math.max(0, Math.sin(time * idleArrow.pulseSpeed)) * idleArrow.pulseAmplitude;
+        const idleArrowOffset = {
+            x: (virtualMouseX - centerX) * idleArrow.mouseInfluence,
+            y: visualSize.radius * idleArrow.verticalOffset +
+                (virtualMouseY - centerY) * idleArrow.mouseInfluence +
+                idleArrowPulse
+        };
         const arrowPoints = idleArrowProgress > 0.001
-            ? createArrowPoints(points, visualSize.radius * 1.35)
+            ? createArrowPoints(points, visualSize.radius * 1.25).map(point => ({
+                x: point.x + idleArrowOffset.x,
+                y: point.y + idleArrowOffset.y
+            }))
             : null;
         const morphedPoints = arrowPoints
             ? generatedPoints.map((point, index) => ({
