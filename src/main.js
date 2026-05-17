@@ -1119,8 +1119,33 @@ function updateGanttRowMetadata(row, job) {
     meta.querySelector('.gantt-duration').textContent = getGanttDurationText(job.startDate, job.endDate);
 }
 
+function setGanttAreaExpanded(barArea, isExpanded) {
+    barArea.classList.toggle('active', isExpanded);
+    barArea.setAttribute('aria-expanded', String(isExpanded));
+}
+
+function closeGanttDetails(container, exceptArea = null) {
+    container.querySelectorAll('.gantt-bar-area.active').forEach(activeArea => {
+        if (activeArea !== exceptArea) {
+            setGanttAreaExpanded(activeArea, false);
+        }
+    });
+}
+
+function isCompactGanttCardView() {
+    return window.matchMedia(`(max-width: ${config.breakpoints.md}px)`).matches;
+}
+
 function enhanceGanttRows(container, jobs, firstDate, totalDuration) {
     const rows = Array.from(container.querySelectorAll('.gantt-row'));
+
+    if (container.dataset.ganttOutsideListener !== 'true') {
+        document.addEventListener('click', (event) => {
+            if (container.contains(event.target)) return;
+            closeGanttDetails(container);
+        });
+        container.dataset.ganttOutsideListener = 'true';
+    }
 
     rows.forEach((row, index) => {
         const job = jobs[index];
@@ -1147,20 +1172,14 @@ function enhanceGanttRows(container, jobs, firstDate, totalDuration) {
 
         if (barArea.dataset.ganttEnhanced === 'true') return;
 
-        const closeOtherTooltips = () => {
-            container.querySelectorAll('.gantt-bar-area.active').forEach(activeArea => {
-                if (activeArea !== barArea) {
-                    activeArea.classList.remove('active');
-                    activeArea.setAttribute('aria-expanded', 'false');
-                }
-            });
-        };
-
         barArea.addEventListener('click', () => {
             const isActive = barArea.classList.contains('active');
-            closeOtherTooltips();
-            barArea.classList.toggle('active', !isActive);
-            barArea.setAttribute('aria-expanded', String(!isActive));
+            closeGanttDetails(container, barArea);
+            setGanttAreaExpanded(barArea, !isActive);
+        });
+        row.addEventListener('click', (event) => {
+            if (!isCompactGanttCardView() || barArea.contains(event.target)) return;
+            barArea.click();
         });
         barArea.addEventListener('keydown', (event) => {
             if (!['Enter', ' '].includes(event.key)) return;
