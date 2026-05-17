@@ -1082,12 +1082,51 @@ function initializeExpandableHighlights() {
     });
 }
 
+function getGanttDurationText(startDate, endDate) {
+    const totalMonths = Math.max(
+        1,
+        (endDate.getFullYear() - startDate.getFullYear()) * 12 +
+        endDate.getMonth() - startDate.getMonth()
+    );
+    const years = Math.floor(totalMonths / 12);
+    const months = totalMonths % 12;
+    const parts = [];
+
+    if (years > 0) {
+        parts.push(`${years} ${years === 1 ? 'yr' : 'yrs'}`);
+    }
+
+    if (months > 0 || parts.length === 0) {
+        parts.push(`${months} ${months === 1 ? 'mo' : 'mos'}`);
+    }
+
+    return parts.join(' ');
+}
+
+function updateGanttRowMetadata(row, job) {
+    const label = row.querySelector('.gantt-label');
+    if (!label) return;
+
+    let meta = label.querySelector('.gantt-meta');
+    if (!meta) {
+        meta = document.createElement('div');
+        meta.className = 'gantt-meta';
+        meta.innerHTML = '<span class="gantt-period"></span><span class="gantt-duration"></span>';
+        label.appendChild(meta);
+    }
+
+    meta.querySelector('.gantt-period').textContent = job.period;
+    meta.querySelector('.gantt-duration').textContent = getGanttDurationText(job.startDate, job.endDate);
+}
+
 function enhanceGanttRows(container, jobs, firstDate, totalDuration) {
     const rows = Array.from(container.querySelectorAll('.gantt-row'));
 
     rows.forEach((row, index) => {
         const job = jobs[index];
         if (!job) return;
+
+        updateGanttRowMetadata(row, job);
 
         const bar = row.querySelector('.gantt-bar');
         const barArea = row.querySelector('.gantt-bar-area');
@@ -1184,6 +1223,7 @@ function generateGanttChart() {
 
         clone.querySelector('.gantt-label h3').textContent = job.title;
         clone.querySelector('.gantt-label p').textContent = job.company;
+        updateGanttRowMetadata(clone.querySelector('.gantt-row'), job);
         clone.querySelector('.tooltip-period').textContent = job.period;
 
         const bar = clone.querySelector('.gantt-bar');

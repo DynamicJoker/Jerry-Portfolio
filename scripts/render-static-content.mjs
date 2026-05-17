@@ -180,6 +180,27 @@ function parsePeriod(period) {
     return { startDate, endDate };
 }
 
+function formatDuration(startDate, endDate) {
+    const totalMonths = Math.max(
+        1,
+        (endDate.getUTCFullYear() - startDate.getUTCFullYear()) * 12 +
+        endDate.getUTCMonth() - startDate.getUTCMonth()
+    );
+    const years = Math.floor(totalMonths / 12);
+    const months = totalMonths % 12;
+    const parts = [];
+
+    if (years > 0) {
+        parts.push(`${years} ${years === 1 ? 'yr' : 'yrs'}`);
+    }
+
+    if (months > 0 || parts.length === 0) {
+        parts.push(`${months} ${months === 1 ? 'mo' : 'mos'}`);
+    }
+
+    return parts.join(' ');
+}
+
 function renderExperience() {
     const jobs = siteContent.experience
         .map(job => ({ ...job, ...parsePeriod(job.period) }))
@@ -208,6 +229,10 @@ function renderExperience() {
             indent('<div class="gantt-label">', 4),
             indent(`<h3>${escapeHtml(job.title)}</h3>`, 8),
             indent(`<p>${escapeHtml(job.company)}</p>`, 8),
+            indent('<div class="gantt-meta">', 8),
+            indent(`<span class="gantt-period">${escapeHtml(job.period)}</span>`, 12),
+            indent(`<span class="gantt-duration">${escapeHtml(formatDuration(job.startDate, job.endDate))}</span>`, 12),
+            indent('</div>', 8),
             indent('</div>', 4),
             indent(`<div class="gantt-bar-area" tabindex="0" role="button" aria-expanded="false" aria-label="Show details for ${escapeHtml(job.title)} at ${escapeHtml(job.company)}">`, 4),
             indent(`<div class="gantt-bar${presentClass}" style="margin-left: ${offset}%; width: ${width}%; animation-delay: ${index * 100}ms;"></div>`, 8),
