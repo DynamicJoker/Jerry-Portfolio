@@ -813,7 +813,8 @@ function initializeScrambleAnimation() {
 
 function updateYearsExperience() {
     const el = document.getElementById('years-experience');
-    if (el) el.textContent = new Date().getFullYear() - config.experience.startYear;
+    const startYear = siteContent.profile?.experienceStartYear || config.experience.startYear;
+    if (el) el.textContent = new Date().getFullYear() - startYear;
 }
 
 function updateFooterYear() {
@@ -852,7 +853,10 @@ function generateSkills() {
     const template = document.getElementById('skill-category-template');
     if (!gridContainer || !template) return;
 
-    // Clear any existing content to prevent duplication
+    if (gridContainer.querySelectorAll('.skill-category').length >= siteContent.skills.length) {
+        return;
+    }
+
     gridContainer.innerHTML = '';
 
     siteContent.skills.forEach(category => {
@@ -898,6 +902,11 @@ function generateServices() {
     const template = document.getElementById('service-card-template');
     if (!container || !template) return;
 
+    if (container.querySelectorAll('.service-card').length >= siteContent.services.length) {
+        return;
+    }
+
+    container.innerHTML = '';
     siteContent.services.forEach(service => {
         const clone = template.content.cloneNode(true);
         clone.querySelector('.service-icon').textContent = service.icon;
@@ -912,6 +921,11 @@ function generateTestimonialColumns() {
     const template = document.getElementById('testimonial-card-template');
     if (!container || !template) return;
 
+    if (container.querySelectorAll('.testimonial-card').length >= siteContent.testimonials.length) {
+        return;
+    }
+
+    container.innerHTML = '';
     const numColumns = config.testimonials.columns;
     const columnsData = Array.from({ length: numColumns }, () => []);
     siteContent.testimonials.forEach((testimonial, index) => {
@@ -944,6 +958,9 @@ function generateTestimonialColumns() {
 function initializeInfiniteScroller() {
     document.querySelectorAll(".testimonials-scroller-column").forEach(scroller => {
         const scrollerInner = scroller.querySelector(".testimonials-scroller-inner");
+        if (!scrollerInner) return;
+        if (scrollerInner.dataset.scrollerEnhanced === 'true') return;
+
         const scrollerContent = Array.from(scrollerInner.children);
         scrollerContent.forEach(item => {
             const duplicatedItem = item.cloneNode(true);
@@ -953,6 +970,7 @@ function initializeInfiniteScroller() {
         const durationRange = config.testimonials.scrollSpeedMax - config.testimonials.scrollSpeedMin;
         const randomDuration = Math.floor(Math.random() * durationRange) + config.testimonials.scrollSpeedMin;
         scrollerInner.style.setProperty('--scroll-duration', `${randomDuration}s`);
+        scrollerInner.dataset.scrollerEnhanced = 'true';
     });
 }
 
@@ -961,6 +979,11 @@ function generatePortfolioItems() {
     const template = document.getElementById('portfolio-item-template');
     if (!container || !template) return;
 
+    if (container.querySelectorAll('.portfolio-item').length >= siteContent.portfolio.length) {
+        return;
+    }
+
+    container.innerHTML = '';
     siteContent.portfolio.forEach(item => {
         const clone = template.content.cloneNode(true);
         clone.querySelector('.portfolio-item').dataset.category = item.category;
@@ -1059,6 +1082,65 @@ function initializeExpandableHighlights() {
     });
 }
 
+function enhanceGanttRows(container, jobs, firstDate, totalDuration) {
+    const rows = Array.from(container.querySelectorAll('.gantt-row'));
+
+    rows.forEach((row, index) => {
+        const job = jobs[index];
+        if (!job) return;
+
+        const bar = row.querySelector('.gantt-bar');
+        const barArea = row.querySelector('.gantt-bar-area');
+        if (!bar || !barArea) return;
+
+        const offset = (job.startDate.getTime() - firstDate.getTime()) / totalDuration * 100;
+        const width = (job.endDate.getTime() - job.startDate.getTime()) / totalDuration * 100;
+
+        bar.style.marginLeft = `${offset}%`;
+        bar.style.width = `${width}%`;
+        bar.style.animationDelay = `${index * config.experience.ganttChart.animationDelayIncrement}ms`;
+        bar.classList.toggle('present', job.period.toLowerCase().includes('present'));
+
+        barArea.tabIndex = 0;
+        barArea.setAttribute('role', 'button');
+        barArea.setAttribute('aria-expanded', barArea.getAttribute('aria-expanded') || 'false');
+        barArea.setAttribute('aria-label', `Show details for ${job.title} at ${job.company}`);
+
+        if (barArea.dataset.ganttEnhanced === 'true') return;
+
+        const closeOtherTooltips = () => {
+            container.querySelectorAll('.gantt-bar-area.active').forEach(activeArea => {
+                if (activeArea !== barArea) {
+                    activeArea.classList.remove('active');
+                    activeArea.setAttribute('aria-expanded', 'false');
+                }
+            });
+        };
+
+        barArea.addEventListener('click', () => {
+            const isActive = barArea.classList.contains('active');
+            closeOtherTooltips();
+            barArea.classList.toggle('active', !isActive);
+            barArea.setAttribute('aria-expanded', String(!isActive));
+        });
+        barArea.addEventListener('keydown', (event) => {
+            if (!['Enter', ' '].includes(event.key)) return;
+            event.preventDefault();
+            barArea.click();
+        });
+        barArea.dataset.ganttEnhanced = 'true';
+    });
+}
+
+function revealGanttChartOnScroll(container) {
+    ScrollTrigger.create({
+        trigger: container,
+        start: 'top 85%',
+        once: true,
+        onEnter: () => container.classList.add('visible'),
+    });
+}
+
 function generateGanttChart() {
     const container = document.getElementById('gantt-chart-container');
     const template = document.getElementById('gantt-row-template');
@@ -1075,6 +1157,12 @@ function generateGanttChart() {
     const firstDate = new Date(Math.min(...jobs.map(j => j.startDate)));
     const lastDate = new Date(Math.max(...jobs.map(j => j.endDate)));
     const totalDuration = lastDate.getTime() - firstDate.getTime();
+
+    if (container.querySelectorAll('.gantt-row').length >= jobs.length) {
+        enhanceGanttRows(container, jobs, firstDate, totalDuration);
+        revealGanttChartOnScroll(container);
+        return;
+    }
 
     // Generate Timeline Axis (HTML string is fine here as it's not complex)
     let timelineHTML = '<div class="gantt-timeline">';
@@ -1100,30 +1188,10 @@ function generateGanttChart() {
 
         const bar = clone.querySelector('.gantt-bar');
         const barArea = clone.querySelector('.gantt-bar-area');
-        const closeOtherTooltips = () => {
-            container.querySelectorAll('.gantt-bar-area.active').forEach(activeArea => {
-                if (activeArea !== barArea) {
-                    activeArea.classList.remove('active');
-                    activeArea.setAttribute('aria-expanded', 'false');
-                }
-            });
-        };
-
         barArea.tabIndex = 0;
         barArea.setAttribute('role', 'button');
         barArea.setAttribute('aria-expanded', 'false');
         barArea.setAttribute('aria-label', `Show details for ${job.title} at ${job.company}`);
-        barArea.addEventListener('click', () => {
-            const isActive = barArea.classList.contains('active');
-            closeOtherTooltips();
-            barArea.classList.toggle('active', !isActive);
-            barArea.setAttribute('aria-expanded', String(!isActive));
-        });
-        barArea.addEventListener('keydown', (event) => {
-            if (!['Enter', ' '].includes(event.key)) return;
-            event.preventDefault();
-            barArea.click();
-        });
 
         bar.style.marginLeft = `${offset}%`;
         bar.style.width = `${width}%`;
@@ -1143,12 +1211,7 @@ function generateGanttChart() {
     });
 
     container.appendChild(fragment);
+    enhanceGanttRows(container, jobs, firstDate, totalDuration);
 
-    // Add scroll-triggered animation via ScrollTrigger
-    ScrollTrigger.create({
-        trigger: container,
-        start: 'top 85%',
-        once: true,
-        onEnter: () => container.classList.add('visible'),
-    });
+    revealGanttChartOnScroll(container);
 }

@@ -1,4 +1,26 @@
 export const siteContent = {
+    profile: {
+        name: 'Jerry James',
+        pageTitle: 'Jerry James - Technical Marketing Specialist',
+        jobTitle: 'Technical Marketing Specialist',
+        canonicalUrl: 'https://jerryjames.me/',
+        description: 'Jerry James is a technical marketing specialist for B2B and B2C technology brands, focused on content marketing, demand generation, product positioning, marketing automation, and technical communication.',
+        aiSummary: 'Jerry James creates technical content strategy, demand generation programs, product positioning, technical documentation, marketing automation, and performance reporting for technology companies. He works across PC hardware, B2B and B2C networking, cybersecurity, cloud computing, SaaS, consumer electronics, and manufacturing.',
+        location: {
+            city: 'Bangalore',
+            country: 'IN'
+        },
+        sameAs: [
+            'https://linkedin.com/in/jerry-james-tech/'
+        ],
+        experienceStartYear: 2014,
+        sitemap: {
+            lastmod: '2026-05-17',
+            changefreq: 'monthly',
+            priority: '1.0'
+        }
+    },
+
     // Experience data
     experience: [
         {
