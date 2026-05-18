@@ -1,0 +1,15 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import LoadingScreen from '../components/LoadingScreen.astro';
+import SiteNav from '../components/SiteNav.astro';
+import HomeBody from '../components/HomeBody.astro';
+---
+
+<BaseLayout page="home">
+  <LoadingScreen />
+  <SiteNav current="home" />
+  <HomeBody />
+  <script>
+    import '../main.js';
+  </script>
+</BaseLayout>

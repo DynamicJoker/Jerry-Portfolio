@@ -4,15 +4,17 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "generate:static": "node scripts/render-static-content.mjs",
-    "check:static": "node scripts/render-static-content.mjs --check",
-    "prebuild": "npm run generate:static",
-    "build": "vite build --configLoader runner",
-    "preview": "vite preview --configLoader runner"
+    "dev": "node scripts/run-astro.mjs dev",
+    "build": "node scripts/run-astro.mjs build",
+    "preview": "node scripts/run-astro.mjs preview",
+    "check:static": "node scripts/run-astro.mjs build"
   },
   "dependencies": {
+    "@astrojs/mdx": "^5.0.6",
+    "@astrojs/rss": "^4.0.18",
+    "@astrojs/sitemap": "^3.7.2",
     "@fontsource/geist": "^5.0.0",
+    "astro": "^6.3.3",
     "gsap": "^3.13.0"
   },
   "devDependencies": {

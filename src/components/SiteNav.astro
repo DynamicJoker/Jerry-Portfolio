@@ -1,0 +1,83 @@
+---
+import { siteContent } from '../content.js';
+
+const { current = 'home' } = Astro.props;
+const availability = siteContent.profile.availability.status;
+const prefix = current === 'home' ? '' : '/';
+
+const links = [
+  { href: `${prefix}#hero`, label: 'Home', id: 'home' },
+  { href: `${prefix}#about`, label: 'About', id: 'about' },
+  { href: `${prefix}#skills`, label: 'Skills', id: 'skills' },
+  { href: `${prefix}#services`, label: 'Services', id: 'services' },
+  { href: `${prefix}#testimonials`, label: 'Testimonials', id: 'testimonials' },
+  { href: `${prefix}#portfolio`, label: 'Portfolio', id: 'portfolio' },
+  { href: `${prefix}#experience`, label: 'Experience', id: 'experience' },
+  { href: '/blog/', label: 'Blog', id: 'blog' },
+  { href: `${prefix}#contact`, label: 'Contact', id: 'contact' }
+];
+---
+
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <a href={current === 'home' ? '#hero' : '/'} class="nav-brand">Jerry James</a>
+    <span class="availability-badge" aria-label={availability}>
+      <span class="availability-dot" aria-hidden="true"></span>
+      <span class="availability-text">{availability}</span>
+    </span>
+    <div class="nav-menu" id="nav-menu">
+      {
+        links.map((link) => (
+          <a href={link.href} class:list={['nav-link', { active: current === link.id }]}>
+            {link.label}
+          </a>
+        ))
+      }
+    </div>
+    <button
+      class="hamburger"
+      id="hamburger"
+      type="button"
+      aria-label="Open navigation menu"
+      aria-controls="nav-menu"
+      aria-expanded="false"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</nav>
+
+<script is:inline>
+  (() => {
+    if (document.body?.dataset.page === 'home') return;
+
+    const hamburger = document.getElementById('hamburger');
+    const navMenu = document.getElementById('nav-menu');
+    const navbar = document.getElementById('navbar');
+    const links = document.querySelectorAll('.nav-link');
+
+    if (!hamburger || !navMenu) return;
+
+    const setNavOpen = (isOpen) => {
+      hamburger.classList.toggle('active', isOpen);
+      navMenu.classList.toggle('active', isOpen);
+      hamburger.setAttribute('aria-expanded', String(isOpen));
+      hamburger.setAttribute('aria-label', isOpen ? 'Close navigation menu' : 'Open navigation menu');
+    };
+
+    hamburger.addEventListener('click', () => setNavOpen(!navMenu.classList.contains('active')));
+    links.forEach((link) => link.addEventListener('click', () => setNavOpen(false)));
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && navMenu.classList.contains('active')) {
+        setNavOpen(false);
+        hamburger.focus();
+      }
+    });
+
+    const updateScrolled = () => navbar?.classList.toggle('scrolled', window.scrollY > 10);
+    updateScrolled();
+    window.addEventListener('scroll', updateScrolled, { passive: true });
+  })();
+</script>

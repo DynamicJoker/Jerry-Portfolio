@@ -1,0 +1,77 @@
+---
+import '@fontsource/geist/400.css';
+import '@fontsource/geist/500.css';
+import '@fontsource/geist/600.css';
+import '@fontsource/geist/700.css';
+import '../../style.css';
+import { siteContent } from '../content.js';
+
+const profile = siteContent.profile;
+const {
+  title = profile.pageTitle,
+  description = profile.description,
+  canonical = new URL(Astro.url.pathname, profile.canonicalUrl).href,
+  page = 'home',
+  image = '/images/blog/blog-cover.svg',
+  type = 'website'
+} = Astro.props;
+
+const personJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: profile.name,
+  url: profile.canonicalUrl,
+  jobTitle: profile.jobTitle,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: profile.location.city,
+    addressCountry: profile.location.country
+  },
+  sameAs: profile.sameAs,
+  knowsAbout: siteContent.skills.flatMap((skill) => skill.tags),
+  description: profile.aiSummary
+};
+
+const absoluteImage = new URL(image, profile.canonicalUrl).href;
+---
+
+<!DOCTYPE html>
+<html lang="en" data-color-scheme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={absoluteImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={absoluteImage} />
+    <noscript>
+      <style>
+        #loading-screen {
+          display: none;
+        }
+
+        #gantt-chart-container {
+          opacity: 1;
+        }
+
+        #gantt-chart-container .gantt-bar {
+          transform: none;
+        }
+      </style>
+    </noscript>
+    <script type="application/ld+json" set:html={JSON.stringify(personJsonLd)}></script>
+    <slot name="head" />
+  </head>
+  <body data-page={page}>
+    <slot />
+  </body>
+</html>

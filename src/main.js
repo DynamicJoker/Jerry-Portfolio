@@ -1,10 +1,6 @@
 // Jerry James Portfolio - Interactive JavaScript
 
 // --- ES Module Imports ---
-import '@fontsource/geist/400.css';
-import '@fontsource/geist/500.css';
-import '@fontsource/geist/600.css';
-import '@fontsource/geist/700.css';
 import { siteContent } from './content.js';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';

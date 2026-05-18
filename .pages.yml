@@ -1,0 +1,64 @@
+media:
+  input: public/images/blog
+  output: /images/blog
+  extensions:
+    - jpg
+    - jpeg
+    - png
+    - webp
+    - svg
+
+content:
+  - name: blog
+    label: Blog
+    type: collection
+    path: src/content/blog
+    filename: "{primary}.mdx"
+    format: yaml-frontmatter
+    view:
+      primary: title
+      fields:
+        - pubDate
+        - draft
+        - tags
+      sort: pubDate
+      order: desc
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: description
+        label: Description
+        type: text
+        required: true
+        options:
+          minlength: 80
+          maxlength: 180
+      - name: pubDate
+        label: Publish date
+        type: date
+        required: true
+      - name: updatedDate
+        label: Updated date
+        type: date
+      - name: draft
+        label: Draft
+        type: boolean
+        required: true
+      - name: tags
+        label: Tags
+        type: string
+        list: true
+      - name: coverImage
+        label: Cover image
+        type: image
+        required: true
+      - name: coverAlt
+        label: Cover image alt text
+        type: text
+        required: true
+      - name: body
+        label: Article
+        type: rich-text
+        required: true

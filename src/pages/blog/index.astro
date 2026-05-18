@@ -1,0 +1,75 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteNav from '../../components/SiteNav.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import { siteContent } from '../../content.js';
+
+const profile = siteContent.profile;
+const posts = (await getCollection('blog'))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const title = `Blog - ${profile.name}`;
+const description = 'Ideas on technical content, B2B marketing, product messaging, and making complex technology easier to understand.';
+
+const formatDate = (date) =>
+  new Intl.DateTimeFormat('en', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric'
+  }).format(date);
+---
+
+<BaseLayout title={title} description={description} canonical={new URL('/blog/', profile.canonicalUrl).href} page="blog">
+  <SiteNav current="blog" />
+  <main class="blog-shell">
+    <section class="blog-hero">
+      <div class="container blog-hero-inner">
+        <p class="blog-kicker">Field Notes</p>
+        <h1 class="blog-title">Technical marketing, without the fog machine</h1>
+        <p class="blog-intro">
+          Practical notes on content systems, product storytelling, and turning dense technical ideas into work that
+          earns attention.
+        </p>
+      </div>
+    </section>
+
+    <section class="blog-list-section">
+      <div class="container">
+        {
+          posts.length > 0 ? (
+            <div class="blog-grid">
+              {posts.map((post) => (
+                <article class="blog-card">
+                  <a href={`/blog/${post.id}/`} class="blog-card-media" aria-label={`Read ${post.data.title}`}>
+                    <img src={post.data.coverImage} alt={post.data.coverAlt} loading="lazy" />
+                  </a>
+                  <div class="blog-card-body">
+                    <div class="blog-card-meta">
+                      <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
+                      {post.data.tags.slice(0, 2).map((tag) => (
+                        <span>{tag}</span>
+                      ))}
+                    </div>
+                    <h2>
+                      <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+                    </h2>
+                    <p>{post.data.description}</p>
+                    <a href={`/blog/${post.id}/`} class="blog-read-link">Read article</a>
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div class="blog-empty">
+              <h2>Articles are coming soon.</h2>
+              <p>Drafts can already be created in Pages CMS and will appear here once published.</p>
+            </div>
+          )
+        }
+      </div>
+    </section>
+  </main>
+  <SiteFooter backHref="/blog/" />
+</BaseLayout>
