@@ -765,12 +765,28 @@
                 <div class="section-line"></div>
             </div>
             <!-- STATIC:booking-cta:start - This block is generated from src/content.js. Do not edit by hand. -->
-            <div class="booking-cta">
-                <div class="booking-cta-message">
-                    <span class="availability-dot booking-cta-dot" aria-hidden="true"></span>
-                    <span>Open to freelance &amp; consulting engagements</span>
+            <div class="booking-cta" data-calendly-booking>
+                <div class="booking-cta-bar">
+                    <div class="booking-cta-message">
+                        <span class="availability-dot booking-cta-dot" aria-hidden="true"></span>
+                        <span>Open to freelance &amp; consulting engagements</span>
+                    </div>
+                    <a class="btn btn--primary booking-cta-button" href="https://calendly.com/jerryjames-cal/discover" target="_blank" rel="noopener" data-calendly-open aria-expanded="false" aria-controls="calendly-booking-panel">Schedule a Discovery Call</a>
                 </div>
-                <a class="btn btn--primary booking-cta-button" href="https://calendly.com/jerry-james" target="_blank" rel="noopener">Schedule a Discovery Call</a>
+                <div class="calendly-panel" id="calendly-booking-panel" hidden>
+                    <div class="calendly-panel-inner">
+                        <div class="calendly-panel-header">
+                            <div>
+                                <h3 class="calendly-panel-title">Choose a time for a discovery call</h3>
+                                <p class="calendly-panel-helper">Pick a slot that works for you. The scheduler stays here so you can keep the portfolio in view.</p>
+                            </div>
+                            <button class="calendly-panel-close" type="button" data-calendly-close>Close scheduler</button>
+                        </div>
+                        <div class="calendly-booked-message" data-calendly-booked hidden>You are booked. Thanks, I will see you on the call.</div>
+                        <div class="calendly-loading" data-calendly-loading>Loading available times...</div>
+                        <div class="calendly-inline-host" data-calendly-container></div>
+                    </div>
+                </div>
             </div>
             <!-- STATIC:booking-cta:end -->
             <div class="contact-content">

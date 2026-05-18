@@ -1964,16 +1964,20 @@ section[id] {
 /* Contact Section */
 .booking-cta {
   width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-20);
   margin-bottom: var(--space-32);
-  padding: var(--space-20) var(--space-24);
   background: linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, rgba(20, 184, 166, 0.05) 100%);
   border: 1px solid rgba(0, 212, 255, 0.35);
   border-radius: var(--radius-lg);
   box-shadow: 0 0 24px rgba(0, 212, 255, 0.12);
+  overflow: hidden;
+}
+
+.booking-cta-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-20);
+  padding: var(--space-20) var(--space-24);
 }
 
 .booking-cta-message {
@@ -1993,6 +1997,105 @@ section[id] {
 
 .booking-cta-button {
   flex-shrink: 0;
+}
+
+.calendly-panel {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-12px) scale(0.985);
+  border-top: 1px solid rgba(0, 212, 255, 0);
+  transition: max-height 0.55s var(--ease-standard), opacity 0.35s ease, transform 0.35s var(--ease-standard), border-color 0.35s ease;
+}
+
+.calendly-panel.is-open {
+  max-height: 62rem;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  border-top-color: rgba(0, 212, 255, 0.22);
+}
+
+.calendly-panel-inner {
+  padding: var(--space-24);
+}
+
+.calendly-panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-20);
+  margin-bottom: var(--space-20);
+}
+
+.calendly-panel-title {
+  color: var(--color-electric-blue);
+  font-size: var(--font-size-2xl);
+  margin-bottom: var(--space-8);
+}
+
+.calendly-panel-helper {
+  max-width: 44rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+
+.calendly-panel-close {
+  flex-shrink: 0;
+  padding: var(--space-8) var(--space-12);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--color-text);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-base);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  transition: all var(--duration-normal) var(--ease-standard);
+}
+
+.calendly-panel-close:hover {
+  color: var(--color-electric-blue);
+  border-color: rgba(0, 212, 255, 0.55);
+  background: rgba(0, 212, 255, 0.08);
+}
+
+.calendly-booked-message {
+  margin-bottom: var(--space-16);
+  padding: var(--space-12) var(--space-16);
+  color: var(--color-accent-teal);
+  background: rgba(20, 184, 166, 0.1);
+  border: 1px solid rgba(20, 184, 166, 0.3);
+  border-radius: var(--radius-base);
+  font-weight: var(--font-weight-medium);
+}
+
+.calendly-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 5rem;
+  color: var(--color-text-secondary);
+}
+
+.calendly-inline-host {
+  min-width: 20rem;
+  height: min(43.75rem, 72dvh);
+  min-height: 37.5rem;
+  overflow: hidden;
+  opacity: 0;
+  border-radius: var(--radius-base);
+  background: rgba(10, 10, 10, 0.6);
+  transition: opacity 0.35s ease;
+}
+
+.calendly-panel.is-loaded .calendly-inline-host {
+  opacity: 1;
+}
+
+.calendly-inline-host iframe {
+  width: 100%;
+  height: 100%;
 }
 
 .contact-content {
@@ -2248,7 +2351,7 @@ section[id] {
     padding: 0 var(--space-12);
   }
 
-  .booking-cta {
+  .booking-cta-bar {
     flex-direction: column;
     align-items: stretch;
     text-align: center;
@@ -2260,6 +2363,24 @@ section[id] {
 
   .booking-cta-button {
     width: 100%;
+  }
+
+  .calendly-panel-inner {
+    padding: var(--space-20);
+  }
+
+  .calendly-panel-header {
+    flex-direction: column;
+  }
+
+  .calendly-panel-close {
+    width: 100%;
+  }
+
+  .calendly-inline-host {
+    min-width: 0;
+    height: 70dvh;
+    min-height: 32rem;
   }
 
   .skills-grid,
@@ -2334,7 +2455,8 @@ section[id] {
     font-size: var(--font-size-xs);
   }
 
-  .booking-cta {
+  .booking-cta-bar,
+  .calendly-panel-inner {
     padding: var(--space-16);
   }
 }
@@ -2565,5 +2687,10 @@ section[id] {
   .availability-dot::after {
     animation: none !important;
     opacity: 0;
+  }
+
+  .calendly-panel {
+    transform: none;
+    transition: max-height 0.01ms linear, opacity 0.01ms linear, border-color 0.01ms linear;
   }
 }

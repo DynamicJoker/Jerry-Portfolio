@@ -34,7 +34,18 @@ export const siteContent = {
         bookingCta: {
             text: 'Open to freelance & consulting engagements',
             buttonLabel: 'Schedule a Discovery Call',
-            url: 'https://calendly.com/jerry-james'
+            url: 'https://calendly.com/jerryjames-cal/discover',
+            expandedTitle: 'Choose a time for a discovery call',
+            helperText: 'Pick a slot that works for you. The scheduler stays here so you can keep the portfolio in view.',
+            loadingText: 'Loading available times...',
+            closeLabel: 'Close scheduler',
+            bookedText: 'You are booked. Thanks, I will see you on the call.',
+            theme: {
+                backgroundColor: '0a0a0a',
+                textColor: 'f5f5f5',
+                primaryColor: '00d4ff',
+                hideEventTypeDetails: true
+            }
         },
         sitemap: {
             lastmod: '2026-05-17',

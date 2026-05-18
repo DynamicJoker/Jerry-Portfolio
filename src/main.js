@@ -107,6 +107,7 @@ const config = {
 };
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 let navLinks = [];
+let calendlyScriptPromise = null;
 
 
 // --- Consolidated Scroll Handler for Performance ---
@@ -156,6 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
     generateAvailabilityBadge();
     generateHeroStats();
     generateBookingCta();
+    initializeCalendlyBookingPanel();
     initializeNavigation();
     generateSkills();
     generateServices();
@@ -923,6 +925,10 @@ function generateBookingCta() {
 
     const bar = document.createElement('div');
     bar.className = 'booking-cta';
+    bar.dataset.calendlyBooking = '';
+
+    const compactBar = document.createElement('div');
+    compactBar.className = 'booking-cta-bar';
 
     const message = document.createElement('div');
     message.className = 'booking-cta-message';
@@ -937,10 +943,241 @@ function generateBookingCta() {
     link.href = cta.url;
     link.target = '_blank';
     link.rel = 'noopener';
+    link.dataset.calendlyOpen = '';
+    link.setAttribute('aria-expanded', 'false');
+    link.setAttribute('aria-controls', 'calendly-booking-panel');
     link.textContent = cta.buttonLabel;
 
-    bar.append(message, link);
+    compactBar.append(message, link);
+    bar.appendChild(compactBar);
+
+    const panel = document.createElement('div');
+    panel.className = 'calendly-panel';
+    panel.id = 'calendly-booking-panel';
+    panel.hidden = true;
+
+    const panelInner = document.createElement('div');
+    panelInner.className = 'calendly-panel-inner';
+
+    const panelHeader = document.createElement('div');
+    panelHeader.className = 'calendly-panel-header';
+
+    const panelText = document.createElement('div');
+
+    const title = document.createElement('h3');
+    title.className = 'calendly-panel-title';
+    title.textContent = cta.expandedTitle;
+
+    const helper = document.createElement('p');
+    helper.className = 'calendly-panel-helper';
+    helper.textContent = cta.helperText;
+
+    panelText.append(title, helper);
+
+    const closeButton = document.createElement('button');
+    closeButton.className = 'calendly-panel-close';
+    closeButton.type = 'button';
+    closeButton.dataset.calendlyClose = '';
+    closeButton.textContent = cta.closeLabel;
+
+    panelHeader.append(panelText, closeButton);
+
+    const bookedMessage = document.createElement('div');
+    bookedMessage.className = 'calendly-booked-message';
+    bookedMessage.dataset.calendlyBooked = '';
+    bookedMessage.hidden = true;
+    bookedMessage.textContent = cta.bookedText;
+
+    const loading = document.createElement('div');
+    loading.className = 'calendly-loading';
+    loading.dataset.calendlyLoading = '';
+    loading.textContent = cta.loadingText;
+
+    const container = document.createElement('div');
+    container.className = 'calendly-inline-host';
+    container.dataset.calendlyContainer = '';
+
+    panelInner.append(panelHeader, bookedMessage, loading, container);
+    panel.appendChild(panelInner);
+    bar.appendChild(panel);
+
     contactContent.insertAdjacentElement('beforebegin', bar);
+}
+
+function buildCalendlyUrl(cta) {
+    const url = new URL(cta.url, window.location.href);
+    const theme = cta.theme || {};
+    const params = {
+        background_color: theme.backgroundColor,
+        text_color: theme.textColor,
+        primary_color: theme.primaryColor
+    };
+
+    Object.entries(params).forEach(([key, value]) => {
+        if (value && !url.searchParams.has(key)) {
+            url.searchParams.set(key, value);
+        }
+    });
+
+    if (theme.hideEventTypeDetails && !url.searchParams.has('hide_event_type_details')) {
+        url.searchParams.set('hide_event_type_details', '1');
+    }
+
+    return url.toString();
+}
+
+function loadCalendlyScript() {
+    if (window.Calendly?.initInlineWidget) {
+        return Promise.resolve(window.Calendly);
+    }
+
+    if (calendlyScriptPromise) {
+        return calendlyScriptPromise;
+    }
+
+    calendlyScriptPromise = new Promise((resolve, reject) => {
+        const existingScript = document.querySelector('script[data-calendly-widget]');
+        if (existingScript) {
+            existingScript.addEventListener('load', () => resolve(window.Calendly), { once: true });
+            existingScript.addEventListener('error', reject, { once: true });
+            return;
+        }
+
+        const script = document.createElement('script');
+        script.src = 'https://assets.calendly.com/assets/external/widget.js';
+        script.async = true;
+        script.dataset.calendlyWidget = 'true';
+        script.addEventListener('load', () => resolve(window.Calendly), { once: true });
+        script.addEventListener('error', reject, { once: true });
+        document.head.appendChild(script);
+    });
+
+    return calendlyScriptPromise;
+}
+
+function initializeCalendlyBookingPanel() {
+    const booking = document.querySelector('[data-calendly-booking]');
+    const cta = siteContent.profile?.bookingCta;
+    if (!booking || !cta?.url || booking.dataset.calendlyEnhanced === 'true') return;
+
+    const trigger = booking.querySelector('[data-calendly-open]');
+    const panel = booking.querySelector('.calendly-panel');
+    const closeButton = booking.querySelector('[data-calendly-close]');
+    const loading = booking.querySelector('[data-calendly-loading]');
+    const container = booking.querySelector('[data-calendly-container]');
+    const bookedMessage = booking.querySelector('[data-calendly-booked]');
+    if (!trigger || !panel || !closeButton || !loading || !container || !bookedMessage) return;
+
+    let isOpen = false;
+    let hasInitializedCalendly = false;
+    let iframeObserver = null;
+
+    const setLoaded = (loaded) => {
+        panel.classList.toggle('is-loaded', loaded);
+        loading.hidden = loaded;
+    };
+
+    const clearCalendlyEmbed = () => {
+        if (iframeObserver) {
+            iframeObserver.disconnect();
+            iframeObserver = null;
+        }
+        container.innerHTML = '';
+        setLoaded(false);
+        hasInitializedCalendly = false;
+    };
+
+    const initializeCalendly = async () => {
+        if (hasInitializedCalendly) return;
+        hasInitializedCalendly = true;
+        setLoaded(false);
+
+        iframeObserver = new MutationObserver(() => {
+            if (container.querySelector('iframe')) {
+                setLoaded(true);
+                iframeObserver.disconnect();
+                iframeObserver = null;
+            }
+        });
+        iframeObserver.observe(container, { childList: true, subtree: true });
+
+        try {
+            const Calendly = await loadCalendlyScript();
+            Calendly.initInlineWidget({
+                url: buildCalendlyUrl(cta),
+                parentElement: container
+            });
+        } catch (error) {
+            hasInitializedCalendly = false;
+            if (iframeObserver) {
+                iframeObserver.disconnect();
+                iframeObserver = null;
+            }
+            loading.hidden = false;
+            console.error('Calendly failed to load:', error);
+        }
+    };
+
+    const openPanel = () => {
+        if (isOpen) return;
+        isOpen = true;
+        panel.hidden = false;
+        trigger.setAttribute('aria-expanded', 'true');
+        requestAnimationFrame(() => {
+            panel.classList.add('is-open');
+            booking.classList.add('is-expanded');
+        });
+        initializeCalendly();
+        setTimeout(() => closeButton.focus(), prefersReducedMotion ? 0 : 220);
+    };
+
+    const closePanel = () => {
+        if (!isOpen) return;
+        isOpen = false;
+        panel.classList.remove('is-open');
+        booking.classList.remove('is-expanded');
+        trigger.setAttribute('aria-expanded', 'false');
+
+        const finishClose = () => {
+            if (isOpen) return;
+            panel.hidden = true;
+            bookedMessage.hidden = true;
+            panel.classList.remove('is-booked');
+            clearCalendlyEmbed();
+            trigger.focus();
+        };
+
+        if (prefersReducedMotion) {
+            finishClose();
+            return;
+        }
+
+        panel.addEventListener('transitionend', finishClose, { once: true });
+    };
+
+    trigger.addEventListener('click', (event) => {
+        event.preventDefault();
+        openPanel();
+    });
+
+    closeButton.addEventListener('click', closePanel);
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && isOpen) {
+            closePanel();
+        }
+    });
+
+    window.addEventListener('message', (event) => {
+        if (event.origin !== 'https://calendly.com') return;
+        if (!event.data?.event?.startsWith?.('calendly.')) return;
+        if (event.data.event === 'calendly.event_scheduled') {
+            bookedMessage.hidden = false;
+            panel.classList.add('is-booked');
+        }
+    });
+
+    booking.dataset.calendlyEnhanced = 'true';
 }
 
 function generateSkills() {

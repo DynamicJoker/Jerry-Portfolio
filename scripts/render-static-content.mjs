@@ -115,13 +115,30 @@ function renderHeroStats() {
 }
 
 function renderBookingCta() {
+    const cta = profile.bookingCta;
     return [
-        '<div class="booking-cta">',
-        indent('<div class="booking-cta-message">', 4),
-        indent('<span class="availability-dot booking-cta-dot" aria-hidden="true"></span>', 8),
-        indent(`<span>${escapeHtml(profile.bookingCta.text)}</span>`, 8),
+        '<div class="booking-cta" data-calendly-booking>',
+        indent('<div class="booking-cta-bar">', 4),
+        indent('<div class="booking-cta-message">', 8),
+        indent('<span class="availability-dot booking-cta-dot" aria-hidden="true"></span>', 12),
+        indent(`<span>${escapeHtml(cta.text)}</span>`, 12),
+        indent('</div>', 8),
+        indent(`<a class="btn btn--primary booking-cta-button" href="${escapeHtml(cta.url)}" target="_blank" rel="noopener" data-calendly-open aria-expanded="false" aria-controls="calendly-booking-panel">${escapeHtml(cta.buttonLabel)}</a>`, 8),
         indent('</div>', 4),
-        indent(`<a class="btn btn--primary booking-cta-button" href="${escapeHtml(profile.bookingCta.url)}" target="_blank" rel="noopener">${escapeHtml(profile.bookingCta.buttonLabel)}</a>`, 4),
+        indent('<div class="calendly-panel" id="calendly-booking-panel" hidden>', 4),
+        indent('<div class="calendly-panel-inner">', 8),
+        indent('<div class="calendly-panel-header">', 12),
+        indent('<div>', 16),
+        indent(`<h3 class="calendly-panel-title">${escapeHtml(cta.expandedTitle)}</h3>`, 20),
+        indent(`<p class="calendly-panel-helper">${escapeHtml(cta.helperText)}</p>`, 20),
+        indent('</div>', 16),
+        indent(`<button class="calendly-panel-close" type="button" data-calendly-close>${escapeHtml(cta.closeLabel)}</button>`, 16),
+        indent('</div>', 12),
+        indent(`<div class="calendly-booked-message" data-calendly-booked hidden>${escapeHtml(cta.bookedText)}</div>`, 12),
+        indent(`<div class="calendly-loading" data-calendly-loading>${escapeHtml(cta.loadingText)}</div>`, 12),
+        indent('<div class="calendly-inline-host" data-calendly-container></div>', 12),
+        indent('</div>', 8),
+        indent('</div>', 4),
         '</div>'
     ].join('\n');
 }
@@ -168,8 +185,14 @@ function validateContent() {
         throw new Error('Each profile.heroStats item must include value and label in src/content.js');
     }
 
-    if (!profile.bookingCta?.text || !profile.bookingCta?.buttonLabel || !profile.bookingCta?.url) {
-        throw new Error('Missing profile.bookingCta text, buttonLabel, or url in src/content.js');
+    const requiredBookingFields = ['text', 'buttonLabel', 'url', 'expandedTitle', 'helperText', 'loadingText', 'closeLabel', 'bookedText'];
+    const missingBookingFields = requiredBookingFields.filter(field => !profile.bookingCta?.[field]);
+    if (missingBookingFields.length > 0) {
+        throw new Error(`Missing profile.bookingCta fields in src/content.js: ${missingBookingFields.join(', ')}`);
+    }
+
+    if (!profile.bookingCta.theme?.backgroundColor || !profile.bookingCta.theme?.textColor || !profile.bookingCta.theme?.primaryColor) {
+        throw new Error('Missing profile.bookingCta.theme colors in src/content.js');
     }
 
     const missingServiceIcons = siteContent.services
