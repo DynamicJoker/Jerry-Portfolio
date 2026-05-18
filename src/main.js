@@ -52,16 +52,17 @@ const config = {
             transitionSpeed: 0.001
         },
         bloblets: {
-            maxDesktop: 12,
-            maxMobile: 7,
+            maxDesktop: 4,
+            maxMobile: 3,
             clickCooldown: 180,
-            minRadiusScale: 0.22,
-            splitScale: 0.72,
-            splitSpread: 0.42,
-            splitImpulse: 8.5,
-            gatherSpeed: 0.006,
-            damping: 0.88,
-            settleThreshold: 8
+            centerThreshold: 0.24,
+            openDuration: 1100,
+            totalDuration: 4600,
+            centerSeparation: 0.42,
+            edgeSeparation: 0.48,
+            edgeBlobletScale: 0.28,
+            edgeNotchDepth: 0.34,
+            edgeNotchWidth: 0.55
         }
     },
     navbar: {
@@ -517,10 +518,16 @@ function initializeHeroVisuals() {
     let virtualMouseX = centerX, virtualMouseY = centerY;
     let mouseVelocity = 0;
     let lastSplitAt = 0;
-    let bloblets = [createRootBloblet()];
-    let blobletPathPairs = [{ core: corePath, glow: glowPath }];
+    let activeSplits = [];
+    let pathPairs = [{ core: corePath, glow: glowPath }];
 
     const lerp = (start, end, amount) => start * (1 - amount) + end * amount;
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+    const easeOutCubic = value => 1 - Math.pow(1 - clamp(value, 0, 1), 3);
+    const easeInOutCubic = value => {
+        const t = clamp(value, 0, 1);
+        return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    };
 
     function createBlobPath(pts) {
         let d = `M ${pts[0].x} ${pts[0].y}`;
@@ -531,37 +538,6 @@ function initializeHeroVisuals() {
         return d + ' Z';
     }
 
-    function createRootBloblet() {
-        return {
-            x: 0,
-            y: 0,
-            vx: 0,
-            vy: 0,
-            radiusScale: 1,
-            splitRadiusScale: 1,
-            opacity: 1,
-            phase: 0,
-            splitLevel: 0
-        };
-    }
-
-    function createSplitBloblet(source, angle, radiusScale) {
-        const push = visualSize.radius * blobletConfig.splitSpread * radiusScale;
-        const impulse = blobletConfig.splitImpulse * (0.75 + Math.random() * 0.5);
-
-        return {
-            x: source.x + Math.cos(angle) * push,
-            y: source.y + Math.sin(angle) * push,
-            vx: source.vx * 0.35 + Math.cos(angle) * impulse,
-            vy: source.vy * 0.35 + Math.sin(angle) * impulse,
-            radiusScale,
-            splitRadiusScale: radiusScale,
-            opacity: 1,
-            phase: source.phase + Math.random() * Math.PI * 2,
-            splitLevel: source.splitLevel + 1
-        };
-    }
-
     function createSvgPath(className, referencePath) {
         const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         path.setAttribute('class', className);
@@ -570,7 +546,7 @@ function initializeHeroVisuals() {
         return path;
     }
 
-    function createBlobletPathPair() {
+    function createSplitPathPair() {
         const glow = createSvgPath('hero-bloblet-glow-path', glowPath);
         const core = createSvgPath('hero-bloblet-path', corePath);
         glow.style.filter = 'blur(70px)';
@@ -583,150 +559,201 @@ function initializeHeroVisuals() {
         return { core, glow };
     }
 
-    function ensureBlobletPathPairs(count) {
-        while (blobletPathPairs.length < count) {
-            blobletPathPairs.push(createBlobletPathPair());
+    function ensurePathPairs(count) {
+        while (pathPairs.length < count) {
+            pathPairs.push(createSplitPathPair());
         }
 
-        while (blobletPathPairs.length > count) {
-            const pair = blobletPathPairs.pop();
+        while (pathPairs.length > count) {
+            const pair = pathPairs.pop();
             pair.core.remove();
             pair.glow.remove();
         }
     }
 
-    function resetBloblets() {
-        bloblets = [createRootBloblet()];
-        ensureBlobletPathPairs(1);
-    }
-
     let isHeroVisible = heroSection.getBoundingClientRect().bottom > 0 &&
         heroSection.getBoundingClientRect().top < window.innerHeight;
 
-    function updateBlobletPhysics() {
-        if (bloblets.length <= 1) {
-            const bloblet = bloblets[0];
-            bloblet.x = bloblet.y = bloblet.vx = bloblet.vy = 0;
-            bloblet.radiusScale = lerp(bloblet.radiusScale, 1, 0.12);
-            bloblet.opacity = lerp(bloblet.opacity, 1, 0.12);
-            return;
-        }
-
-        let maxDistance = 0;
-        let maxSpeed = 0;
-
-        bloblets.forEach(bloblet => {
-            bloblet.vx += -bloblet.x * blobletConfig.gatherSpeed;
-            bloblet.vy += -bloblet.y * blobletConfig.gatherSpeed;
-            bloblet.vx *= blobletConfig.damping;
-            bloblet.vy *= blobletConfig.damping;
-            bloblet.x += bloblet.vx;
-            bloblet.y += bloblet.vy;
-
-            maxDistance = Math.max(maxDistance, Math.hypot(bloblet.x, bloblet.y));
-            maxSpeed = Math.max(maxSpeed, Math.hypot(bloblet.vx, bloblet.vy));
-        });
-
-        const mergeRange = blobletConfig.settleThreshold * 4;
-        const mergeProgress = 1 - Math.min(maxDistance / mergeRange, 1);
-
-        bloblets.forEach((bloblet, index) => {
-            const targetRadius = index === 0
-                ? lerp(bloblet.splitRadiusScale, 1, mergeProgress)
-                : lerp(bloblet.splitRadiusScale, blobletConfig.minRadiusScale * 0.55, mergeProgress);
-            const targetOpacity = index === 0 ? 1 : 1 - mergeProgress;
-
-            bloblet.radiusScale = lerp(bloblet.radiusScale, targetRadius, 0.08);
-            bloblet.opacity = lerp(bloblet.opacity, targetOpacity, 0.08);
-        });
-
-        if (maxDistance < blobletConfig.settleThreshold && maxSpeed < 0.65) {
-            resetBloblets();
-        }
+    function angleDistance(a, b) {
+        return Math.atan2(Math.sin(a - b), Math.cos(a - b));
     }
 
-    function createBlobletPoints(bloblet, dynamicNoiseAmount, dynamicMaxStretch, mouseAngle, pullIntensity) {
+    function getBaseRadius(angle, dynamicNoiseAmount, dynamicMaxStretch, mouseAngle, pullIntensity, phase = 0) {
+        const noiseFactor = 1 + dynamicNoiseAmount * Math.sin(time + phase + angle * noiseFrequency);
+        const stretch = pullIntensity * dynamicMaxStretch * (Math.cos(angle - mouseAngle) + 1) / 2;
+        return (visualSize.radius + stretch) * noiseFactor;
+    }
+
+    function createBaseBlobPoints(dynamicNoiseAmount, dynamicMaxStretch, mouseAngle, pullIntensity, edgeSplits) {
         const pointCount = visualSize.pointCount;
-        const stretchScale = bloblets.length === 1 ? 1 : bloblet.radiusScale * 0.35;
 
         return Array.from({ length: pointCount }, (_, i) => {
             const angle = (i / pointCount) * Math.PI * 2;
-            const noiseFactor = 1 + dynamicNoiseAmount * Math.sin(time + bloblet.phase + angle * noiseFrequency);
-            const stretch = pullIntensity * dynamicMaxStretch * stretchScale * (Math.cos(angle - mouseAngle) + 1) / 2;
-            const finalRadius = (visualSize.radius * bloblet.radiusScale + stretch) * noiseFactor;
+            let finalRadius = getBaseRadius(angle, dynamicNoiseAmount, dynamicMaxStretch, mouseAngle, pullIntensity);
+
+            edgeSplits.forEach(split => {
+                const distance = Math.abs(angleDistance(angle, split.angle));
+                const notch = Math.exp(-Math.pow(distance / blobletConfig.edgeNotchWidth, 2));
+                finalRadius -= visualSize.radius * blobletConfig.edgeNotchDepth * split.strength * notch;
+            });
+
+            return { x: Math.cos(angle) * finalRadius, y: Math.sin(angle) * finalRadius };
+        });
+    }
+
+    function createCenterHalfPoints(split, side, dynamicNoiseAmount, dynamicMaxStretch, mouseAngle, pullIntensity) {
+        const count = Math.max(12, Math.round(visualSize.pointCount * 0.62));
+        const sideAngle = split.axis + (side > 0 ? 0 : Math.PI);
+        const arcSpan = Math.PI * 1.08;
+        const separation = visualSize.radius * blobletConfig.centerSeparation * split.strength;
+        const offsetX = Math.cos(split.axis) * side * separation;
+        const offsetY = Math.sin(split.axis) * side * separation;
+        const seamShift = visualSize.radius * 0.08 * split.strength;
+
+        const points = Array.from({ length: count }, (_, i) => {
+            const angle = sideAngle - arcSpan / 2 + (arcSpan * i) / (count - 1);
+            const radius = getBaseRadius(angle, dynamicNoiseAmount, dynamicMaxStretch, mouseAngle, pullIntensity, split.phase) * 1.02;
             return {
-                x: bloblet.x + Math.cos(angle) * finalRadius,
-                y: bloblet.y + Math.sin(angle) * finalRadius
+                x: offsetX + Math.cos(angle) * radius,
+                y: offsetY + Math.sin(angle) * radius
+            };
+        });
+
+        const seamAngle = sideAngle + Math.PI;
+        points.push({
+            x: offsetX + Math.cos(seamAngle) * seamShift + split.clickX * 0.12,
+            y: offsetY + Math.sin(seamAngle) * seamShift + split.clickY * 0.12
+        });
+
+        return points;
+    }
+
+    function createEdgeBlobletPoints(split, dynamicNoiseAmount) {
+        const count = Math.max(12, Math.round(visualSize.pointCount * 0.56));
+        const directionX = Math.cos(split.angle);
+        const directionY = Math.sin(split.angle);
+        const originRadius = visualSize.radius * clamp(split.clickDistance / visualSize.radius, 0.62, 1);
+        const separation = visualSize.radius * blobletConfig.edgeSeparation * split.strength;
+        const center = {
+            x: directionX * (originRadius + separation),
+            y: directionY * (originRadius + separation)
+        };
+        const blobletRadius = visualSize.radius * blobletConfig.edgeBlobletScale * (0.25 + 0.75 * split.strength);
+
+        return Array.from({ length: count }, (_, i) => {
+            const angle = (i / count) * Math.PI * 2;
+            const noiseFactor = 1 + dynamicNoiseAmount * 0.75 * Math.sin(time + split.phase + angle * noiseFrequency);
+            const radius = blobletRadius * noiseFactor;
+            return {
+                x: center.x + Math.cos(angle) * radius,
+                y: center.y + Math.sin(angle) * radius
             };
         });
     }
 
-    function renderBloblets(dynamicNoiseAmount, dynamicMaxStretch, mouseAngle, pullIntensity) {
-        ensureBlobletPathPairs(bloblets.length);
+    function updateActiveSplits(now) {
+        activeSplits = activeSplits
+            .map(split => {
+                const elapsed = now - split.start;
+                const strength = elapsed <= blobletConfig.openDuration
+                    ? easeOutCubic(elapsed / blobletConfig.openDuration)
+                    : 1 - easeInOutCubic((elapsed - blobletConfig.openDuration) / (blobletConfig.totalDuration - blobletConfig.openDuration));
+                return { ...split, elapsed, strength: clamp(strength, 0, 1) };
+            })
+            .filter(split => split.elapsed < blobletConfig.totalDuration && split.strength > 0.01);
+    }
 
-        bloblets.forEach((bloblet, index) => {
-            const pathData = createBlobPath(createBlobletPoints(bloblet, dynamicNoiseAmount, dynamicMaxStretch, mouseAngle, pullIntensity));
-            const pair = blobletPathPairs[index];
-            pair.core.setAttribute('d', pathData);
-            pair.glow.setAttribute('d', pathData);
-            pair.core.style.opacity = bloblet.opacity;
-            pair.glow.style.opacity = bloblet.opacity;
+    function renderSplitScene(dynamicNoiseAmount, dynamicMaxStretch, mouseAngle, pullIntensity) {
+        const edgeSplits = activeSplits.filter(split => split.kind === 'edge');
+        const centerSplits = activeSplits.filter(split => split.kind === 'center');
+        const paths = [];
+
+        centerSplits.forEach(split => {
+            paths.push({
+                d: createBlobPath(createCenterHalfPoints(split, -1, dynamicNoiseAmount, dynamicMaxStretch, mouseAngle, pullIntensity)),
+                opacity: 0.95 * Math.max(split.strength, 0.08)
+            });
+            paths.push({
+                d: createBlobPath(createCenterHalfPoints(split, 1, dynamicNoiseAmount, dynamicMaxStretch, mouseAngle, pullIntensity)),
+                opacity: 0.95 * Math.max(split.strength, 0.08)
+            });
+        });
+
+        edgeSplits.forEach(split => {
+            paths.push({
+                d: createBlobPath(createEdgeBlobletPoints(split, dynamicNoiseAmount)),
+                opacity: 0.92 * split.strength
+            });
+        });
+
+        ensurePathPairs(1 + paths.length);
+
+        const basePath = createBlobPath(createBaseBlobPoints(dynamicNoiseAmount, dynamicMaxStretch, mouseAngle, pullIntensity, edgeSplits));
+        const strongestCenterSplit = centerSplits.reduce((max, split) => Math.max(max, split.strength), 0);
+        const baseOpacity = 1 - strongestCenterSplit * 0.72;
+
+        pathPairs[0].core.setAttribute('d', basePath);
+        pathPairs[0].glow.setAttribute('d', basePath);
+        pathPairs[0].core.style.opacity = baseOpacity;
+        pathPairs[0].glow.style.opacity = baseOpacity;
+
+        paths.forEach((path, index) => {
+            const pair = pathPairs[index + 1];
+            pair.core.setAttribute('d', path.d);
+            pair.glow.setAttribute('d', path.d);
+            pair.core.style.opacity = path.opacity;
+            pair.glow.style.opacity = path.opacity;
         });
     }
 
-    function clickHitsBloblet(localX, localY) {
-        return bloblets.some(bloblet => {
-            const radius = visualSize.radius * Math.max(bloblet.radiusScale, blobletConfig.minRadiusScale) * 1.12;
-            return Math.hypot(localX - bloblet.x, localY - bloblet.y) <= radius;
-        });
+    function clickHitsBlob(localX, localY) {
+        return Math.hypot(localX, localY) <= visualSize.radius * 1.16;
     }
 
-    function scatterExistingBloblets(localX, localY) {
-        bloblets.forEach(bloblet => {
-            const awayFromClick = Math.atan2(bloblet.y - localY, bloblet.x - localX);
-            const angle = awayFromClick + (Math.random() - 0.5) * 0.9;
-            const impulse = blobletConfig.splitImpulse * (0.8 + Math.random() * 0.5);
-            bloblet.vx += Math.cos(angle) * impulse;
-            bloblet.vy += Math.sin(angle) * impulse;
-            bloblet.x += Math.cos(angle) * visualSize.radius * blobletConfig.splitSpread * 0.12;
-            bloblet.y += Math.sin(angle) * visualSize.radius * blobletConfig.splitSpread * 0.12;
-            bloblet.opacity = 1;
-        });
+    function findNearestSplit(localX, localY) {
+        return activeSplits.reduce((nearest, split) => {
+            const distance = Math.hypot(localX - split.clickX, localY - split.clickY);
+            if (!nearest || distance < nearest.distance) return { split, distance };
+            return nearest;
+        }, null)?.split;
     }
 
-    function splitBloblets(localX, localY) {
+    function createSplitFromClick(localX, localY, now) {
+        const clickDistance = Math.hypot(localX, localY);
+        const kind = clickDistance <= visualSize.radius * blobletConfig.centerThreshold ? 'center' : 'edge';
+        const clickAngle = Math.atan2(localY, localX);
+
+        return {
+            id: now + Math.random(),
+            kind,
+            start: now,
+            elapsed: 0,
+            strength: 0,
+            clickX: localX,
+            clickY: localY,
+            clickDistance,
+            angle: Number.isFinite(clickAngle) ? clickAngle : 0,
+            axis: kind === 'center' ? Math.random() * Math.PI * 2 : clickAngle,
+            phase: Math.random() * Math.PI * 2
+        };
+    }
+
+    function triggerSplit(localX, localY) {
         if (prefersReducedMotion) return;
 
         const now = performance.now();
         if (now - lastSplitAt < blobletConfig.clickCooldown) return;
         lastSplitAt = now;
 
-        if (bloblets.length >= visualSize.maxBloblets) {
-            scatterExistingBloblets(localX, localY);
+        const nextSplit = createSplitFromClick(localX, localY, now);
+
+        if (activeSplits.length >= visualSize.maxBloblets) {
+            const nearestSplit = findNearestSplit(localX, localY);
+            if (nearestSplit) Object.assign(nearestSplit, nextSplit);
             return;
         }
 
-        const nextBloblets = [];
-
-        bloblets.forEach(bloblet => {
-            const canSplit = nextBloblets.length + 2 <= visualSize.maxBloblets &&
-                bloblet.radiusScale > blobletConfig.minRadiusScale * 1.25;
-
-            if (!canSplit) {
-                nextBloblets.push({ ...bloblet, opacity: 1 });
-                return;
-            }
-
-            const childScale = Math.max(blobletConfig.minRadiusScale, bloblet.radiusScale * blobletConfig.splitScale);
-            const baseAngle = Math.atan2(bloblet.y - localY, bloblet.x - localX) || Math.random() * Math.PI * 2;
-            const fan = Math.PI * (0.42 + Math.random() * 0.18);
-            nextBloblets.push(createSplitBloblet(bloblet, baseAngle - fan, childScale));
-            nextBloblets.push(createSplitBloblet(bloblet, baseAngle + fan, childScale));
-        });
-
-        bloblets = nextBloblets.slice(0, visualSize.maxBloblets);
-        scatterExistingBloblets(localX, localY);
-        ensureBlobletPathPairs(bloblets.length);
+        activeSplits.push(nextSplit);
     }
 
     function animate() {
@@ -775,8 +802,8 @@ function initializeHeroVisuals() {
         const dynamicNoiseAmount = baseNoise + mouseVelocity * velocityIntensity;
         const dynamicMaxStretch = visualSize.maxStretch + mouseVelocity * 0.5;
 
-        updateBlobletPhysics();
-        renderBloblets(dynamicNoiseAmount, dynamicMaxStretch, mouseAngle, pullIntensity);
+        updateActiveSplits(performance.now());
+        renderSplitScene(dynamicNoiseAmount, dynamicMaxStretch, mouseAngle, pullIntensity);
     }
 
     heroSection.addEventListener('mousemove', e => {
@@ -794,8 +821,8 @@ function initializeHeroVisuals() {
         const localX = e.clientX - currentRect.left - centerX;
         const localY = e.clientY - currentRect.top - centerY;
 
-        if (clickHitsBloblet(localX, localY)) {
-            splitBloblets(localX, localY);
+        if (clickHitsBlob(localX, localY)) {
+            triggerSplit(localX, localY);
         }
     });
     heroSection.addEventListener('mouseleave', () => { mouseX = centerX; mouseY = centerY; });
@@ -805,8 +832,7 @@ function initializeHeroVisuals() {
         centerX = rect.width / 2; centerY = rect.height / 2;
         mouseX = virtualMouseX = centerX; mouseY = virtualMouseY = centerY;
         blobGroup.style.transform = `translate(${centerX}px, ${centerY}px)`;
-        bloblets = bloblets.slice(0, visualSize.maxBloblets);
-        ensureBlobletPathPairs(bloblets.length);
+        activeSplits = activeSplits.slice(0, visualSize.maxBloblets);
     });
 
     blobGroup.style.transform = `translate(${centerX}px, ${centerY}px)`;
