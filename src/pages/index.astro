@@ -3,12 +3,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import LoadingScreen from '../components/LoadingScreen.astro';
 import SiteNav from '../components/SiteNav.astro';
 import HomeBody from '../components/HomeBody.astro';
+import HomeBlogSection from '../components/HomeBlogSection.astro';
 ---
 
 <BaseLayout page="home">
   <LoadingScreen />
   <SiteNav current="home" />
-  <HomeBody />
+  <HomeBody>
+    <HomeBlogSection slot="blog-section" />
+  </HomeBody>
   <script>
     import '../main.js';
   </script>

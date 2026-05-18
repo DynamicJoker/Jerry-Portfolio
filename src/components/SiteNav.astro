@@ -13,7 +13,7 @@ const links = [
   { href: `${prefix}#testimonials`, label: 'Testimonials', id: 'testimonials' },
   { href: `${prefix}#portfolio`, label: 'Portfolio', id: 'portfolio' },
   { href: `${prefix}#experience`, label: 'Experience', id: 'experience' },
-  { href: '/blog/', label: 'Blog', id: 'blog' },
+  { href: current === 'home' ? '#blog' : '/blog/', label: 'Blog', id: 'blog' },
   { href: `${prefix}#contact`, label: 'Contact', id: 'contact' }
 ];
 ---
