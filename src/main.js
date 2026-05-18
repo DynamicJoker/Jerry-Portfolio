@@ -115,11 +115,16 @@ function handleScroll() {
     lastKnownScrollPosition = window.pageYOffset;
 
     if (!ticking) {
-        window.requestAnimationFrame(() => {
+        let didUpdate = false;
+        const update = () => {
+            if (didUpdate) return;
+            didUpdate = true;
             updateUIOnScroll(lastKnownScrollPosition);
             ticking = false;
-        });
+        };
 
+        window.requestAnimationFrame(update);
+        window.setTimeout(update, 80);
         ticking = true;
     }
 }
@@ -264,19 +269,25 @@ function initializeLoadingScreen() {
 // Navigation functionality
 function initializeNavigation() {
     const hamburger = document.getElementById('hamburger');
+    const currentToggle = document.getElementById('nav-current-toggle');
     const navMenu = document.getElementById('nav-menu');
     navLinks = document.querySelectorAll('.nav-link');
     const navbar = document.getElementById('navbar');
+    const controls = [hamburger, currentToggle].filter(Boolean);
+    const setNavOpen = (isOpen) => {
+        if (!hamburger || !navMenu) return;
+
+        hamburger.classList.toggle('active', isOpen);
+        navMenu.classList.toggle('active', isOpen);
+        updateNavControls(isOpen, controls);
+    };
 
     if (hamburger && navMenu) {
-        const setNavOpen = (isOpen) => {
-            hamburger.classList.toggle('active', isOpen);
-            navMenu.classList.toggle('active', isOpen);
-            hamburger.setAttribute('aria-expanded', String(isOpen));
-            hamburger.setAttribute('aria-label', isOpen ? 'Close navigation menu' : 'Open navigation menu');
-        };
-
         hamburger.addEventListener('click', () => {
+            setNavOpen(!navMenu.classList.contains('active'));
+        });
+
+        currentToggle?.addEventListener('click', () => {
             setNavOpen(!navMenu.classList.contains('active'));
         });
 
@@ -290,16 +301,18 @@ function initializeNavigation() {
     navLinks.forEach(link => {
         link.addEventListener('click', () => {
             // Immediately update the active link on click
-            navLinks.forEach(navLink => navLink.classList.remove('active'));
+            navLinks.forEach(navLink => {
+                navLink.classList.remove('active');
+                navLink.removeAttribute('aria-current');
+            });
             link.classList.add('active');
+            link.setAttribute('aria-current', 'location');
+            updateCurrentSectionLabel(link);
             updateNavGlow();
 
             // Close the mobile menu if it's open
             if (hamburger && navMenu) {
-                hamburger.classList.remove('active');
-                navMenu.classList.remove('active');
-                hamburger.setAttribute('aria-expanded', 'false');
-                hamburger.setAttribute('aria-label', 'Open navigation menu');
+                setNavOpen(false);
             }
         });
     });
@@ -366,6 +379,25 @@ function initializeSmartGlow() {
     });
 }
 
+function getCurrentSectionText() {
+    return document.querySelector('[data-current-section]')?.textContent?.trim() || 'Home';
+}
+
+function updateNavControls(isOpen, controls = []) {
+    const currentText = getCurrentSectionText();
+    controls.forEach(control => {
+        control.setAttribute('aria-expanded', String(isOpen));
+        control.setAttribute('aria-label', `${isOpen ? 'Close' : 'Open'} navigation menu, currently ${currentText}`);
+    });
+}
+
+function updateCurrentSectionLabel(activeLink) {
+    const currentLabel = document.querySelector('[data-current-section]');
+    if (!currentLabel || !activeLink) return;
+
+    currentLabel.textContent = activeLink.textContent.trim();
+}
+
 function updateActiveNavLink() {
     const scrollY = window.scrollY;
     let currentSectionId = '';
@@ -401,9 +433,19 @@ function updateActiveNavLink() {
     }
 
     // 4. Update nav links
+    let activeLink = null;
     navLinks.forEach(link => {
-        link.classList.toggle('active', link.getAttribute('href') === `#${currentSectionId}`);
+        const isActive = link.getAttribute('href') === `#${currentSectionId}`;
+        link.classList.toggle('active', isActive);
+        if (isActive) {
+            link.setAttribute('aria-current', 'location');
+            activeLink = link;
+        } else {
+            link.removeAttribute('aria-current');
+        }
     });
+
+    updateCurrentSectionLabel(activeLink);
 }
 
 function updateNavGlow() {

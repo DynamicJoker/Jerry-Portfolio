@@ -658,6 +658,8 @@ select.form-control {
   justify-content: space-between;
   align-items: center;
   height: var(--navbar-height);
+  min-width: 0;
+  position: relative;
 }
 
 .nav-brand {
@@ -667,6 +669,8 @@ select.form-control {
   background-clip: text;
   color: transparent;
   margin-right: var(--space-12);
+  flex: 0 1 auto;
+  white-space: nowrap;
 }
 
 .availability-badge {
@@ -705,55 +709,115 @@ select.form-control {
 }
 
 .nav-menu {
-  display: flex;
-  gap: clamp(1rem, 2vw, var(--space-32));
+  position: absolute;
+  top: calc(100% + var(--space-8));
+  right: var(--space-16);
+  z-index: 1001;
+  width: min(18rem, calc(100vw - 2rem));
+  display: grid;
+  gap: var(--space-4);
   align-items: center;
-  position: relative;
+  padding: var(--space-8);
+  background: rgba(10, 10, 10, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-md);
+  box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.32);
+  backdrop-filter: blur(1rem);
+  opacity: 0;
+  transform: translateY(-0.5rem) scale(0.98);
+  transform-origin: top right;
+  pointer-events: none;
+  visibility: hidden;
+  transition:
+    opacity 0.2s ease-out,
+    transform 0.2s ease-out,
+    visibility 0s linear 0.2s;
+}
+
+.nav-menu.active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+  visibility: visible;
+  transition-delay: 0s;
 }
 
 .nav-link {
   color: var(--color-text);
   text-decoration: none;
   font-weight: var(--font-weight-medium);
-  font-size: clamp(0.82rem, 0.74rem + 0.28vw, 1rem);
-  transition: all var(--animation-speed) var(--animation-curve);
+  font-size: var(--font-size-sm);
+  line-height: 1.2;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  padding: var(--space-10) var(--space-12);
+  border-radius: var(--radius-sm);
+  transition: color var(--animation-speed) var(--animation-curve), background-color var(--animation-speed) var(--animation-curve);
   position: relative;
 }
 
 .nav-link.active {
   color: var(--color-electric-blue);
+  background: rgba(0, 212, 255, 0.08);
 }
 
 .nav-link:hover {
   color: var(--color-electric-blue);
+  background: rgba(255, 255, 255, 0.06);
   /* Uses the existing teal color variable */
   transition: color 0.2s ease-in-out;
 }
 
 #nav-menu::after {
-  content: '';
-  position: absolute;
-  bottom: -5px;
-  /* Position it below the nav links */
-  height: 2px;
-  background: var(--color-electric-blue);
-  box-shadow: 0 0 8px var(--color-electric-blue), 0 0 12px var(--color-accent-teal);
-  border-radius: 2px;
+  display: none;
+}
 
-  /* Use CSS variables for dynamic positioning from JavaScript */
-  width: var(--glow-width, 0);
-  left: var(--glow-left, 0);
-  opacity: var(--glow-opacity, 0);
+.nav-current {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+  min-width: 0;
+  max-width: min(18rem, 38vw);
+  height: 44px;
+  margin-left: var(--space-12);
+  padding: 0 var(--space-12);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--color-text);
+  cursor: pointer;
+  font: inherit;
+  line-height: 1;
+  transition: border-color 0.2s ease-out, background-color 0.2s ease-out, color 0.2s ease-out;
+}
 
-  /* This is the key to the smooth transition */
-  transition:
-    left 0.4s cubic-bezier(0.65, 0, 0.35, 1),
-    width 0.4s cubic-bezier(0.65, 0, 0.35, 1),
-    opacity 0.2s ease-out;
+.nav-current:hover,
+.nav-current[aria-expanded="true"] {
+  border-color: rgba(0, 212, 255, 0.45);
+  background: rgba(0, 212, 255, 0.1);
+  color: var(--color-electric-blue);
+}
+
+.nav-current-kicker {
+  flex: 0 0 auto;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+.nav-current-label {
+  min-width: 0;
+  overflow: hidden;
+  color: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .hamburger {
-  display: none;
+  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -761,16 +825,26 @@ select.form-control {
   gap: var(--space-4);
   width: 44px;
   height: 44px;
+  margin-left: var(--space-8);
   padding: 0;
-  background: transparent;
-  border: 0;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-full);
   color: inherit;
+  transition: border-color 0.2s ease-out, background-color 0.2s ease-out;
+}
+
+.hamburger:hover,
+.hamburger.active {
+  border-color: rgba(0, 212, 255, 0.45);
+  background: rgba(0, 212, 255, 0.1);
 }
 
 .hamburger span {
-  width: 1.5625rem;
-  height: 0.1875rem;
+  width: 1.125rem;
+  height: 0.125rem;
   background: var(--color-text);
+  border-radius: var(--radius-full);
   transition: all var(--animation-speed) var(--animation-curve);
 }
 
@@ -2602,61 +2676,51 @@ section[id] {
 
 /* --- RESPONSIVE DESIGN --- */
 @media (max-width: 768px) {
-  .hamburger {
-    display: flex;
+  .nav-container {
+    padding-inline: var(--space-12);
+  }
+
+  .nav-brand {
+    font-size: clamp(1rem, 4vw, var(--font-size-xl));
+    margin-right: var(--space-8);
   }
 
   .availability-badge {
     gap: 0;
     padding: var(--space-8);
+    margin-right: var(--space-8);
   }
 
   .availability-text {
     display: none;
   }
 
+  .nav-current {
+    flex: 1 1 auto;
+    max-width: none;
+    margin-left: 0;
+    padding-inline: var(--space-10);
+  }
+
+  .nav-current-kicker {
+    display: none;
+  }
+
   .nav-menu {
     position: fixed;
     top: var(--navbar-height);
-    left: 0;
-    width: 100%;
-    height: calc(100vh - var(--navbar-height));
-    height: calc(100dvh - var(--navbar-height));
+    right: var(--space-12);
+    left: var(--space-12);
+    width: auto;
+    max-height: min(31rem, calc(100vh - var(--navbar-height) - 1rem));
+    max-height: min(31rem, calc(100dvh - var(--navbar-height) - 1rem));
     z-index: 1001;
-
-    /* Start with the background and filter turned OFF */
-    background: rgba(10, 10, 10, 0);
-    /* Start fully transparent */
-    backdrop-filter: blur(0px);
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding-top: 0;
-    opacity: 0;
-    transform: translateY(-20px);
-    pointer-events: none;
-    visibility: hidden;
-
-    /* Add background and backdrop-filter to the transition list */
-    transition:
-      opacity 0.35s ease-out,
-      transform 0.35s ease-out,
-      visibility 0s linear 0.35s,
-      backdrop-filter 0.35s ease-out,
-      background 0.35s ease-out;
+    overflow-y: auto;
+    transform-origin: top center;
   }
 
   .nav-menu.active {
-    opacity: 1;
-    transform: translateY(0);
-    pointer-events: auto;
-    visibility: visible;
-
-    /* Turn the background and filter ON when active */
-    background: var(--color-dark-primary);
-    backdrop-filter: blur(1.25rem);
+    transform: translateY(var(--space-8)) scale(1);
   }
 
   /* Make navbar solid when menu is open */
@@ -2664,64 +2728,13 @@ section[id] {
     background-color: var(--color-dark-primary) !important;
   }
 
-
-
   .nav-menu .nav-link {
-    font-size: var(--font-size-2xl);
-    /* Make links larger and easier to tap */
-    padding: var(--space-16) 0;
-    opacity: 0;
-    transform: translateY(-10px);
-    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
-  }
-
-  /* When the menu is active, animate the links into view */
-  .nav-menu.active .nav-link {
-    opacity: 1;
-    transform: translateY(0);
+    font-size: var(--font-size-base);
   }
 
   #nav-menu::after {
     display: none;
   }
-
-  /* Staggered animation for each link */
-  .nav-menu.active .nav-link:nth-child(1) {
-    transition-delay: 0.1s;
-  }
-
-  .nav-menu.active .nav-link:nth-child(2) {
-    transition-delay: 0.15s;
-  }
-
-  .nav-menu.active .nav-link:nth-child(3) {
-    transition-delay: 0.2s;
-  }
-
-  .nav-menu.active .nav-link:nth-child(4) {
-    transition-delay: 0.25s;
-  }
-
-  .nav-menu.active .nav-link:nth-child(5) {
-    transition-delay: 0.3s;
-  }
-
-  .nav-menu.active .nav-link:nth-child(6) {
-    transition-delay: 0.35s;
-  }
-
-  .nav-menu.active .nav-link:nth-child(7) {
-    transition-delay: 0.4s;
-  }
-
-  .nav-menu.active .nav-link:nth-child(8) {
-    transition-delay: 0.45s;
-  }
-
-  .nav-menu.active .nav-link:nth-child(9) {
-    transition-delay: 0.5s;
-  }
-
 
   .hamburger.active span:nth-child(1) {
     transform: translateY(7px) rotate(45deg);

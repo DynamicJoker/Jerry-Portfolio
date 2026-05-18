@@ -16,6 +16,8 @@ const links = [
   { href: current === 'home' ? '#blog' : '/blog/', label: 'Blog', id: 'blog' },
   { href: `${prefix}#contact`, label: 'Contact', id: 'contact' }
 ];
+
+const currentLabel = links.find((link) => link.id === current)?.label ?? 'Home';
 ---
 
 <nav class="navbar" id="navbar">
@@ -25,10 +27,25 @@ const links = [
       <span class="availability-dot" aria-hidden="true"></span>
       <span class="availability-text">{availability}</span>
     </span>
+    <button
+      class="nav-current"
+      id="nav-current-toggle"
+      type="button"
+      aria-label={`Open navigation menu, currently ${currentLabel}`}
+      aria-controls="nav-menu"
+      aria-expanded="false"
+    >
+      <span class="nav-current-kicker">Viewing</span>
+      <span class="nav-current-label" data-current-section>{currentLabel}</span>
+    </button>
     <div class="nav-menu" id="nav-menu">
       {
         links.map((link) => (
-          <a href={link.href} class:list={['nav-link', { active: current === link.id }]}>
+          <a
+            href={link.href}
+            class:list={['nav-link', { active: current === link.id }]}
+            aria-current={current === link.id ? 'location' : undefined}
+          >
             {link.label}
           </a>
         ))
@@ -54,20 +71,30 @@ const links = [
     if (document.body?.dataset.page === 'home') return;
 
     const hamburger = document.getElementById('hamburger');
+    const currentToggle = document.getElementById('nav-current-toggle');
+    const currentLabel = document.querySelector('[data-current-section]');
     const navMenu = document.getElementById('nav-menu');
     const navbar = document.getElementById('navbar');
     const links = document.querySelectorAll('.nav-link');
 
     if (!hamburger || !navMenu) return;
 
+    const controls = [hamburger, currentToggle].filter(Boolean);
+
     const setNavOpen = (isOpen) => {
       hamburger.classList.toggle('active', isOpen);
       navMenu.classList.toggle('active', isOpen);
-      hamburger.setAttribute('aria-expanded', String(isOpen));
-      hamburger.setAttribute('aria-label', isOpen ? 'Close navigation menu' : 'Open navigation menu');
+      controls.forEach((control) => {
+        control.setAttribute('aria-expanded', String(isOpen));
+        control.setAttribute(
+          'aria-label',
+          `${isOpen ? 'Close' : 'Open'} navigation menu, currently ${currentLabel?.textContent?.trim() || 'Blog'}`
+        );
+      });
     };
 
     hamburger.addEventListener('click', () => setNavOpen(!navMenu.classList.contains('active')));
+    currentToggle?.addEventListener('click', () => setNavOpen(!navMenu.classList.contains('active')));
     links.forEach((link) => link.addEventListener('click', () => setNavOpen(false)));
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape' && navMenu.classList.contains('active')) {
