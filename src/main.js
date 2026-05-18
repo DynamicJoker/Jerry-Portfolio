@@ -30,10 +30,13 @@ const config = {
     heroVisuals: {
         radius: 300,
         maxStretch: 200,
-        points: 45,
         noiseFrequency: 3,
         noiseSpeed: 0.009,
         baseNoise: 0.15,
+        pointCounts: {
+            desktop: 36,
+            mobile: 26
+        },
         mouseFollowSpeed: 0.03,
         velocityIntensity: 0.003,
         colors: {
@@ -48,17 +51,17 @@ const config = {
             // How fast it transitions from one color to the next (lower is slower)
             transitionSpeed: 0.001
         },
-        idleArrow: {
-            enabled: true,
-            delay: 10000,
-            morphSpeed: 0.04,
-            minWidth: 768,
-            verticalOffset: 0.62,
-            pulseAmplitude: 18,
-            pulseSpeed: 2.4,
-            mouseInfluence: 0.12,
-            wiggleThreshold: 180,
-            wiggleDecay: 0.92
+        bloblets: {
+            maxDesktop: 12,
+            maxMobile: 7,
+            clickCooldown: 180,
+            minRadiusScale: 0.22,
+            splitScale: 0.72,
+            splitSpread: 0.42,
+            splitImpulse: 8.5,
+            gatherSpeed: 0.006,
+            damping: 0.88,
+            settleThreshold: 8
         }
     },
     navbar: {
@@ -484,16 +487,23 @@ function initializeHeroVisuals() {
     if (!corePath || !glowPath || !blobGroup || !heroSection || !gradientStop || !neonCircle) return;
     function getHeroVisualSize() {
         if (window.innerWidth < config.breakpoints.md) {
-            return { radius: 200, maxStretch: 120 };
+            return {
+                radius: 200,
+                maxStretch: 120,
+                pointCount: config.heroVisuals.pointCounts.mobile,
+                maxBloblets: config.heroVisuals.bloblets.maxMobile
+            };
         }
         return {
             radius: config.heroVisuals.radius,
-            maxStretch: config.heroVisuals.maxStretch
+            maxStretch: config.heroVisuals.maxStretch,
+            pointCount: config.heroVisuals.pointCounts.desktop,
+            maxBloblets: config.heroVisuals.bloblets.maxDesktop
         };
     }
 
     // Destructure properties from the config
-    const { points, noiseFrequency, noiseSpeed, baseNoise, mouseFollowSpeed, velocityIntensity, colors, idleArrow } = config.heroVisuals;
+    const { noiseFrequency, noiseSpeed, baseNoise, mouseFollowSpeed, velocityIntensity, colors, bloblets: blobletConfig } = config.heroVisuals;
     let visualSize = getHeroVisualSize();
 
     let time = 0;
@@ -506,10 +516,9 @@ function initializeHeroVisuals() {
     let lastMouseX = centerX, lastMouseY = centerY;
     let virtualMouseX = centerX, virtualMouseY = centerY;
     let mouseVelocity = 0;
-    let idleArrowTimer = null;
-    let isIdleArrowActive = false;
-    let idleArrowProgress = 0;
-    let idleArrowWiggleDistance = 0;
+    let lastSplitAt = 0;
+    let bloblets = [createRootBloblet()];
+    let blobletPathPairs = [{ core: corePath, glow: glowPath }];
 
     const lerp = (start, end, amount) => start * (1 - amount) + end * amount;
 
@@ -522,81 +531,203 @@ function initializeHeroVisuals() {
         return d + ' Z';
     }
 
-    function pointOnSegment(start, end, progress) {
+    function createRootBloblet() {
         return {
-            x: lerp(start.x, end.x, progress),
-            y: lerp(start.y, end.y, progress)
+            x: 0,
+            y: 0,
+            vx: 0,
+            vy: 0,
+            radiusScale: 1,
+            splitRadiusScale: 1,
+            opacity: 1,
+            phase: 0,
+            splitLevel: 0
         };
     }
 
-    function createArrowPoints(pointCount, size) {
-        const half = size * 0.45;
-        const shaftHalf = size * 0.15;
-        const top = -size * 0.55;
-        const shoulderY = size * 0.08;
-        const tipY = size * 0.58;
-        const polygon = [
-            { x: -shaftHalf, y: top },
-            { x: shaftHalf, y: top },
-            { x: shaftHalf, y: shoulderY },
-            { x: half, y: shoulderY },
-            { x: 0, y: tipY },
-            { x: -half, y: shoulderY },
-            { x: -shaftHalf, y: shoulderY }
-        ];
-        const segmentCount = polygon.length;
+    function createSplitBloblet(source, angle, radiusScale) {
+        const push = visualSize.radius * blobletConfig.splitSpread * radiusScale;
+        const impulse = blobletConfig.splitImpulse * (0.75 + Math.random() * 0.5);
 
-        return Array.from({ length: pointCount }, (_, i) => {
-            const position = (i / pointCount) * segmentCount;
-            const segmentIndex = Math.floor(position);
-            const segmentProgress = position - segmentIndex;
-            const start = polygon[segmentIndex];
-            const end = polygon[(segmentIndex + 1) % segmentCount];
-            return pointOnSegment(start, end, segmentProgress);
-        });
+        return {
+            x: source.x + Math.cos(angle) * push,
+            y: source.y + Math.sin(angle) * push,
+            vx: source.vx * 0.35 + Math.cos(angle) * impulse,
+            vy: source.vy * 0.35 + Math.sin(angle) * impulse,
+            radiusScale,
+            splitRadiusScale: radiusScale,
+            opacity: 1,
+            phase: source.phase + Math.random() * Math.PI * 2,
+            splitLevel: source.splitLevel + 1
+        };
     }
 
-    function canRunIdleArrow() {
-        return idleArrow.enabled &&
-            !prefersReducedMotion &&
-            window.innerWidth >= idleArrow.minWidth;
+    function createSvgPath(className, referencePath) {
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('class', className);
+        path.setAttribute('fill', referencePath.getAttribute('fill') || 'url(#vibrant-core-gradient)');
+        path.style.pointerEvents = 'none';
+        return path;
     }
 
-    function clearIdleArrowTimer() {
-        if (idleArrowTimer) {
-            clearTimeout(idleArrowTimer);
-            idleArrowTimer = null;
+    function createBlobletPathPair() {
+        const glow = createSvgPath('hero-bloblet-glow-path', glowPath);
+        const core = createSvgPath('hero-bloblet-path', corePath);
+        glow.style.filter = 'blur(70px)';
+        glow.style.transform = 'scale(1.05)';
+        glow.style.transformOrigin = 'center center';
+        glow.style.willChange = 'transform, filter';
+        core.style.fill = 'rgba(43, 43, 43, 0.28)';
+        blobGroup.appendChild(glow);
+        blobGroup.appendChild(core);
+        return { core, glow };
+    }
+
+    function ensureBlobletPathPairs(count) {
+        while (blobletPathPairs.length < count) {
+            blobletPathPairs.push(createBlobletPathPair());
+        }
+
+        while (blobletPathPairs.length > count) {
+            const pair = blobletPathPairs.pop();
+            pair.core.remove();
+            pair.glow.remove();
         }
     }
 
-    function resetIdleArrow() {
-        clearIdleArrowTimer();
-        isIdleArrowActive = false;
-        idleArrowProgress = 0;
-        idleArrowWiggleDistance = 0;
-    }
-
-    function dismissIdleArrow() {
-        clearIdleArrowTimer();
-        isIdleArrowActive = false;
-        idleArrowWiggleDistance = 0;
-        startIdleArrowTimer();
-    }
-
-    function startIdleArrowTimer() {
-        clearIdleArrowTimer();
-        if (!isHeroVisible || !canRunIdleArrow()) return;
-
-        idleArrowTimer = setTimeout(() => {
-            idleArrowTimer = null;
-            if (isHeroVisible && canRunIdleArrow()) {
-                isIdleArrowActive = true;
-            }
-        }, idleArrow.delay);
+    function resetBloblets() {
+        bloblets = [createRootBloblet()];
+        ensureBlobletPathPairs(1);
     }
 
     let isHeroVisible = heroSection.getBoundingClientRect().bottom > 0 &&
         heroSection.getBoundingClientRect().top < window.innerHeight;
+
+    function updateBlobletPhysics() {
+        if (bloblets.length <= 1) {
+            const bloblet = bloblets[0];
+            bloblet.x = bloblet.y = bloblet.vx = bloblet.vy = 0;
+            bloblet.radiusScale = lerp(bloblet.radiusScale, 1, 0.12);
+            bloblet.opacity = lerp(bloblet.opacity, 1, 0.12);
+            return;
+        }
+
+        let maxDistance = 0;
+        let maxSpeed = 0;
+
+        bloblets.forEach(bloblet => {
+            bloblet.vx += -bloblet.x * blobletConfig.gatherSpeed;
+            bloblet.vy += -bloblet.y * blobletConfig.gatherSpeed;
+            bloblet.vx *= blobletConfig.damping;
+            bloblet.vy *= blobletConfig.damping;
+            bloblet.x += bloblet.vx;
+            bloblet.y += bloblet.vy;
+
+            maxDistance = Math.max(maxDistance, Math.hypot(bloblet.x, bloblet.y));
+            maxSpeed = Math.max(maxSpeed, Math.hypot(bloblet.vx, bloblet.vy));
+        });
+
+        const mergeRange = blobletConfig.settleThreshold * 4;
+        const mergeProgress = 1 - Math.min(maxDistance / mergeRange, 1);
+
+        bloblets.forEach((bloblet, index) => {
+            const targetRadius = index === 0
+                ? lerp(bloblet.splitRadiusScale, 1, mergeProgress)
+                : lerp(bloblet.splitRadiusScale, blobletConfig.minRadiusScale * 0.55, mergeProgress);
+            const targetOpacity = index === 0 ? 1 : 1 - mergeProgress;
+
+            bloblet.radiusScale = lerp(bloblet.radiusScale, targetRadius, 0.08);
+            bloblet.opacity = lerp(bloblet.opacity, targetOpacity, 0.08);
+        });
+
+        if (maxDistance < blobletConfig.settleThreshold && maxSpeed < 0.65) {
+            resetBloblets();
+        }
+    }
+
+    function createBlobletPoints(bloblet, dynamicNoiseAmount, dynamicMaxStretch, mouseAngle, pullIntensity) {
+        const pointCount = visualSize.pointCount;
+        const stretchScale = bloblets.length === 1 ? 1 : bloblet.radiusScale * 0.35;
+
+        return Array.from({ length: pointCount }, (_, i) => {
+            const angle = (i / pointCount) * Math.PI * 2;
+            const noiseFactor = 1 + dynamicNoiseAmount * Math.sin(time + bloblet.phase + angle * noiseFrequency);
+            const stretch = pullIntensity * dynamicMaxStretch * stretchScale * (Math.cos(angle - mouseAngle) + 1) / 2;
+            const finalRadius = (visualSize.radius * bloblet.radiusScale + stretch) * noiseFactor;
+            return {
+                x: bloblet.x + Math.cos(angle) * finalRadius,
+                y: bloblet.y + Math.sin(angle) * finalRadius
+            };
+        });
+    }
+
+    function renderBloblets(dynamicNoiseAmount, dynamicMaxStretch, mouseAngle, pullIntensity) {
+        ensureBlobletPathPairs(bloblets.length);
+
+        bloblets.forEach((bloblet, index) => {
+            const pathData = createBlobPath(createBlobletPoints(bloblet, dynamicNoiseAmount, dynamicMaxStretch, mouseAngle, pullIntensity));
+            const pair = blobletPathPairs[index];
+            pair.core.setAttribute('d', pathData);
+            pair.glow.setAttribute('d', pathData);
+            pair.core.style.opacity = bloblet.opacity;
+            pair.glow.style.opacity = bloblet.opacity;
+        });
+    }
+
+    function clickHitsBloblet(localX, localY) {
+        return bloblets.some(bloblet => {
+            const radius = visualSize.radius * Math.max(bloblet.radiusScale, blobletConfig.minRadiusScale) * 1.12;
+            return Math.hypot(localX - bloblet.x, localY - bloblet.y) <= radius;
+        });
+    }
+
+    function scatterExistingBloblets(localX, localY) {
+        bloblets.forEach(bloblet => {
+            const awayFromClick = Math.atan2(bloblet.y - localY, bloblet.x - localX);
+            const angle = awayFromClick + (Math.random() - 0.5) * 0.9;
+            const impulse = blobletConfig.splitImpulse * (0.8 + Math.random() * 0.5);
+            bloblet.vx += Math.cos(angle) * impulse;
+            bloblet.vy += Math.sin(angle) * impulse;
+            bloblet.x += Math.cos(angle) * visualSize.radius * blobletConfig.splitSpread * 0.12;
+            bloblet.y += Math.sin(angle) * visualSize.radius * blobletConfig.splitSpread * 0.12;
+            bloblet.opacity = 1;
+        });
+    }
+
+    function splitBloblets(localX, localY) {
+        if (prefersReducedMotion) return;
+
+        const now = performance.now();
+        if (now - lastSplitAt < blobletConfig.clickCooldown) return;
+        lastSplitAt = now;
+
+        if (bloblets.length >= visualSize.maxBloblets) {
+            scatterExistingBloblets(localX, localY);
+            return;
+        }
+
+        const nextBloblets = [];
+
+        bloblets.forEach(bloblet => {
+            const canSplit = nextBloblets.length + 2 <= visualSize.maxBloblets &&
+                bloblet.radiusScale > blobletConfig.minRadiusScale * 1.25;
+
+            if (!canSplit) {
+                nextBloblets.push({ ...bloblet, opacity: 1 });
+                return;
+            }
+
+            const childScale = Math.max(blobletConfig.minRadiusScale, bloblet.radiusScale * blobletConfig.splitScale);
+            const baseAngle = Math.atan2(bloblet.y - localY, bloblet.x - localX) || Math.random() * Math.PI * 2;
+            const fan = Math.PI * (0.42 + Math.random() * 0.18);
+            nextBloblets.push(createSplitBloblet(bloblet, baseAngle - fan, childScale));
+            nextBloblets.push(createSplitBloblet(bloblet, baseAngle + fan, childScale));
+        });
+
+        bloblets = nextBloblets.slice(0, visualSize.maxBloblets);
+        scatterExistingBloblets(localX, localY);
+        ensureBlobletPathPairs(bloblets.length);
+    }
 
     function animate() {
         if (!isHeroVisible) return;
@@ -604,7 +735,6 @@ function initializeHeroVisuals() {
         // Increment both timers
         time += noiseSpeed;
         colorTime += colors.transitionSpeed;
-        idleArrowWiggleDistance *= idleArrow.wiggleDecay;
 
         const dx = mouseX - lastMouseX;
         const dy = mouseY - lastMouseY;
@@ -645,59 +775,28 @@ function initializeHeroVisuals() {
         const dynamicNoiseAmount = baseNoise + mouseVelocity * velocityIntensity;
         const dynamicMaxStretch = visualSize.maxStretch + mouseVelocity * 0.5;
 
-        const generatedPoints = Array.from({ length: points }, (_, i) => {
-            const angle = (i / points) * Math.PI * 2;
-            const noiseFactor = 1 + dynamicNoiseAmount * Math.sin(time + angle * noiseFrequency);
-            const stretch = pullIntensity * dynamicMaxStretch * (Math.cos(angle - mouseAngle) + 1) / 2;
-            const finalRadius = (visualSize.radius + stretch) * noiseFactor;
-            return { x: Math.cos(angle) * finalRadius, y: Math.sin(angle) * finalRadius };
-        });
-
-        const targetIdleArrowProgress = isIdleArrowActive && canRunIdleArrow() ? 1 : 0;
-        idleArrowProgress = lerp(idleArrowProgress, targetIdleArrowProgress, idleArrow.morphSpeed);
-
-        const idleArrowPulse = Math.max(0, Math.sin(time * idleArrow.pulseSpeed)) * idleArrow.pulseAmplitude;
-        const idleArrowOffset = {
-            x: (virtualMouseX - centerX) * idleArrow.mouseInfluence,
-            y: visualSize.radius * idleArrow.verticalOffset +
-                (virtualMouseY - centerY) * idleArrow.mouseInfluence +
-                idleArrowPulse
-        };
-        const arrowPoints = idleArrowProgress > 0.001
-            ? createArrowPoints(points, visualSize.radius * 1.25).map(point => ({
-                x: point.x + idleArrowOffset.x,
-                y: point.y + idleArrowOffset.y
-            }))
-            : null;
-        const morphedPoints = arrowPoints
-            ? generatedPoints.map((point, index) => ({
-                x: lerp(point.x, arrowPoints[index].x, idleArrowProgress),
-                y: lerp(point.y, arrowPoints[index].y, idleArrowProgress)
-            }))
-            : generatedPoints;
-
-        const pathData = createBlobPath(morphedPoints);
-        corePath.setAttribute('d', pathData);
-        glowPath.setAttribute('d', pathData);
+        updateBlobletPhysics();
+        renderBloblets(dynamicNoiseAmount, dynamicMaxStretch, mouseAngle, pullIntensity);
     }
 
     heroSection.addEventListener('mousemove', e => {
         const currentRect = heroSection.getBoundingClientRect();
         const nextMouseX = e.clientX - currentRect.left;
         const nextMouseY = e.clientY - currentRect.top;
-        const movementX = Number.isFinite(e.movementX) ? e.movementX : nextMouseX - mouseX;
-        const movementY = Number.isFinite(e.movementY) ? e.movementY : nextMouseY - mouseY;
-        const movementDistance = Math.hypot(movementX, movementY);
-
-        if (isIdleArrowActive && idleArrowProgress > 0.5) {
-            idleArrowWiggleDistance += movementDistance;
-            if (idleArrowWiggleDistance >= idleArrow.wiggleThreshold) {
-                dismissIdleArrow();
-            }
-        }
-
         mouseX = nextMouseX;
         mouseY = nextMouseY;
+    });
+    heroSection.addEventListener('click', e => {
+        const target = e.target instanceof Element ? e.target : null;
+        if (target?.closest('a, button, input, textarea, select, label, [role="button"], .hero-content')) return;
+
+        const currentRect = heroSection.getBoundingClientRect();
+        const localX = e.clientX - currentRect.left - centerX;
+        const localY = e.clientY - currentRect.top - centerY;
+
+        if (clickHitsBloblet(localX, localY)) {
+            splitBloblets(localX, localY);
+        }
     });
     heroSection.addEventListener('mouseleave', () => { mouseX = centerX; mouseY = centerY; });
     window.addEventListener('resize', () => {
@@ -706,8 +805,8 @@ function initializeHeroVisuals() {
         centerX = rect.width / 2; centerY = rect.height / 2;
         mouseX = virtualMouseX = centerX; mouseY = virtualMouseY = centerY;
         blobGroup.style.transform = `translate(${centerX}px, ${centerY}px)`;
-        if (!canRunIdleArrow()) resetIdleArrow();
-        else if (!isIdleArrowActive) startIdleArrowTimer();
+        bloblets = bloblets.slice(0, visualSize.maxBloblets);
+        ensureBlobletPathPairs(bloblets.length);
     });
 
     blobGroup.style.transform = `translate(${centerX}px, ${centerY}px)`;
@@ -719,7 +818,6 @@ function initializeHeroVisuals() {
 
     // Use gsap.ticker instead of requestAnimationFrame loop
     gsap.ticker.add(animate);
-    startIdleArrowTimer();
 
     // Use ScrollTrigger instead of IntersectionObserver to pause/resume
     ScrollTrigger.create({
@@ -728,19 +826,15 @@ function initializeHeroVisuals() {
         end: 'bottom top',
         onEnter: () => {
             isHeroVisible = true;
-            startIdleArrowTimer();
         },
         onLeave: () => {
             isHeroVisible = false;
-            resetIdleArrow();
         },
         onEnterBack: () => {
             isHeroVisible = true;
-            startIdleArrowTimer();
         },
         onLeaveBack: () => {
             isHeroVisible = false;
-            resetIdleArrow();
         },
     });
 }
