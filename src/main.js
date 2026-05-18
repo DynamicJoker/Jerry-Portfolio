@@ -153,6 +153,9 @@ window.addEventListener('load', () => ScrollTrigger.refresh());
 
 document.addEventListener('DOMContentLoaded', () => {
     initializeLoadingScreen();
+    generateAvailabilityBadge();
+    generateHeroStats();
+    generateBookingCta();
     initializeNavigation();
     generateSkills();
     generateServices();
@@ -847,6 +850,98 @@ function showNotification(message, type = 'info') {
 }
 
 
+
+function createAvailabilityDot(className = 'availability-dot') {
+    const dot = document.createElement('span');
+    dot.className = className;
+    dot.setAttribute('aria-hidden', 'true');
+    return dot;
+}
+
+function generateAvailabilityBadge() {
+    const navBrand = document.querySelector('.nav-brand');
+    const status = siteContent.profile?.availability?.status;
+    if (!navBrand || !status) return;
+
+    const navContainer = navBrand.parentElement;
+    if (!navContainer || navContainer.querySelector('.availability-badge')) {
+        return;
+    }
+
+    const badge = document.createElement('span');
+    badge.className = 'availability-badge';
+    badge.setAttribute('aria-label', status);
+    badge.appendChild(createAvailabilityDot());
+
+    const text = document.createElement('span');
+    text.className = 'availability-text';
+    text.textContent = status;
+    badge.appendChild(text);
+
+    navBrand.insertAdjacentElement('afterend', badge);
+}
+
+function generateHeroStats() {
+    const heroTitle = document.querySelector('.hero-title');
+    const stats = siteContent.profile?.heroStats;
+    if (!heroTitle || !Array.isArray(stats) || stats.length === 0) return;
+
+    if (heroTitle.parentElement?.querySelector('.hero-stats')) {
+        return;
+    }
+
+    const statsRow = document.createElement('div');
+    statsRow.className = 'hero-stats';
+
+    stats.forEach(stat => {
+        const item = document.createElement('div');
+        item.className = 'hero-stat';
+
+        const value = document.createElement('span');
+        value.className = 'hero-stat-value';
+        value.textContent = stat.value;
+
+        const label = document.createElement('span');
+        label.className = 'hero-stat-label';
+        label.textContent = stat.label;
+
+        item.append(value, label);
+        statsRow.appendChild(item);
+    });
+
+    heroTitle.insertAdjacentElement('afterend', statsRow);
+}
+
+function generateBookingCta() {
+    const contactContent = document.querySelector('#contact .contact-content');
+    const cta = siteContent.profile?.bookingCta;
+    if (!contactContent || !cta?.text || !cta?.buttonLabel || !cta?.url) return;
+
+    if (document.querySelector('#contact .booking-cta')) {
+        return;
+    }
+
+    const bar = document.createElement('div');
+    bar.className = 'booking-cta';
+
+    const message = document.createElement('div');
+    message.className = 'booking-cta-message';
+    message.appendChild(createAvailabilityDot('availability-dot booking-cta-dot'));
+
+    const messageText = document.createElement('span');
+    messageText.textContent = cta.text;
+    message.appendChild(messageText);
+
+    const link = document.createElement('a');
+    link.className = 'btn btn--primary booking-cta-button';
+    link.href = cta.url;
+    link.target = '_blank';
+    link.rel = 'noopener';
+    link.textContent = cta.buttonLabel;
+
+    bar.append(message, link);
+    contactContent.insertAdjacentElement('beforebegin', bar);
+}
 
 function generateSkills() {
     const gridContainer = document.getElementById('skills-grid');

@@ -14,6 +14,28 @@ export const siteContent = {
             'https://linkedin.com/in/jerry-james-tech/'
         ],
         experienceStartYear: 2014,
+        availability: {
+            status: 'Available for projects'
+        },
+        heroStats: [
+            {
+                value: '50M+',
+                label: 'Views'
+            },
+            {
+                value: '1,000+',
+                label: 'Pieces'
+            },
+            {
+                value: '12+',
+                label: 'Years'
+            }
+        ],
+        bookingCta: {
+            text: 'Open to freelance & consulting engagements',
+            buttonLabel: 'Schedule a Discovery Call',
+            url: 'https://calendly.com/jerry-james'
+        },
         sitemap: {
             lastmod: '2026-05-17',
             changefreq: 'monthly',

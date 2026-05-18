@@ -56,6 +56,18 @@ function replaceContainerInner(html, id, name, renderedInner) {
     return html.replace(pattern, `$1${replacement}$3`);
 }
 
+function replaceGeneratedOrInsert(html, name, replacement, pattern, errorMessage) {
+    const generated = replaceGeneratedRegion(html, name, replacement);
+    if (generated) return generated;
+
+    if (!pattern.test(html)) {
+        throw new Error(errorMessage);
+    }
+
+    const inserted = replacement.endsWith('\n') ? replacement : `${replacement}\n`;
+    return html.replace(pattern, `$1${inserted}$2`);
+}
+
 function renderJsonLd() {
     const data = {
         '@context': 'https://schema.org',
@@ -77,6 +89,40 @@ function renderJsonLd() {
         '<script type="application/ld+json">',
         indent(JSON.stringify(data, null, 4), 4),
         '</script>'
+    ].join('\n');
+}
+
+function renderAvailabilityBadge() {
+    return [
+        `<span class="availability-badge" aria-label="${escapeHtml(profile.availability.status)}">`,
+        indent('<span class="availability-dot" aria-hidden="true"></span>', 4),
+        indent(`<span class="availability-text">${escapeHtml(profile.availability.status)}</span>`, 4),
+        '</span>'
+    ].join('\n');
+}
+
+function renderHeroStats() {
+    return [
+        '<div class="hero-stats">',
+        indent(profile.heroStats.map(stat => [
+            '<div class="hero-stat">',
+            indent(`<span class="hero-stat-value">${escapeHtml(stat.value)}</span>`, 4),
+            indent(`<span class="hero-stat-label">${escapeHtml(stat.label)}</span>`, 4),
+            '</div>'
+        ].join('\n')).join('\n'), 4),
+        '</div>'
+    ].join('\n');
+}
+
+function renderBookingCta() {
+    return [
+        '<div class="booking-cta">',
+        indent('<div class="booking-cta-message">', 4),
+        indent('<span class="availability-dot booking-cta-dot" aria-hidden="true"></span>', 8),
+        indent(`<span>${escapeHtml(profile.bookingCta.text)}</span>`, 8),
+        indent('</div>', 4),
+        indent(`<a class="btn btn--primary booking-cta-button" href="${escapeHtml(profile.bookingCta.url)}" target="_blank" rel="noopener">${escapeHtml(profile.bookingCta.buttonLabel)}</a>`, 4),
+        '</div>'
     ].join('\n');
 }
 
@@ -109,6 +155,23 @@ function renderServices() {
 }
 
 function validateContent() {
+    if (!profile.availability?.status) {
+        throw new Error('Missing profile.availability.status in src/content.js');
+    }
+
+    if (!Array.isArray(profile.heroStats) || profile.heroStats.length !== 3) {
+        throw new Error('profile.heroStats must contain exactly 3 stats in src/content.js');
+    }
+
+    const incompleteStats = profile.heroStats.filter(stat => !stat.value || !stat.label);
+    if (incompleteStats.length > 0) {
+        throw new Error('Each profile.heroStats item must include value and label in src/content.js');
+    }
+
+    if (!profile.bookingCta?.text || !profile.bookingCta?.buttonLabel || !profile.bookingCta?.url) {
+        throw new Error('Missing profile.bookingCta text, buttonLabel, or url in src/content.js');
+    }
+
     const missingServiceIcons = siteContent.services
         .map((service, index) => ({ service, index }))
         .filter(({ service }) => !service.icon || !String(service.icon).trim());
@@ -334,6 +397,27 @@ async function plannedWrites() {
 
     let indexHtml = await readFile(path.join(rootDir, 'index.html'), 'utf8');
     indexHtml = updateHead(indexHtml);
+    indexHtml = replaceGeneratedOrInsert(
+        indexHtml,
+        'availability',
+        indent(generatedRegion('availability', renderAvailabilityBadge()), 12),
+        /(\s{12}<a href="#hero" class="nav-brand">[\s\S]*?<\/a>\r?\n)(\s{12}<div class="nav-menu")/,
+        'Could not find .nav-brand insertion point in index.html'
+    );
+    indexHtml = replaceGeneratedOrInsert(
+        indexHtml,
+        'hero-stats',
+        indent(generatedRegion('hero-stats', renderHeroStats()), 16),
+        /(\s{16}<div class="hero-title">[\s\S]*?\s{16}<\/div>\r?\n)(\s{16}<p class="hero-subtitle">)/,
+        'Could not find .hero-title insertion point in index.html'
+    );
+    indexHtml = replaceGeneratedOrInsert(
+        indexHtml,
+        'booking-cta',
+        indent(generatedRegion('booking-cta', renderBookingCta()), 12),
+        /(\s{4}<section id="contact" class="section">[\s\S]*?\s{12}<\/div>\r?\n)(\s{12}<div class="contact-content">)/,
+        'Could not find contact CTA insertion point in index.html'
+    );
     indexHtml = replaceContainerInner(indexHtml, 'skills-grid', 'skills', renderSkills());
     indexHtml = replaceContainerInner(indexHtml, 'services-grid', 'services', renderServices());
     indexHtml = replaceContainerInner(indexHtml, 'testimonials-container', 'testimonials', renderTestimonials());
