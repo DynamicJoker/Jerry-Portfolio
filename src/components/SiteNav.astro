@@ -27,42 +27,44 @@ const currentLabel = links.find((link) => link.id === current)?.label ?? 'Home';
       <span class="availability-dot" aria-hidden="true"></span>
       <span class="availability-text">{availability}</span>
     </span>
-    <button
-      class="nav-current"
-      id="nav-current-toggle"
-      type="button"
-      aria-label={`Open navigation menu, currently ${currentLabel}`}
-      aria-controls="nav-menu"
-      aria-expanded="false"
-    >
-      <span class="nav-current-kicker">Viewing</span>
-      <span class="nav-current-label" data-current-section>{currentLabel}</span>
-    </button>
-    <div class="nav-menu" id="nav-menu">
-      {
-        links.map((link) => (
-          <a
-            href={link.href}
-            class:list={['nav-link', { active: current === link.id }]}
-            aria-current={current === link.id ? 'location' : undefined}
-          >
-            {link.label}
-          </a>
-        ))
-      }
+    <div class="nav-actions">
+      <button
+        class="nav-current"
+        id="nav-current-toggle"
+        type="button"
+        aria-label={`Open navigation menu, currently ${currentLabel}`}
+        aria-controls="nav-menu"
+        aria-expanded="false"
+      >
+        <span class="nav-current-kicker">Viewing</span>
+        <span class="nav-current-label" data-current-section>{currentLabel}</span>
+      </button>
+      <button
+        class="hamburger"
+        id="hamburger"
+        type="button"
+        aria-label="Open navigation menu"
+        aria-controls="nav-menu"
+        aria-expanded="false"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <div class="nav-menu" id="nav-menu">
+        {
+          links.map((link) => (
+            <a
+              href={link.href}
+              class:list={['nav-link', { active: current === link.id }]}
+              aria-current={current === link.id ? 'location' : undefined}
+            >
+              {link.label}
+            </a>
+          ))
+        }
+      </div>
     </div>
-    <button
-      class="hamburger"
-      id="hamburger"
-      type="button"
-      aria-label="Open navigation menu"
-      aria-controls="nav-menu"
-      aria-expanded="false"
-    >
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
   </div>
 </nav>
 
