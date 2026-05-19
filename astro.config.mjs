@@ -4,13 +4,30 @@ import sitemap from '@astrojs/sitemap';
 import browserslist from 'browserslist';
 import { browserslistToTargets } from 'lightningcss';
 
+function openMdxLinksInNewTab() {
+  const visit = (node) => {
+    if (node?.type === 'element' && node.tagName === 'a' && node.properties?.href) {
+      node.properties.target = '_blank';
+      node.properties.rel = ['noopener', 'noreferrer'];
+    }
+
+    if (Array.isArray(node?.children)) {
+      node.children.forEach(visit);
+    }
+  };
+
+  return (tree) => visit(tree);
+}
+
 export default defineConfig({
   site: 'https://jerryjames.me',
   devToolbar: {
     enabled: false
   },
   integrations: [
-    mdx(),
+    mdx({
+      rehypePlugins: [openMdxLinksInNewTab]
+    }),
     sitemap({
       filter: (page) => !page.includes('/drafts/')
     })
