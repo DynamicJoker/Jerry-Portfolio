@@ -1,3 +1,56 @@
+---
+import { siteContent } from '../content.js';
+
+const profile = siteContent.profile;
+
+// Prepare Gantt Chart calculation
+const jobs = siteContent.experience.map(job => {
+  const [startStr, endStr] = job.period.split(' - ');
+  const [startMonth, startYear] = startStr.split('/');
+  const startDate = new Date(`${startYear}-${startMonth}-01`);
+  let endDate = (endStr.toLowerCase() === 'present') ? new Date() : new Date(`${endStr.split('/')[1]}-${endStr.split('/')[0]}-01`);
+  return { ...job, startDate, endDate };
+}).sort((a, b) => a.sortOrder - b.sortOrder);
+
+const firstDate = new Date(Math.min(...jobs.map(j => j.startDate)));
+const lastDate = new Date(Math.max(...jobs.map(j => j.endDate)));
+const totalDuration = lastDate.getTime() - firstDate.getTime();
+
+const ganttYears = [];
+for (let y = firstDate.getFullYear(); y <= lastDate.getFullYear(); y++) {
+  ganttYears.push(y);
+}
+
+// Function to get duration text
+function getGanttDurationText(startDate, endDate) {
+  const totalMonths = Math.max(
+    1,
+    (endDate.getFullYear() - startDate.getFullYear()) * 12 +
+    endDate.getMonth() - startDate.getMonth()
+  );
+  const years = Math.floor(totalMonths / 12);
+  const months = totalMonths % 12;
+  const parts = [];
+
+  if (years > 0) {
+    parts.push(`${years} ${years === 1 ? 'yr' : 'yrs'}`);
+  }
+
+  if (months > 0 || parts.length === 0) {
+    parts.push(`${months} ${months === 1 ? 'mo' : 'mos'}`);
+  }
+
+  return parts.join(' ');
+}
+
+// Split testimonials into 3 columns
+const numColumns = 3;
+const testimonialColumns = Array.from({ length: numColumns }, () => []);
+siteContent.testimonials.forEach((testimonial, index) => {
+  testimonialColumns[index % numColumns].push(testimonial);
+});
+---
+
 <!-- Hero Section -->
     <section id="hero" class="hero">
         <div class="hero-background">
@@ -42,29 +95,21 @@
             </div>
             <!-- The Text Content -->
             <div class="hero-text">
-                <h1 class="hero-name">Jerry James</h1>
+                <h1 class="hero-name">{profile.name}</h1>
                 <div class="hero-title">
-                    <span class="typing-text" id="typing-text">Technical Marketing Specialist</span>
+                    <span class="typing-text" id="typing-text">{profile.jobTitle}</span>
                 </div>
-                <!-- HOME_STATIC:hero-stats:start - This block is generated from src/content.js. Do not edit by hand. -->
                 <div class="hero-stats">
-                    <div class="hero-stat">
-                        <span class="hero-stat-value">50M+</span>
-                        <span class="hero-stat-label">Views</span>
-                    </div>
-                    <div class="hero-stat">
-                        <span class="hero-stat-value">1,000+</span>
-                        <span class="hero-stat-label">Pieces</span>
-                    </div>
-                    <div class="hero-stat">
-                        <span class="hero-stat-value">12+</span>
-                        <span class="hero-stat-label">Years</span>
-                    </div>
+                    {profile.heroStats.map(stat => (
+                        <div class="hero-stat">
+                            <span class="hero-stat-value">{stat.value}</span>
+                            <span class="hero-stat-label">{stat.label}</span>
+                        </div>
+                    ))}
                 </div>
-                <!-- HOME_STATIC:hero-stats:end -->
                 <p class="hero-subtitle">
                     <span class="subtitle-experience">
-                        <span id="years-experience">12</span>+ Years Experience
+                        <span id="years-experience">{new Date().getFullYear() - profile.experienceStartYear}</span>+ Years Experience
                     </span>
                     <span class="shape-assembler" id="shape-assembler">
                         <i></i><i></i><i></i>
@@ -179,64 +224,28 @@
                 <div class="section-line"></div>
             </div>
             <div class="skills-grid" id="skills-grid">
-                <!-- HOME_STATIC:skills:start - This block is generated from src/content.js. Do not edit by hand. -->
-                <div class="skill-category card-base">
-                    <h3 class="skill-category-title">Technical Marketing</h3>
-                    <div class="skill-tags">
-                        <div>
-                            <span class="skill-tag">Technical Writing</span>
-                            <span class="skill-tag">White Paper Creation</span>
-                            <span class="skill-tag">API Documentation</span>
-                            <span class="skill-tag">Product Marketing</span>
-                            <span class="skill-tag">Technical SEO</span>
-                            <span class="skill-tag">Marketing Automation</span>
-                        </div>
+                {siteContent.skills.map(category => (
+                    <div class="skill-category card-base">
+                        <h3 class="skill-category-title">{category.category}</h3>
+                        {category.type === 'pane' ? (
+                            <div class="skill-pane-container">
+                                <div class="skill-tags">
+                                    {category.tags.map(tagText => (
+                                        <span class="skill-tag">{tagText}</span>
+                                    ))}
+                                </div>
+                            </div>
+                        ) : (
+                            <div class="skill-tags">
+                                <div>
+                                    {category.tags.map(tagText => (
+                                        <span class="skill-tag">{tagText}</span>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
-                </div>
-                <div class="skill-category card-base">
-                    <h3 class="skill-category-title">B2B Marketing</h3>
-                    <div class="skill-tags">
-                        <div>
-                            <span class="skill-tag">Demand Generation</span>
-                            <span class="skill-tag">Account-Based Marketing</span>
-                            <span class="skill-tag">Lead Nurturing</span>
-                            <span class="skill-tag">Sales Enablement</span>
-                            <span class="skill-tag">B2B Content Strategy</span>
-                            <span class="skill-tag">Marketing Qualified Leads</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="skill-category card-base">
-                    <h3 class="skill-category-title">B2C Marketing</h3>
-                    <div class="skill-tags">
-                        <div>
-                            <span class="skill-tag">Consumer Behavior Analysis</span>
-                            <span class="skill-tag">Brand Storytelling</span>
-                            <span class="skill-tag">Social Media Marketing</span>
-                            <span class="skill-tag">Customer Journey Mapping</span>
-                            <span class="skill-tag">Conversion Optimization</span>
-                            <span class="skill-tag">Performance Marketing</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="skill-category card-base">
-                    <h3 class="skill-category-title">Tools &amp; Platforms</h3>
-                    <div class="skill-pane-container">
-                        <div class="skill-tags">
-                            <span class="skill-tag">HubSpot</span>
-                            <span class="skill-tag">Salesforce</span>
-                            <span class="skill-tag">Google Analytics</span>
-                            <span class="skill-tag">Marketo</span>
-                            <span class="skill-tag">Pardot</span>
-                            <span class="skill-tag">Mailchimp</span>
-                            <span class="skill-tag">Hootsuite</span>
-                            <span class="skill-tag">Figma</span>
-                            <span class="skill-tag">WordPress</span>
-                            <span class="skill-tag">Webflow</span>
-                        </div>
-                    </div>
-                </div>
-                <!-- HOME_STATIC:skills:end -->
+                ))}
             </div>
         </div>
     </section>
@@ -249,38 +258,13 @@
                 <div class="section-line"></div>
             </div>
             <div class="services-grid" id="services-grid">
-                <!-- HOME_STATIC:services:start - This block is generated from src/content.js. Do not edit by hand. -->
-                <div class="service-card card-base">
-                    <div class="service-icon" aria-hidden="true">📝</div>
-                    <h3 class="service-title">Technical Content Creation</h3>
-                    <p class="service-description">White papers, case studies, technical documentation, and thought leadership content that simplifies complex topics.</p>
-                </div>
-                <div class="service-card card-base">
-                    <div class="service-icon" aria-hidden="true">🎯</div>
-                    <h3 class="service-title">B2B Marketing Strategy</h3>
-                    <p class="service-description">Comprehensive B2B marketing strategies including demand generation, ABM, and lead nurturing campaigns.</p>
-                </div>
-                <div class="service-card card-base">
-                    <div class="service-icon" aria-hidden="true">🚀</div>
-                    <h3 class="service-title">B2C Campaign Development</h3>
-                    <p class="service-description">Consumer-focused marketing campaigns that drive engagement, awareness, and conversions across digital channels.</p>
-                </div>
-                <div class="service-card card-base">
-                    <div class="service-icon" aria-hidden="true">⚡</div>
-                    <h3 class="service-title">Marketing Automation</h3>
-                    <p class="service-description">Implementation and optimization of marketing automation workflows to nurture leads and improve ROI.</p>
-                </div>
-                <div class="service-card card-base">
-                    <div class="service-icon" aria-hidden="true">📊</div>
-                    <h3 class="service-title">Content Marketing</h3>
-                    <p class="service-description">Strategic content planning, creation, and distribution across multiple channels to build brand authority.</p>
-                </div>
-                <div class="service-card card-base">
-                    <div class="service-icon" aria-hidden="true">📈</div>
-                    <h3 class="service-title">Performance Analytics</h3>
-                    <p class="service-description">Data analysis and reporting to measure campaign effectiveness and optimize marketing performance.</p>
-                </div>
-                <!-- HOME_STATIC:services:end -->
+                {siteContent.services.map(service => (
+                    <div class="service-card card-base">
+                        <div class="service-icon" aria-hidden="true">{service.icon}</div>
+                        <h3 class="service-title">{service.title}</h3>
+                        <p class="service-description">{service.description}</p>
+                    </div>
+                ))}
             </div>
         </div>
     </section>
@@ -294,110 +278,24 @@
             </div>
             <!-- This container will hold our scrolling columns -->
             <div id="testimonials-container" class="testimonials-scroller">
-                <!-- HOME_STATIC:testimonials:start - This block is generated from src/content.js. Do not edit by hand. -->
-                <div class="testimonials-scroller-column">
-                    <div class="testimonials-scroller-inner">
-                        <div class="testimonial-card">
-                            <div class="testimonial-header">
-                                <img class="testimonial-image" src="https://i.pravatar.cc/100?u=john-doe" alt="Alex Glawion" loading="lazy" width="50" height="50">
-                                <div class="testimonial-author-info">
-                                    <p class="testimonial-author">Alex Glawion</p>
-                                    <p class="testimonial-title">CEO and Founder, CG Director</p>
+                {testimonialColumns.map(column => (
+                    <div class="testimonials-scroller-column">
+                        <div class="testimonials-scroller-inner">
+                            {column.map(testimonial => (
+                                <div class="testimonial-card">
+                                    <div class="testimonial-header">
+                                        <img class="testimonial-image" src={testimonial.image} alt={testimonial.name} loading="lazy" width="50" height="50">
+                                        <div class="testimonial-author-info">
+                                            <p class="testimonial-author">{testimonial.name}</p>
+                                            <p class="testimonial-title">{testimonial.title}, {testimonial.company}</p>
+                                        </div>
+                                    </div>
+                                    <p class="testimonial-quote">&ldquo;{testimonial.quote}&rdquo;</p>
                                 </div>
-                            </div>
-                            <p class="testimonial-quote">&ldquo;Jerry is an exceptional technical writer, editor, and content marketer. He&#39;s been instrumental in our traffic growth from a few thousands to over 2M a month within 18 months!&rdquo;</p>
-                        </div>
-                        <div class="testimonial-card">
-                            <div class="testimonial-header">
-                                <img class="testimonial-image" src="https://i.pravatar.cc/100?u=emily-white" alt="Emily White" loading="lazy" width="50" height="50">
-                                <div class="testimonial-author-info">
-                                    <p class="testimonial-author">Emily White</p>
-                                    <p class="testimonial-title">Head of Content, Redlegg</p>
-                                </div>
-                            </div>
-                            <p class="testimonial-quote">&ldquo;The series of white papers Jerry created for us not only generated a significant number of qualified leads but also positioned us as thought leaders in the cybersecurity space.&rdquo;</p>
-                        </div>
-                        <div class="testimonial-card">
-                            <div class="testimonial-header">
-                                <img class="testimonial-image" src="https://i.pravatar.cc/100?u=david-lee" alt="David Lee" loading="lazy" width="50" height="50">
-                                <div class="testimonial-author-info">
-                                    <p class="testimonial-author">David Lee</p>
-                                    <p class="testimonial-title">Brand Manager, Quantum Electronics</p>
-                                </div>
-                            </div>
-                            <p class="testimonial-quote">&ldquo;The integrated B2C campaign for our new product line achieved a 150% ROI, far exceeding our expectations. Jerry&#39;s data-driven approach was key.&rdquo;</p>
+                            ))}
                         </div>
                     </div>
-                </div>
-                <div class="testimonials-scroller-column">
-                    <div class="testimonials-scroller-inner">
-                        <div class="testimonial-card">
-                            <div class="testimonial-header">
-                                <img class="testimonial-image" src="https://i.pravatar.cc/100?u=jane-smith" alt="Edmon Moren" loading="lazy" width="50" height="50">
-                                <div class="testimonial-author-info">
-                                    <p class="testimonial-author">Edmon Moren</p>
-                                    <p class="testimonial-title">CEO, LicenseSpring</p>
-                                </div>
-                            </div>
-                            <p class="testimonial-quote">&ldquo;Working with Jerry was a game-changer. His strategic insights and execution on our B2B campaigns were instrumental in us exceeding our quarterly targets.&rdquo;</p>
-                        </div>
-                        <div class="testimonial-card">
-                            <div class="testimonial-header">
-                                <img class="testimonial-image" src="https://i.pravatar.cc/100?u=michael-brown" alt="Michael Brown" loading="lazy" width="50" height="50">
-                                <div class="testimonial-author-info">
-                                    <p class="testimonial-author">Michael Brown</p>
-                                    <p class="testimonial-title">Founder, SaaSify</p>
-                                </div>
-                            </div>
-                            <p class="testimonial-quote">&ldquo;Jerry&#39;s expertise in technical marketing was crucial for our SaaS platform launch. He is a true professional and a pleasure to work with.&rdquo;</p>
-                        </div>
-                        <div class="testimonial-card">
-                            <div class="testimonial-header">
-                                <img class="testimonial-image" src="https://i.pravatar.cc/100?u=laura-chen" alt="Laura Chen" loading="lazy" width="50" height="50">
-                                <div class="testimonial-author-info">
-                                    <p class="testimonial-author">Laura Chen</p>
-                                    <p class="testimonial-title">VP of Engineering, CloudNet</p>
-                                </div>
-                            </div>
-                            <p class="testimonial-quote">&ldquo;Jerry&#39;s ability to create clear and concise API documentation was a huge asset to our development team and our partners.&rdquo;</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="testimonials-scroller-column">
-                    <div class="testimonials-scroller-inner">
-                        <div class="testimonial-card">
-                            <div class="testimonial-header">
-                                <img class="testimonial-image" src="https://i.pravatar.cc/100?u=sam-wilson" alt="Sam Wilson" loading="lazy" width="50" height="50">
-                                <div class="testimonial-author-info">
-                                    <p class="testimonial-author">Sam Wilson</p>
-                                    <p class="testimonial-title">Product Manager, Gadget Masters</p>
-                                </div>
-                            </div>
-                            <p class="testimonial-quote">&ldquo;The B2C campaign Jerry developed was a resounding success. He has a deep understanding of the consumer mindset and how to engage them effectively.&rdquo;</p>
-                        </div>
-                        <div class="testimonial-card">
-                            <div class="testimonial-header">
-                                <img class="testimonial-image" src="https://i.pravatar.cc/100?u=sarah-green" alt="Sarah Green" loading="lazy" width="50" height="50">
-                                <div class="testimonial-author-info">
-                                    <p class="testimonial-author">Sarah Green</p>
-                                    <p class="testimonial-title">CMO, Data Dynamics</p>
-                                </div>
-                            </div>
-                            <p class="testimonial-quote">&ldquo;We saw an 85% improvement in our lead nurturing process after Jerry implemented and optimized our marketing automation workflows. Highly recommended.&rdquo;</p>
-                        </div>
-                        <div class="testimonial-card">
-                            <div class="testimonial-header">
-                                <img class="testimonial-image" src="https://i.pravatar.cc/100?u=chris-taylor" alt="Chris Taylor" loading="lazy" width="50" height="50">
-                                <div class="testimonial-author-info">
-                                    <p class="testimonial-author">Chris Taylor</p>
-                                    <p class="testimonial-title">Operations Manager, Global Manufacturing</p>
-                                </div>
-                            </div>
-                            <p class="testimonial-quote">&ldquo;The marketing automation system Jerry put in place saved us countless hours and significantly increased our sales-ready leads.&rdquo;</p>
-                        </div>
-                    </div>
-                </div>
-                <!-- HOME_STATIC:testimonials:end -->
+                ))}
             </div>
         </div>
     </section>
@@ -416,88 +314,27 @@
                 <button class="filter-btn" data-filter="content">Content</button>
             </div>
             <div class="portfolio-grid" id="portfolio-grid">
-                <!-- HOME_STATIC:portfolio:start - This block is generated from src/content.js. Do not edit by hand. -->
-                <div class="portfolio-item" data-category="b2b">
-                    <div class="portfolio-card card-base">
-                        <div class="portfolio-header">
-                            <h3 class="portfolio-title">SaaS Platform Launch Strategy</h3>
-                            <span class="portfolio-category">B2B</span>
-                        </div>
-                        <p class="portfolio-description">Led the technical marketing strategy for a new SaaS platform, resulting in 300% increase in qualified leads and $2M ARR growth.</p>
-                        <div class="portfolio-results">
-                            <div class="result-item">300% increase in qualified leads</div>
-                            <div class="result-item">$2M ARR growth</div>
-                            <div class="result-item">45% reduction in CAC</div>
-                        </div>
-                        <div class="portfolio-tags">
-                            <span class="tag">B2B</span>
-                            <span class="tag">SaaS</span>
-                            <span class="tag">Technical Marketing</span>
-                            <span class="tag">Lead Generation</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="portfolio-item" data-category="b2c">
-                    <div class="portfolio-card card-base">
-                        <div class="portfolio-header">
-                            <h3 class="portfolio-title">Consumer Electronics Campaign</h3>
-                            <span class="portfolio-category">B2C</span>
-                        </div>
-                        <p class="portfolio-description">Developed and executed an integrated B2C campaign for consumer electronics brand, achieving 150% ROI.</p>
-                        <div class="portfolio-results">
-                            <div class="result-item">150% ROI</div>
-                            <div class="result-item">2.5M+ impressions</div>
-                            <div class="result-item">25% increase in brand awareness</div>
-                        </div>
-                        <div class="portfolio-tags">
-                            <span class="tag">B2C</span>
-                            <span class="tag">Consumer Electronics</span>
-                            <span class="tag">Integrated Campaign</span>
-                            <span class="tag">Brand Awareness</span>
+                {siteContent.portfolio.map(item => (
+                    <div class="portfolio-item" data-category={item.category}>
+                        <div class="portfolio-card card-base">
+                            <div class="portfolio-header">
+                                <h3 class="portfolio-title">{item.title}</h3>
+                                <span class="portfolio-category">{item.category.toUpperCase()}</span>
+                            </div>
+                            <p class="portfolio-description">{item.description}</p>
+                            <div class="portfolio-results">
+                                {item.results.map(resultText => (
+                                    <div class="result-item">{resultText}</div>
+                                ))}
+                            </div>
+                            <div class="portfolio-tags">
+                                {item.tags.map(tagText => (
+                                    <span class="tag">{tagText}</span>
+                                ))}
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="portfolio-item" data-category="content">
-                    <div class="portfolio-card card-base">
-                        <div class="portfolio-header">
-                            <h3 class="portfolio-title">Technical White Paper Series</h3>
-                            <span class="portfolio-category">CONTENT</span>
-                        </div>
-                        <p class="portfolio-description">Created a series of technical white papers for a cybersecurity company, generating 1000+ qualified leads.</p>
-                        <div class="portfolio-results">
-                            <div class="result-item">1000+ qualified leads</div>
-                            <div class="result-item">40% conversion rate</div>
-                            <div class="result-item">Industry thought leadership</div>
-                        </div>
-                        <div class="portfolio-tags">
-                            <span class="tag">Technical Writing</span>
-                            <span class="tag">White Papers</span>
-                            <span class="tag">Cybersecurity</span>
-                            <span class="tag">Lead Generation</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="portfolio-item" data-category="b2b">
-                    <div class="portfolio-card card-base">
-                        <div class="portfolio-header">
-                            <h3 class="portfolio-title">Marketing Automation Implementation</h3>
-                            <span class="portfolio-category">B2B</span>
-                        </div>
-                        <p class="portfolio-description">Implemented comprehensive marketing automation system for manufacturing company, improving lead nurturing by 85%.</p>
-                        <div class="portfolio-results">
-                            <div class="result-item">85% improvement in lead nurturing</div>
-                            <div class="result-item">60% time savings</div>
-                            <div class="result-item">35% increase in sales-ready leads</div>
-                        </div>
-                        <div class="portfolio-tags">
-                            <span class="tag">Marketing Automation</span>
-                            <span class="tag">B2B</span>
-                            <span class="tag">Lead Nurturing</span>
-                            <span class="tag">Manufacturing</span>
-                        </div>
-                    </div>
-                </div>
-                <!-- HOME_STATIC:portfolio:end -->
+                ))}
             </div>
         </div>
     </section>
@@ -508,133 +345,46 @@
             <div class="section-header">
                 <h2 class="section-title">Experience</h2>
                 <div class="section-line"></div>
-            </div>
-            <div id="gantt-chart-container">
-                <!-- HOME_STATIC:experience:start - This block is generated from src/content.js. Do not edit by hand. -->
+                  <div id="gantt-chart-container">
                 <div class="gantt-timeline">
-                    <span>2012</span>
-                    <span>2013</span>
-                    <span>2014</span>
-                    <span>2015</span>
-                    <span>2016</span>
-                    <span>2017</span>
-                    <span>2018</span>
-                    <span>2019</span>
-                    <span>2020</span>
-                    <span>2021</span>
-                    <span>2022</span>
-                    <span>2023</span>
-                    <span>2024</span>
-                    <span>2025</span>
-                    <span>2026</span>
+                    {ganttYears.map(year => (
+                        <span>{year}</span>
+                    ))}
                 </div>
-                <div class="gantt-row">
-                    <div class="gantt-label">
-                        <h3>Technology Content Specialist | Editor</h3>
-                        <p>Jerry James (Consulting)</p>
-                        <div class="gantt-meta">
-                            <span class="gantt-period">10/2015 - Present</span>
-                            <span class="gantt-duration">10 yrs 7 mos</span>
+                {jobs.map((job, index) => {
+                    const offset = (job.startDate.getTime() - firstDate.getTime()) / totalDuration * 100;
+                    const width = (job.endDate.getTime() - job.startDate.getTime()) / totalDuration * 100;
+                    const durationText = getGanttDurationText(job.startDate, job.endDate);
+                    const delay = index * 100; // Animation delay increment (100ms)
+                    const isPresent = job.period.toLowerCase().includes('present');
+
+                    return (
+                        <div class="gantt-row">
+                            <div class="gantt-label">
+                                <h3>{job.title}</h3>
+                                <p>{job.company}</p>
+                                <div class="gantt-meta">
+                                    <span class="gantt-period">{job.period}</span>
+                                    <span class="gantt-duration">{durationText}</span>
+                                </div>
+                            </div>
+                            <div class="gantt-bar-area" tabindex="0" role="button" aria-expanded="false" aria-label={`Show details for ${job.title} at ${job.company}`}>
+                                <div class={`gantt-bar ${isPresent ? 'present' : ''}`} style={`margin-left: ${offset.toFixed(2)}%; width: ${width.toFixed(2)}%; animation-delay: ${delay}ms;`}></div>
+                                <div class="gantt-tooltip">
+                                    <div class="tooltip-period">{job.period}</div>
+                                    <ul class="tooltip-achievements">
+                                        {job.achievements.map(a => (
+                                            <li>
+                                                <span class="achievement-icon">{a.icon}</span>
+                                                <span set:html={a.text}></span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="gantt-bar-area" tabindex="0" role="button" aria-expanded="false" aria-label="Show details for Technology Content Specialist | Editor at Jerry James (Consulting)">
-                        <div class="gantt-bar present" style="margin-left: 22.01%; width: 77.99%; animation-delay: 0ms;"></div>
-                        <div class="gantt-tooltip">
-                            <div class="tooltip-period">10/2015 - Present</div>
-                            <ul class="tooltip-achievements">
-                                <li><span>Founded a consulting firm for clients in the tech and finance industries.</span></li>
-                                <li><span>Specialized in PC Hardware, B2B/B2C Networking, Cybersecurity, and Cloud Computing.</span></li>
-                                <li><span>Created over 1,000+ compelling content pieces.</span></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="gantt-row">
-                    <div class="gantt-label">
-                        <h3>Head of PC Hardware | Technical Editor</h3>
-                        <p>CGDirector</p>
-                        <div class="gantt-meta">
-                            <span class="gantt-period">07/2019 - 06/2025</span>
-                            <span class="gantt-duration">5 yrs 11 mos</span>
-                        </div>
-                    </div>
-                    <div class="gantt-bar-area" tabindex="0" role="button" aria-expanded="false" aria-label="Show details for Head of PC Hardware | Technical Editor at CGDirector">
-                        <div class="gantt-bar" style="margin-left: 49.52%; width: 43.45%; animation-delay: 100ms;"></div>
-                        <div class="gantt-tooltip">
-                            <div class="tooltip-period">07/2019 - 06/2025</div>
-                            <ul class="tooltip-achievements">
-                                <li><span>Oversaw the hardware section, including content strategy and quality control.</span></li>
-                                <li><span>Managed and edited work from a team of writers to ensure quality standards.</span></li>
-                                <li><span>Edited and published over 200+ technical articles.</span></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="gantt-row">
-                    <div class="gantt-label">
-                        <h3>Freelance Technical Content Developer | Consultant</h3>
-                        <p>MSI (Micro-Star Int&#39;l)</p>
-                        <div class="gantt-meta">
-                            <span class="gantt-period">05/2018 - Present</span>
-                            <span class="gantt-duration">8 yrs</span>
-                        </div>
-                    </div>
-                    <div class="gantt-bar-area" tabindex="0" role="button" aria-expanded="false" aria-label="Show details for Freelance Technical Content Developer | Consultant at MSI (Micro-Star Int&#39;l)">
-                        <div class="gantt-bar present" style="margin-left: 40.96%; width: 59.04%; animation-delay: 200ms;"></div>
-                        <div class="gantt-tooltip">
-                            <div class="tooltip-period">05/2018 - Present</div>
-                            <ul class="tooltip-achievements">
-                                <li><span>Translate technical specs into effective marketing materials.</span></li>
-                                <li><span>Strategize content marketing for new product launches.</span></li>
-                                <li><span>Develop a distinct brand voice for MSI&#39;s business product lineup.</span></li>
-                                <li><span>Managed content for 50+ landing pages with 50M+ views.</span></li>
-                                <li><span>Authored 100+ and edited 400+ content pieces.</span></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="gantt-row">
-                    <div class="gantt-label">
-                        <h3>Freelance Web Developer</h3>
-                        <p>Self-Employed</p>
-                        <div class="gantt-meta">
-                            <span class="gantt-period">07/2014 - 08/2015</span>
-                            <span class="gantt-duration">1 yr 1 mo</span>
-                        </div>
-                    </div>
-                    <div class="gantt-bar-area" tabindex="0" role="button" aria-expanded="false" aria-label="Show details for Freelance Web Developer at Self-Employed">
-                        <div class="gantt-bar" style="margin-left: 12.82%; width: 7.96%; animation-delay: 300ms;"></div>
-                        <div class="gantt-tooltip">
-                            <div class="tooltip-period">07/2014 - 08/2015</div>
-                            <ul class="tooltip-achievements">
-                                <li><span>Provided freelance web development, focusing on design changes, maintenance, and bug fixing.</span></li>
-                                <li><span>Handled creation and updates of REST APIs using Node.js.</span></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="gantt-row">
-                    <div class="gantt-label">
-                        <h3>Administrator and Community Manager</h3>
-                        <p>Dota2Traders</p>
-                        <div class="gantt-meta">
-                            <span class="gantt-period">10/2012 - 10/2015</span>
-                            <span class="gantt-duration">3 yrs</span>
-                        </div>
-                    </div>
-                    <div class="gantt-bar-area" tabindex="0" role="button" aria-expanded="false" aria-label="Show details for Administrator and Community Manager at Dota2Traders">
-                        <div class="gantt-bar" style="margin-left: 0.00%; width: 22.01%; animation-delay: 400ms;"></div>
-                        <div class="gantt-tooltip">
-                            <div class="tooltip-period">10/2012 - 10/2015</div>
-                            <ul class="tooltip-achievements">
-                                <li><span>Managed website and community administration for a forum.</span></li>
-                                <li><span>Collaborated with influencers and Esports players for publicity campaigns.</span></li>
-                                <li><span>Grew and managed a community forum of over 10,000+ members.</span></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <!-- HOME_STATIC:experience:end -->
+                    );
+                })}
             </div>
         </div>
     </section>
@@ -648,31 +398,30 @@
                 <h2 class="section-title">Let's Work Together</h2>
                 <div class="section-line"></div>
             </div>
-            <!-- HOME_STATIC:booking-cta:start - This block is generated from src/content.js. Do not edit by hand. -->
+            <!-- Booking CTA Block -->
             <div class="booking-cta" data-calendly-booking>
                 <div class="booking-cta-bar">
                     <div class="booking-cta-message">
                         <span class="availability-dot booking-cta-dot" aria-hidden="true"></span>
-                        <span>Open to freelance &amp; consulting engagements</span>
+                        <span>{profile.bookingCta.text}</span>
                     </div>
-                    <a class="btn btn--primary booking-cta-button" href="https://calendly.com/jerryjames-cal/discover" target="_blank" rel="noopener" data-calendly-open aria-expanded="false" aria-controls="calendly-booking-panel">Schedule a Discovery Call</a>
+                    <a class="btn btn--primary booking-cta-button" href={profile.bookingCta.url} target="_blank" rel="noopener" data-calendly-open aria-expanded="false" aria-controls="calendly-booking-panel">{profile.bookingCta.buttonLabel}</a>
                 </div>
                 <div class="calendly-panel" id="calendly-booking-panel" hidden>
                     <div class="calendly-panel-inner">
                         <div class="calendly-panel-header">
                             <div>
-                                <h3 class="calendly-panel-title">Choose a time for a discovery call</h3>
-                                <p class="calendly-panel-helper">Pick a slot that works for you. The scheduler stays here so you can keep the portfolio in view.</p>
+                                <h3 class="calendly-panel-title">{profile.bookingCta.expandedTitle}</h3>
+                                <p class="calendly-panel-helper">{profile.bookingCta.helperText}</p>
                             </div>
-                            <button class="calendly-panel-close" type="button" data-calendly-close>Close scheduler</button>
+                            <button class="calendly-panel-close" type="button" data-calendly-close>{profile.bookingCta.closeLabel}</button>
                         </div>
-                        <div class="calendly-booked-message" data-calendly-booked hidden>You are booked. Thanks, I will see you on the call.</div>
-                        <div class="calendly-loading" data-calendly-loading>Loading available times...</div>
+                        <div class="calendly-booked-message" data-calendly-booked hidden>{profile.bookingCta.bookedText}</div>
+                        <div class="calendly-loading" data-calendly-loading>{profile.bookingCta.loadingText}</div>
                         <div class="calendly-inline-host" data-calendly-container></div>
                     </div>
                 </div>
             </div>
-            <!-- HOME_STATIC:booking-cta:end -->
             <div class="contact-content">
                 <div class="contact-info">
                     <h3>Get In Touch</h3>
@@ -740,7 +489,7 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-text">
-                    <p>&copy; <span id="footer-year">2026</span> Jerry James. All rights reserved.</p>
+                    <p>&copy; <span id="footer-year">{new Date().getFullYear()}</span> Jerry James. All rights reserved.</p>
                 </div>
                 <div class="footer-links">
                     <a href="#hero" class="footer-link">Back to Top</a>
@@ -748,74 +497,3 @@
             </div>
         </div>
     </footer>
-    <!-- ======================================================================= -->
-    <!-- TEMPLATES for Dynamic Content Injection -->
-    <!-- ======================================================================= -->
-
-    <template id="skill-category-template">
-        <div class="skill-category card-base">
-            <h3 class="skill-category-title"></h3>
-            <!-- The specific layout for tags will be injected here by JavaScript -->
-        </div>
-    </template>
-
-    <template id="service-card-template">
-        <div class="service-card card-base">
-            <div class="service-icon"></div>
-            <h3 class="service-title"></h3>
-            <p class="service-description"></p>
-        </div>
-    </template>
-
-    <template id="testimonial-card-template">
-        <div class="testimonial-card">
-            <div class="testimonial-header">
-                <img class="testimonial-image" loading="lazy" width="50" height="50">
-                <div class="testimonial-author-info">
-                    <p class="testimonial-author"></p>
-                    <p class="testimonial-title"></p>
-                </div>
-            </div>
-            <p class="testimonial-quote"></p>
-        </div>
-    </template>
-
-    <template id="portfolio-item-template">
-        <div class="portfolio-item" data-category="">
-            <div class="portfolio-card card-base">
-                <div class="portfolio-header">
-                    <h3 class="portfolio-title"></h3>
-                    <span class="portfolio-category"></span>
-                </div>
-                <p class="portfolio-description"></p>
-                <div class="portfolio-results">
-                    <!-- Result items will be inserted here -->
-                </div>
-                <div class="portfolio-tags">
-                    <!-- Tags will be inserted here -->
-                </div>
-            </div>
-        </div>
-    </template>
-
-    <template id="gantt-row-template">
-        <div class="gantt-row">
-            <div class="gantt-label">
-                <h3></h3>
-                <p></p>
-                <div class="gantt-meta">
-                    <span class="gantt-period"></span>
-                    <span class="gantt-duration"></span>
-                </div>
-            </div>
-            <div class="gantt-bar-area">
-                <div class="gantt-bar"></div>
-                <div class="gantt-tooltip">
-                    <div class="tooltip-period"></div>
-                    <ul class="tooltip-achievements">
-                        <!-- Achievements will be inserted here -->
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </template>

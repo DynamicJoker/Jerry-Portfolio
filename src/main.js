@@ -143,17 +143,10 @@ window.addEventListener('load', () => ScrollTrigger.refresh());
 
 document.addEventListener('DOMContentLoaded', () => {
     initializeLoadingScreen();
-    generateAvailabilityBadge();
-    generateHeroStats();
-    generateBookingCta();
     initializeCalendlyBookingPanel();
     initializeNavigation();
-    generateSkills();
-    generateServices();
-    generateTestimonialColumns();
     initializeInfiniteScroller();
-    generatePortfolioItems();
-    generateGanttChart();
+    enhanceGanttRows();
     initializeScrollAnimations();
     initializePortfolioFilters();
     initializeContactForm();
@@ -760,156 +753,7 @@ function showNotification(message, type = 'info') {
 
 
 
-function createAvailabilityDot(className = 'availability-dot') {
-    const dot = document.createElement('span');
-    dot.className = className;
-    dot.setAttribute('aria-hidden', 'true');
-    return dot;
-}
 
-function generateAvailabilityBadge() {
-    const navBrand = document.querySelector('.nav-brand');
-    const status = siteContent.profile?.availability?.status;
-    if (!navBrand || !status) return;
-
-    const navContainer = navBrand.parentElement;
-    if (!navContainer || navContainer.querySelector('.availability-badge')) {
-        return;
-    }
-
-    const badge = document.createElement('span');
-    badge.className = 'availability-badge';
-    badge.setAttribute('aria-label', status);
-    badge.appendChild(createAvailabilityDot());
-
-    const text = document.createElement('span');
-    text.className = 'availability-text';
-    text.textContent = status;
-    badge.appendChild(text);
-
-    navBrand.insertAdjacentElement('afterend', badge);
-}
-
-function generateHeroStats() {
-    const heroTitle = document.querySelector('.hero-title');
-    const stats = siteContent.profile?.heroStats;
-    if (!heroTitle || !Array.isArray(stats) || stats.length === 0) return;
-
-    if (heroTitle.parentElement?.querySelector('.hero-stats')) {
-        return;
-    }
-
-    const statsRow = document.createElement('div');
-    statsRow.className = 'hero-stats';
-
-    stats.forEach(stat => {
-        const item = document.createElement('div');
-        item.className = 'hero-stat';
-
-        const value = document.createElement('span');
-        value.className = 'hero-stat-value';
-        value.textContent = stat.value;
-
-        const label = document.createElement('span');
-        label.className = 'hero-stat-label';
-        label.textContent = stat.label;
-
-        item.append(value, label);
-        statsRow.appendChild(item);
-    });
-
-    heroTitle.insertAdjacentElement('afterend', statsRow);
-}
-
-function generateBookingCta() {
-    const contactContent = document.querySelector('#contact .contact-content');
-    const cta = siteContent.profile?.bookingCta;
-    if (!contactContent || !cta?.text || !cta?.buttonLabel || !cta?.url) return;
-
-    if (document.querySelector('#contact .booking-cta')) {
-        return;
-    }
-
-    const bar = document.createElement('div');
-    bar.className = 'booking-cta';
-    bar.dataset.calendlyBooking = '';
-
-    const compactBar = document.createElement('div');
-    compactBar.className = 'booking-cta-bar';
-
-    const message = document.createElement('div');
-    message.className = 'booking-cta-message';
-    message.appendChild(createAvailabilityDot('availability-dot booking-cta-dot'));
-
-    const messageText = document.createElement('span');
-    messageText.textContent = cta.text;
-    message.appendChild(messageText);
-
-    const link = document.createElement('a');
-    link.className = 'btn btn--primary booking-cta-button';
-    link.href = cta.url;
-    link.target = '_blank';
-    link.rel = 'noopener';
-    link.dataset.calendlyOpen = '';
-    link.setAttribute('aria-expanded', 'false');
-    link.setAttribute('aria-controls', 'calendly-booking-panel');
-    link.textContent = cta.buttonLabel;
-
-    compactBar.append(message, link);
-    bar.appendChild(compactBar);
-
-    const panel = document.createElement('div');
-    panel.className = 'calendly-panel';
-    panel.id = 'calendly-booking-panel';
-    panel.hidden = true;
-
-    const panelInner = document.createElement('div');
-    panelInner.className = 'calendly-panel-inner';
-
-    const panelHeader = document.createElement('div');
-    panelHeader.className = 'calendly-panel-header';
-
-    const panelText = document.createElement('div');
-
-    const title = document.createElement('h3');
-    title.className = 'calendly-panel-title';
-    title.textContent = cta.expandedTitle;
-
-    const helper = document.createElement('p');
-    helper.className = 'calendly-panel-helper';
-    helper.textContent = cta.helperText;
-
-    panelText.append(title, helper);
-
-    const closeButton = document.createElement('button');
-    closeButton.className = 'calendly-panel-close';
-    closeButton.type = 'button';
-    closeButton.dataset.calendlyClose = '';
-    closeButton.textContent = cta.closeLabel;
-
-    panelHeader.append(panelText, closeButton);
-
-    const bookedMessage = document.createElement('div');
-    bookedMessage.className = 'calendly-booked-message';
-    bookedMessage.dataset.calendlyBooked = '';
-    bookedMessage.hidden = true;
-    bookedMessage.textContent = cta.bookedText;
-
-    const loading = document.createElement('div');
-    loading.className = 'calendly-loading';
-    loading.dataset.calendlyLoading = '';
-    loading.textContent = cta.loadingText;
-
-    const container = document.createElement('div');
-    container.className = 'calendly-inline-host';
-    container.dataset.calendlyContainer = '';
-
-    panelInner.append(panelHeader, bookedMessage, loading, container);
-    panel.appendChild(panelInner);
-    bar.appendChild(panel);
-
-    contactContent.insertAdjacentElement('beforebegin', bar);
-}
 
 function buildCalendlyUrl(cta) {
     const url = new URL(cta.url, window.location.href);
@@ -1087,113 +931,6 @@ function initializeCalendlyBookingPanel() {
     booking.dataset.calendlyEnhanced = 'true';
 }
 
-function generateSkills() {
-    const gridContainer = document.getElementById('skills-grid');
-    const template = document.getElementById('skill-category-template');
-    if (!gridContainer || !template) return;
-
-    if (gridContainer.querySelectorAll('.skill-category').length >= siteContent.skills.length) {
-        return;
-    }
-
-    gridContainer.innerHTML = '';
-
-    siteContent.skills.forEach(category => {
-        const clone = template.content.cloneNode(true);
-        const categoryCard = clone.querySelector('.skill-category');
-        clone.querySelector('.skill-category-title').textContent = category.category;
-
-        // Create the necessary divs that will contain the tags
-        const outerWrapper = document.createElement('div');
-        const innerTagHolder = document.createElement('div');
-
-        // Apply the correct CSS classes based on the category type
-        if (category.type === 'pane') {
-            // Recreate the structure for the scrollable pane:
-            // <div class="skill-pane-container"> <div class="skill-tags"> ... </div> </div>
-            outerWrapper.className = 'skill-pane-container';
-            innerTagHolder.className = 'skill-tags';
-        } else {
-            // Recreate the structure for a standard list:
-            // <div class="skill-tags"> <div class=""> ... </div> </div>
-            outerWrapper.className = 'skill-tags';
-            // The inner div for standard skills intentionally has no class
-        }
-
-        // Create and append all the skill tags into the inner holder
-        category.tags.forEach(tagText => {
-            const tagElement = document.createElement('span');
-            tagElement.className = 'skill-tag';
-            tagElement.textContent = tagText;
-            innerTagHolder.appendChild(tagElement);
-        });
-
-        // Assemble the final structure and append it to the card
-        outerWrapper.appendChild(innerTagHolder);
-        categoryCard.appendChild(outerWrapper);
-
-        gridContainer.appendChild(clone);
-    });
-}
-
-function generateServices() {
-    const container = document.getElementById('services-grid');
-    const template = document.getElementById('service-card-template');
-    if (!container || !template) return;
-
-    if (container.querySelectorAll('.service-card').length >= siteContent.services.length) {
-        return;
-    }
-
-    container.innerHTML = '';
-    siteContent.services.forEach(service => {
-        const clone = template.content.cloneNode(true);
-        clone.querySelector('.service-icon').textContent = service.icon;
-        clone.querySelector('.service-title').textContent = service.title;
-        clone.querySelector('.service-description').textContent = service.description;
-        container.appendChild(clone);
-    });
-}
-
-function generateTestimonialColumns() {
-    const container = document.getElementById('testimonials-container');
-    const template = document.getElementById('testimonial-card-template');
-    if (!container || !template) return;
-
-    if (container.querySelectorAll('.testimonial-card').length >= siteContent.testimonials.length) {
-        return;
-    }
-
-    container.innerHTML = '';
-    const numColumns = config.testimonials.columns;
-    const columnsData = Array.from({ length: numColumns }, () => []);
-    siteContent.testimonials.forEach((testimonial, index) => {
-        columnsData[index % numColumns].push(testimonial);
-    });
-
-    columnsData.forEach(testimonials => {
-        const columnEl = document.createElement('div');
-        columnEl.className = 'testimonials-scroller-column';
-
-        const innerEl = document.createElement('div');
-        innerEl.className = 'testimonials-scroller-inner';
-
-        testimonials.forEach(testimonial => {
-            const clone = template.content.cloneNode(true);
-            const image = clone.querySelector('.testimonial-image');
-            image.src = testimonial.image;
-            image.alt = testimonial.name;
-
-            clone.querySelector('.testimonial-author').textContent = testimonial.name;
-            clone.querySelector('.testimonial-title').textContent = `${testimonial.title}, ${testimonial.company}`;
-            clone.querySelector('.testimonial-quote').textContent = `"${testimonial.quote}"`;
-            innerEl.appendChild(clone);
-        });
-        columnEl.appendChild(innerEl);
-        container.appendChild(columnEl);
-    });
-}
-
 function initializeInfiniteScroller() {
     document.querySelectorAll(".testimonials-scroller-column").forEach(scroller => {
         const scrollerInner = scroller.querySelector(".testimonials-scroller-inner");
@@ -1210,42 +947,6 @@ function initializeInfiniteScroller() {
         const randomDuration = Math.floor(Math.random() * durationRange) + config.testimonials.scrollSpeedMin;
         scrollerInner.style.setProperty('--scroll-duration', `${randomDuration}s`);
         scrollerInner.dataset.scrollerEnhanced = 'true';
-    });
-}
-
-function generatePortfolioItems() {
-    const container = document.getElementById('portfolio-grid');
-    const template = document.getElementById('portfolio-item-template');
-    if (!container || !template) return;
-
-    if (container.querySelectorAll('.portfolio-item').length >= siteContent.portfolio.length) {
-        return;
-    }
-
-    container.innerHTML = '';
-    siteContent.portfolio.forEach(item => {
-        const clone = template.content.cloneNode(true);
-        clone.querySelector('.portfolio-item').dataset.category = item.category;
-        clone.querySelector('.portfolio-title').textContent = item.title;
-        clone.querySelector('.portfolio-category').textContent = item.category.toUpperCase();
-        clone.querySelector('.portfolio-description').textContent = item.description;
-
-        const resultsContainer = clone.querySelector('.portfolio-results');
-        item.results.forEach(resultText => {
-            const resultDiv = document.createElement('div');
-            resultDiv.className = 'result-item';
-            resultDiv.textContent = resultText;
-            resultsContainer.appendChild(resultDiv);
-        });
-
-        const tagsContainer = clone.querySelector('.portfolio-tags');
-        item.tags.forEach(tagText => {
-            const tagSpan = document.createElement('span');
-            tagSpan.className = 'tag';
-            tagSpan.textContent = tagText;
-            tagsContainer.appendChild(tagSpan);
-        });
-        container.appendChild(clone);
     });
 }
 
@@ -1321,43 +1022,6 @@ function initializeExpandableHighlights() {
     });
 }
 
-function getGanttDurationText(startDate, endDate) {
-    const totalMonths = Math.max(
-        1,
-        (endDate.getFullYear() - startDate.getFullYear()) * 12 +
-        endDate.getMonth() - startDate.getMonth()
-    );
-    const years = Math.floor(totalMonths / 12);
-    const months = totalMonths % 12;
-    const parts = [];
-
-    if (years > 0) {
-        parts.push(`${years} ${years === 1 ? 'yr' : 'yrs'}`);
-    }
-
-    if (months > 0 || parts.length === 0) {
-        parts.push(`${months} ${months === 1 ? 'mo' : 'mos'}`);
-    }
-
-    return parts.join(' ');
-}
-
-function updateGanttRowMetadata(row, job) {
-    const label = row.querySelector('.gantt-label');
-    if (!label) return;
-
-    let meta = label.querySelector('.gantt-meta');
-    if (!meta) {
-        meta = document.createElement('div');
-        meta.className = 'gantt-meta';
-        meta.innerHTML = '<span class="gantt-period"></span><span class="gantt-duration"></span>';
-        label.appendChild(meta);
-    }
-
-    meta.querySelector('.gantt-period').textContent = job.period;
-    meta.querySelector('.gantt-duration').textContent = getGanttDurationText(job.startDate, job.endDate);
-}
-
 function setGanttAreaExpanded(barArea, isExpanded) {
     barArea.classList.toggle('active', isExpanded);
     barArea.setAttribute('aria-expanded', String(isExpanded));
@@ -1375,8 +1039,9 @@ function isCompactGanttCardView() {
     return window.matchMedia(`(max-width: ${config.breakpoints.md}px)`).matches;
 }
 
-function enhanceGanttRows(container, jobs, firstDate, totalDuration) {
-    const rows = Array.from(container.querySelectorAll('.gantt-row'));
+function enhanceGanttRows() {
+    const container = document.getElementById('gantt-chart-container');
+    if (!container) return;
 
     if (container.dataset.ganttOutsideListener !== 'true') {
         document.addEventListener('click', (event) => {
@@ -1386,28 +1051,10 @@ function enhanceGanttRows(container, jobs, firstDate, totalDuration) {
         container.dataset.ganttOutsideListener = 'true';
     }
 
-    rows.forEach((row, index) => {
-        const job = jobs[index];
-        if (!job) return;
-
-        updateGanttRowMetadata(row, job);
-
-        const bar = row.querySelector('.gantt-bar');
+    const rows = Array.from(container.querySelectorAll('.gantt-row'));
+    rows.forEach(row => {
         const barArea = row.querySelector('.gantt-bar-area');
-        if (!bar || !barArea) return;
-
-        const offset = (job.startDate.getTime() - firstDate.getTime()) / totalDuration * 100;
-        const width = (job.endDate.getTime() - job.startDate.getTime()) / totalDuration * 100;
-
-        bar.style.marginLeft = `${offset}%`;
-        bar.style.width = `${width}%`;
-        bar.style.animationDelay = `${index * config.experience.ganttChart.animationDelayIncrement}ms`;
-        bar.classList.toggle('present', job.period.toLowerCase().includes('present'));
-
-        barArea.tabIndex = 0;
-        barArea.setAttribute('role', 'button');
-        barArea.setAttribute('aria-expanded', barArea.getAttribute('aria-expanded') || 'false');
-        barArea.setAttribute('aria-label', `Show details for ${job.title} at ${job.company}`);
+        if (!barArea) return;
 
         if (barArea.dataset.ganttEnhanced === 'true') return;
 
@@ -1427,6 +1074,8 @@ function enhanceGanttRows(container, jobs, firstDate, totalDuration) {
         });
         barArea.dataset.ganttEnhanced = 'true';
     });
+    
+    revealGanttChartOnScroll(container);
 }
 
 function revealGanttChartOnScroll(container) {
@@ -1436,80 +1085,4 @@ function revealGanttChartOnScroll(container) {
         once: true,
         onEnter: () => container.classList.add('visible'),
     });
-}
-
-function generateGanttChart() {
-    const container = document.getElementById('gantt-chart-container');
-    const template = document.getElementById('gantt-row-template');
-    if (!container) return;
-
-    const jobs = siteContent.experience.map(job => {
-        const [startStr, endStr] = job.period.split(' - ');
-        const [startMonth, startYear] = startStr.split('/');
-        const startDate = new Date(`${startYear}-${startMonth}-01`);
-        let endDate = (endStr.toLowerCase() === 'present') ? new Date() : new Date(`${endStr.split('/')[1]}-${endStr.split('/')[0]}-01`);
-        return { ...job, startDate, endDate };
-    }).sort((a, b) => a.sortOrder - b.sortOrder);
-
-    const firstDate = new Date(Math.min(...jobs.map(j => j.startDate)));
-    const lastDate = new Date(Math.max(...jobs.map(j => j.endDate)));
-    const totalDuration = lastDate.getTime() - firstDate.getTime();
-
-    if (container.querySelectorAll('.gantt-row').length >= jobs.length) {
-        enhanceGanttRows(container, jobs, firstDate, totalDuration);
-        revealGanttChartOnScroll(container);
-        return;
-    }
-
-    // Generate Timeline Axis (HTML string is fine here as it's not complex)
-    let timelineHTML = '<div class="gantt-timeline">';
-    const startYear = firstDate.getFullYear();
-    const endYear = lastDate.getFullYear();
-    for (let year = startYear; year <= endYear; year++) {
-        timelineHTML += `<span>${year}</span>`;
-    }
-    timelineHTML += '</div>';
-    container.innerHTML = timelineHTML;
-
-    // Use a document fragment for efficient row appending
-    const fragment = document.createDocumentFragment();
-
-    jobs.forEach((job, index) => {
-        const clone = template.content.cloneNode(true);
-        const offset = (job.startDate.getTime() - firstDate.getTime()) / totalDuration * 100;
-        const width = (job.endDate.getTime() - job.startDate.getTime()) / totalDuration * 100;
-
-        clone.querySelector('.gantt-label h3').textContent = job.title;
-        clone.querySelector('.gantt-label p').textContent = job.company;
-        updateGanttRowMetadata(clone.querySelector('.gantt-row'), job);
-        clone.querySelector('.tooltip-period').textContent = job.period;
-
-        const bar = clone.querySelector('.gantt-bar');
-        const barArea = clone.querySelector('.gantt-bar-area');
-        barArea.tabIndex = 0;
-        barArea.setAttribute('role', 'button');
-        barArea.setAttribute('aria-expanded', 'false');
-        barArea.setAttribute('aria-label', `Show details for ${job.title} at ${job.company}`);
-
-        bar.style.marginLeft = `${offset}%`;
-        bar.style.width = `${width}%`;
-        bar.style.animationDelay = `${index * config.experience.ganttChart.animationDelayIncrement}ms`;
-        if (job.period.toLowerCase().includes('present')) {
-            bar.classList.add('present');
-        }
-
-        const achievementsList = clone.querySelector('.tooltip-achievements');
-        job.achievements.forEach(a => {
-            const li = document.createElement('li');
-            li.innerHTML = `<span class="achievement-icon">${a.icon}</span><span>${a.text}</span>`;
-            achievementsList.appendChild(li);
-        });
-
-        fragment.appendChild(clone);
-    });
-
-    container.appendChild(fragment);
-    enhanceGanttRows(container, jobs, firstDate, totalDuration);
-
-    revealGanttChartOnScroll(container);
 }

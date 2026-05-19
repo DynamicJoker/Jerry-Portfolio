@@ -2862,10 +2862,6 @@ section[id] {
     padding-block: calc(var(--navbar-height) + 3rem) 2.5rem;
   }
 
-  .home-blog-feature {
-    grid-template-columns: 1fr;
-  }
-
   .article-cta {
     align-items: stretch;
     flex-direction: column;
@@ -3021,7 +3017,8 @@ section[id] {
   .skills-grid,
   .services-grid,
   .portfolio-grid,
-  .contact-content {
+  .contact-content,
+  .home-blog-feature {
     grid-template-columns: 1fr;
   }
 
