@@ -663,14 +663,18 @@ select.form-control {
 }
 
 .nav-brand {
-  font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-bold);
-  background: linear-gradient(135deg, var(--color-electric-blue) 0%, var(--color-accent-teal) 100%);
-  background-clip: text;
-  color: transparent;
+  display: inline-flex;
+  align-items: center;
+  color: var(--color-text);
   margin-right: var(--space-12);
-  flex: 0 1 auto;
+  flex: 0 0 auto;
   white-space: nowrap;
+}
+
+.nav-brand-logo {
+  display: block;
+  width: clamp(9.75rem, 18vw, 11.75rem);
+  height: auto;
 }
 
 .availability-badge {
@@ -2884,8 +2888,11 @@ section[id] {
   }
 
   .nav-brand {
-    font-size: clamp(1rem, 4vw, var(--font-size-xl));
     margin-right: var(--space-8);
+  }
+
+  .nav-brand-logo {
+    width: clamp(8rem, 36vw, 9.5rem);
   }
 
   .availability-badge {

@@ -22,7 +22,9 @@ const currentLabel = links.find((link) => link.id === current)?.label ?? 'Home';
 
 <nav class="navbar" id="navbar">
   <div class="nav-container">
-    <a href={current === 'home' ? '#hero' : '/'} class="nav-brand">Jerry James</a>
+    <a href={current === 'home' ? '#hero' : '/'} class="nav-brand" aria-label="Jerry James home">
+      <img src="/brand/jj-signal-logo.svg" alt="" class="nav-brand-logo" width="260" height="64" />
+    </a>
     <span class="availability-badge" aria-label={availability}>
       <span class="availability-dot" aria-hidden="true"></span>
       <span class="availability-text">{availability}</span>
