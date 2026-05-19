@@ -2678,6 +2678,9 @@ section[id] {
 }
 
 .article-chart {
+  --chart-fill-start: var(--color-electric-blue);
+  --chart-fill-end: var(--color-accent-teal);
+  --chart-fill-accent: var(--color-accent-teal);
   padding: clamp(1rem, 2.5vw, 1.15rem);
   border: 1px solid rgba(0, 212, 255, 0.24);
   border-radius: 8px;
@@ -2747,7 +2750,7 @@ section[id] {
   inline-size: var(--bar-size);
   block-size: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--color-electric-blue), var(--color-neon-green));
+  background: linear-gradient(90deg, var(--chart-fill-start), var(--chart-fill-end));
   content: "";
 }
 
@@ -2798,11 +2801,11 @@ section[id] {
   min-inline-size: 0;
   color: var(--color-dark-primary);
   font-weight: var(--font-weight-bold);
-  background: linear-gradient(90deg, var(--color-electric-blue), var(--color-neon-green));
+  background: linear-gradient(90deg, var(--chart-fill-start), var(--chart-fill-end));
 }
 
 .stacked-bar-segment--accent {
-  background: var(--color-neon-green);
+  background: var(--chart-fill-accent);
 }
 
 .chart-legend {
@@ -2829,7 +2832,7 @@ section[id] {
 }
 
 .legend-swatch--accent {
-  background: var(--color-neon-green);
+  background: var(--chart-fill-accent);
 }
 
 .article-cta {
