@@ -13,8 +13,8 @@ const config = {
     loadingScreenFadeOut: 500,
     notificationDuration: 5000,
     breakpoints: {
-        md: 768,
-        lg: 1024
+        md: { cssVar: '--breakpoint-md', fallbackRem: 48 },
+        lg: { cssVar: '--breakpoint-lg', fallbackRem: 64 }
     },
     scrambleAnimation: {
         texts: [
@@ -50,7 +50,6 @@ const config = {
         }
     },
     navbar: {
-        height: 70, // The height of the navbar in pixels
         scrollThreshold: 10 // Scroll threshold to change navbar style
     },
     scroll: { // New property
@@ -92,6 +91,27 @@ const config = {
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 let navLinks = [];
 let calendlyScriptPromise = null;
+
+function cssLengthToPx(value, fallbackRem) {
+    const trimmedValue = value.trim();
+    const rootFontSize = Number.parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+
+    if (trimmedValue.endsWith('rem')) {
+        return Number.parseFloat(trimmedValue) * rootFontSize;
+    }
+
+    if (trimmedValue.endsWith('px')) {
+        return Number.parseFloat(trimmedValue);
+    }
+
+    return fallbackRem * rootFontSize;
+}
+
+function getBreakpointPx(key) {
+    const breakpoint = config.breakpoints[key];
+    const value = getComputedStyle(document.documentElement).getPropertyValue(breakpoint.cssVar);
+    return cssLengthToPx(value, breakpoint.fallbackRem);
+}
 
 
 // --- Consolidated Scroll Handler for Performance ---
@@ -250,11 +270,10 @@ function initializeLoadingScreen() {
 // Navigation functionality
 function initializeNavigation() {
     const hamburger = document.getElementById('hamburger');
-    const currentToggle = document.getElementById('nav-current-toggle');
     const navMenu = document.getElementById('nav-menu');
     navLinks = document.querySelectorAll('.nav-link');
     const navbar = document.getElementById('navbar');
-    const controls = [hamburger, currentToggle].filter(Boolean);
+    const controls = [hamburger].filter(Boolean);
     const setNavOpen = (isOpen) => {
         if (!hamburger || !navMenu) return;
 
@@ -265,10 +284,6 @@ function initializeNavigation() {
 
     if (hamburger && navMenu) {
         hamburger.addEventListener('click', () => {
-            setNavOpen(!navMenu.classList.contains('active'));
-        });
-
-        currentToggle?.addEventListener('click', () => {
             setNavOpen(!navMenu.classList.contains('active'));
         });
 
@@ -433,8 +448,10 @@ function updateNavGlow() {
     const navMenu = document.getElementById('nav-menu');
     const activeLink = Array.from(navLinks).find(link => link.classList.contains('active'));
     if (activeLink && navMenu) {
-        navMenu.style.setProperty('--glow-left', `${activeLink.offsetLeft}px`);
-        navMenu.style.setProperty('--glow-width', `${activeLink.offsetWidth}px`);
+        const menuRect = navMenu.getBoundingClientRect();
+        const activeRect = activeLink.getBoundingClientRect();
+        navMenu.style.setProperty('--glow-left', `${activeRect.left - menuRect.left}px`);
+        navMenu.style.setProperty('--glow-width', `${activeRect.width}px`);
         navMenu.style.setProperty('--glow-opacity', '1');
     } else if (navMenu) {
         // Hide the glow if no link is active
@@ -464,7 +481,7 @@ function initializeHeroVisuals() {
 
     if (!corePath || !glowPath || !blobGroup || !heroSection || !gradientStop || !neonCircle) return;
     function getHeroVisualSize() {
-        if (window.innerWidth < config.breakpoints.md) {
+        if (window.innerWidth < getBreakpointPx('md')) {
             return { radius: 200, maxStretch: 120 };
         }
         return {
@@ -1036,7 +1053,7 @@ function closeGanttDetails(container, exceptArea = null) {
 }
 
 function isCompactGanttCardView() {
-    return window.matchMedia(`(max-width: ${config.breakpoints.md}px)`).matches;
+    return window.matchMedia(`(max-width: ${getBreakpointPx('md')}px)`).matches;
 }
 
 function enhanceGanttRows() {

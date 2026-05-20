@@ -24,40 +24,34 @@ const currentLabel = links.find((link) => link.id === current)?.label ?? 'Home';
     </a>
     <div class="nav-actions">
       <button
-        class="nav-current"
-        id="nav-current-toggle"
+        class="hamburger nav-toggle"
+        id="hamburger"
         type="button"
         aria-label={`Open navigation menu, currently ${currentLabel}`}
         aria-controls="nav-menu"
         aria-expanded="false"
       >
-        <span class="nav-current-kicker">Viewing</span>
-        <span class="nav-current-label" data-current-section>{currentLabel}</span>
-      </button>
-      <button
-        class="hamburger"
-        id="hamburger"
-        type="button"
-        aria-label="Open navigation menu"
-        aria-controls="nav-menu"
-        aria-expanded="false"
-      >
-        <span></span>
-        <span></span>
-        <span></span>
+        <span class="nav-toggle-label" data-current-section>{currentLabel}</span>
+        <span class="nav-toggle-icon" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </span>
       </button>
       <div class="nav-menu" id="nav-menu">
-        {
-          links.map((link) => (
-            <a
-              href={link.href}
-              class:list={['nav-link', { active: current === link.id }]}
-              aria-current={current === link.id ? 'location' : undefined}
-            >
-              {link.label}
-            </a>
-          ))
-        }
+        <div class="nav-rail" aria-label="Primary navigation">
+          {
+            links.map((link) => (
+              <a
+                href={link.href}
+                class:list={['nav-link', { active: current === link.id }]}
+                aria-current={current === link.id ? 'location' : undefined}
+              >
+                {link.label}
+              </a>
+            ))
+          }
+        </div>
       </div>
     </div>
   </div>
@@ -68,7 +62,6 @@ const currentLabel = links.find((link) => link.id === current)?.label ?? 'Home';
     if (document.body?.dataset.page === 'home') return;
 
     const hamburger = document.getElementById('hamburger');
-    const currentToggle = document.getElementById('nav-current-toggle');
     const currentLabel = document.querySelector('[data-current-section]');
     const navMenu = document.getElementById('nav-menu');
     const navbar = document.getElementById('navbar');
@@ -76,7 +69,7 @@ const currentLabel = links.find((link) => link.id === current)?.label ?? 'Home';
 
     if (!hamburger || !navMenu) return;
 
-    const controls = [hamburger, currentToggle].filter(Boolean);
+    const controls = [hamburger].filter(Boolean);
 
     const setNavOpen = (isOpen) => {
       hamburger.classList.toggle('active', isOpen);
@@ -91,7 +84,6 @@ const currentLabel = links.find((link) => link.id === current)?.label ?? 'Home';
     };
 
     hamburger.addEventListener('click', () => setNavOpen(!navMenu.classList.contains('active')));
-    currentToggle?.addEventListener('click', () => setNavOpen(!navMenu.classList.contains('active')));
     links.forEach((link) => link.addEventListener('click', () => setNavOpen(false)));
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape' && navMenu.classList.contains('active')) {
