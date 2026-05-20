@@ -12,6 +12,26 @@ const posts = (await getCollection('blog'))
 
 const title = `Blog - ${profile.name}`;
 const description = 'Ideas on technical content, B2B marketing, product messaging, and making complex technology easier to understand.';
+const canonical = new URL('/blog/', profile.canonicalUrl).href;
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Home',
+      item: profile.canonicalUrl
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Blog',
+      item: canonical
+    }
+  ]
+};
 
 const formatDate = (date) =>
   new Intl.DateTimeFormat('en', {
@@ -21,7 +41,7 @@ const formatDate = (date) =>
   }).format(date);
 ---
 
-<BaseLayout title={title} description={description} canonical={new URL('/blog/', profile.canonicalUrl).href} page="blog">
+<BaseLayout title={title} description={description} canonical={canonical} page="blog" structuredData={[breadcrumbJsonLd]}>
   <SiteNav current="blog" />
   <main class="blog-shell">
     <section class="blog-hero">
@@ -43,7 +63,7 @@ const formatDate = (date) =>
               {posts.map((post) => (
                 <article class="blog-card">
                   <a href={`/blog/${post.id}/`} class="blog-card-media" aria-label={`Read ${post.data.title}`}>
-                    <img src={post.data.coverImage} alt={post.data.coverAlt} loading="lazy" />
+                    <img src={post.data.coverImage} alt={post.data.coverAlt} loading="lazy" width={post.data.coverWidth} height={post.data.coverHeight} decoding="async" />
                   </a>
                   <div class="blog-card-body">
                     <div class="blog-card-meta">

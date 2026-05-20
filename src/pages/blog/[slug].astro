@@ -18,6 +18,10 @@ const { post } = Astro.props;
 const { Content } = await render(post);
 const profile = siteContent.profile;
 const canonical = new URL(`/blog/${post.id}/`, profile.canonicalUrl).href;
+const socialImage = post.data.socialImage ?? post.data.coverImage;
+const socialImageAlt = post.data.socialImageAlt ?? post.data.coverAlt;
+const socialImageWidth = post.data.socialImageWidth ?? post.data.coverWidth;
+const socialImageHeight = post.data.socialImageHeight ?? post.data.coverHeight;
 const formatDate = (date) =>
   new Intl.DateTimeFormat('en', {
     month: 'long',
@@ -28,17 +32,53 @@ const formatDate = (date) =>
 const articleJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'BlogPosting',
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': canonical
+  },
   headline: post.data.title,
   description: post.data.description,
   datePublished: post.data.pubDate.toISOString(),
   dateModified: (post.data.updatedDate ?? post.data.pubDate).toISOString(),
-  image: new URL(post.data.coverImage, profile.canonicalUrl).href,
+  image: {
+    '@type': 'ImageObject',
+    url: new URL(socialImage, profile.canonicalUrl).href,
+    width: socialImageWidth,
+    height: socialImageHeight,
+    caption: socialImageAlt
+  },
   url: canonical,
   author: {
-    '@type': 'Person',
-    name: profile.name,
-    url: profile.canonicalUrl
+    '@id': new URL('/#person', profile.canonicalUrl).href
+  },
+  publisher: {
+    '@id': new URL('/#person', profile.canonicalUrl).href
   }
+};
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Home',
+      item: profile.canonicalUrl
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Blog',
+      item: new URL('/blog/', profile.canonicalUrl).href
+    },
+    {
+      '@type': 'ListItem',
+      position: 3,
+      name: post.data.title,
+      item: canonical
+    }
+  ]
 };
 ---
 
@@ -46,11 +86,14 @@ const articleJsonLd = {
   title={`${post.data.title} - ${profile.name}`}
   description={post.data.description}
   canonical={canonical}
-  image={post.data.coverImage}
+  image={socialImage}
+  imageAlt={socialImageAlt}
+  imageWidth={socialImageWidth}
+  imageHeight={socialImageHeight}
   type="article"
   page="blog"
+  structuredData={[articleJsonLd, breadcrumbJsonLd]}
 >
-  <script slot="head" type="application/ld+json" set:html={JSON.stringify(articleJsonLd)}></script>
   <SiteNav current="blog" />
   <main class="article-shell">
     <article class="article-layout">
@@ -71,7 +114,7 @@ const articleJsonLd = {
         </div>
       </header>
 
-      <img class="article-cover" src={post.data.coverImage} alt={post.data.coverAlt} />
+      <img class="article-cover" src={post.data.coverImage} alt={post.data.coverAlt} width={post.data.coverWidth} height={post.data.coverHeight} loading="eager" fetchpriority="high" decoding="async" />
 
       <div class="article-content">
         <Content />

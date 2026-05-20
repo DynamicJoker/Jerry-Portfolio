@@ -4,6 +4,10 @@ export const siteContent = {
         pageTitle: 'Jerry James - Technical Marketing Specialist',
         jobTitle: 'Technical Marketing Specialist',
         canonicalUrl: 'https://jerryjames.me/',
+        socialImage: '/images/seo/jerry-james-og.png',
+        socialImageAlt: 'Jerry James technical marketing portfolio preview',
+        socialImageWidth: 1200,
+        socialImageHeight: 630,
         description: 'Jerry James is a technical marketing specialist for B2B and B2C technology brands, focused on content marketing, demand generation, product positioning, marketing automation, and technical communication.',
         aiSummary: 'Jerry James creates technical content strategy, demand generation programs, product positioning, technical documentation, marketing automation, and performance reporting for technology companies. He works across PC hardware, B2B and B2C networking, cybersecurity, cloud computing, SaaS, consumer electronics, and manufacturing.',
         location: {

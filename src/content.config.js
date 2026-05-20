@@ -11,7 +11,13 @@ const blog = defineCollection({
     draft: z.boolean().default(false),
     tags: z.array(z.string()).default([]),
     coverImage: z.string(),
-    coverAlt: z.string()
+    coverAlt: z.string(),
+    coverWidth: z.number().int().positive(),
+    coverHeight: z.number().int().positive(),
+    socialImage: z.string().optional(),
+    socialImageAlt: z.string().optional(),
+    socialImageWidth: z.number().int().positive().optional(),
+    socialImageHeight: z.number().int().positive().optional()
   })
 });
 

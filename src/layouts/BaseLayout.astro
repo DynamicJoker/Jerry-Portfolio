@@ -4,6 +4,7 @@ import '@fontsource/geist/500.css';
 import '@fontsource/geist/600.css';
 import '@fontsource/geist/700.css';
 import globalStylesUrl from '../styles/global.css?url';
+import criticalHomeStyles from '../styles/critical-home.css?raw';
 import { siteContent } from '../content.js';
 import BetaBanner from '../components/BetaBanner.astro';
 
@@ -13,15 +14,23 @@ const {
   description = profile.description,
   canonical = new URL(Astro.url.pathname, profile.canonicalUrl).href,
   page = 'home',
-  image = '/images/blog/blog-cover.svg',
-  type = 'website'
+  image = profile.socialImage,
+  imageAlt = profile.socialImageAlt,
+  imageWidth = profile.socialImageWidth,
+  imageHeight = profile.socialImageHeight,
+  type = 'website',
+  structuredData = []
 } = Astro.props;
+
+const personId = new URL('/#person', profile.canonicalUrl).href;
 
 const personJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Person',
+  '@id': personId,
   name: profile.name,
   url: profile.canonicalUrl,
+  image: new URL(profile.socialImage, profile.canonicalUrl).href,
   jobTitle: profile.jobTitle,
   address: {
     '@type': 'PostalAddress',
@@ -33,7 +42,72 @@ const personJsonLd = {
   description: profile.aiSummary
 };
 
+const websiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': new URL('/#website', profile.canonicalUrl).href,
+  url: profile.canonicalUrl,
+  name: profile.name,
+  description: profile.description,
+  publisher: {
+    '@id': personId
+  },
+  inLanguage: 'en'
+};
+
+const profilePageJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfilePage',
+  '@id': new URL('/#profile-page', profile.canonicalUrl).href,
+  url: profile.canonicalUrl,
+  name: profile.pageTitle,
+  description: profile.description,
+  image: new URL(profile.socialImage, profile.canonicalUrl).href,
+  primaryImageOfPage: {
+    '@type': 'ImageObject',
+    url: new URL(profile.socialImage, profile.canonicalUrl).href,
+    width: profile.socialImageWidth,
+    height: profile.socialImageHeight
+  },
+  mainEntity: {
+    '@id': personId
+  },
+  inLanguage: 'en'
+};
+
 const absoluteImage = new URL(image, profile.canonicalUrl).href;
+const isHome = page === 'home';
+const jsonLd = [
+  personJsonLd,
+  ...(isHome ? [websiteJsonLd, profilePageJsonLd] : []),
+  ...structuredData
+];
+const jsonLdHtml = jsonLd
+  .map((item) => `<script type="application/ld+json">${JSON.stringify(item).replace(/</g, '\\u003c')}</script>`)
+  .join('\n');
+const criticalHomeCssHtml = `<style data-critical-css="home">${criticalHomeStyles.replace(/<\/style/gi, '<\\/style')}</style>`;
+const homePortraitImage = '/images/jerry-james-portrait.jpg';
+const stylesheetHtml = isHome
+  ? `${criticalHomeCssHtml}<script type="module" data-deferred-stylesheet>
+const href=${JSON.stringify(globalStylesUrl)};
+const loadStylesheet=()=>{
+  if(document.querySelector('link[data-global-stylesheet]')) return;
+  const link=document.createElement('link');
+  link.rel='stylesheet';
+  link.href=href;
+  link.dataset.globalStylesheet='';
+  document.head.append(link);
+};
+if('requestAnimationFrame' in window){
+  requestAnimationFrame(()=>requestAnimationFrame(loadStylesheet));
+}else{
+  window.addEventListener('load',loadStylesheet,{once:true});
+}
+</script>`
+  : `<link rel="stylesheet" href="${globalStylesUrl}">`;
+const noScriptStylesheetHtml = isHome
+  ? `<noscript><link rel="stylesheet" href="${globalStylesUrl}"></noscript>`
+  : '';
 ---
 
 <!DOCTYPE html>
@@ -47,16 +121,24 @@ const absoluteImage = new URL(image, profile.canonicalUrl).href;
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/brand/jj-signal-icon.svg" type="image/svg+xml" />
     <link rel="shortcut icon" href="/brand/jj-signal-icon.svg" type="image/svg+xml" />
+    <link rel="alternate" type="application/rss+xml" title={`${profile.name} - Blog`} href={new URL('/rss.xml', profile.canonicalUrl).href} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content={type} />
     <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content={profile.name} />
     <meta property="og:image" content={absoluteImage} />
+    <meta property="og:image:alt" content={imageAlt} />
+    <meta property="og:image:width" content={imageWidth} />
+    <meta property="og:image:height" content={imageHeight} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={absoluteImage} />
-    <link rel="stylesheet" href={globalStylesUrl} />
+    <meta name="twitter:image:alt" content={imageAlt} />
+    {isHome && <link rel="preload" as="image" href={homePortraitImage} fetchpriority="high" />}
+    <Fragment set:html={stylesheetHtml} />
+    <Fragment set:html={noScriptStylesheetHtml} />
     <noscript>
       <style>
         #loading-screen {
@@ -72,7 +154,7 @@ const absoluteImage = new URL(image, profile.canonicalUrl).href;
         }
       </style>
     </noscript>
-    <script type="application/ld+json" set:html={JSON.stringify(personJsonLd)}></script>
+    <Fragment set:html={jsonLdHtml} />
     <slot name="head" />
   </head>
   <body data-page={page}>
