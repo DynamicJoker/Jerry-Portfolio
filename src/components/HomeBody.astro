@@ -406,7 +406,12 @@ siteContent.testimonials.forEach((testimonial, index) => {
                         <span class="availability-dot booking-cta-dot" aria-hidden="true"></span>
                         <span>{profile.bookingCta.text}</span>
                     </div>
-                    <a class="btn btn--primary booking-cta-button" href={profile.bookingCta.url} target="_blank" rel="noopener" data-calendly-open aria-expanded="false" aria-controls="calendly-booking-panel">{profile.bookingCta.buttonLabel}</a>
+                    <a class="btn btn--primary booking-cta-button" href={profile.bookingCta.url} target="_blank" rel="noopener" data-calendly-open aria-expanded="false" aria-controls="calendly-booking-panel" aria-label={profile.bookingCta.buttonLabel}>
+                        <span class="booking-cta-labels" aria-hidden="true">
+                            <span class="booking-cta-label booking-cta-label--open">{profile.bookingCta.buttonLabel}</span>
+                            <span class="booking-cta-label booking-cta-label--close">{profile.bookingCta.closeLabel}</span>
+                        </span>
+                    </a>
                 </div>
                 <div class="calendly-panel" id="calendly-booking-panel" hidden>
                     <div class="calendly-panel-inner">
@@ -415,7 +420,6 @@ siteContent.testimonials.forEach((testimonial, index) => {
                                 <h3 class="calendly-panel-title">{profile.bookingCta.expandedTitle}</h3>
                                 <p class="calendly-panel-helper">{profile.bookingCta.helperText}</p>
                             </div>
-                            <button class="calendly-panel-close" type="button" data-calendly-close>{profile.bookingCta.closeLabel}</button>
                         </div>
                         <div class="calendly-booked-message" data-calendly-booked hidden>{profile.bookingCta.bookedText}</div>
                         <div class="calendly-loading" data-calendly-loading>{profile.bookingCta.loadingText}</div>

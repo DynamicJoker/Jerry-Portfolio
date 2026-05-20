@@ -274,6 +274,7 @@ function initializeNavigation() {
     navLinks = document.querySelectorAll('.nav-link');
     const navbar = document.getElementById('navbar');
     const controls = [hamburger].filter(Boolean);
+    const navMenuQuery = window.matchMedia('(max-width: 64rem)');
     const setNavOpen = (isOpen) => {
         if (!hamburger || !navMenu) return;
 
@@ -281,16 +282,37 @@ function initializeNavigation() {
         navMenu.classList.toggle('active', isOpen);
         updateNavControls(isOpen, controls);
     };
+    const isNavOpen = () => Boolean(navMenu?.classList.contains('active'));
+    const closeNav = ({ restoreFocus = false } = {}) => {
+        if (!isNavOpen()) return;
+
+        setNavOpen(false);
+        if (restoreFocus) {
+            hamburger?.focus();
+        }
+    };
 
     if (hamburger && navMenu) {
         hamburger.addEventListener('click', () => {
-            setNavOpen(!navMenu.classList.contains('active'));
+            setNavOpen(!isNavOpen());
         });
 
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && navMenu.classList.contains('active')) {
-                setNavOpen(false);
-                hamburger.focus();
+            if (e.key === 'Escape' && isNavOpen()) {
+                closeNav({ restoreFocus: true });
+            }
+        });
+
+        document.addEventListener('pointerdown', (event) => {
+            if (!isNavOpen()) return;
+            if (hamburger.contains(event.target) || navMenu.contains(event.target)) return;
+
+            closeNav();
+        }, { passive: true });
+
+        navMenuQuery.addEventListener('change', (event) => {
+            if (!event.matches) {
+                closeNav();
             }
         });
     }
@@ -308,7 +330,7 @@ function initializeNavigation() {
 
             // Close the mobile menu if it's open
             if (hamburger && navMenu) {
-                setNavOpen(false);
+                closeNav();
             }
         });
     });
@@ -830,15 +852,22 @@ function initializeCalendlyBookingPanel() {
 
     const trigger = booking.querySelector('[data-calendly-open]');
     const panel = booking.querySelector('.calendly-panel');
-    const closeButton = booking.querySelector('[data-calendly-close]');
     const loading = booking.querySelector('[data-calendly-loading]');
     const container = booking.querySelector('[data-calendly-container]');
     const bookedMessage = booking.querySelector('[data-calendly-booked]');
-    if (!trigger || !panel || !closeButton || !loading || !container || !bookedMessage) return;
+    if (!trigger || !panel || !loading || !container || !bookedMessage) return;
 
     let isOpen = false;
     let hasInitializedCalendly = false;
     let iframeObserver = null;
+    const openLabel = cta.buttonLabel || trigger.getAttribute('aria-label') || 'Schedule a Discovery Call';
+    const closeLabel = cta.closeLabel || 'Close scheduler';
+
+    const updateTriggerState = (open) => {
+        trigger.setAttribute('aria-expanded', String(open));
+        trigger.setAttribute('aria-label', open ? closeLabel : openLabel);
+        trigger.classList.toggle('is-close-state', open);
+    };
 
     const setLoaded = (loaded) => {
         panel.classList.toggle('is-loaded', loaded);
@@ -890,13 +919,12 @@ function initializeCalendlyBookingPanel() {
         if (isOpen) return;
         isOpen = true;
         panel.hidden = false;
-        trigger.setAttribute('aria-expanded', 'true');
+        updateTriggerState(true);
         requestAnimationFrame(() => {
             panel.classList.add('is-open');
             booking.classList.add('is-expanded');
         });
         initializeCalendly();
-        setTimeout(() => closeButton.focus(), prefersReducedMotion ? 0 : 220);
     };
 
     const closePanel = () => {
@@ -904,7 +932,7 @@ function initializeCalendlyBookingPanel() {
         isOpen = false;
         panel.classList.remove('is-open');
         booking.classList.remove('is-expanded');
-        trigger.setAttribute('aria-expanded', 'false');
+        updateTriggerState(false);
 
         const finishClose = () => {
             if (isOpen) return;
@@ -925,10 +953,12 @@ function initializeCalendlyBookingPanel() {
 
     trigger.addEventListener('click', (event) => {
         event.preventDefault();
-        openPanel();
+        if (isOpen) {
+            closePanel();
+        } else {
+            openPanel();
+        }
     });
-
-    closeButton.addEventListener('click', closePanel);
 
     document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape' && isOpen) {

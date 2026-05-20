@@ -103,7 +103,6 @@
   --nav-link-inline-padding: clamp(0.35rem, 0.58vw, 0.625rem);
   --nav-menu-closed-offset: -0.375rem;
   --nav-menu-open-offset: var(--space-8);
-  --nav-toggle-line-shift: 0.4375rem;
 
   /* Common style patterns */
   --focus-ring: 0 0 0 3px var(--color-focus-ring);
@@ -840,18 +839,39 @@ select.form-control {
 }
 
 .nav-toggle-icon {
-  display: flex;
+  position: relative;
+  display: block;
   flex: 0 0 auto;
-  flex-direction: column;
-  gap: var(--space-4);
+  width: 1rem;
+  height: 0.875rem;
 }
 
 .nav-toggle-icon span {
+  position: absolute;
+  left: 0;
   width: 1rem;
   height: 0.125rem;
   background: rgba(245, 245, 245, 0.86);
   border-radius: var(--radius-full);
-  transition: all var(--animation-speed) var(--animation-curve);
+  transform-origin: center;
+  transition:
+    top var(--animation-speed) var(--animation-curve),
+    opacity var(--animation-speed) var(--animation-curve),
+    transform var(--animation-speed) var(--animation-curve),
+    background-color var(--animation-speed) var(--animation-curve);
+}
+
+.nav-toggle-icon span:nth-child(1) {
+  top: 0;
+}
+
+.nav-toggle-icon span:nth-child(2) {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.nav-toggle-icon span:nth-child(3) {
+  top: calc(100% - 0.125rem);
 }
 
 @media (max-width: 64rem) {
@@ -864,6 +884,21 @@ select.form-control {
   .hamburger {
     display: inline-flex;
     max-width: min(var(--nav-toggle-max-width), var(--nav-toggle-fluid-width));
+  }
+
+  .hamburger.active .nav-toggle-icon span:nth-child(1) {
+    top: 50%;
+    transform: translateY(-50%) rotate(45deg);
+  }
+
+  .hamburger.active .nav-toggle-icon span:nth-child(2) {
+    opacity: 0;
+    transform: translateY(-50%) scaleX(0.35);
+  }
+
+  .hamburger.active .nav-toggle-icon span:nth-child(3) {
+    top: 50%;
+    transform: translateY(-50%) rotate(-45deg);
   }
 
   .nav-menu {
@@ -2236,8 +2271,93 @@ section[id] {
   flex-basis: 0.625rem;
 }
 
-.booking-cta-button {
+.btn.booking-cta-button {
   flex-shrink: 0;
+  isolation: isolate;
+  background: linear-gradient(135deg, var(--color-electric-blue) 0%, var(--color-accent-teal) 100%);
+  transition:
+    color 0.45s var(--ease-standard),
+    border-color 0.45s var(--ease-standard),
+    box-shadow 0.45s var(--ease-standard),
+    transform 0.35s var(--ease-standard);
+}
+
+.booking-cta-button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-color: rgba(62, 68, 72, 0.98);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.55s var(--ease-standard),
+    background-color 0.35s var(--ease-standard);
+}
+
+.booking-cta-labels {
+  position: relative;
+  z-index: 1;
+  display: inline-grid;
+  align-items: center;
+  justify-items: center;
+}
+
+.booking-cta-label {
+  grid-area: 1 / 1;
+  white-space: nowrap;
+  transition:
+    opacity 0.42s var(--ease-standard),
+    transform 0.42s var(--ease-standard);
+}
+
+.booking-cta-label--open {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.booking-cta-label--close {
+  opacity: 0;
+  transform: translateY(0.35rem);
+}
+
+.btn.booking-cta-button.is-close-state {
+  color: var(--color-text);
+  border-color: rgba(255, 255, 255, 0.16);
+  box-shadow: none;
+}
+
+.btn.booking-cta-button.is-close-state::before {
+  opacity: 1;
+}
+
+.btn.booking-cta-button.is-close-state .booking-cta-label--open {
+  opacity: 0;
+  transform: translateY(-0.35rem);
+}
+
+.btn.booking-cta-button.is-close-state .booking-cta-label--close {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.btn.booking-cta-button.is-close-state:hover {
+  color: var(--color-text);
+  border-color: var(--color-electric-blue);
+  box-shadow: 0 0 0 1px rgba(0, 212, 255, 0.24), 0 0 18px rgba(0, 212, 255, 0.16);
+}
+
+.btn.booking-cta-button.is-close-state:hover::before {
+  background-color: rgba(72, 79, 84, 0.98);
+}
+
+.btn.booking-cta-button.is-close-state:active {
+  color: var(--color-text);
+  border-color: var(--color-electric-blue);
+}
+
+.btn.booking-cta-button.is-close-state:active::before {
+  background-color: rgba(54, 59, 63, 0.98);
 }
 
 .calendly-panel {
@@ -2279,26 +2399,6 @@ section[id] {
   color: var(--color-text-secondary);
   line-height: 1.6;
   margin-bottom: 0;
-}
-
-.calendly-panel-close {
-  flex-shrink: 0;
-  padding: var(--space-8) var(--space-12);
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--color-text);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: var(--radius-base);
-  cursor: pointer;
-  font: inherit;
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  transition: all var(--duration-normal) var(--ease-standard);
-}
-
-.calendly-panel-close:hover {
-  color: var(--color-electric-blue);
-  border-color: rgba(0, 212, 255, 0.55);
-  background: rgba(0, 212, 255, 0.08);
 }
 
 .calendly-booked-message {
@@ -3030,18 +3130,6 @@ section[id] {
     max-width: min(var(--nav-toggle-mobile-max-width), var(--nav-toggle-fluid-width));
   }
 
-  .hamburger.active .nav-toggle-icon span:nth-child(1) {
-    transform: translateY(var(--nav-toggle-line-shift)) rotate(45deg);
-  }
-
-  .hamburger.active .nav-toggle-icon span:nth-child(2) {
-    opacity: 0;
-  }
-
-  .hamburger.active .nav-toggle-icon span:nth-child(3) {
-    transform: translateY(calc(var(--nav-toggle-line-shift) * -1)) rotate(-45deg);
-  }
-
   .hero-buttons {
     flex-direction: column;
     align-items: center;
@@ -3079,14 +3167,6 @@ section[id] {
 
   .calendly-panel-inner {
     padding: var(--space-20);
-  }
-
-  .calendly-panel-header {
-    flex-direction: column;
-  }
-
-  .calendly-panel-close {
-    width: 100%;
   }
 
   .calendly-inline-host {

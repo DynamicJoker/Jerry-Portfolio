@@ -70,6 +70,7 @@ const currentLabel = links.find((link) => link.id === current)?.label ?? 'Home';
     if (!hamburger || !navMenu) return;
 
     const controls = [hamburger].filter(Boolean);
+    const navMenuQuery = window.matchMedia('(max-width: 64rem)');
 
     const setNavOpen = (isOpen) => {
       hamburger.classList.toggle('active', isOpen);
@@ -82,13 +83,32 @@ const currentLabel = links.find((link) => link.id === current)?.label ?? 'Home';
         );
       });
     };
+    const isNavOpen = () => navMenu.classList.contains('active');
+    const closeNav = ({ restoreFocus = false } = {}) => {
+      if (!isNavOpen()) return;
 
-    hamburger.addEventListener('click', () => setNavOpen(!navMenu.classList.contains('active')));
-    links.forEach((link) => link.addEventListener('click', () => setNavOpen(false)));
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape' && navMenu.classList.contains('active')) {
-        setNavOpen(false);
+      setNavOpen(false);
+      if (restoreFocus) {
         hamburger.focus();
+      }
+    };
+
+    hamburger.addEventListener('click', () => setNavOpen(!isNavOpen()));
+    links.forEach((link) => link.addEventListener('click', () => closeNav()));
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && isNavOpen()) {
+        closeNav({ restoreFocus: true });
+      }
+    });
+    document.addEventListener('pointerdown', (event) => {
+      if (!isNavOpen()) return;
+      if (hamburger.contains(event.target) || navMenu.contains(event.target)) return;
+
+      closeNav();
+    }, { passive: true });
+    navMenuQuery.addEventListener('change', (event) => {
+      if (!event.matches) {
+        closeNav();
       }
     });
 
