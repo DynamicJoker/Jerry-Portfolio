@@ -1,0 +1,139 @@
+<div
+  id="beta-banner"
+  class="beta-banner is-expanded"
+  data-beta-banner
+  data-state="expanded"
+>
+  <button
+    class="beta-banner__control"
+    type="button"
+    aria-expanded="true"
+    aria-controls="beta-banner-message"
+    data-beta-banner-control
+  >
+    <span class="beta-banner__strip" aria-hidden="true">
+      <span class="beta-banner__strip-label">Beta</span>
+    </span>
+    <span class="beta-banner__content" id="beta-banner-message">
+      <span class="beta-banner__eyebrow">Beta site</span>
+      <span class="beta-banner__message">this website is still a work in progress.</span>
+    </span>
+  </button>
+</div>
+
+<script is:inline>
+  (() => {
+    const banner = document.querySelector('[data-beta-banner]');
+    const control = document.querySelector('[data-beta-banner-control]');
+
+    if (!banner || !control) return;
+
+    const body = document.body;
+    const touchQuery = window.matchMedia('(hover: none), (pointer: coarse)');
+    let isTouch = touchQuery.matches;
+    let autoFoldTimer;
+    let lastScrollY = window.scrollY;
+    let didScheduleAutoFold = false;
+
+    const syncBodyState = (isExpanded) => {
+      body.classList.add('has-beta-banner');
+      body.classList.toggle('beta-banner-expanded', isExpanded);
+      body.classList.toggle('beta-banner-collapsed', !isExpanded);
+    };
+
+    const setExpanded = (isExpanded) => {
+      banner.classList.toggle('is-expanded', isExpanded);
+      banner.classList.toggle('is-collapsed', !isExpanded);
+      banner.dataset.state = isExpanded ? 'expanded' : 'collapsed';
+      control.setAttribute('aria-expanded', String(isExpanded));
+      syncBodyState(isExpanded);
+    };
+
+    const scheduleAutoFold = () => {
+      window.clearTimeout(autoFoldTimer);
+      autoFoldTimer = window.setTimeout(() => {
+        if (banner.matches(':hover') || banner.contains(document.activeElement)) return;
+        setExpanded(false);
+      }, 3000);
+    };
+
+    const waitForPageReady = () => {
+      const loadingScreen = document.getElementById('loading-screen');
+      const scheduleOnce = () => {
+        if (didScheduleAutoFold) return;
+        didScheduleAutoFold = true;
+        scheduleAutoFold();
+      };
+
+      if (!loadingScreen) {
+        scheduleOnce();
+        return;
+      }
+
+      const observer = new MutationObserver(() => {
+        if (document.getElementById('loading-screen')) return;
+        observer.disconnect();
+        scheduleOnce();
+      });
+
+      observer.observe(document.body, { childList: true });
+
+      window.setTimeout(() => {
+        observer.disconnect();
+        scheduleOnce();
+      }, 4500);
+    };
+
+    syncBodyState(true);
+
+    control.addEventListener('click', () => {
+      window.clearTimeout(autoFoldTimer);
+      setExpanded(!banner.classList.contains('is-expanded'));
+    });
+
+    banner.addEventListener('mouseenter', () => {
+      if (isTouch) return;
+      window.clearTimeout(autoFoldTimer);
+      setExpanded(true);
+    });
+
+    banner.addEventListener('mouseleave', () => {
+      if (isTouch) return;
+      setExpanded(false);
+    });
+
+    banner.addEventListener('focusin', () => {
+      window.clearTimeout(autoFoldTimer);
+      setExpanded(true);
+    });
+
+    banner.addEventListener('focusout', () => {
+      window.setTimeout(() => {
+        if (banner.contains(document.activeElement)) return;
+        setExpanded(false);
+      }, 0);
+    });
+
+    window.addEventListener('scroll', () => {
+      const currentScrollY = window.scrollY;
+      const didMove = Math.abs(currentScrollY - lastScrollY) > 4;
+      lastScrollY = currentScrollY;
+
+      if (!isTouch || !didMove || !banner.classList.contains('is-expanded')) return;
+      window.clearTimeout(autoFoldTimer);
+      setExpanded(false);
+    }, { passive: true });
+
+    if (typeof touchQuery.addEventListener === 'function') {
+      touchQuery.addEventListener('change', (event) => {
+        isTouch = event.matches;
+      });
+    } else if (typeof touchQuery.addListener === 'function') {
+      touchQuery.addListener((event) => {
+        isTouch = event.matches;
+      });
+    }
+
+    waitForPageReady();
+  })();
+</script>

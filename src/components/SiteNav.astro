@@ -1,8 +1,5 @@
 ---
-import { siteContent } from '../content.js';
-
 const { current = 'home' } = Astro.props;
-const availability = siteContent.profile.availability.status;
 const prefix = current === 'home' ? '' : '/';
 
 const links = [
@@ -25,10 +22,6 @@ const currentLabel = links.find((link) => link.id === current)?.label ?? 'Home';
     <a href={current === 'home' ? '#hero' : '/'} class="nav-brand" aria-label="Jerry James home">
       <img src="/brand/jj-signal-logo.svg" alt="" class="nav-brand-logo" width="260" height="64" />
     </a>
-    <span class="availability-badge" aria-label={availability}>
-      <span class="availability-dot" aria-hidden="true"></span>
-      <span class="availability-text">{availability}</span>
-    </span>
     <div class="nav-actions">
       <button
         class="nav-current"

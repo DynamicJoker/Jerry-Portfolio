@@ -27,8 +27,8 @@ export const siteContent = {
                 label: 'Pieces'
             },
             {
-                value: '12+',
-                label: 'Years'
+                value: '50+',
+                label: 'Clients'
             }
         ],
         bookingCta: {

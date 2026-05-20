@@ -5,6 +5,7 @@ import '@fontsource/geist/600.css';
 import '@fontsource/geist/700.css';
 import globalStylesUrl from '../styles/global.css?url';
 import { siteContent } from '../content.js';
+import BetaBanner from '../components/BetaBanner.astro';
 
 const profile = siteContent.profile;
 const {
@@ -75,6 +76,7 @@ const absoluteImage = new URL(image, profile.canonicalUrl).href;
     <slot name="head" />
   </head>
   <body data-page={page}>
+    <BetaBanner />
     <slot />
   </body>
 </html>

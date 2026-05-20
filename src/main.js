@@ -718,8 +718,8 @@ function initializeScrambleAnimation() {
 
 function updateYearsExperience() {
     const el = document.getElementById('years-experience');
-    const startYear = siteContent.profile?.experienceStartYear || config.experience.startYear;
-    if (el) el.textContent = new Date().getFullYear() - startYear;
+    const startYear = siteContent.profile?.experienceStartYear;
+    if (el && startYear) el.textContent = new Date().getFullYear() - startYear;
 }
 
 function updateFooterYear() {

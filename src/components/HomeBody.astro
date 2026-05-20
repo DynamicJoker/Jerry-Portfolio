@@ -111,14 +111,15 @@ siteContent.testimonials.forEach((testimonial, index) => {
                     <span class="subtitle-experience">
                         <span id="years-experience">{new Date().getFullYear() - profile.experienceStartYear}</span>+ Years Experience
                     </span>
-                    <span class="shape-assembler" id="shape-assembler">
+                    <span class="shape-assembler" id="shape-assembler" aria-hidden="true">
                         <i></i><i></i><i></i>
                         <i></i><i></i><i></i>
                         <i></i><i></i><i></i>
                     </span>
-                    <span class="subtitle-location">
-                        Available Worldwide
-                    </span>
+                    <a class="subtitle-location" href="#schedule" aria-label="Go to scheduling section">
+                        <span>Available Worldwide</span>
+                        <span class="availability-dot subtitle-location-dot" aria-hidden="true"></span>
+                    </a>
                 </p>
                 <div class="hero-buttons">
                     <a href="#portfolio" class="btn btn--primary btn--lg">View Portfolio</a>
@@ -399,7 +400,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
                 <div class="section-line"></div>
             </div>
             <!-- Booking CTA Block -->
-            <div class="booking-cta" data-calendly-booking>
+            <div class="booking-cta" id="schedule" data-calendly-booking>
                 <div class="booking-cta-bar">
                     <div class="booking-cta-message">
                         <span class="availability-dot booking-cta-dot" aria-hidden="true"></span>
