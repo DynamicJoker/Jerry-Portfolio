@@ -1,8 +1,7 @@
 ---
-import '@fontsource/geist/400.css';
-import '@fontsource/geist/500.css';
-import '@fontsource/geist/600.css';
-import '@fontsource/geist/700.css';
+import geistLatin400Url from '@fontsource/geist/files/geist-latin-400-normal.woff2?url';
+import geistLatin500Url from '@fontsource/geist/files/geist-latin-500-normal.woff2?url';
+import geistLatin600Url from '@fontsource/geist/files/geist-latin-600-normal.woff2?url';
 import globalStylesUrl from '../styles/global.css?url';
 import criticalHomeStyles from '../styles/critical-home.css?raw';
 import { siteContent } from '../content.js';
@@ -85,6 +84,17 @@ const jsonLd = [
 const jsonLdHtml = jsonLd
   .map((item) => `<script type="application/ld+json">${JSON.stringify(item).replace(/</g, '\\u003c')}</script>`)
   .join('\n');
+const geistFontFaces = [
+  { weight: '400', url: geistLatin400Url },
+  { weight: '500', url: geistLatin500Url },
+  { weight: '600', url: geistLatin600Url }
+];
+const geistFontFaceCssHtml = `<style data-font-face="geist">${geistFontFaces
+  .map(
+    ({ weight, url }) =>
+      `@font-face{font-family:'Geist';font-style:normal;font-display:swap;font-weight:${weight};src:url(${JSON.stringify(url)}) format('woff2');}`
+  )
+  .join('')}</style>`;
 const criticalHomeCssHtml = `<style data-critical-css="home">${criticalHomeStyles.replace(/<\/style/gi, '<\\/style')}</style>`;
 const homePortraitImage = '/images/jerry-james-portrait.jpg';
 const stylesheetHtml = isHome
@@ -136,7 +146,9 @@ const noScriptStylesheetHtml = isHome
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={absoluteImage} />
     <meta name="twitter:image:alt" content={imageAlt} />
+    {isHome && geistFontFaces.map((font) => <link rel="preload" as="font" href={font.url} type="font/woff2" crossorigin />)}
     {isHome && <link rel="preload" as="image" href={homePortraitImage} fetchpriority="high" />}
+    <Fragment set:html={geistFontFaceCssHtml} />
     <Fragment set:html={stylesheetHtml} />
     <Fragment set:html={noScriptStylesheetHtml} />
     <noscript>

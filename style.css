@@ -231,6 +231,11 @@ h6 {
   font-size: var(--font-size-md);
 }
 
+b,
+strong {
+  font-weight: var(--font-weight-bold);
+}
+
 p {
   margin: 0 0 var(--space-16) 0;
 }
