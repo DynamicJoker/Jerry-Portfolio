@@ -31,6 +31,10 @@ function countMatches(value, pattern) {
   return value.match(pattern)?.length ?? 0;
 }
 
+function stripNoscriptBlocks(html) {
+  return html.replace(/<noscript\b[\s\S]*?<\/noscript>/gi, '');
+}
+
 function getJsonLd(html, file) {
   const scripts = [...html.matchAll(/<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)];
   return scripts.map((match, index) => {
@@ -67,6 +71,7 @@ if (!fs.existsSync(distDir)) {
     if (countMatches(html, /<meta\s+name=["']description["']/gi) !== 1) fail(`${relative}: expected exactly one meta description.`);
     if (countMatches(html, /<link\s+rel=["']canonical["']/gi) !== 1) fail(`${relative}: expected exactly one canonical link.`);
     if (countMatches(html, /<h1\b/gi) !== 1) fail(`${relative}: expected exactly one h1.`);
+    if (countMatches(html, /<main\b/gi) !== 1) fail(`${relative}: expected exactly one main landmark.`);
     if (!/<meta\s+name=["']robots["']\s+content=["'][^"']*index[^"']*follow[^"']*max-image-preview:large[^"']*["']/i.test(html)) {
       fail(`${relative}: missing expected robots meta policy.`);
     }
@@ -81,6 +86,17 @@ if (!fs.existsSync(distDir)) {
     if (relative === 'index.html') {
       if (!hasType(jsonLd, 'WebSite')) fail(`${relative}: missing WebSite JSON-LD.`);
       if (!hasType(jsonLd, 'ProfilePage')) fail(`${relative}: missing ProfilePage JSON-LD.`);
+      if (/\bSiteNav\.[^"'\s<>]+\.css\b/i.test(html)) {
+        fail(`${relative}: must not reference a blocking SiteNav CSS chunk.`);
+      }
+
+      const htmlWithoutNoscript = stripNoscriptBlocks(html);
+      if (/<link\b(?=[^>]*\brel=["']stylesheet["'])[^>]*>/i.test(htmlWithoutNoscript)) {
+        fail(`${relative}: homepage must not emit blocking stylesheet links outside noscript.`);
+      }
+      if (!/<noscript>\s*<link\b(?=[^>]*\brel=["']stylesheet["'])(?=[^>]*\bhref=["'][^"']*\/_astro\/global\.[^"']+\.css["'])[^>]*>\s*<\/noscript>/i.test(html)) {
+        fail(`${relative}: missing expected noscript global stylesheet fallback.`);
+      }
     }
 
     if (relative === 'blog/index.html') {
