@@ -1530,6 +1530,10 @@ section[id] {
   font-size: 2rem;
 }
 
+.highlight-title {
+  font-size: var(--font-size-xl);
+}
+
 .highlight-text {
   font-weight: var(--font-weight-medium);
   font-size: var(--font-size-lg);
@@ -2526,7 +2530,6 @@ section[id] {
 
 .footer-text {
   color: var(--color-text-secondary);
-  opacity: 0.8;
 }
 
 .footer-link {
