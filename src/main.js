@@ -70,7 +70,7 @@ const config = {
         glowColorRgb: '0, 212, 255'
     },
     contactUI: {
-        eyeOffSvg: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`,
+        eyeOffSvg: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`,
         dummyPlaceholderText: '••••••••@••••••••.•••'
     },
     contactForm: {
@@ -166,6 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeCalendlyBookingPanel();
     initializeNavigation();
     initializeInfiniteScroller();
+    initializeTestimonialPauseControl();
     enhanceGanttRows();
     initializeScrollAnimations();
     initializePortfolioFilters();
@@ -186,13 +187,11 @@ function initializeContactInfo() {
     
     const emailEl = document.getElementById('contact-email');
     if (emailEl && siteContent.contactInfo.email) {
-        // Create an initial placeholder container for the hidden email
-        const container = document.createElement('div');
-        container.style.display = 'inline-flex';
-        container.style.alignItems = 'center';
-        container.style.gap = '10px';
-        container.style.cursor = 'pointer';
-        container.title = "Click to reveal";
+        const revealButton = document.createElement('button');
+        revealButton.type = 'button';
+        revealButton.className = 'contact-reveal-button';
+        revealButton.setAttribute('aria-label', 'Reveal email address');
+        revealButton.title = 'Reveal email address';
         
         // Add an eye-off icon to suggest hidden visibility
         const iconHTML = config.contactUI.eyeOffSvg;
@@ -204,23 +203,23 @@ function initializeContactInfo() {
         textSpan.style.opacity = '0.7';
         textSpan.style.transition = 'filter 0.3s ease, opacity 0.3s ease';
         
-        container.innerHTML = iconHTML;
-        container.appendChild(textSpan);
+        revealButton.innerHTML = iconHTML;
+        revealButton.appendChild(textSpan);
         
         // Interactive hover effect to hint at reveal
-        container.addEventListener('mouseenter', () => {
+        revealButton.addEventListener('mouseenter', () => {
             textSpan.style.filter = 'blur(2px)';
             textSpan.style.opacity = '1';
-            container.style.color = 'var(--color-electric-blue)';
+            revealButton.style.color = 'var(--color-electric-blue)';
         });
-        container.addEventListener('mouseleave', () => {
+        revealButton.addEventListener('mouseleave', () => {
             textSpan.style.filter = 'blur(4px)';
             textSpan.style.opacity = '0.7';
-            container.style.color = 'inherit';
+            revealButton.style.color = 'inherit';
         });
         
         // Reveal the actual email on click
-        container.addEventListener('click', function revealEmail() {
+        revealButton.addEventListener('click', function revealEmail() {
             const emailAddress = `${siteContent.contactInfo.email.user}@${siteContent.contactInfo.email.domain}`;
             
             const mailLink = document.createElement('a');
@@ -235,6 +234,7 @@ function initializeContactInfo() {
             
             emailEl.innerHTML = '';
             emailEl.appendChild(mailLink);
+            mailLink.focus();
             
             // Smooth fade-in
             mailLink.style.opacity = '0';
@@ -245,7 +245,7 @@ function initializeContactInfo() {
         });
 
         emailEl.innerHTML = '';
-        emailEl.appendChild(container);
+        emailEl.appendChild(revealButton);
     }
     
     const linkedinEl = document.getElementById('contact-linkedin');
@@ -653,6 +653,11 @@ function initializePortfolioFilters() {
     // Safety check in case the container doesn't exist
     if (!filterContainer) return;
 
+    const filterButtons = filterContainer.querySelectorAll('.filter-btn');
+    filterButtons.forEach(button => {
+        button.setAttribute('aria-pressed', String(button.classList.contains('active')));
+    });
+
     // Add a single click listener to the parent container
     filterContainer.addEventListener('click', (event) => {
         // Find the button that was actually clicked, even if the user clicks an inner element
@@ -661,20 +666,29 @@ function initializePortfolioFilters() {
         // If the click was not on a button, do nothing
         if (!clickedButton) return;
 
-        // Get all filter buttons to manage the 'active' class
-        const filterButtons = filterContainer.querySelectorAll('.filter-btn');
         const filter = clickedButton.dataset.filter;
 
         // Update the active state
-        filterButtons.forEach(btn => btn.classList.remove('active'));
-        clickedButton.classList.add('active');
+        filterButtons.forEach(btn => {
+            const isActive = btn === clickedButton;
+            btn.classList.toggle('active', isActive);
+            btn.setAttribute('aria-pressed', String(isActive));
+        });
 
         // Apply the filter logic to each portfolio item
         portfolioItems.forEach(item => {
             const isVisible = filter === 'all' || item.dataset.category === filter;
             item.classList.toggle('hidden', !isVisible);
-            item.style.opacity = isVisible ? '1' : '0';
-            item.style.transform = isVisible ? 'scale(1)' : 'scale(0.8)';
+            item.toggleAttribute('hidden', !isVisible);
+            item.setAttribute('aria-hidden', String(!isVisible));
+            item.inert = !isVisible;
+            if (isVisible) {
+                item.style.opacity = '1';
+                item.style.transform = 'scale(1)';
+            } else {
+                item.style.opacity = '';
+                item.style.transform = '';
+            }
         });
     });
 }
@@ -685,7 +699,18 @@ function initializeContactForm() {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const formData = new FormData(form);
-        if (!formData.get('name') || !formData.get('email') || !formData.get('message')) {
+        const fields = {
+            name: form.elements.name,
+            email: form.elements.email,
+            message: form.elements.message
+        };
+
+        Object.values(fields).forEach(field => field?.removeAttribute('aria-invalid'));
+
+        const missingFields = Object.entries(fields).filter(([name, field]) => !String(formData.get(name) || '').trim() && field?.required);
+        if (missingFields.length > 0) {
+            missingFields.forEach(([, field]) => field.setAttribute('aria-invalid', 'true'));
+            missingFields[0][1].focus();
             showNotification('Please fill in all required fields.', 'error');
             return;
         }
@@ -693,6 +718,8 @@ function initializeContactForm() {
         // Basic email sanity check regex
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailPattern.test(formData.get('email'))) {
+            fields.email?.setAttribute('aria-invalid', 'true');
+            fields.email?.focus();
             showNotification('Please enter a valid email address.', 'error');
             return;
         }
@@ -712,6 +739,7 @@ function initializeContactForm() {
             if (data.success) {
                 showNotification('Message sent successfully! I\'ll get back to you soon.', 'success');
                 form.reset();
+                Object.values(fields).forEach(field => field?.removeAttribute('aria-invalid'));
             } else {
                 showNotification('Something went wrong. Please try again.', 'error');
                 console.error('Web3Forms Error:', data);
@@ -771,7 +799,9 @@ function showNotification(message, type = 'info') {
 
     const notification = document.createElement('div');
     notification.className = `notification notification--${type}`;
-    notification.innerHTML = `<div class="notification-content"><span class="notification-message">${message}</span><button class="notification-close" aria-label="Close">&times;</button></div>`;
+    notification.setAttribute('role', type === 'error' ? 'alert' : 'status');
+    notification.setAttribute('aria-live', type === 'error' ? 'assertive' : 'polite');
+    notification.innerHTML = `<div class="notification-content"><span class="notification-message">${message}</span><button class="notification-close" aria-label="Close notification">&times;</button></div>`;
 
     document.body.appendChild(notification);
 
@@ -994,6 +1024,30 @@ function initializeInfiniteScroller() {
         const randomDuration = Math.floor(Math.random() * durationRange) + config.testimonials.scrollSpeedMin;
         scrollerInner.style.setProperty('--scroll-duration', `${randomDuration}s`);
         scrollerInner.dataset.scrollerEnhanced = 'true';
+    });
+}
+
+function initializeTestimonialPauseControl() {
+    const scroller = document.getElementById('testimonials-container');
+    const control = document.querySelector('[data-testimonials-pause]');
+    if (!scroller || !control) return;
+
+    const setPaused = (isPaused) => {
+        scroller.classList.toggle('is-paused', isPaused);
+        control.setAttribute('aria-pressed', String(isPaused));
+        control.setAttribute('aria-label', isPaused ? 'Resume testimonial animation' : 'Pause testimonial animation');
+    };
+
+    setPaused(prefersReducedMotion);
+
+    if (prefersReducedMotion) {
+        control.disabled = true;
+        control.setAttribute('aria-label', 'Testimonials paused because reduced motion is enabled');
+        return;
+    }
+
+    control.addEventListener('click', () => {
+        setPaused(!scroller.classList.contains('is-paused'));
     });
 }
 
