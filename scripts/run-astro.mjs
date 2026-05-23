@@ -17,7 +17,7 @@ function runAstro(cwd) {
 }
 
 function findAvailableDrive() {
-  for (const letter of 'ZYXWVUTSRQPONMLKJIHGFED') {
+  for (const letter of 'YXWVU') {
     const drive = `${letter}:`;
     if (!existsSync(`${drive}\\`)) return drive;
   }
