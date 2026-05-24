@@ -148,7 +148,7 @@ export const siteContent = {
     skills: [
         {
             category: 'Technical Marketing',
-            tags: ['Technical Writing', 'White Paper Creation', 'API Documentation', 'Product Marketing', 'Technical SEO', 'Marketing Automation']
+            tags: ['Product Positioning', 'Go-to-Market Strategy', 'Competitive Analysis', 'Product Messaging', 'Core Benefit Analysis', 'Technical Narrative Development', 'Market Research']
         },
         {
             category: 'B2B Marketing',
