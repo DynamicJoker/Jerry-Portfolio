@@ -3,7 +3,7 @@ export const siteContent = {
         name: 'Jerry James',
         pageTitle: 'Jerry James - Technical Marketing Specialist',
         jobTitle: 'Technical Marketing Specialist',
-        canonicalUrl: 'https://jerryjames.me/',
+        canonicalUrl: 'https://www.jerryjames.me/',
         socialImage: '/images/seo/jerry-james-og.png',
         socialImageAlt: 'Jerry James technical marketing portfolio preview',
         socialImageWidth: 1200,

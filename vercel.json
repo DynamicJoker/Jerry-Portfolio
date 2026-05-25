@@ -1,6 +1,19 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "jerryjames.me"
+        }
+      ],
+      "destination": "https://www.jerryjames.me/:path*",
+      "statusCode": 308
+    }
+  ],
   "headers": [
     {
       "source": "/assets/(.*)",

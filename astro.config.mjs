@@ -6,7 +6,7 @@ import { browserslistToTargets } from 'lightningcss';
 import fs from 'node:fs';
 import path from 'node:path';
 
-const siteUrl = 'https://jerryjames.me';
+const siteUrl = 'https://www.jerryjames.me';
 
 function getBlogSitemapMetadata() {
   const blogDir = path.resolve('./src/content/blog');

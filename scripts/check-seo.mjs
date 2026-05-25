@@ -2,6 +2,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const distDir = path.resolve('dist');
+const canonicalOrigin = 'https://www.jerryjames.me';
+const bareOrigin = 'https://jerryjames.me';
+const forbiddenPathPattern = /(?:cgi-sys|defaultwebpage\.cgi)/i;
 const requiredArtifacts = [
   'robots.txt',
   'sitemap-index.xml',
@@ -51,6 +54,19 @@ function hasType(jsonLd, type) {
   return jsonLd.some((item) => item['@type'] === type);
 }
 
+function getCanonicalHref(html) {
+  return html.match(/<link\s+rel=["']canonical["'][^>]+href=["']([^"']+)["']/i)?.[1];
+}
+
+function assertCanonicalHost(value, label) {
+  if (value?.includes(bareOrigin)) {
+    fail(`${label}: must use ${canonicalOrigin}, not ${bareOrigin}.`);
+  }
+  if (forbiddenPathPattern.test(value ?? '')) {
+    fail(`${label}: must not reference cgi-sys/defaultwebpage URLs.`);
+  }
+}
+
 if (!fs.existsSync(distDir)) {
   fail('dist directory is missing. Run npm.cmd run build first.');
 } else {
@@ -70,12 +86,17 @@ if (!fs.existsSync(distDir)) {
     if (countMatches(html, /<title\b/gi) !== 1) fail(`${relative}: expected exactly one title element.`);
     if (countMatches(html, /<meta\s+name=["']description["']/gi) !== 1) fail(`${relative}: expected exactly one meta description.`);
     if (countMatches(html, /<link\s+rel=["']canonical["']/gi) !== 1) fail(`${relative}: expected exactly one canonical link.`);
+    const canonicalHref = getCanonicalHref(html);
+    if (!canonicalHref?.startsWith(`${canonicalOrigin}/`)) {
+      fail(`${relative}: canonical link must use ${canonicalOrigin}.`);
+    }
+    assertCanonicalHost(html, relative);
     if (countMatches(html, /<h1\b/gi) !== 1) fail(`${relative}: expected exactly one h1.`);
     if (countMatches(html, /<main\b/gi) !== 1) fail(`${relative}: expected exactly one main landmark.`);
     if (!/<meta\s+name=["']robots["']\s+content=["'][^"']*index[^"']*follow[^"']*max-image-preview:large[^"']*["']/i.test(html)) {
       fail(`${relative}: missing expected robots meta policy.`);
     }
-    if (!/<link\s+rel=["']alternate["'][^>]+type=["']application\/rss\+xml["'][^>]+href=["']https:\/\/jerryjames\.me\/rss\.xml["']/i.test(html)) {
+    if (!/<link\s+rel=["']alternate["'][^>]+type=["']application\/rss\+xml["'][^>]+href=["']https:\/\/www\.jerryjames\.me\/rss\.xml["']/i.test(html)) {
       fail(`${relative}: missing RSS autodiscovery link.`);
     }
     if (!/<div[^>]+data-beta-banner[^>]+data-nosnippet/i.test(html)) {
@@ -119,9 +140,24 @@ if (!fs.existsSync(distDir)) {
   }
 
   const sitemap = fs.existsSync(path.join(distDir, 'sitemap-0.xml')) ? read(path.join(distDir, 'sitemap-0.xml')) : '';
+  const robots = fs.existsSync(path.join(distDir, 'robots.txt')) ? read(path.join(distDir, 'robots.txt')) : '';
+  const llms = fs.existsSync(path.join(distDir, 'llms.txt')) ? read(path.join(distDir, 'llms.txt')) : '';
+  const rss = fs.existsSync(path.join(distDir, 'rss.xml')) ? read(path.join(distDir, 'rss.xml')) : '';
+
   if (!/<lastmod>\d{4}-\d{2}-\d{2}(?:T[^<]+)?<\/lastmod>/.test(sitemap)) {
     fail('sitemap-0.xml is missing lastmod entries.');
   }
+  if (!sitemap.includes(`<loc>${canonicalOrigin}/`)) {
+    fail(`sitemap-0.xml must use ${canonicalOrigin} URLs.`);
+  }
+  if (!robots.includes(`Sitemap: ${canonicalOrigin}/sitemap-index.xml`)) {
+    fail(`robots.txt must reference ${canonicalOrigin}/sitemap-index.xml.`);
+  }
+
+  assertCanonicalHost(sitemap, 'sitemap-0.xml');
+  assertCanonicalHost(robots, 'robots.txt');
+  assertCanonicalHost(llms, 'llms.txt');
+  assertCanonicalHost(rss, 'rss.xml');
 }
 
 if (errors.length > 0) {
