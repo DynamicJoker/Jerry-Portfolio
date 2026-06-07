@@ -228,7 +228,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
             </div>
             <div class="skills-grid" id="skills-grid">
                 {siteContent.skills.map(category => (
-                    <div class="skill-category card-base">
+                    <div class="skill-category">
                         <h3 class="skill-category-title">{category.category}</h3>
                         {category.type === 'pane' ? (
                             <div class="skill-pane-container">
@@ -262,7 +262,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
             </div>
             <div class="services-grid" id="services-grid">
                 {siteContent.services.map(service => (
-                    <div class="service-card card-base">
+                    <div class="service-card">
                         <div class="service-icon" aria-hidden="true"><Icon name={service.icon} /></div>
                         <h3 class="service-title">{service.title}</h3>
                         <p class="service-description">{service.description}</p>

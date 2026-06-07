@@ -1739,7 +1739,8 @@ section[id] {
 }
 
 .skill-category {
-  padding: var(--space-32);
+  padding: var(--space-20) 0;
+  border-top: 1px solid var(--color-hairline);
 }
 
 .skill-category-title {
@@ -1810,13 +1811,7 @@ section[id] {
 }
 
 /* --- CONSOLIDATED HOVER EFFECT for Cards --- */
-/* Card hover: skills stay flat (border feedback only via .card-base:hover);
-   services lift slightly; portfolio is the one elevated "showcase" card. */
-.service-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.32);
-}
-
+/* Portfolio is the one elevated "showcase" card; skills and services are editorial (no lift). */
 .portfolio-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.4);
@@ -1830,14 +1825,14 @@ section[id] {
 }
 
 .service-card {
-  padding: var(--space-32);
-  text-align: center;
-  position: relative;
+  padding: var(--space-8) 0 var(--space-24) var(--space-24);
+  border-left: 2px solid var(--color-hairline);
+  text-align: left;
 }
 
 .service-icon {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   font-size: 2.5rem;
   color: var(--color-electric-blue);
   margin-bottom: var(--space-16);
@@ -2937,7 +2932,7 @@ section[id] {
 .home-blog-card:hover {
   transform: translateY(-0.25rem);
   border-color: rgba(0, 212, 255, 0.42);
-  box-shadow: var(--shadow-lg), 0 0 32px rgba(0, 212, 255, 0.12);
+  box-shadow: var(--shadow-lg);
 }
 
 .home-blog-card-meta {
