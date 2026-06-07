@@ -1552,8 +1552,8 @@ select.form-control {
   padding-block: var(--section-padding);
   position: relative;
   opacity: 0;
-  transform: translateY(3.125rem);
-  transition: all 0.8s var(--animation-curve);
+  transform: translateY(1rem);
+  transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
 .section.visible {
