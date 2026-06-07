@@ -143,6 +143,22 @@ function updateUIOnScroll(scrollY) {
 window.addEventListener('scroll', handleScroll, { passive: true });
 window.addEventListener('load', () => ScrollTrigger.refresh());
 
+// Recompute scroll-derived UI on resize. The active-nav-link underline is
+// positioned with pixel values from getBoundingClientRect() (see updateNavGlow),
+// so it must be re-measured when the layout reflows — otherwise it lags/mispositions.
+let resizeRaf = 0;
+let resizeSettle = 0;
+window.addEventListener('resize', () => {
+    if (!resizeRaf) {
+        resizeRaf = window.requestAnimationFrame(() => {
+            resizeRaf = 0;
+            updateUIOnScroll(window.pageYOffset);
+        });
+    }
+    clearTimeout(resizeSettle);
+    resizeSettle = window.setTimeout(() => ScrollTrigger.refresh(), 200);
+}, { passive: true });
+
 document.addEventListener('DOMContentLoaded', () => {
     initializeLoadingScreen();
     initializeCalendlyBookingPanel();
