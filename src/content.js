@@ -207,64 +207,55 @@ export const siteContent = {
             name: 'Alex Glawion',
             title: 'CEO and Founder',
             company: 'CG Director',
-            quote: 'Jerry is an exceptional technical writer, editor, and content marketer. He\'s been instrumental in our traffic growth from a few thousands to over 2M a month within 18 months!',
-            image: 'https://i.pravatar.cc/100?u=john-doe'
+            quote: 'Jerry is an exceptional technical writer, editor, and content marketer. He\'s been instrumental in our traffic growth from a few thousands to over 2M a month within 18 months!'
         },
         {
             name: 'Edmon Moren',
             title: 'CEO',
             company: 'LicenseSpring',
-            quote: 'Working with Jerry was a game-changer. His strategic insights and execution on our B2B campaigns were instrumental in us exceeding our quarterly targets.',
-            image: 'https://i.pravatar.cc/100?u=jane-smith'
+            quote: 'Working with Jerry was a game-changer. His strategic insights and execution on our B2B campaigns were instrumental in us exceeding our quarterly targets.'
         },
         {
             name: 'Sam Wilson',
             title: 'Product Manager',
             company: 'Gadget Masters',
-            quote: 'The B2C campaign Jerry developed was a resounding success. He has a deep understanding of the consumer mindset and how to engage them effectively.',
-            image: 'https://i.pravatar.cc/100?u=sam-wilson'
+            quote: 'The B2C campaign Jerry developed was a resounding success. He has a deep understanding of the consumer mindset and how to engage them effectively.'
         },
         {
             name: 'Emily White',
             title: 'Head of Content',
             company: 'Redlegg',
-            quote: 'The series of white papers Jerry created for us not only generated a significant number of qualified leads but also positioned us as thought leaders in the cybersecurity space.',
-            image: 'https://i.pravatar.cc/100?u=emily-white'
+            quote: 'The series of white papers Jerry created for us not only generated a significant number of qualified leads but also positioned us as thought leaders in the cybersecurity space.'
         },
         {
             name: 'Michael Brown',
             title: 'Founder',
             company: 'SaaSify',
-            quote: 'Jerry\'s expertise in technical marketing was crucial for our SaaS platform launch. He is a true professional and a pleasure to work with.',
-            image: 'https://i.pravatar.cc/100?u=michael-brown'
+            quote: 'Jerry\'s expertise in technical marketing was crucial for our SaaS platform launch. He is a true professional and a pleasure to work with.'
         },
         {
             name: 'Sarah Green',
             title: 'CMO',
             company: 'Data Dynamics',
-            quote: 'We saw an 85% improvement in our lead nurturing process after Jerry implemented and optimized our marketing automation workflows. Highly recommended.',
-            image: 'https://i.pravatar.cc/100?u=sarah-green'
+            quote: 'We saw an 85% improvement in our lead nurturing process after Jerry implemented and optimized our marketing automation workflows. Highly recommended.'
         },
         {
             name: 'David Lee',
             title: 'Brand Manager',
             company: 'Quantum Electronics',
-            quote: 'The integrated B2C campaign for our new product line achieved a 150% ROI, far exceeding our expectations. Jerry\'s data-driven approach was key.',
-            image: 'https://i.pravatar.cc/100?u=david-lee'
+            quote: 'The integrated B2C campaign for our new product line achieved a 150% ROI, far exceeding our expectations. Jerry\'s data-driven approach was key.'
         },
         {
             name: 'Laura Chen',
             title: 'VP of Engineering',
             company: 'CloudNet',
-            quote: 'Jerry\'s ability to create clear and concise API documentation was a huge asset to our development team and our partners.',
-            image: 'https://i.pravatar.cc/100?u=laura-chen'
+            quote: 'Jerry\'s ability to create clear and concise API documentation was a huge asset to our development team and our partners.'
         },
         {
             name: 'Chris Taylor',
             title: 'Operations Manager',
             company: 'Global Manufacturing',
-            quote: 'The marketing automation system Jerry put in place saved us countless hours and significantly increased our sales-ready leads.',
-            image: 'https://i.pravatar.cc/100?u=chris-taylor'
+            quote: 'The marketing automation system Jerry put in place saved us countless hours and significantly increased our sales-ready leads.'
         }
     ],
 

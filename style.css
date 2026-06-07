@@ -296,7 +296,7 @@ pre code {
   font-weight: 500;
   line-height: 1.5;
   cursor: pointer;
-  transition: all var(--duration-normal) var(--ease-standard);
+  transition: background-color var(--duration-normal) var(--ease-standard), color var(--duration-normal) var(--ease-standard), border-color var(--duration-normal) var(--ease-standard), box-shadow var(--duration-normal) var(--ease-standard), transform var(--duration-normal) var(--ease-standard);
   border: none;
   text-decoration: none;
   position: relative;
@@ -657,21 +657,13 @@ select.form-control {
 
 /* Navigation */
 .navbar {
-  --nav-glass-gleam-duration: 12s;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  backdrop-filter: none;
   z-index: 1000;
   background-color: transparent;
-  transition: background-color 0.4s var(--ease-standard), backdrop-filter 0.4s var(--ease-standard), box-shadow 0.4s var(--ease-standard);
-}
-
-@media (max-width: 75rem) and (min-width: 64.01rem) {
-  .navbar {
-    --nav-glass-gleam-duration: 10.5s;
-  }
+  transition: background-color 0.4s var(--ease-standard), box-shadow 0.4s var(--ease-standard);
 }
 
 .navbar.scrolled {
@@ -1372,64 +1364,6 @@ select.form-control {
   }
 }
 
-@keyframes navbarGlassGleam {
-  0%,
-  28% {
-    opacity: 0;
-    transform: translateX(-120%);
-  }
-
-  34% {
-    opacity: 0.82;
-    transform: translateX(-98%);
-  }
-
-  48% {
-    opacity: 0.82;
-    transform: translateX(-28%);
-  }
-
-  78% {
-    opacity: 0.82;
-    transform: translateX(58%);
-  }
-
-  88%,
-  100% {
-    opacity: 0;
-    transform: translateX(120%);
-  }
-}
-
-@keyframes navRailGlassGleam {
-  0%,
-  47.5% {
-    opacity: 0;
-    background-position: 82% 50%;
-  }
-
-  48% {
-    opacity: 0.86;
-    background-position: 80% 50%;
-  }
-
-  62% {
-    opacity: 0.74;
-    background-position: 50% 50%;
-  }
-
-  78% {
-    opacity: 0.12;
-    background-position: 4% 50%;
-  }
-
-  79%,
-  100% {
-    opacity: 0;
-    background-position: 4% 50%;
-  }
-}
-
 @keyframes navMarkerGlassPulse {
   0%,
   72%,
@@ -1772,7 +1706,7 @@ section[id] {
   opacity: 0.78;
   filter: grayscale(1) brightness(0.9);
   transform: scale(1);
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), filter 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .logo-item.active .logo-img,
@@ -1810,7 +1744,7 @@ section[id] {
   font-size: var(--font-size-base);
   color: var(--color-text-secondary);
   position: relative;
-  transition: all var(--animation-speed) var(--animation-curve);
+  transition: color var(--animation-speed) var(--animation-curve);
 }
 
 .skill-tags .skill-tag::before {
@@ -1824,7 +1758,7 @@ section[id] {
   background: var(--color-electric-blue);
   opacity: 0.9;
   border-radius: 2px;
-  transition: all var(--animation-speed) var(--animation-curve);
+  transition: opacity var(--animation-speed) var(--animation-curve), height var(--animation-speed) var(--animation-curve);
 }
 
 .skill-tags .skill-tag:hover {
@@ -2002,12 +1936,20 @@ section[id] {
   min-width: 0;
 }
 
-.testimonial-image {
+.testimonial-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
   width: 3.125rem;
   height: 3.125rem;
   border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid var(--color-electric-blue);
+  background: var(--color-dark-primary);
+  border: 1px solid var(--color-hairline-strong);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.03em;
 }
 
 .testimonial-author-info {
@@ -2048,7 +1990,7 @@ section[id] {
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-full);
   cursor: pointer;
-  transition: all var(--animation-speed) var(--animation-curve);
+  transition: background-color var(--animation-speed) var(--animation-curve), color var(--animation-speed) var(--animation-curve), border-color var(--animation-speed) var(--animation-curve);
   font-weight: var(--font-weight-medium);
 }
 
@@ -2071,7 +2013,7 @@ section[id] {
 }
 
 .portfolio-item {
-  transition: all var(--animation-speed) var(--animation-curve);
+  transition: opacity var(--animation-speed) var(--animation-curve), transform var(--animation-speed) var(--animation-curve);
   will-change: opacity, transform;
 }
 
@@ -2258,7 +2200,7 @@ section[id] {
   opacity: 0;
   visibility: hidden;
   transform: translateY(10px);
-  transition: all 0.3s var(--animation-curve);
+  transition: opacity 0.3s var(--animation-curve), visibility 0.3s var(--animation-curve), transform 0.3s var(--animation-curve);
   backdrop-filter: blur(5px);
 }
 
@@ -2675,7 +2617,7 @@ section[id] {
   background: var(--color-surface-raised);
   border-radius: var(--radius-lg);
   border: 1px solid var(--color-hairline);
-  transition: all var(--animation-speed) var(--animation-curve);
+  transition: background-color var(--animation-speed) var(--animation-curve), border-color var(--animation-speed) var(--animation-curve), transform var(--animation-speed) var(--animation-curve);
   min-width: 0;
 }
 
@@ -3523,7 +3465,7 @@ section[id] {
   font-weight: var(--font-weight-semibold);
   position: relative;
   overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .btn--primary:hover,
@@ -3659,7 +3601,7 @@ section[id] {
 .services-grid,
 .portfolio-grid,
 .contact-content {
-  transition: all 0.4s ease-in-out;
+  transition: gap 0.4s ease-in-out;
 }
 
 /* 3. For specific components that resize */
@@ -3668,13 +3610,13 @@ section[id] {
        This smoothes the font-size and padding change, AND it has the
        added benefit of making the button's hover effects animate smoothly too.
     */
-  transition: all 0.3s ease-in-out;
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out, border-color 0.3s ease-in-out;
 }
 
 /* 4. For the About Me highlights */
 .highlight-item {
   /* Smoothes the transition when it stacks vertically */
-  transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* 5. For the Gantt Chart rows */

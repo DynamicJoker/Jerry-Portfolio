@@ -166,7 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeSmartGlow();
     initializeLogoCarousel();
     initializeExpandableHighlights();
-    console.log('Jerry James Portfolio initialized successfully! 🚀');
+    console.log('Jerry James Portfolio initialized.');
 });
 
 function initializeContactInfo() {

@@ -293,7 +293,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
                             {column.map(testimonial => (
                                 <div class="testimonial-card">
                                     <div class="testimonial-header">
-                                        <img class="testimonial-image" src={testimonial.image} alt={testimonial.name} loading="lazy" width="50" height="50">
+                                        <span class="testimonial-avatar" aria-hidden="true">{testimonial.name.split(' ').map(part => part[0]).slice(0, 2).join('')}</span>
                                         <div class="testimonial-author-info">
                                             <p class="testimonial-author">{testimonial.name}</p>
                                             <p class="testimonial-title">{testimonial.title}, {testimonial.company}</p>
