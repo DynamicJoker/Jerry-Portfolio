@@ -1617,24 +1617,39 @@ select.form-control {
 }
 
 .section-header {
-  text-align: center;
   margin-bottom: var(--section-header-gap);
 }
 
-.section-title {
-  font-size: clamp(2rem, 5vw, 3rem);
-  margin-bottom: var(--space-16);
-  background: linear-gradient(135deg, var(--color-text) 0%, var(--color-electric-blue) 100%);
-  background-clip: text;
-  color: transparent;
+.section-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-12);
+  margin-bottom: var(--space-12);
+  color: var(--color-electric-blue);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
-.section-line {
-  width: 80px;
-  height: 4px;
-  background: linear-gradient(90deg, var(--color-electric-blue), var(--color-accent-teal));
-  margin: 0 auto;
+.section-kicker::before {
+  content: '';
+  width: 1.75rem;
+  height: 2px;
   border-radius: 2px;
+  background: currentColor;
+}
+
+.section-title {
+  font-size: clamp(1.9rem, 4vw, 2.75rem);
+  max-width: 26ch;
+  text-wrap: balance;
+  color: var(--color-text);
+}
+
+/* Legacy centered underline — superseded by the kicker. */
+.section-line {
+  display: none;
 }
 
 section[id] {
@@ -1644,14 +1659,14 @@ section[id] {
 /* About Section */
 .about-content {
   max-width: 56.25rem;
-  margin: 0 auto;
+  margin: 0;
 }
 
 .about-description {
   font-size: var(--font-size-lg);
   line-height: 1.8;
   margin-bottom: var(--space-32);
-  text-align: center;
+  max-width: 60ch;
 }
 
 .about-highlights {
