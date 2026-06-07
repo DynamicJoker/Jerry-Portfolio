@@ -3,3 +3,21 @@ dist/
 .vite/
 .npm-cache/
 .astro/
+
+# AI assistant / agent files (keep local, never commit)
+.claude/
+.cursor/
+.cursorrules
+.cursorignore
+.windsurf/
+.windsurfrules
+.aider*
+.continue/
+.codeium/
+.codeiumignore
+.tabnine/
+.roo/
+.gemini/
+.github/copilot-instructions.md
+CLAUDE.local.md
+AGENTS.local.md
