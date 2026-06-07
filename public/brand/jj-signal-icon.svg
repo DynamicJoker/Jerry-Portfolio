@@ -1,29 +1,32 @@
-<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="none" aria-labelledby="title desc" role="img" viewBox="0 0 64 64">
   <title id="title">Jerry James Monogram Icon</title>
-  <desc id="desc">A circular J monogram with an orbital signal line.</desc>
+  <desc id="desc">
+    A circular J monogram with an orbital signal line.
+  </desc>
   <defs>
-    <linearGradient id="jj-icon-ring" x1="8" y1="9" x2="55" y2="56" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#00D4FF"/>
-      <stop offset="0.5" stop-color="#14B8A6"/>
-      <stop offset="1" stop-color="#8F5CFF"/>
+    <linearGradient id="jj-icon-ring" x1="8" x2="55" y1="9" y2="56" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#00d4ff"/>
+      <stop offset="1" stop-color="#14b8a6"/>
     </linearGradient>
-    <linearGradient id="jj-icon-orbit" x1="5" y1="29" x2="59" y2="35" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#8F5CFF"/>
-      <stop offset="0.46" stop-color="#00D4FF"/>
-      <stop offset="1" stop-color="#14B8A6"/>
+    <linearGradient id="jj-icon-orbit" x1="5" x2="59" y1="29" y2="35" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#00d4ff"/>
+      <stop offset=".5" stop-color="#73e2f7"/>
+      <stop offset="1" stop-color="#14b8a6"/>
     </linearGradient>
-    <filter id="jj-icon-glow" x="-8" y="-8" width="80" height="80" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-      <feGaussianBlur stdDeviation="2.1" result="blur"/>
-      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.00 0 0 0 0 0.83 0 0 0 0 1.00 0 0 0 0.3 0"/>
+    <linearGradient id="jj-icon-gloss" x1="29" x2="39" y1="14" y2="48" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#dffaff"/>
+      <stop offset=".45" stop-color="#00d4ff"/>
+      <stop offset="1" stop-color="#0e8c81"/>
+    </linearGradient>
+    <filter id="jj-icon-glow" width="80" height="80" x="-8" y="-8" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feGaussianBlur result="blur" stdDeviation="2.1"/>
+      <feColorMatrix in="blur" values="0 0 0 0 0.00 0 0 0 0 0.83 0 0 0 0 1.00 0 0 0 0.3 0"/>
       <feBlend in2="SourceGraphic" mode="screen"/>
     </filter>
   </defs>
-
   <g filter="url(#jj-icon-glow)">
-    <circle cx="32" cy="32" r="23.5" fill="#07090C" fill-opacity="0.72" stroke="url(#jj-icon-ring)" stroke-width="2.1"/>
-    <circle cx="32" cy="32" r="18.6" stroke="#F8FCFF" stroke-opacity="0.12" stroke-width="0.9"/>
-    <path d="M5 32C18.5 27.2 45.5 27.2 59 32" stroke="url(#jj-icon-orbit)" stroke-width="2" stroke-linecap="round"/>
-    <path d="M5 32C18.5 36.8 45.5 36.8 59 32" stroke="#8F5CFF" stroke-opacity="0.34" stroke-width="1.1" stroke-linecap="round"/>
-    <text x="32" y="45.5" text-anchor="middle" fill="#F8FCFF" font-family="'Cinzel', 'Trajan Pro', Georgia, 'Times New Roman', serif" font-size="39" font-weight="500" letter-spacing="0">J</text>
+    <circle cx="32" cy="32" r="23.5" fill="#07090c" fill-opacity=".72" stroke="url(#jj-icon-ring)" stroke-width="2.1"/>
+    <path stroke="url(#jj-icon-orbit)" stroke-linecap="round" stroke-width="2" d="M5 32c13.5-4.8 40.5-4.8 54 0"/>
+    <path fill="url(#jj-icon-gloss)" d="M38.2 18.07V37.3q0 1.93-.61 3.53-.61 1.59-1.79 2.73-1.17 1.13-2.92 1.75-1.74.62-4.05.62-1.7 0-3.27-.4-1.58-.4-2.76-1.01v-4.99q.53.44 1.23.82.71.37 1.5.66.8.28 1.64.44t1.66.16q.69 0 1.44-.26.74-.25 1.33-.84.59-.58.97-1.54.38-.95.38-2.36V22.33h-9.94v-4.26"/>
   </g>
 </svg>
