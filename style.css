@@ -421,15 +421,14 @@ select.form-control {
 
 /* --- CARD COMPONENTS --- */
 .card-base {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(154, 236, 251, 0.36);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-hairline);
   border-radius: var(--radius-lg);
-  transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .card-base:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: var(--color-electric-blue);
+  border-color: var(--color-hairline-strong);
 }
 
 .card {
@@ -1682,15 +1681,13 @@ section[id] {
   padding: var(--space-20);
   border-radius: var(--radius-lg);
   cursor: pointer;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(154, 236, 251, 0.36);
-  transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-hairline);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .highlight-item:hover {
-  transform: translateY(-5px);
-  background: rgba(255, 255, 255, 0.1);
-  border-color: var(--color-electric-blue);
+  border-color: var(--color-hairline-strong);
 }
 
 .highlight-item:focus-visible {
@@ -1715,9 +1712,8 @@ section[id] {
 
 .highlight-item.expanded {
   cursor: default;
-  border-color: var(--color-electric-blue);
-  box-shadow: 0 0 20px rgba(0, 212, 255, 0.15);
-  transform: translateY(0);
+  border-color: var(--color-hairline-strong);
+  box-shadow: inset 3px 0 0 var(--color-electric-blue);
 }
 
 .highlight-item.expanded .highlight-description {
@@ -1907,7 +1903,7 @@ section[id] {
 }
 
 .skill-pane-container::-webkit-scrollbar-thumb {
-  background: rgba(154, 236, 251, 0.64);
+  background: rgba(243, 241, 236, 0.28);
   border-radius: 10px;
   transition: background 0.2s ease-in-out;
 }
@@ -1921,17 +1917,16 @@ section[id] {
 }
 
 /* --- CONSOLIDATED HOVER EFFECT for Cards --- */
-.service-card:hover,
-.skill-category:hover {
-  transform: translateY(-5px);
-  border-color: var(--color-electric-blue);
+/* Card hover: skills stay flat (border feedback only via .card-base:hover);
+   services lift slightly; portfolio is the one elevated "showcase" card. */
+.service-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.32);
 }
 
 .portfolio-card:hover {
-  transform: translateY(-10px);
-  border-color: var(--color-electric-blue);
-  /* Make border consistent */
-  box-shadow: 0 20px 40px rgba(0, 212, 255, 0.1);
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.4);
 }
 
 /* Services Section */
@@ -1945,26 +1940,6 @@ section[id] {
   padding: var(--space-32);
   text-align: center;
   position: relative;
-  overflow: hidden;
-}
-
-.service-card:hover {
-  box-shadow: 0 20px 40px rgba(0, 212, 255, 0.1);
-}
-
-.service-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.1), transparent);
-  transition: left 0.5s ease;
-}
-
-.service-card:hover::before {
-  left: 100%;
 }
 
 .service-icon {
@@ -2061,8 +2036,8 @@ section[id] {
 }
 
 .testimonial-card {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(154, 236, 251, 0.36);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-hairline);
   border-radius: var(--radius-lg);
   padding: var(--space-24);
   display: flex;
@@ -2750,9 +2725,9 @@ section[id] {
   align-items: center;
   gap: var(--space-16);
   padding: var(--space-16);
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--color-surface-raised);
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(154, 236, 251, 0.36);
+  border: 1px solid var(--color-hairline);
   transition: all var(--animation-speed) var(--animation-curve);
   min-width: 0;
 }
@@ -2800,10 +2775,10 @@ section[id] {
 }
 
 .contact-form-container {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--color-surface-raised);
   padding: var(--space-32);
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(154, 236, 251, 0.36);
+  border: 1px solid var(--color-hairline);
 }
 
 .contact-form .form-control {
@@ -3259,7 +3234,7 @@ section[id] {
   min-block-size: clamp(8rem, 18vw, 9rem);
   align-content: end;
   padding: 0.85rem;
-  border: 1px solid rgba(154, 236, 251, 0.36);
+  border: 1px solid var(--color-hairline);
   border-radius: 8px;
   background: rgba(10, 10, 10, 0.28);
 }
