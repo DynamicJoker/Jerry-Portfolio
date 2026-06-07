@@ -1,5 +1,6 @@
 ---
 import { siteContent } from '../content.js';
+import Icon from './Icon.astro';
 
 const profile = siteContent.profile;
 
@@ -149,7 +150,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
                     <div class="about-highlights">
                         <div class="highlight-item" tabindex="0">
                             <div class="highlight-header">
-                                <div class="highlight-icon" aria-hidden="true">✨</div>
+                                <div class="highlight-icon" aria-hidden="true"><Icon name="pen" /></div>
                                 <h3 class="highlight-title">Technical Content Creation</h3>
                             </div>
                             <div class="highlight-description">
@@ -160,7 +161,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
                         </div>
                         <div class="highlight-item" tabindex="0">
                             <div class="highlight-header">
-                                <div class="highlight-icon" aria-hidden="true">🎯</div>
+                                <div class="highlight-icon" aria-hidden="true"><Icon name="target" /></div>
                                 <h3 class="highlight-title">B2B & B2C Marketing Strategy</h3>
                             </div>
                             <div class="highlight-description">
@@ -171,7 +172,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
                         </div>
                         <div class="highlight-item" tabindex="0">
                             <div class="highlight-header">
-                                <div class="highlight-icon" aria-hidden="true">🚀</div>
+                                <div class="highlight-icon" aria-hidden="true"><Icon name="compass" /></div>
                                 <h3 class="highlight-title">Complex Product Positioning</h3>
                             </div>
                             <div class="highlight-description">
@@ -182,7 +183,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
                         </div>
                         <div class="highlight-item" tabindex="0">
                             <div class="highlight-header">
-                                <div class="highlight-icon" aria-hidden="true">📊</div>
+                                <div class="highlight-icon" aria-hidden="true"><Icon name="bar-chart" /></div>
                                 <h3 class="highlight-title">Data-Driven Results</h3>
                             </div>
                             <div class="highlight-description">
@@ -262,7 +263,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
             <div class="services-grid" id="services-grid">
                 {siteContent.services.map(service => (
                     <div class="service-card card-base">
-                        <div class="service-icon" aria-hidden="true">{service.icon}</div>
+                        <div class="service-icon" aria-hidden="true"><Icon name={service.icon} /></div>
                         <h3 class="service-title">{service.title}</h3>
                         <p class="service-description">{service.description}</p>
                     </div>
@@ -383,7 +384,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
                                     <ul class="tooltip-achievements">
                                         {job.achievements.map(a => (
                                             <li>
-                                                <span class="achievement-icon">{a.icon}</span>
+                                                <span class="achievement-icon" aria-hidden="true"><Icon name={a.icon} /></span>
                                                 <span set:html={a.text}></span>
                                             </li>
                                         ))}

@@ -68,7 +68,7 @@ export const siteContent = {
             company: 'Jerry James (Consulting)',
             location: 'Bangalore, India',
             responsibilities: ['Founded a consulting firm for clients in the tech and finance industries.', 'Specialized in PC Hardware, B2B/B2C Networking, Cybersecurity, and Cloud Computing.'],
-            achievements: [{ icon: '🏆', text: 'Created over <b>1,000+</b> compelling content pieces.' }],
+            achievements: [{ icon: 'award', text: 'Created over <b>1,000+</b> compelling content pieces.' }],
         },
         {
             id: 'msi',
@@ -78,7 +78,7 @@ export const siteContent = {
             company: 'MSI (Micro-Star Int\'l)',
             location: 'Remote, Taiwan',
             responsibilities: ['Translate technical specs into effective marketing materials.', 'Strategize content marketing for new product launches.', 'Develop a distinct brand voice for MSI\'s business product lineup.'],
-            achievements: [{ icon: '🌐', text: 'Managed content for <b>50+</b> landing pages with <b>50M+</b> views.' }, { icon: '✍️', text: 'Authored <b>100+</b> and edited <b>400+</b> content pieces.' }],
+            achievements: [{ icon: 'globe', text: 'Managed content for <b>50+</b> landing pages with <b>50M+</b> views.' }, { icon: 'feather', text: 'Authored <b>100+</b> and edited <b>400+</b> content pieces.' }],
         },
         {
             id: 'cgdirector',
@@ -88,7 +88,7 @@ export const siteContent = {
             company: 'CGDirector',
             location: 'Remote, Germany',
             responsibilities: ['Oversaw the hardware section, including content strategy and quality control.', 'Managed and edited work from a team of writers to ensure quality standards.'],
-            achievements: [{ icon: '📈', text: 'Edited and published over <b>200+</b> technical articles.' }],
+            achievements: [{ icon: 'file-text', text: 'Edited and published over <b>200+</b> technical articles.' }],
         },
         {
             id: 'webdev',
@@ -98,7 +98,7 @@ export const siteContent = {
             company: 'Self-Employed',
             location: 'Remote, Worldwide',
             responsibilities: ['Provided freelance web development, focusing on design changes, maintenance, and bug fixing.'],
-            achievements: [{ icon: '🚀', text: 'Handled creation and updates of <b>REST APIs</b> using Node.js.' }],
+            achievements: [{ icon: 'code', text: 'Handled creation and updates of <b>REST APIs</b> using Node.js.' }],
         },
         {
             id: 'dota2',
@@ -108,7 +108,7 @@ export const siteContent = {
             company: 'Dota2Traders',
             location: 'Remote, US',
             responsibilities: ['Managed website and community administration for a forum.', 'Collaborated with influencers and Esports players for publicity campaigns.'],
-            achievements: [{ icon: '👥', text: 'Grew and managed a community forum of over <b>10,000+</b> members.' }],
+            achievements: [{ icon: 'users', text: 'Grew and managed a community forum of over <b>10,000+</b> members.' }],
         }
     ],
 
@@ -172,32 +172,32 @@ export const siteContent = {
     // Services data
     services: [
         {
-            icon: '📝',
+            icon: 'pen',
             title: 'Technical Content Creation',
             description: 'White papers, case studies, technical documentation, and thought leadership content that simplifies complex topics.'
         },
         {
-            icon: '🎯',
+            icon: 'target',
             title: 'B2B Marketing Strategy',
             description: 'Comprehensive B2B marketing strategies including demand generation, ABM, and lead nurturing campaigns.'
         },
         {
-            icon: '🚀',
+            icon: 'megaphone',
             title: 'B2C Campaign Development',
             description: 'Consumer-focused marketing campaigns that drive engagement, awareness, and conversions across digital channels.'
         },
         {
-            icon: '⚡',
+            icon: 'workflow',
             title: 'Marketing Automation',
             description: 'Implementation and optimization of marketing automation workflows to nurture leads and improve ROI.'
         },
         {
-            icon: '📊',
+            icon: 'layers',
             title: 'Content Marketing',
             description: 'Strategic content planning, creation, and distribution across multiple channels to build brand authority.'
         },
         {
-            icon: '📈',
+            icon: 'trending-up',
             title: 'Performance Analytics',
             description: 'Data analysis and reporting to measure campaign effectiveness and optimize marketing performance.'
         }

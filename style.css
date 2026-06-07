@@ -1712,7 +1712,17 @@ section[id] {
 }
 
 .highlight-icon {
-  font-size: 2rem;
+  display: inline-flex;
+  font-size: 1.75rem;
+  color: var(--color-warm-accent);
+}
+
+.icon {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  vertical-align: middle;
+  flex-shrink: 0;
 }
 
 .highlight-title {
@@ -1943,7 +1953,10 @@ section[id] {
 }
 
 .service-icon {
-  font-size: 3rem;
+  display: flex;
+  justify-content: center;
+  font-size: 2.5rem;
+  color: var(--color-warm-accent);
   margin-bottom: var(--space-16);
 }
 
@@ -2348,6 +2361,13 @@ section[id] {
   margin-bottom: var(--space-8);
   font-size: var(--font-size-sm);
   min-width: 0;
+}
+
+.achievement-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  font-size: 1.1rem;
+  color: var(--color-accent-teal);
 }
 
 @keyframes drawBar {
