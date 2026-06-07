@@ -4,9 +4,8 @@
 import { siteContent } from './content.js';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
 
-gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin);
+gsap.registerPlugin(ScrollTrigger);
 
 const config = {
     loadingScreenDuration: 2000,
@@ -16,20 +15,9 @@ const config = {
         md: { cssVar: '--breakpoint-md', fallbackRem: 48 },
         lg: { cssVar: '--breakpoint-lg', fallbackRem: 64 }
     },
-    scrambleAnimation: {
-        texts: [
-            'Technical Marketing Strategy',
-            'B2B & B2C Narratives',
-            'Inbound Marketing Campaigns',
-            'Content Marketing Wizard'
-        ],
-        duration: 1.1,
-        delayBetweenTexts: 1600,
-        initialDelay: 2500
-    },
     heroVisuals: {
-        radius: 300,
-        maxStretch: 200,
+        radius: 220,
+        maxStretch: 130,
         points: 45,
         noiseFrequency: 3,
         noiseSpeed: 0.009,
@@ -37,13 +25,13 @@ const config = {
         mouseFollowSpeed: 0.03,
         velocityIntensity: 0.003,
         colors: {
-            target: { h: 195, s: 100, l: 50 }, // The target electric blue for motion
-            // The orb will cycle through these colors in order.
+            target: { h: 192, s: 50, l: 42 }, // Muted cyan for motion accents
+            // The orb drifts subtly through desaturated cool tones (ambient depth, not neon).
             colorStops: [
-                { h: 195, s: 100, l: 55 }, // Electric Blue
-                { h: 250, s: 90, l: 60 },  // Vibrant Purple
-                { h: 330, s: 95, l: 60 },  // Hot Pink / Magenta
-                { h: 280, s: 90, l: 60 },  // Deep Violet
+                { h: 192, s: 42, l: 38 }, // Muted cyan
+                { h: 184, s: 38, l: 36 }, // Muted teal
+                { h: 205, s: 36, l: 36 }, // Muted blue
+                { h: 188, s: 40, l: 37 }, // Muted teal-cyan
             ],
             // How fast it transitions from one color to the next (lower is slower)
             transitionSpeed: 0.001
@@ -175,7 +163,6 @@ document.addEventListener('DOMContentLoaded', () => {
     updateYearsExperience();
     updateFooterYear();
     initializeHeroVisuals();
-    initializeScrambleAnimation();
     initializeSmartGlow();
     initializeLogoCarousel();
     initializeExpandableHighlights();
@@ -752,35 +739,6 @@ function initializeContactForm() {
             submitButton.disabled = false;
         }
     });
-}
-
-function initializeScrambleAnimation() {
-    const typingElement = document.getElementById('typing-text');
-    if (!typingElement) return;
-
-    const texts = config.scrambleAnimation.texts;
-    if (prefersReducedMotion) {
-        typingElement.textContent = texts[0];
-        return;
-    }
-
-    let textIndex = 0;
-
-    function next() {
-        gsap.to(typingElement, {
-            duration: config.scrambleAnimation.duration,
-            scrambleText: {
-                text: texts[textIndex],
-                chars: '!<>-_\\/[]{}—=+*^?#________',
-                speed: 0.8,
-            },
-            onComplete: () => {
-                textIndex = (textIndex + 1) % texts.length;
-                setTimeout(next, config.scrambleAnimation.delayBetweenTexts);
-            },
-        });
-    }
-    setTimeout(next, config.scrambleAnimation.initialDelay);
 }
 
 function updateYearsExperience() {
