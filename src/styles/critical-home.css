@@ -225,12 +225,39 @@ a {
   margin-right: var(--space-12);
   color: var(--color-text);
   white-space: nowrap;
+  overflow: hidden;
+  width: clamp(9.75rem, 18vw, 11.75rem);
+  transition: width 0.4s var(--ease-standard);
 }
 
 .nav-brand-logo {
   display: block;
   width: clamp(9.75rem, 18vw, 11.75rem);
   height: auto;
+  flex: 0 0 auto;
+}
+
+.nav-brand-wordmark {
+  transition: opacity 0.35s ease, transform 0.4s var(--ease-standard);
+}
+
+/* Home: brand starts collapsed to the J monogram, expands past the hero name */
+body[data-page="home"] .nav-brand {
+  width: clamp(2.7rem, 5vw, 3.3rem);
+}
+
+body[data-page="home"] .nav-brand-wordmark {
+  opacity: 0;
+  transform: translateX(-6px);
+}
+
+body[data-page="home"] .navbar.brand-expanded .nav-brand {
+  width: clamp(9.75rem, 18vw, 11.75rem);
+}
+
+body[data-page="home"] .navbar.brand-expanded .nav-brand-wordmark {
+  opacity: 1;
+  transform: none;
 }
 
 .nav-actions {

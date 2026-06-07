@@ -1,4 +1,6 @@
 ---
+import BrandLogo from './BrandLogo.astro';
+
 const { current = 'home' } = Astro.props;
 const prefix = current === 'home' ? '' : '/';
 
@@ -20,7 +22,7 @@ const currentLabel = links.find((link) => link.id === current)?.label ?? 'Home';
 <nav class="navbar" id="navbar">
   <div class="nav-container">
     <a href={current === 'home' ? '#hero' : '/'} class="nav-brand" aria-label="Jerry James home">
-      <img src="/brand/jj-signal-logo.svg" alt="" class="nav-brand-logo" width="260" height="64" />
+      <BrandLogo />
     </a>
     <div class="nav-actions">
       <button

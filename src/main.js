@@ -151,6 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeTestimonialPauseControl();
     enhanceGanttRows();
     initializeScrollAnimations();
+    initializeBrandCollapse();
     initializePortfolioFilters();
     initializeContactForm();
     initializeContactInfo();
@@ -414,6 +415,21 @@ function initializeScrollAnimations() {
             once: true,
             onEnter: () => section.classList.add('visible'),
         });
+    });
+}
+
+// Collapse the brand to the J monogram while the hero name is visible;
+// expand to the full logo once the name scrolls under the navbar.
+function initializeBrandCollapse() {
+    const navbar = document.getElementById('navbar');
+    const heroName = document.querySelector('.hero-name');
+    if (!navbar || !heroName) return;
+
+    ScrollTrigger.create({
+        trigger: heroName,
+        start: () => `bottom top+=${navbar.offsetHeight}`,
+        onEnter: () => navbar.classList.add('brand-expanded'),
+        onLeaveBack: () => navbar.classList.remove('brand-expanded'),
     });
 }
 
