@@ -25,13 +25,13 @@ const config = {
         mouseFollowSpeed: 0.03,
         velocityIntensity: 0.003,
         colors: {
-            target: { h: 192, s: 50, l: 42 }, // Muted cyan for motion accents
-            // The orb drifts subtly through desaturated cool tones (ambient depth, not neon).
+            target: { h: 243, s: 55, l: 52 }, // Muted indigo for motion accents
+            // The orb drifts subtly through desaturated indigo tones (ambient depth, not neon).
             colorStops: [
-                { h: 192, s: 42, l: 38 }, // Muted cyan
-                { h: 184, s: 38, l: 36 }, // Muted teal
-                { h: 205, s: 36, l: 36 }, // Muted blue
-                { h: 188, s: 40, l: 37 }, // Muted teal-cyan
+                { h: 245, s: 48, l: 46 }, // Muted indigo
+                { h: 238, s: 44, l: 44 }, // Muted blue-indigo
+                { h: 250, s: 42, l: 46 }, // Muted violet-indigo
+                { h: 243, s: 46, l: 45 }, // Muted indigo
             ],
             // How fast it transitions from one color to the next (lower is slower)
             transitionSpeed: 0.001

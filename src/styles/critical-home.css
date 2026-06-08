@@ -1,17 +1,23 @@
 /* Homepage first-paint CSS. Keep this small and limited to above-the-fold UI. */
 :root {
-  --color-background: rgba(252, 252, 249, 1);
-  --color-surface: rgba(255, 255, 253, 1);
-  --color-text: rgba(19, 52, 59, 1);
-  --color-text-secondary: rgba(98, 108, 113, 1);
-  --color-primary: rgba(33, 128, 141, 1);
-  --color-primary-hover: rgba(29, 116, 128, 1);
-  --color-primary-active: rgba(26, 104, 115, 1);
-  --color-border: rgba(94, 82, 64, 0.35);
-  --color-border-strong: rgba(19, 52, 59, 0.65);
-  --color-btn-primary-text: rgba(252, 252, 249, 1);
-  --color-focus-ring: rgba(33, 128, 141, 0.4);
-  --color-focus-visible: rgba(33, 128, 141, 1);
+  --color-background: #FAFAF9;
+  --color-surface: #FFFFFF;
+  --color-text: #1A1A2E;
+  --color-text-secondary: #555562;
+  --color-primary: #4338CA;
+  --color-primary-hover: #3730A3;
+  --color-primary-active: #312A8A;
+  --color-primary-rgb: 67, 56, 202;
+  --color-accent: #F59E0B;
+  --color-accent-hover: #D98906;
+  --color-accent-muted-bg: #FEF3E2;
+  --color-accent-on-muted: #92610A;
+  --color-accent-rgb: 245, 158, 11;
+  --color-border: #E5E5E3;
+  --color-border-strong: rgba(26, 26, 46, 0.45);
+  --color-btn-primary-text: #FFFFFF;
+  --color-focus-ring: rgba(var(--color-primary-rgb), 0.4);
+  --color-focus-visible: var(--color-primary);
   --font-family-base: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
@@ -56,14 +62,15 @@
   --viewport-inline-padding: clamp(var(--space-16), 5vw, var(--space-32));
   --focus-ring: 0 0 0 4px var(--color-focus-ring);
   --focus-outline: 3px solid var(--color-focus-visible);
-  --color-dark-primary: #13110e;
-  --color-dark-secondary: #1c1916;
-  --color-surface-raised: #262220;
-  --color-hairline: rgba(243, 241, 236, 0.1);
-  --color-hairline-strong: rgba(243, 241, 236, 0.2);
-  --color-electric-blue: #00d4ff;
-  --color-electric-blue-hover: #73e2f7;
-  --color-accent-teal: #14b8a6;
+  --color-dark-primary: #0F1117;
+  --color-dark-secondary: #1A1D29;
+  --color-surface-raised: #232633;
+  --color-hairline: rgba(229, 231, 238, 0.08);
+  --color-hairline-strong: rgba(229, 231, 238, 0.16);
+  /* Legacy accent names now alias the indigo primary so existing usages flip automatically */
+  --color-electric-blue: var(--color-primary);
+  --color-electric-blue-hover: var(--color-primary-hover);
+  --color-accent-teal: var(--color-primary);
   --animation-speed: 0.3s;
   --animation-curve: cubic-bezier(0.4, 0, 0.2, 1);
   --beta-banner-expanded-height: 3.25rem;
@@ -75,25 +82,42 @@
   :root:not([data-color-scheme="light"]) {
     --color-background: var(--color-dark-primary);
     --color-surface: var(--color-dark-secondary);
-    --color-primary: var(--color-electric-blue);
-    --color-primary-hover: var(--color-electric-blue-hover);
+    --color-text: rgba(232, 232, 234, 1);
+    --color-text-secondary: rgba(154, 154, 165, 1);
+    --color-primary: #6366F1;
+    --color-primary-hover: #818CF8;
+    --color-primary-rgb: 99, 102, 241;
+    --color-accent: #FBBF24;
+    --color-accent-hover: #FBBF50;
+    --color-accent-muted-bg: #3A2A12;
+    --color-accent-on-muted: #FBBF50;
+    --color-accent-rgb: 251, 191, 36;
+    --color-border: var(--color-hairline);
+    --color-border-strong: var(--color-hairline-strong);
+    --color-btn-primary-text: #0F1117;
   }
 }
 
 [data-color-scheme="dark"] {
   --color-background: var(--color-dark-primary);
   --color-surface: var(--color-dark-secondary);
-  --color-primary: var(--color-electric-blue);
-  --color-primary-hover: var(--color-electric-blue-hover);
-  --color-text: rgba(243, 241, 236, 1);
-  --color-text-secondary: rgba(189, 184, 176, 0.92);
-  --color-text-muted: rgba(141, 135, 126, 0.9);
-  --color-primary-active: rgba(41, 150, 161, 1);
+  --color-primary: #6366F1;
+  --color-primary-hover: #818CF8;
+  --color-primary-active: #4F46E5;
+  --color-primary-rgb: 99, 102, 241;
+  --color-accent: #FBBF24;
+  --color-accent-hover: #FBBF50;
+  --color-accent-muted-bg: #3A2A12;
+  --color-accent-on-muted: #FBBF50;
+  --color-accent-rgb: 251, 191, 36;
+  --color-text: rgba(232, 232, 234, 1);
+  --color-text-secondary: rgba(154, 154, 165, 1);
+  --color-text-muted: rgba(122, 124, 134, 0.9);
   --color-border: var(--color-hairline);
   --color-border-strong: var(--color-hairline-strong);
-  --color-focus-ring: rgba(50, 184, 198, 0.4);
-  --color-focus-visible: rgba(115, 226, 247, 1);
-  --color-btn-primary-text: rgba(19, 52, 59, 1);
+  --color-focus-ring: rgba(var(--color-primary-rgb), 0.4);
+  --color-focus-visible: var(--color-primary-hover);
+  --color-btn-primary-text: #0F1117;
 }
 
 html,
@@ -306,7 +330,7 @@ body[data-page="home"] .navbar.brand-expanded .nav-brand-wordmark {
   width: var(--glow-width, 0);
   height: 2px;
   border-radius: var(--radius-full);
-  background: var(--color-electric-blue);
+  background: var(--color-accent);
   opacity: var(--glow-opacity, 0);
   transition: left 0.24s var(--ease-standard), width 0.24s var(--ease-standard), opacity 0.2s ease-out;
 }
@@ -329,7 +353,7 @@ body[data-page="home"] .navbar.brand-expanded .nav-brand-wordmark {
 }
 
 .nav-link.active {
-  color: var(--color-electric-blue);
+  color: var(--color-accent);
 }
 
 .hamburger {
@@ -487,11 +511,36 @@ body[data-page="home"] .navbar.brand-expanded .nav-brand-wordmark {
 
 .hero-name {
   margin-bottom: var(--space-16);
-  color: var(--color-text);
   font-size: clamp(2.65rem, 8vw, 6rem);
   font-weight: var(--font-weight-bold);
   line-height: 0.98;
-  animation: fadeInUp 1s ease-out 0.5s both;
+  /* Fluid fill: white -> soft amber meniscus rises slowly with indigo behind ->
+     gentle slosh (swirl) -> settles indigo->amber. */
+  color: transparent;
+  background-image: linear-gradient(105deg, var(--color-primary) 0%, var(--color-accent) 50%, #fff 62%, #fff 100%);
+  background-size: 200% 100%;
+  background-position: 100% 0;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: fadeInUp 1s ease-out 0.5s both, heroNameFill 6s linear 0.7s both;
+}
+
+@supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+  .hero-name {
+    color: var(--color-text);
+    -webkit-text-fill-color: currentColor;
+  }
+}
+
+@keyframes heroNameFill {
+  0%   { background-position: 100% 0; animation-timing-function: cubic-bezier(0.45, 0, 0.25, 1); }
+  58%  { background-position: 5% 0;   animation-timing-function: cubic-bezier(0.33, 0, 0.3, 1); }
+  72%  { background-position: 0% 0;   animation-timing-function: ease-in-out; }
+  82%  { background-position: 12% 0;  animation-timing-function: ease-in-out; }
+  91%  { background-position: 3% 0;   animation-timing-function: ease-out; }
+  100% { background-position: 0% 0; }
 }
 
 .hero-title {
@@ -632,7 +681,7 @@ body[data-page="home"] .navbar.brand-expanded .nav-brand-wordmark {
 .btn:focus-visible {
   outline: var(--focus-outline);
   outline-offset: 3px;
-  box-shadow: 0 0 0 5px rgba(0, 212, 255, 0.18);
+  box-shadow: 0 0 0 5px rgba(var(--color-primary-rgb), 0.18);
 }
 
 .btn--lg {
@@ -651,12 +700,12 @@ body[data-page="home"] .navbar.brand-expanded .nav-brand-wordmark {
 }
 
 .btn--primary {
-  background: linear-gradient(135deg, var(--color-accent-teal) 0%, #0e8c81 100%);
-  color: var(--color-dark-primary);
+  background: var(--color-primary);
+  color: var(--color-btn-primary-text);
 }
 
 .btn--outline {
-  border-color: var(--color-accent-teal);
+  border-color: var(--color-primary);
   background: transparent;
   color: var(--color-text);
 }
@@ -753,7 +802,7 @@ body.beta-banner-expanded {
   align-items: center;
   justify-content: center;
   height: var(--beta-banner-collapsed-height);
-  background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.18), transparent);
+  background: linear-gradient(90deg, transparent, rgba(var(--color-primary-rgb), 0.18), transparent);
   opacity: 0;
   transition: opacity 0.18s ease-out;
 }
@@ -763,7 +812,7 @@ body.beta-banner-expanded {
 }
 
 .beta-banner__strip-label {
-  color: rgba(115, 226, 247, 0.95);
+  color: var(--color-primary-hover);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
   line-height: 1;
@@ -795,8 +844,8 @@ body.beta-banner-expanded {
   padding: 0 var(--space-10);
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-full);
-  background: rgba(0, 212, 255, 0.08);
-  color: var(--color-electric-blue);
+  background: rgba(var(--color-primary-rgb), 0.08);
+  color: var(--color-primary-hover);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
   line-height: 1;
@@ -1028,6 +1077,10 @@ body.has-beta-banner .navbar {
   .neon-circle,
   .shape-assembler i {
     animation: none !important;
+  }
+
+  .hero-name {
+    background-position: 0 0;
   }
 
   .shape-assembler i,
