@@ -6,6 +6,12 @@ dist/
 # npm-managed; npm rewrites it on every install, so don't let Prettier touch it
 package-lock.json
 
+# Platform config/output. Vercel re-serializes vercel.json during its build
+# pipeline, so the on-disk copy fails `prettier --check` on the deploy runner
+# even though the committed file is canonical. Keep it out of the gate.
+vercel.json
+.vercel/
+
 # Out of scope: Markdown/MDX prose + embedded JSX/HTML (mangling risk)
 *.mdx
 *.md
