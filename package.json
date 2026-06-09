@@ -5,10 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "node scripts/run-astro.mjs dev",
-    "build": "node scripts/run-astro.mjs build",
+    "build": "prettier --check . && node scripts/run-astro.mjs build",
     "preview": "node scripts/run-astro.mjs preview",
     "check:static": "node scripts/run-astro.mjs build",
-    "check:seo": "node scripts/check-seo.mjs"
+    "check:seo": "node scripts/check-seo.mjs",
+    "format": "prettier --write .",
+    "check:format": "prettier --check .",
+    "prepare": "git config core.hooksPath .githooks"
   },
   "dependencies": {
     "@astrojs/mdx": "^5.0.6",
@@ -20,6 +23,8 @@
   },
   "devDependencies": {
     "browserslist": "^4.24.0",
-    "lightningcss": "^1.29.0"
+    "lightningcss": "^1.29.0",
+    "prettier": "3.8.3",
+    "prettier-plugin-astro": "0.14.1"
   }
 }

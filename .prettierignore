@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.astro/
+.vite/
+
+# npm-managed; npm rewrites it on every install, so don't let Prettier touch it
+package-lock.json
+
+# Out of scope: Markdown/MDX prose + embedded JSX/HTML (mangling risk)
+*.mdx
+*.md
+
+# Generated, whitespace-sensitive text output — review a --check diff before opting in
+src/pages/rss.xml.js
+src/pages/robots.txt.js
+src/pages/llms.txt.js
