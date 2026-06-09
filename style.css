@@ -2640,10 +2640,15 @@ section[id] {
   background: var(--color-accent);
   color: var(--color-btn-primary-text);
   transition:
+    background 0.3s var(--ease-standard),
     color 0.45s var(--ease-standard),
     border-color 0.45s var(--ease-standard),
     box-shadow 0.45s var(--ease-standard),
     transform 0.35s var(--ease-standard);
+}
+
+.btn.booking-cta-button:not(.is-close-state):hover {
+  background: var(--color-accent-hover);
 }
 
 .booking-cta-button::before {
