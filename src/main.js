@@ -53,6 +53,20 @@ const prefersReducedMotion = window.matchMedia(
 ).matches;
 let navLinks = [];
 let calendlyScriptPromise = null;
+// While a nav link is clicked we lock the active link to it so the scroll-spy
+// (updateActiveNavLink) doesn't fight the smooth-scroll and yank the underline
+// through every intermediate section. Released on scrollend, with a timeout
+// fallback for browsers without scrollend or clicks that don't trigger a scroll.
+let navLinkClickLock = false;
+let navLinkClickFallbackId = null;
+
+function releaseNavLinkClickLock() {
+  navLinkClickLock = false;
+  if (navLinkClickFallbackId) {
+    clearTimeout(navLinkClickFallbackId);
+    navLinkClickFallbackId = null;
+  }
+}
 
 function cssLengthToPx(value, fallbackRem) {
   const trimmedValue = value.trim();
@@ -125,6 +139,10 @@ function updateUIOnScroll(scrollY) {
 }
 
 window.addEventListener('scroll', handleScroll, { passive: true });
+// Once the click-driven smooth-scroll lands, hand control back to the scroll-spy.
+window.addEventListener('scrollend', releaseNavLinkClickLock, {
+  passive: true,
+});
 window.addEventListener('load', () => ScrollTrigger.refresh());
 
 // Recompute scroll-derived UI on resize. The active-nav-link underline is
@@ -316,6 +334,15 @@ function initializeNavigation() {
       updateCurrentSectionLabel(link);
       updateNavGlow();
 
+      // Lock the active link to this one until the smooth-scroll settles so the
+      // scroll-spy can't drag the underline through intermediate sections. The
+      // real release is the `scrollend` listener; this timeout is only a safety
+      // net for browsers without `scrollend`, so it must outlast any smooth
+      // scroll (a full-page jump measured ~1.5s) to avoid releasing mid-scroll.
+      navLinkClickLock = true;
+      if (navLinkClickFallbackId) clearTimeout(navLinkClickFallbackId);
+      navLinkClickFallbackId = window.setTimeout(releaseNavLinkClickLock, 3000);
+
       if (hamburger && navMenu) {
         closeNav();
       }
@@ -357,6 +384,9 @@ function updateCurrentSectionLabel(activeLink) {
 }
 
 function updateActiveNavLink() {
+  // While a click-driven smooth-scroll is in flight, the clicked link stays active.
+  if (navLinkClickLock) return;
+
   const scrollY = window.scrollY;
   let currentSectionId = '';
 
