@@ -447,31 +447,159 @@ body[data-page='home'] .navbar.brand-expanded .nav-brand-wordmark {
   background: var(--color-dark-primary);
 }
 
-.hero-background,
-.hero-blob-svg {
+.hero-background {
   position: absolute;
   top: 0;
   left: 0;
+  z-index: 1;
   width: 100%;
   height: 100%;
+  overflow: hidden;
   pointer-events: none;
 }
 
-.hero-background,
-.hero-blob-svg {
-  z-index: 1;
+/* Vignette keeps the edges calm and focuses attention on the portrait */
+.hero-background::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at 50% 40%,
+    rgba(15, 17, 23, 0) 45%,
+    rgba(15, 17, 23, 0.6) 100%
+  );
 }
 
-#hero-blob-glow-path {
-  filter: blur(80px);
+/* Aurora: soft, heavily blurred blue light blooms */
+.hero-aurora {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  filter: blur(60px);
+}
+
+.hero-aurora__bloom {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
   opacity: 0.5;
-  transform: scale(0.9);
-  transform-origin: center center;
-  will-change: transform, filter;
+  mix-blend-mode: screen;
+  will-change: transform;
 }
 
-#hero-blob-path {
-  fill: rgba(43, 43, 43, 0.28);
+.hero-aurora__bloom--1 {
+  top: 6%;
+  left: 30%;
+  width: 46vw;
+  height: 46vw;
+  background: radial-gradient(
+    circle,
+    rgba(87, 185, 255, 0.7),
+    rgba(87, 185, 255, 0) 65%
+  );
+  animation: heroAuroraDrift1 22s ease-in-out infinite alternate;
+}
+
+.hero-aurora__bloom--2 {
+  top: 26%;
+  left: 50%;
+  width: 40vw;
+  height: 40vw;
+  background: radial-gradient(
+    circle,
+    rgba(144, 213, 255, 0.5),
+    rgba(144, 213, 255, 0) 65%
+  );
+  animation: heroAuroraDrift2 28s ease-in-out infinite alternate;
+}
+
+.hero-aurora__bloom--3 {
+  top: 18%;
+  left: 8%;
+  width: 34vw;
+  height: 34vw;
+  background: radial-gradient(
+    circle,
+    rgba(81, 120, 145, 0.65),
+    rgba(81, 120, 145, 0) 65%
+  );
+  animation: heroAuroraDrift3 26s ease-in-out infinite alternate;
+}
+
+/* Signal pulse: a "heartbeat" — two radar rings a beat apart emanating from
+   the portrait, then a rest. Shares the signalHeartbeat keyframe + 1.8s
+   cadence with the "Available Worldwide" subtitle dot so the two stay in
+   sync. */
+.hero-rings {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.hero-rings__pulse {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  border: 1px solid rgba(87, 185, 255, 0.45);
+  border-radius: 50%;
+  opacity: 0;
+  animation: signalHeartbeat 4.32s ease-out infinite;
+}
+
+.hero-rings__pulse--2 {
+  animation-delay: 0.54s;
+}
+
+@keyframes heroAuroraDrift1 {
+  from {
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    transform: translate(6%, 8%) scale(1.12);
+  }
+}
+
+@keyframes heroAuroraDrift2 {
+  from {
+    transform: translate(0, 0) scale(1.05);
+  }
+  to {
+    transform: translate(-7%, -4%) scale(0.95);
+  }
+}
+
+@keyframes heroAuroraDrift3 {
+  from {
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    transform: translate(5%, -6%) scale(1.1);
+  }
+}
+
+@keyframes signalHeartbeat {
+  0% {
+    opacity: 0.7;
+    transform: scale(0.65);
+  }
+  30% {
+    opacity: 0;
+    transform: scale(1.75);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.75);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-aurora__bloom {
+    animation: none;
+  }
+  .hero-rings__pulse {
+    display: none;
+  }
 }
 
 .hero-content {
@@ -702,6 +830,22 @@ body[data-page='home'] .navbar.brand-expanded .nav-brand-wordmark {
   width: 0.45rem;
   height: 0.45rem;
   box-shadow: 0 0 10px rgba(34, 197, 94, 0.75);
+}
+
+/* Heartbeat: two rings a beat apart, matched to the hero signal pulse. */
+.subtitle-location-dot::before,
+.subtitle-location-dot::after {
+  content: '';
+  position: absolute;
+  inset: -0.375rem;
+  border: 1px solid rgba(34, 197, 94, 0.45);
+  border-radius: inherit;
+  opacity: 0;
+  animation: signalHeartbeat 4.32s ease-out infinite;
+}
+
+.subtitle-location-dot::before {
+  animation-delay: 0.54s;
 }
 
 .hero-buttons {
@@ -1190,6 +1334,7 @@ body.has-beta-banner .navbar {
     box-shadow: none;
   }
 
+  .availability-dot::before,
   .availability-dot::after {
     animation: none !important;
     opacity: 0;

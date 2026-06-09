@@ -60,29 +60,19 @@ siteContent.testimonials.forEach((testimonial, index) => {
 <main id="main-content">
   <!-- Hero Section -->
   <section id="hero" class="hero">
-    <div class="hero-background"></div>
-    <svg
-      id="hero-blob-svg"
-      class="hero-blob-svg"
-      width="100%"
-      height="100%"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <defs>
-        <radialGradient id="vibrant-core-gradient">
-          <stop offset="0%" stop-color="#57B9FF" id="gradient-stop-1"></stop>
-          <stop offset="90%" stop-color="#1a1a2e"></stop>
-        </radialGradient>
-      </defs>
-      <g id="blob-group">
-        <path id="hero-blob-glow-path" fill="url(#vibrant-core-gradient)"
-        ></path>
-        <path id="hero-blob-path" fill="url(#vibrant-core-gradient)"></path>
-      </g>
-    </svg>
+    <div class="hero-background" aria-hidden="true">
+      <div class="hero-aurora">
+        <span class="hero-aurora__bloom hero-aurora__bloom--1"></span>
+        <span class="hero-aurora__bloom hero-aurora__bloom--2"></span>
+        <span class="hero-aurora__bloom hero-aurora__bloom--3"></span>
+      </div>
+    </div>
     <div class="hero-content">
       <div class="neon-frame-container">
+        <div class="hero-rings" aria-hidden="true">
+          <span class="hero-rings__pulse"></span>
+          <span class="hero-rings__pulse hero-rings__pulse--2"></span>
+        </div>
         <img
           src="/images/jerry-james-portrait.jpg"
           alt="Portrait of Jerry James"
