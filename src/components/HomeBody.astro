@@ -27,7 +27,6 @@ for (let y = firstDate.getFullYear(); y <= lastDate.getFullYear(); y++) {
   ganttYears.push(y);
 }
 
-// Function to get duration text
 function getGanttDurationText(startDate, endDate) {
   const totalMonths = Math.max(
     1,
@@ -71,18 +70,14 @@ siteContent.testimonials.forEach((testimonial, index) => {
       focusable="false"
     >
       <defs>
-        <!-- This gradient will be applied to both paths -->
         <radialGradient id="vibrant-core-gradient">
           <stop offset="0%" stop-color="#6366F1" id="gradient-stop-1"></stop>
           <stop offset="90%" stop-color="#1a1a2e"></stop>
         </radialGradient>
       </defs>
-      <!-- A group to move both paths together -->
       <g id="blob-group">
-        <!-- This path creates the soft, blurred glow effect -->
         <path id="hero-blob-glow-path" fill="url(#vibrant-core-gradient)"
         ></path>
-        <!-- This path is the sharp, main orb -->
         <path id="hero-blob-path" fill="url(#vibrant-core-gradient)"></path>
       </g>
     </svg>
@@ -99,7 +94,6 @@ siteContent.testimonials.forEach((testimonial, index) => {
           decoding="async"
         />
 
-        <!-- This SVG will draw the glowing circle -->
         <svg
           class="neon-circle-svg"
           viewBox="0 0 102 102"
@@ -108,7 +102,6 @@ siteContent.testimonials.forEach((testimonial, index) => {
           focusable="false"
         >
           <defs>
-            <!-- This filter creates the "glow" effect -->
             <filter id="neon-glow">
               <feGaussianBlur stdDeviation="1.5" result="coloredBlur"
               ></feGaussianBlur>
@@ -118,11 +111,9 @@ siteContent.testimonials.forEach((testimonial, index) => {
               </feMerge>
             </filter>
           </defs>
-          <!-- The circle that gets animated -->
           <circle class="neon-circle" cx="51" cy="51" r="49"></circle>
         </svg>
       </div>
-      <!-- The Text Content -->
       <div class="hero-text">
         <h1 class="hero-name">{profile.name}</h1>
         <div class="hero-title">
@@ -384,7 +375,6 @@ siteContent.testimonials.forEach((testimonial, index) => {
         <span class="section-kicker">04 / Testimonials</span>
         <h2 class="section-title">I Didn't Even Have to Bribe Them</h2>
       </div>
-      <!-- This container will hold our scrolling columns -->
       <div class="testimonials-controls">
         <button
           type="button"

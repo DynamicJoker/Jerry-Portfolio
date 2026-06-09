@@ -732,10 +732,6 @@ select.form-control {
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.32);
 }
 
-/* Glass "gleam" sweep removed — read as a generated effect. */
-
-/* Title-tracking radial glow removed — flat navbar. */
-
 .nav-container {
   max-width: 75rem;
   margin: 0 auto;

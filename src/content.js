@@ -259,7 +259,6 @@ export const siteContent = {
       category: 'Tools & Platforms',
       type: 'pane', // Using 'pane' to identify this new layout
       tags: [
-        // Now a single array of tags
         'HubSpot',
         'Salesforce',
         'Google Analytics',

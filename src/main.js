@@ -41,7 +41,6 @@ const config = {
     scrollThreshold: 10, // Scroll threshold to change navbar style
   },
   scroll: {
-    // New property
     spyOffset: 0, // For determining the active navigation link
   },
   testimonials: {
@@ -106,7 +105,6 @@ function getBreakpointPx(key) {
 let lastKnownScrollPosition = 0;
 let ticking = false;
 
-// 1. Function to read scroll position and call update functions
 function handleScroll() {
   lastKnownScrollPosition = window.pageYOffset;
 
@@ -125,12 +123,12 @@ function handleScroll() {
   }
 }
 
-// 2. All visual updates triggered by scroll happen here
+// All visual updates triggered by scroll happen here
 function updateUIOnScroll(scrollY) {
   const navbar = document.getElementById('navbar');
   const heroBackground = document.querySelector('.hero-background');
 
-  // Logic from: initializeNavigation()
+  // Navbar scrolled state
   if (navbar) {
     navbar.classList.toggle(
       'scrolled',
@@ -138,17 +136,16 @@ function updateUIOnScroll(scrollY) {
     );
   }
 
-  // Logic from: the old throttled listener
+  // Active nav link + underline glow
   updateActiveNavLink();
   updateNavGlow();
 
-  // Logic from: initializeParallaxEffect()
+  // Hero parallax
   if (heroBackground) {
     heroBackground.style.transform = `translateY(${scrollY * -0.5}px)`;
   }
 }
 
-// 3. Adding single, efficient event listener
 window.addEventListener('scroll', handleScroll, { passive: true });
 window.addEventListener('load', () => ScrollTrigger.refresh());
 
@@ -203,7 +200,6 @@ function initializeContactInfo() {
     revealButton.setAttribute('aria-label', 'Reveal email address');
     revealButton.title = 'Reveal email address';
 
-    // Add an eye-off icon to suggest hidden visibility
     const iconHTML = config.contactUI.eyeOffSvg;
 
     // Use dummy characters that are heavily blurred to thwart OCR
@@ -216,7 +212,6 @@ function initializeContactInfo() {
     revealButton.innerHTML = iconHTML;
     revealButton.appendChild(textSpan);
 
-    // Interactive hover effect to hint at reveal
     revealButton.addEventListener('mouseenter', () => {
       textSpan.style.filter = 'blur(2px)';
       textSpan.style.opacity = '1';
@@ -228,7 +223,6 @@ function initializeContactInfo() {
       revealButton.style.color = 'inherit';
     });
 
-    // Reveal the actual email on click
     revealButton.addEventListener('click', function revealEmail() {
       const emailAddress = `${siteContent.contactInfo.email.user}@${siteContent.contactInfo.email.domain}`;
 
@@ -238,7 +232,6 @@ function initializeContactInfo() {
       mailLink.style.color = 'inherit';
       mailLink.style.textDecoration = 'none';
 
-      // Add hover effect to the revealed link
       mailLink.addEventListener(
         'mouseenter',
         () => (mailLink.style.color = 'var(--color-electric-blue)'),
@@ -252,7 +245,6 @@ function initializeContactInfo() {
       emailEl.appendChild(mailLink);
       mailLink.focus();
 
-      // Smooth fade-in
       mailLink.style.opacity = '0';
       requestAnimationFrame(() => {
         mailLink.style.transition = 'opacity 0.4s ease, color 0.3s ease';
@@ -338,7 +330,6 @@ function initializeNavigation() {
   }
   navLinks.forEach((link) => {
     link.addEventListener('click', () => {
-      // Immediately update the active link on click
       navLinks.forEach((navLink) => {
         navLink.classList.remove('active');
         navLink.removeAttribute('aria-current');
@@ -348,18 +339,16 @@ function initializeNavigation() {
       updateCurrentSectionLabel(link);
       updateNavGlow();
 
-      // Close the mobile menu if it's open
       if (hamburger && navMenu) {
         closeNav();
       }
     });
   });
   if (navbar) {
-    // Set initial state on load
     navbar.classList.toggle(
       'scrolled',
       window.pageYOffset > config.navbar.scrollThreshold,
-    ); // Use config value
+    );
     updateActiveNavLink();
     updateNavGlow();
   }
@@ -397,7 +386,6 @@ function updateActiveNavLink() {
   // 1. Get all navigable sections
   const sections = Array.from(document.querySelectorAll('section[id]')).filter(
     (section) => {
-      // Check if there is a nav link pointing to this section ID
       return document.querySelector(`.nav-link[href="#${section.id}"]`);
     },
   );
@@ -458,7 +446,6 @@ function updateNavGlow() {
     navMenu.style.setProperty('--glow-width', `${activeRect.width}px`);
     navMenu.style.setProperty('--glow-opacity', '1');
   } else if (navMenu) {
-    // Hide the glow if no link is active
     navMenu.style.setProperty('--glow-opacity', '0');
   }
 }
@@ -489,7 +476,7 @@ function initializeBrandCollapse() {
   });
 }
 
-// --- REBUILT: initializeHeroVisuals for the new "Vibrant Core Orb" ---
+// Hero "Vibrant Core Orb" — animated, color-cycling background blob
 function initializeHeroVisuals() {
   const corePath = document.getElementById('hero-blob-path');
   const glowPath = document.getElementById('hero-blob-glow-path');
@@ -517,7 +504,6 @@ function initializeHeroVisuals() {
     };
   }
 
-  // Destructure properties from the config
   const {
     points,
     noiseFrequency,
@@ -562,7 +548,6 @@ function initializeHeroVisuals() {
   function animate() {
     if (!isHeroVisible) return;
 
-    // Increment both timers
     time += noiseSpeed;
     colorTime += colors.transitionSpeed;
 
@@ -688,7 +673,6 @@ function initializePortfolioFilters() {
   const filterContainer = document.querySelector('.portfolio-filters');
   const portfolioItems = document.querySelectorAll('.portfolio-item');
 
-  // Safety check in case the container doesn't exist
   if (!filterContainer) return;
 
   const filterButtons = filterContainer.querySelectorAll('.filter-btn');
@@ -699,24 +683,20 @@ function initializePortfolioFilters() {
     );
   });
 
-  // Add a single click listener to the parent container
   filterContainer.addEventListener('click', (event) => {
     // Find the button that was actually clicked, even if the user clicks an inner element
     const clickedButton = event.target.closest('.filter-btn');
 
-    // If the click was not on a button, do nothing
     if (!clickedButton) return;
 
     const filter = clickedButton.dataset.filter;
 
-    // Update the active state
     filterButtons.forEach((btn) => {
       const isActive = btn === clickedButton;
       btn.classList.toggle('active', isActive);
       btn.setAttribute('aria-pressed', String(isActive));
     });
 
-    // Apply the filter logic to each portfolio item
     portfolioItems.forEach((item) => {
       const isVisible = filter === 'all' || item.dataset.category === filter;
       item.classList.toggle('hidden', !isVisible);
@@ -1140,10 +1120,7 @@ function initializeExpandableHighlights() {
   };
 
   const handleInteraction = (event) => {
-    // Find the parent highlight-item that was clicked or activated by key
     const highlightItem = event.target.closest('.highlight-item');
-
-    // Exit if the interaction was not on a highlight item
     if (!highlightItem) return;
 
     // Ensure only Enter or Space keys trigger the action
@@ -1160,11 +1137,9 @@ function initializeExpandableHighlights() {
       setExpanded(currentlyExpanded, false);
     }
 
-    // Toggle the active state of the interacted item
     setExpanded(highlightItem, !highlightItem.classList.contains('expanded'));
   };
 
-  // Attach a single listener to the parent container for all clicks and key events
   container.addEventListener('click', handleInteraction);
   container.addEventListener('keydown', handleInteraction);
 
@@ -1175,7 +1150,6 @@ function initializeExpandableHighlights() {
       return;
     }
 
-    // If the click was outside, find and close any expanded item.
     const currentlyExpanded = container.querySelector('.expanded');
     if (currentlyExpanded) {
       setExpanded(currentlyExpanded, false);
