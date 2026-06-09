@@ -96,6 +96,17 @@ const breadcrumbJsonLd = {
   page="blog"
   structuredData={[articleJsonLd, breadcrumbJsonLd]}
 >
+  <Fragment slot="head">
+    <meta
+      property="article:published_time"
+      content={post.data.pubDate.toISOString()}
+    />
+    <meta
+      property="article:modified_time"
+      content={(post.data.updatedDate ?? post.data.pubDate).toISOString()}
+    />
+    {post.data.tags.map((tag) => <meta property="article:tag" content={tag} />)}
+  </Fragment>
   <SiteNav current="blog" />
   <main class="article-shell">
     <article class="article-layout">
