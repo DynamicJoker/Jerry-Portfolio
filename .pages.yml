@@ -13,7 +13,7 @@ content:
     label: Blog
     type: collection
     path: src/content/blog
-    filename: "{primary}.mdx"
+    filename: '{primary}.mdx'
     format: yaml-frontmatter
     view:
       primary: title

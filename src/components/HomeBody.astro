@@ -5,16 +5,21 @@ import Icon from './Icon.astro';
 const profile = siteContent.profile;
 
 // Prepare Gantt Chart calculation
-const jobs = siteContent.experience.map(job => {
-  const [startStr, endStr] = job.period.split(' - ');
-  const [startMonth, startYear] = startStr.split('/');
-  const startDate = new Date(`${startYear}-${startMonth}-01`);
-  let endDate = (endStr.toLowerCase() === 'present') ? new Date() : new Date(`${endStr.split('/')[1]}-${endStr.split('/')[0]}-01`);
-  return { ...job, startDate, endDate };
-}).sort((a, b) => a.sortOrder - b.sortOrder);
+const jobs = siteContent.experience
+  .map((job) => {
+    const [startStr, endStr] = job.period.split(' - ');
+    const [startMonth, startYear] = startStr.split('/');
+    const startDate = new Date(`${startYear}-${startMonth}-01`);
+    let endDate =
+      endStr.toLowerCase() === 'present'
+        ? new Date()
+        : new Date(`${endStr.split('/')[1]}-${endStr.split('/')[0]}-01`);
+    return { ...job, startDate, endDate };
+  })
+  .sort((a, b) => a.sortOrder - b.sortOrder);
 
-const firstDate = new Date(Math.min(...jobs.map(j => j.startDate)));
-const lastDate = new Date(Math.max(...jobs.map(j => j.endDate)));
+const firstDate = new Date(Math.min(...jobs.map((j) => j.startDate)));
+const lastDate = new Date(Math.max(...jobs.map((j) => j.endDate)));
 const totalDuration = lastDate.getTime() - firstDate.getTime();
 
 const ganttYears = [];
@@ -22,12 +27,12 @@ for (let y = firstDate.getFullYear(); y <= lastDate.getFullYear(); y++) {
   ganttYears.push(y);
 }
 
-// Function to get duration text
 function getGanttDurationText(startDate, endDate) {
   const totalMonths = Math.max(
     1,
     (endDate.getFullYear() - startDate.getFullYear()) * 12 +
-    endDate.getMonth() - startDate.getMonth()
+      endDate.getMonth() -
+      startDate.getMonth(),
   );
   const years = Math.floor(totalMonths / 12);
   const months = totalMonths % 12;
@@ -53,461 +58,705 @@ siteContent.testimonials.forEach((testimonial, index) => {
 ---
 
 <main id="main-content">
-<!-- Hero Section -->
-    <section id="hero" class="hero">
-        <div class="hero-background">
+  <!-- Hero Section -->
+  <section id="hero" class="hero">
+    <div class="hero-background"></div>
+    <svg
+      id="hero-blob-svg"
+      class="hero-blob-svg"
+      width="100%"
+      height="100%"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <defs>
+        <radialGradient id="vibrant-core-gradient">
+          <stop offset="0%" stop-color="#6366F1" id="gradient-stop-1"></stop>
+          <stop offset="90%" stop-color="#1a1a2e"></stop>
+        </radialGradient>
+      </defs>
+      <g id="blob-group">
+        <path id="hero-blob-glow-path" fill="url(#vibrant-core-gradient)"
+        ></path>
+        <path id="hero-blob-path" fill="url(#vibrant-core-gradient)"></path>
+      </g>
+    </svg>
+    <div class="hero-content">
+      <div class="neon-frame-container">
+        <img
+          src="/images/jerry-james-portrait.jpg"
+          alt="Portrait of Jerry James"
+          class="neon-frame-image"
+          width="300"
+          height="300"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+        />
 
-        </div>
-        <svg id="hero-blob-svg" class="hero-blob-svg" width="100%" height="100%" aria-hidden="true" focusable="false">
-            <defs>
-                <!-- This gradient will be applied to both paths -->
-                <radialGradient id="vibrant-core-gradient">
-                    <stop offset="0%" stop-color="#6366F1" id="gradient-stop-1" />
-                    <stop offset="90%" stop-color="#1a1a2e" />
-                </radialGradient>
-            </defs>
-            <!-- A group to move both paths together -->
-            <g id="blob-group">
-                <!-- This path creates the soft, blurred glow effect -->
-                <path id="hero-blob-glow-path" fill="url(#vibrant-core-gradient)"></path>
-                <!-- This path is the sharp, main orb -->
-                <path id="hero-blob-path" fill="url(#vibrant-core-gradient)"></path>
-            </g>
+        <svg
+          class="neon-circle-svg"
+          viewBox="0 0 102 102"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <defs>
+            <filter id="neon-glow">
+              <feGaussianBlur stdDeviation="1.5" result="coloredBlur"
+              ></feGaussianBlur>
+              <feMerge>
+                <feMergeNode in="coloredBlur"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+              </feMerge>
+            </filter>
+          </defs>
+          <circle class="neon-circle" cx="51" cy="51" r="49"></circle>
         </svg>
-        <div class="hero-content">
-            <div class="neon-frame-container">
-                <img src="/images/jerry-james-portrait.jpg"
-                    alt="Portrait of Jerry James" class="neon-frame-image" width="300" height="300" loading="eager" fetchpriority="high" decoding="async">
+      </div>
+      <div class="hero-text">
+        <h1 class="hero-name">{profile.name}</h1>
+        <div class="hero-title">
+          <span class="typing-text" id="typing-text">{profile.jobTitle}</span>
+        </div>
+        <div class="hero-stats">
+          {
+            profile.heroStats.map((stat) => (
+              <div class="hero-stat">
+                <span class="hero-stat-value">{stat.value}</span>
+                <span class="hero-stat-label">{stat.label}</span>
+              </div>
+            ))
+          }
+        </div>
+        <p class="hero-subtitle">
+          <span class="subtitle-experience">
+            <span id="years-experience"
+              >{new Date().getFullYear() - profile.experienceStartYear}</span
+            >+ Years Experience
+          </span>
+          <span class="shape-assembler" id="shape-assembler" aria-hidden="true">
+            <i></i><i></i><i></i>
+            <i></i><i></i><i></i>
+            <i></i><i></i><i></i>
+          </span>
+          <a
+            class="subtitle-location"
+            href="#schedule"
+            aria-label="Go to scheduling section"
+          >
+            <span>Available Worldwide</span>
+            <span
+              class="availability-dot subtitle-location-dot"
+              aria-hidden="true"></span>
+          </a>
+        </p>
+        <div class="hero-buttons">
+          <a href="#portfolio" class="btn btn--primary btn--lg"
+            >View Portfolio</a
+          >
+          <a href="#contact" class="btn btn--outline btn--lg">Contact Me</a>
+        </div>
+      </div>
+    </div>
+    <a
+      href="#about"
+      class="scroll-indicator"
+      aria-label="Scroll to next section"
+    >
+      <div class="scroll-arrow"></div>
+    </a>
+  </section>
 
-                <!-- This SVG will draw the glowing circle -->
-                <svg class="neon-circle-svg" viewBox="0 0 102 102" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-                    <defs>
-                        <!-- This filter creates the "glow" effect -->
-                        <filter id="neon-glow">
-                            <feGaussianBlur stdDeviation="1.5" result="coloredBlur"></feGaussianBlur>
-                            <feMerge>
-                                <feMergeNode in="coloredBlur"></feMergeNode>
-                                <feMergeNode in="SourceGraphic"></feMergeNode>
-                            </feMerge>
-                        </filter>
-                    </defs>
-                    <!-- The circle that gets animated -->
-                    <circle class="neon-circle" cx="51" cy="51" r="49"></circle>
-                </svg>
-            </div>
-            <!-- The Text Content -->
-            <div class="hero-text">
-                <h1 class="hero-name">{profile.name}</h1>
-                <div class="hero-title">
-                    <span class="typing-text" id="typing-text">{profile.jobTitle}</span>
+  <!-- About Section -->
+  <section id="about" class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-kicker">01 / About</span>
+        <h2 class="section-title">About Me</h2>
+      </div>
+      <div class="about-content">
+        <div class="about-text">
+          <p class="about-description">
+            Experienced technical marketing specialist who specializes in
+            strategic content marketing, demand generation, and coherent
+            technical communication for B2B and B2C clients. I bridge the gap
+            between complex technology and market demand – creating compelling
+            narratives that convert prospects into customers.
+          </p>
+          <div class="about-highlights">
+            <div class="highlight-item" tabindex="0">
+              <div class="highlight-header">
+                <div class="highlight-icon" aria-hidden="true">
+                  <Icon name="pen" />
                 </div>
-                <div class="hero-stats">
-                    {profile.heroStats.map(stat => (
-                        <div class="hero-stat">
-                            <span class="hero-stat-value">{stat.value}</span>
-                            <span class="hero-stat-label">{stat.label}</span>
-                        </div>
-                    ))}
-                </div>
-                <p class="hero-subtitle">
-                    <span class="subtitle-experience">
-                        <span id="years-experience">{new Date().getFullYear() - profile.experienceStartYear}</span>+ Years Experience
-                    </span>
-                    <span class="shape-assembler" id="shape-assembler" aria-hidden="true">
-                        <i></i><i></i><i></i>
-                        <i></i><i></i><i></i>
-                        <i></i><i></i><i></i>
-                    </span>
-                    <a class="subtitle-location" href="#schedule" aria-label="Go to scheduling section">
-                        <span>Available Worldwide</span>
-                        <span class="availability-dot subtitle-location-dot" aria-hidden="true"></span>
-                    </a>
+                <h3 class="highlight-title">Technical Content Creation</h3>
+              </div>
+              <div class="highlight-description">
+                <p>
+                  I create compelling white papers, case studies, and
+                  documentation that translate complex technical features into
+                  clear business value, driving lead generation and establishing
+                  thought leadership.
                 </p>
-                <div class="hero-buttons">
-                    <a href="#portfolio" class="btn btn--primary btn--lg">View Portfolio</a>
-                    <a href="#contact" class="btn btn--outline btn--lg">Contact Me</a>
+              </div>
+            </div>
+            <div class="highlight-item" tabindex="0">
+              <div class="highlight-header">
+                <div class="highlight-icon" aria-hidden="true">
+                  <Icon name="target" />
                 </div>
+                <h3 class="highlight-title">B2B & B2C Marketing Strategy</h3>
+              </div>
+              <div class="highlight-description">
+                <p>
+                  From account-based marketing (ABM) for enterprise clients to
+                  broad consumer campaigns, I develop and execute cohesive
+                  strategies that resonate with the target audience and achieve
+                  measurable goals.
+                </p>
+              </div>
             </div>
-        </div>
-        <a href="#about" class="scroll-indicator" aria-label="Scroll to next section">
-            <div class="scroll-arrow"></div>
-        </a>
-    </section>
-
-    <!-- About Section -->
-    <section id="about" class="section">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-kicker">01 / About</span>
-                <h2 class="section-title">About Me</h2>
-            </div>
-            <div class="about-content">
-                <div class="about-text">
-                    <p class="about-description">Experienced technical marketing specialist who specializes in strategic
-                        content marketing, demand generation, and coherent technical communication for B2B and B2C
-                        clients. I bridge the gap between complex technology and market demand – creating compelling
-                        narratives that convert prospects into customers.</p>
-                    <div class="about-highlights">
-                        <div class="highlight-item" tabindex="0">
-                            <div class="highlight-header">
-                                <div class="highlight-icon" aria-hidden="true"><Icon name="pen" /></div>
-                                <h3 class="highlight-title">Technical Content Creation</h3>
-                            </div>
-                            <div class="highlight-description">
-                                <p>I create compelling white papers, case studies, and documentation that translate
-                                    complex technical features into clear business value, driving lead generation and
-                                    establishing thought leadership.</p>
-                            </div>
-                        </div>
-                        <div class="highlight-item" tabindex="0">
-                            <div class="highlight-header">
-                                <div class="highlight-icon" aria-hidden="true"><Icon name="target" /></div>
-                                <h3 class="highlight-title">B2B & B2C Marketing Strategy</h3>
-                            </div>
-                            <div class="highlight-description">
-                                <p>From account-based marketing (ABM) for enterprise clients to broad consumer
-                                    campaigns, I develop and execute cohesive strategies that resonate with the target
-                                    audience and achieve measurable goals.</p>
-                            </div>
-                        </div>
-                        <div class="highlight-item" tabindex="0">
-                            <div class="highlight-header">
-                                <div class="highlight-icon" aria-hidden="true"><Icon name="compass" /></div>
-                                <h3 class="highlight-title">Complex Product Positioning</h3>
-                            </div>
-                            <div class="highlight-description">
-                                <p>I specialize in taking multifaceted tech products and positioning them in crowded
-                                    markets. I build the narrative that highlights unique strengths and solves
-                                    real-world customer problems.</p>
-                            </div>
-                        </div>
-                        <div class="highlight-item" tabindex="0">
-                            <div class="highlight-header">
-                                <div class="highlight-icon" aria-hidden="true"><Icon name="bar-chart" /></div>
-                                <h3 class="highlight-title">Data-Driven Results</h3>
-                            </div>
-                            <div class="highlight-description">
-                                <p>Every decision is backed by data. I leverage analytics from Google, HubSpot, and
-                                    other platforms to track KPIs, optimize campaign performance, and demonstrate clear
-                                    marketing ROI.</p>
-                            </div>
-                        </div>
-                    </div>
+            <div class="highlight-item" tabindex="0">
+              <div class="highlight-header">
+                <div class="highlight-icon" aria-hidden="true">
+                  <Icon name="compass" />
                 </div>
+                <h3 class="highlight-title">Complex Product Positioning</h3>
+              </div>
+              <div class="highlight-description">
+                <p>
+                  I specialize in taking multifaceted tech products and
+                  positioning them in crowded markets. I build the narrative
+                  that highlights unique strengths and solves real-world
+                  customer problems.
+                </p>
+              </div>
             </div>
-        </div>
-    </section>
-
-    <!-- Logo Bar Section -->
-    <section id="logos" class="logo-bar-section">
-        <div class="logo-bar-wrapper">
-            <div class="logo-bar">
-                <div class="logo-bar-label">
-                    Experience With
+            <div class="highlight-item" tabindex="0">
+              <div class="highlight-header">
+                <div class="highlight-icon" aria-hidden="true">
+                  <Icon name="bar-chart" />
                 </div>
-                <div class="logo-set-container">
-                    <div class="logo-item"><img src="logos/microsoft.svg" alt="Microsoft logo" class="logo-img"
-                            loading="lazy" decoding="async" width="150" height="40" /></div>
-                    <div class="logo-item"><img src="logos/cgdirector.svg" alt="CGDirector logo" class="logo-img"
-                            loading="lazy" decoding="async" width="150" height="40" /></div>
-                    <div class="logo-item"><img src="logos/msi.svg" alt="MSI logo" class="logo-img" loading="lazy"
-                            decoding="async" width="150" height="40" /></div>
-                    <div class="logo-item"><img src="logos/licensespring.svg" alt="LicenseSpring logo" class="logo-img"
-                            loading="lazy" decoding="async" width="150" height="40" /></div>
-                </div>
+                <h3 class="highlight-title">Data-Driven Results</h3>
+              </div>
+              <div class="highlight-description">
+                <p>
+                  Every decision is backed by data. I leverage analytics from
+                  Google, HubSpot, and other platforms to track KPIs, optimize
+                  campaign performance, and demonstrate clear marketing ROI.
+                </p>
+              </div>
             </div>
+          </div>
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 
-    <!-- Skills Section -->
-    <section id="skills" class="section">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-kicker">02 / Expertise</span>
-                <h2 class="section-title">Skills & Expertise</h2>
-            </div>
-            <div class="skills-grid" id="skills-grid">
-                {siteContent.skills.map(category => (
-                    <div class="skill-category">
-                        <h3 class="skill-category-title">{category.category}</h3>
-                        {category.type === 'pane' ? (
-                            <div class="skill-pane-container">
-                                <div class="skill-tags">
-                                    {category.tags.map(tagText => (
-                                        <span class="skill-tag">{tagText}</span>
-                                    ))}
-                                </div>
-                            </div>
-                        ) : (
-                            <div class="skill-tags">
-                                <div>
-                                    {category.tags.map(tagText => (
-                                        <span class="skill-tag">{tagText}</span>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                ))}
-            </div>
+  <!-- Logo Bar Section -->
+  <section id="logos" class="logo-bar-section">
+    <div class="logo-bar-wrapper">
+      <div class="logo-bar">
+        <div class="logo-bar-label">Experience With</div>
+        <div class="logo-set-container">
+          <div class="logo-item">
+            <img
+              src="logos/microsoft.svg"
+              alt="Microsoft logo"
+              class="logo-img"
+              loading="lazy"
+              decoding="async"
+              width="150"
+              height="40"
+            />
+          </div>
+          <div class="logo-item">
+            <img
+              src="logos/cgdirector.svg"
+              alt="CGDirector logo"
+              class="logo-img"
+              loading="lazy"
+              decoding="async"
+              width="150"
+              height="40"
+            />
+          </div>
+          <div class="logo-item">
+            <img
+              src="logos/msi.svg"
+              alt="MSI logo"
+              class="logo-img"
+              loading="lazy"
+              decoding="async"
+              width="150"
+              height="40"
+            />
+          </div>
+          <div class="logo-item">
+            <img
+              src="logos/licensespring.svg"
+              alt="LicenseSpring logo"
+              class="logo-img"
+              loading="lazy"
+              decoding="async"
+              width="150"
+              height="40"
+            />
+          </div>
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 
-    <!-- Services Section -->
-    <section id="services" class="section">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-kicker">03 / Services</span>
-                <h2 class="section-title">You Build It. I'll Bring the Party</h2>
-            </div>
-            <div class="services-grid" id="services-grid">
-                {siteContent.services.map(service => (
-                    <div class="service-card">
-                        <div class="service-icon" aria-hidden="true"><Icon name={service.icon} /></div>
-                        <h3 class="service-title">{service.title}</h3>
-                        <p class="service-description">{service.description}</p>
-                    </div>
-                ))}
-            </div>
-        </div>
-    </section>
-
-    <!-- Testimonials Section -->
-    <section id="testimonials" class="section">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-kicker">04 / Testimonials</span>
-                <h2 class="section-title">I Didn't Even Have to Bribe Them</h2>
-            </div>
-            <!-- This container will hold our scrolling columns -->
-            <div class="testimonials-controls">
-                <button type="button" class="btn btn--outline testimonial-pause-button" aria-pressed="false" aria-controls="testimonials-container" data-testimonials-pause>
-                    <span class="pause-label--pause">Pause testimonials</span>
-                    <span class="pause-label--resume">Resume testimonials</span>
-                </button>
-            </div>
-            <div id="testimonials-container" class="testimonials-scroller">
-                {testimonialColumns.map(column => (
-                    <div class="testimonials-scroller-column">
-                        <div class="testimonials-scroller-inner">
-                            {column.map(testimonial => (
-                                <div class="testimonial-card">
-                                    <div class="testimonial-header">
-                                        <span class="testimonial-avatar" aria-hidden="true">{testimonial.name.split(' ').map(part => part[0]).slice(0, 2).join('')}</span>
-                                        <div class="testimonial-author-info">
-                                            <p class="testimonial-author">{testimonial.name}</p>
-                                            <p class="testimonial-title">{testimonial.title}, {testimonial.company}</p>
-                                        </div>
-                                    </div>
-                                    <p class="testimonial-quote">&ldquo;{testimonial.quote}&rdquo;</p>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                ))}
-            </div>
-        </div>
-    </section>
-
-    <!-- Portfolio Section -->
-    <section id="portfolio" class="section">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-kicker">05 / Selected Work</span>
-                <h2 class="section-title">Spoiler Alert: It Went Well</h2>
-            </div>
-            <div class="portfolio-filters" role="group" aria-label="Filter portfolio projects">
-                <button type="button" class="filter-btn active" data-filter="all" aria-pressed="true">All</button>
-                <button type="button" class="filter-btn" data-filter="b2b" aria-pressed="false">B2B</button>
-                <button type="button" class="filter-btn" data-filter="b2c" aria-pressed="false">B2C</button>
-                <button type="button" class="filter-btn" data-filter="content" aria-pressed="false">Content</button>
-            </div>
-            <div class="portfolio-grid" id="portfolio-grid">
-                {siteContent.portfolio.map(item => (
-                    <div class="portfolio-item" data-category={item.category}>
-                        <div class="portfolio-card card-base">
-                            <div class="portfolio-header">
-                                <h3 class="portfolio-title">{item.title}</h3>
-                                <span class="portfolio-category">{item.category.toUpperCase()}</span>
-                            </div>
-                            <p class="portfolio-description">{item.description}</p>
-                            <div class="portfolio-results">
-                                {item.results.map(resultText => (
-                                    <div class="result-item">{resultText}</div>
-                                ))}
-                            </div>
-                            <div class="portfolio-tags">
-                                {item.tags.map(tagText => (
-                                    <span class="tag">{tagText}</span>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                ))}
-            </div>
-        </div>
-    </section>
-
-    <!-- Experience Section -->
-    <section id="experience" class="section">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-kicker">06 / Experience</span>
-                <h2 class="section-title">Experience</h2>
-                  <div id="gantt-chart-container">
-                <div class="gantt-timeline">
-                    {ganttYears.map(year => (
-                        <span>{year}</span>
+  <!-- Skills Section -->
+  <section id="skills" class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-kicker">02 / Expertise</span>
+        <h2 class="section-title">Skills & Expertise</h2>
+      </div>
+      <div class="skills-grid" id="skills-grid">
+        {
+          siteContent.skills.map((category) => (
+            <div class="skill-category">
+              <h3 class="skill-category-title">{category.category}</h3>
+              {category.type === 'pane' ? (
+                <div class="skill-pane-container">
+                  <div class="skill-tags">
+                    {category.tags.map((tagText) => (
+                      <span class="skill-tag">{tagText}</span>
                     ))}
+                  </div>
                 </div>
-                {jobs.map((job, index) => {
-                    const offset = (job.startDate.getTime() - firstDate.getTime()) / totalDuration * 100;
-                    const width = (job.endDate.getTime() - job.startDate.getTime()) / totalDuration * 100;
-                    const durationText = getGanttDurationText(job.startDate, job.endDate);
-                    const delay = index * 100; // Animation delay increment (100ms)
-                    const isPresent = job.period.toLowerCase().includes('present');
-
-                    return (
-                        <div class="gantt-row">
-                            <div class="gantt-label">
-                                <h3>{job.title}</h3>
-                                <p>{job.company}</p>
-                                <div class="gantt-meta">
-                                    <span class="gantt-period">{job.period}</span>
-                                    <span class="gantt-duration">{durationText}</span>
-                                </div>
-                            </div>
-                            <div class="gantt-bar-area" tabindex="0" role="button" aria-expanded="false" aria-label={`Show details for ${job.title} at ${job.company}`}>
-                                <div class={`gantt-bar ${isPresent ? 'present' : ''}`} style={`margin-left:${offset.toFixed(2)}%;width:${width.toFixed(2)}%;--anim-delay:${delay}ms`}></div>
-                                <div class="gantt-tooltip">
-                                    <div class="tooltip-period">{job.period}</div>
-                                    <ul class="tooltip-achievements">
-                                        {job.achievements.map(a => (
-                                            <li>
-                                                <span class="achievement-icon" aria-hidden="true"><Icon name={a.icon} /></span>
-                                                <span set:html={a.text}></span>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    );
-                })}
+              ) : (
+                <div class="skill-tags">
+                  <div>
+                    {category.tags.map((tagText) => (
+                      <span class="skill-tag">{tagText}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section id="services" class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-kicker">03 / Services</span>
+        <h2 class="section-title">You Build It. I'll Bring the Party</h2>
+      </div>
+      <div class="services-grid" id="services-grid">
+        {
+          siteContent.services.map((service) => (
+            <div class="service-card">
+              <div class="service-icon" aria-hidden="true">
+                <Icon name={service.icon} />
+              </div>
+              <h3 class="service-title">{service.title}</h3>
+              <p class="service-description">{service.description}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section id="testimonials" class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-kicker">04 / Testimonials</span>
+        <h2 class="section-title">I Didn't Even Have to Bribe Them</h2>
+      </div>
+      <div class="testimonials-controls">
+        <button
+          type="button"
+          class="btn btn--outline testimonial-pause-button"
+          aria-pressed="false"
+          aria-controls="testimonials-container"
+          data-testimonials-pause
+        >
+          <span class="pause-label--pause">Pause testimonials</span>
+          <span class="pause-label--resume">Resume testimonials</span>
+        </button>
+      </div>
+      <div id="testimonials-container" class="testimonials-scroller">
+        {
+          testimonialColumns.map((column) => (
+            <div class="testimonials-scroller-column">
+              <div class="testimonials-scroller-inner">
+                {column.map((testimonial) => (
+                  <div class="testimonial-card">
+                    <div class="testimonial-header">
+                      <span class="testimonial-avatar" aria-hidden="true">
+                        {testimonial.name
+                          .split(' ')
+                          .map((part) => part[0])
+                          .slice(0, 2)
+                          .join('')}
+                      </span>
+                      <div class="testimonial-author-info">
+                        <p class="testimonial-author">{testimonial.name}</p>
+                        <p class="testimonial-title">
+                          {testimonial.title}, {testimonial.company}
+                        </p>
+                      </div>
+                    </div>
+                    <p class="testimonial-quote">
+                      &ldquo;{testimonial.quote}&rdquo;
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Portfolio Section -->
+  <section id="portfolio" class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-kicker">05 / Selected Work</span>
+        <h2 class="section-title">Spoiler Alert: It Went Well</h2>
+      </div>
+      <div
+        class="portfolio-filters"
+        role="group"
+        aria-label="Filter portfolio projects"
+      >
+        <button
+          type="button"
+          class="filter-btn active"
+          data-filter="all"
+          aria-pressed="true">All</button
+        >
+        <button
+          type="button"
+          class="filter-btn"
+          data-filter="b2b"
+          aria-pressed="false">B2B</button
+        >
+        <button
+          type="button"
+          class="filter-btn"
+          data-filter="b2c"
+          aria-pressed="false">B2C</button
+        >
+        <button
+          type="button"
+          class="filter-btn"
+          data-filter="content"
+          aria-pressed="false">Content</button
+        >
+      </div>
+      <div class="portfolio-grid" id="portfolio-grid">
+        {
+          siteContent.portfolio.map((item) => (
+            <div class="portfolio-item" data-category={item.category}>
+              <div class="portfolio-card card-base">
+                <div class="portfolio-header">
+                  <h3 class="portfolio-title">{item.title}</h3>
+                  <span class="portfolio-category">
+                    {item.category.toUpperCase()}
+                  </span>
+                </div>
+                <p class="portfolio-description">{item.description}</p>
+                <div class="portfolio-results">
+                  {item.results.map((resultText) => (
+                    <div class="result-item">{resultText}</div>
+                  ))}
+                </div>
+                <div class="portfolio-tags">
+                  {item.tags.map((tagText) => (
+                    <span class="tag">{tagText}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Experience Section -->
+  <section id="experience" class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-kicker">06 / Experience</span>
+        <h2 class="section-title">Experience</h2>
+        <div id="gantt-chart-container">
+          <div class="gantt-timeline">
+            {ganttYears.map((year) => <span>{year}</span>)}
+          </div>
+          {
+            jobs.map((job, index) => {
+              const offset =
+                ((job.startDate.getTime() - firstDate.getTime()) /
+                  totalDuration) *
+                100;
+              const width =
+                ((job.endDate.getTime() - job.startDate.getTime()) /
+                  totalDuration) *
+                100;
+              const durationText = getGanttDurationText(
+                job.startDate,
+                job.endDate,
+              );
+              const delay = index * 100; // Animation delay increment (100ms)
+              const isPresent = job.period.toLowerCase().includes('present');
+
+              return (
+                <div class="gantt-row">
+                  <div class="gantt-label">
+                    <h3>{job.title}</h3>
+                    <p>{job.company}</p>
+                    <div class="gantt-meta">
+                      <span class="gantt-period">{job.period}</span>
+                      <span class="gantt-duration">{durationText}</span>
+                    </div>
+                  </div>
+                  <div
+                    class="gantt-bar-area"
+                    tabindex="0"
+                    role="button"
+                    aria-expanded="false"
+                    aria-label={`Show details for ${job.title} at ${job.company}`}
+                  >
+                    <div
+                      class={`gantt-bar ${isPresent ? 'present' : ''}`}
+                      style={`margin-left:${offset.toFixed(2)}%;width:${width.toFixed(2)}%;--anim-delay:${delay}ms`}
+                    />
+                    <div class="gantt-tooltip">
+                      <div class="tooltip-period">{job.period}</div>
+                      <ul class="tooltip-achievements">
+                        {job.achievements.map((a) => (
+                          <li>
+                            <span class="achievement-icon" aria-hidden="true">
+                              <Icon name={a.icon} />
+                            </span>
+                            <span set:html={a.text} />
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          }
         </div>
-    </section>
+      </div>
+    </div>
 
     <slot name="blog-section" />
 
     <!-- Contact Section -->
     <section id="contact" class="section">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-kicker">08 / Contact</span>
-                <h2 class="section-title">Let's Work Together</h2>
-            </div>
-            <!-- Booking CTA Block -->
-            <div class="booking-cta" id="schedule" data-calendly-booking>
-                <div class="booking-cta-bar">
-                    <div class="booking-cta-message">
-                        <span class="availability-dot booking-cta-dot" aria-hidden="true"></span>
-                        <span>{profile.bookingCta.text}</span>
-                    </div>
-                    <a class="btn btn--primary booking-cta-button" href={profile.bookingCta.url} target="_blank" rel="noopener" data-calendly-open aria-expanded="false" aria-controls="calendly-booking-panel" aria-label={profile.bookingCta.buttonLabel}>
-                        <span class="booking-cta-labels" aria-hidden="true">
-                            <span class="booking-cta-label booking-cta-label--open">{profile.bookingCta.buttonLabel}</span>
-                            <span class="booking-cta-label booking-cta-label--close">{profile.bookingCta.closeLabel}</span>
-                        </span>
-                    </a>
-                </div>
-                <div class="calendly-panel" id="calendly-booking-panel" hidden>
-                    <div class="calendly-panel-inner">
-                        <div class="calendly-panel-header">
-                            <div>
-                                <h3 class="calendly-panel-title">{profile.bookingCta.expandedTitle}</h3>
-                                <p class="calendly-panel-helper">{profile.bookingCta.helperText}</p>
-                            </div>
-                        </div>
-                        <div class="calendly-booked-message" data-calendly-booked hidden>{profile.bookingCta.bookedText}</div>
-                        <div class="calendly-loading" data-calendly-loading>{profile.bookingCta.loadingText}</div>
-                        <div class="calendly-inline-host" data-calendly-container></div>
-                    </div>
-                </div>
-            </div>
-            <div class="contact-content">
-                <div class="contact-info">
-                    <h3>Get In Touch</h3>
-                    <p>Ready to elevate your technical marketing? Let's discuss how I can help drive growth for your B2B
-                        or B2C business.</p>
-                    <div class="contact-details">
-                        <div class="contact-item">
-                            <div class="contact-icon" aria-hidden="true">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"
-                                    fill="currentColor" aria-hidden="true" focusable="false">
-                                    <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
-                                </svg>
-                            </div>
-                            <div class="contact-text" id="contact-email"><span class="sr-only">Email: </span>jerry@placeholder.com</div>
-                        </div>
-
-                        <div class="contact-item">
-                            <div class="contact-icon" aria-hidden="true">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"
-                                    fill="currentColor" aria-hidden="true" focusable="false">
-                                    <path
-                                        d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.761 0 5-2.239 5-5v-14c0-2.761-2.239-5-5-5zm-11 19h-3v-10h3v10zm-1.5-11.268c-.966 0-1.75-.784-1.75-1.75s.784-1.75 1.75-1.75 1.75.784 1.75 1.75-.784 1.75-1.75 1.75zm13.5 11.268h-3v-5.604c0-1.337-.026-3.063-1.868-3.063-1.868 0-2.154 1.459-2.154 2.967v5.7h-3v-10h2.881v1.367h.041c.401-.761 1.379-1.563 2.838-1.563 3.036 0 3.599 2 3.599 4.594v5.602z" />
-                                </svg>
-                            </div>
-                            <div class="contact-text">
-                                <a href="https://linkedin.com/in/jerry-james-tech/" id="contact-linkedin" target="_blank" rel="noopener">Reach
-                                    out via LinkedIn</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="contact-form-container">
-                    <form class="contact-form" id="contact-form" action="https://api.web3forms.com/submit" method="POST">
-                        <input type="hidden" name="access_key" value="c813bf75-f553-4abb-9e16-b19a84e83537">
-                        <input type="hidden" name="subject" value="New Submission from Portfolio">
-                        <div class="form-group">
-                            <label for="name" class="form-label">Name</label>
-                            <input type="text" id="name" name="name" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" id="email" name="email" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="company" class="form-label">Company</label>
-                            <input type="text" id="company" name="company" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label for="message" class="form-label">Message</label>
-                            <textarea id="message" name="message" rows="5" class="form-control" required></textarea>
-                        </div>
-                        
-                        <!-- Frictionless Spam Protection -->
-                        <input type="checkbox" name="botcheck" class="hidden">
-                        
-                        <button type="submit" class="btn btn--primary btn--full-width">Send Message</button>
-                    </form>
-                </div>
-            </div>
+      <div class="container">
+        <div class="section-header">
+          <span class="section-kicker">08 / Contact</span>
+          <h2 class="section-title">Let's Work Together</h2>
         </div>
+        <!-- Booking CTA Block -->
+        <div class="booking-cta" id="schedule" data-calendly-booking>
+          <div class="booking-cta-bar">
+            <div class="booking-cta-message">
+              <span class="availability-dot booking-cta-dot" aria-hidden="true"
+              ></span>
+              <span>{profile.bookingCta.text}</span>
+            </div>
+            <a
+              class="btn btn--primary booking-cta-button"
+              href={profile.bookingCta.url}
+              target="_blank"
+              rel="noopener"
+              data-calendly-open
+              aria-expanded="false"
+              aria-controls="calendly-booking-panel"
+              aria-label={profile.bookingCta.buttonLabel}
+            >
+              <span class="booking-cta-labels" aria-hidden="true">
+                <span class="booking-cta-label booking-cta-label--open"
+                  >{profile.bookingCta.buttonLabel}</span
+                >
+                <span class="booking-cta-label booking-cta-label--close"
+                  >{profile.bookingCta.closeLabel}</span
+                >
+              </span>
+            </a>
+          </div>
+          <div class="calendly-panel" id="calendly-booking-panel" hidden>
+            <div class="calendly-panel-inner">
+              <div class="calendly-panel-header">
+                <div>
+                  <h3 class="calendly-panel-title">
+                    {profile.bookingCta.expandedTitle}
+                  </h3>
+                  <p class="calendly-panel-helper">
+                    {profile.bookingCta.helperText}
+                  </p>
+                </div>
+              </div>
+              <div class="calendly-booked-message" data-calendly-booked hidden>
+                {profile.bookingCta.bookedText}
+              </div>
+              <div class="calendly-loading" data-calendly-loading>
+                {profile.bookingCta.loadingText}
+              </div>
+              <div class="calendly-inline-host" data-calendly-container></div>
+            </div>
+          </div>
+        </div>
+        <div class="contact-content">
+          <div class="contact-info">
+            <h3>Get In Touch</h3>
+            <p>
+              Ready to elevate your technical marketing? Let's discuss how I can
+              help drive growth for your B2B or B2C business.
+            </p>
+            <div class="contact-details">
+              <div class="contact-item">
+                <div class="contact-icon" aria-hidden="true">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="1em"
+                    height="1em"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <path
+                      d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"
+                    ></path>
+                  </svg>
+                </div>
+                <div class="contact-text" id="contact-email">
+                  <span class="sr-only">Email: </span>jerry@placeholder.com
+                </div>
+              </div>
+
+              <div class="contact-item">
+                <div class="contact-icon" aria-hidden="true">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="1em"
+                    height="1em"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <path
+                      d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.761 0 5-2.239 5-5v-14c0-2.761-2.239-5-5-5zm-11 19h-3v-10h3v10zm-1.5-11.268c-.966 0-1.75-.784-1.75-1.75s.784-1.75 1.75-1.75 1.75.784 1.75 1.75-.784 1.75-1.75 1.75zm13.5 11.268h-3v-5.604c0-1.337-.026-3.063-1.868-3.063-1.868 0-2.154 1.459-2.154 2.967v5.7h-3v-10h2.881v1.367h.041c.401-.761 1.379-1.563 2.838-1.563 3.036 0 3.599 2 3.599 4.594v5.602z"
+                    ></path>
+                  </svg>
+                </div>
+                <div class="contact-text">
+                  <a
+                    href="https://linkedin.com/in/jerry-james-tech/"
+                    id="contact-linkedin"
+                    target="_blank"
+                    rel="noopener">Reach out via LinkedIn</a
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="contact-form-container">
+            <form
+              class="contact-form"
+              id="contact-form"
+              action="https://api.web3forms.com/submit"
+              method="POST"
+            >
+              <input
+                type="hidden"
+                name="access_key"
+                value="c813bf75-f553-4abb-9e16-b19a84e83537"
+              />
+              <input
+                type="hidden"
+                name="subject"
+                value="New Submission from Portfolio"
+              />
+              <div class="form-group">
+                <label for="name" class="form-label">Name</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  class="form-control"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="email" class="form-label">Email</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  class="form-control"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="company" class="form-label">Company</label>
+                <input
+                  type="text"
+                  id="company"
+                  name="company"
+                  class="form-control"
+                />
+              </div>
+              <div class="form-group">
+                <label for="message" class="form-label">Message</label>
+                <textarea
+                  id="message"
+                  name="message"
+                  rows="5"
+                  class="form-control"
+                  required></textarea>
+              </div>
+
+              <!-- Frictionless Spam Protection -->
+              <input type="checkbox" name="botcheck" class="hidden" />
+
+              <button type="submit" class="btn btn--primary btn--full-width"
+                >Send Message</button
+              >
+            </form>
+          </div>
+        </div>
+      </div>
     </section>
-</main>
+  </section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-text">
-                    <p>&copy; <span id="footer-year">{new Date().getFullYear()}</span> Jerry James. All rights reserved.</p>
-                </div>
-                <div class="footer-links">
-                    <a href="#hero" class="footer-link">Back to Top</a>
-                </div>
-            </div>
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-text">
+          <p>
+            &copy; <span id="footer-year">{new Date().getFullYear()}</span> Jerry
+            James. All rights reserved.
+          </p>
         </div>
-    </footer>
+        <div class="footer-links">
+          <a href="#hero" class="footer-link">Back to Top</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</main>

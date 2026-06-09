@@ -10,7 +10,7 @@ const formatDate = (date) =>
   new Intl.DateTimeFormat('en', {
     month: 'short',
     day: 'numeric',
-    year: 'numeric'
+    year: 'numeric',
   }).format(date);
 ---
 
@@ -34,10 +34,12 @@ const formatDate = (date) =>
       </div>
       <div class="home-blog-copy">
         <p class="blog-kicker">Blog</p>
-        <h3>Useful thinking for technical marketers, founders, and product teams.</h3>
+        <h3>
+          Useful thinking for technical marketers, founders, and product teams.
+        </h3>
         <p>
-          Notes on turning complex technology into clearer positioning, sharper content systems, and pages that help
-          buyers understand what matters.
+          Notes on turning complex technology into clearer positioning, sharper
+          content systems, and pages that help buyers understand what matters.
         </p>
         <a href="/blog/" class="btn btn--primary">View all posts</a>
       </div>
@@ -49,14 +51,18 @@ const formatDate = (date) =>
           {posts.map((post) => (
             <article class="home-blog-card">
               <div class="home-blog-card-meta">
-                <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
+                <time datetime={post.data.pubDate.toISOString()}>
+                  {formatDate(post.data.pubDate)}
+                </time>
                 {post.data.tags[0] && <span>{post.data.tags[0]}</span>}
               </div>
               <h3>
                 <a href={`/blog/${post.id}/`}>{post.data.title}</a>
               </h3>
               <p>{post.data.description}</p>
-              <a href={`/blog/${post.id}/`} class="blog-read-link">Read article</a>
+              <a href={`/blog/${post.id}/`} class="blog-read-link">
+                Read article
+              </a>
             </article>
           ))}
         </div>

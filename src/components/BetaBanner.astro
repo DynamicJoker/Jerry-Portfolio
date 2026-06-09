@@ -17,7 +17,9 @@
     </span>
     <span class="beta-banner__content" id="beta-banner-message">
       <span class="beta-banner__eyebrow">Beta site</span>
-      <span class="beta-banner__message">this website is still a work in progress.</span>
+      <span class="beta-banner__message"
+        >this website is still a work in progress.</span
+      >
     </span>
   </button>
 </div>
@@ -53,7 +55,8 @@
     const scheduleAutoFold = () => {
       window.clearTimeout(autoFoldTimer);
       autoFoldTimer = window.setTimeout(() => {
-        if (banner.matches(':hover') || banner.contains(document.activeElement)) return;
+        if (banner.matches(':hover') || banner.contains(document.activeElement))
+          return;
         setExpanded(false);
       }, 3000);
     };
@@ -115,15 +118,20 @@
       }, 0);
     });
 
-    window.addEventListener('scroll', () => {
-      const currentScrollY = window.scrollY;
-      const didMove = Math.abs(currentScrollY - lastScrollY) > 4;
-      lastScrollY = currentScrollY;
+    window.addEventListener(
+      'scroll',
+      () => {
+        const currentScrollY = window.scrollY;
+        const didMove = Math.abs(currentScrollY - lastScrollY) > 4;
+        lastScrollY = currentScrollY;
 
-      if (!isTouch || !didMove || !banner.classList.contains('is-expanded')) return;
-      window.clearTimeout(autoFoldTimer);
-      setExpanded(false);
-    }, { passive: true });
+        if (!isTouch || !didMove || !banner.classList.contains('is-expanded'))
+          return;
+        window.clearTimeout(autoFoldTimer);
+        setExpanded(false);
+      },
+      { passive: true },
+    );
 
     if (typeof touchQuery.addEventListener === 'function') {
       touchQuery.addEventListener('change', (event) => {

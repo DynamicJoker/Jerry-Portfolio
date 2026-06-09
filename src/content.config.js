@@ -17,8 +17,8 @@ const blog = defineCollection({
     socialImage: z.string().optional(),
     socialImageAlt: z.string().optional(),
     socialImageWidth: z.number().int().positive().optional(),
-    socialImageHeight: z.number().int().positive().optional()
-  })
+    socialImageHeight: z.number().int().positive().optional(),
+  }),
 });
 
 export const collections = { blog };

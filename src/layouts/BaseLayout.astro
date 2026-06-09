@@ -18,7 +18,7 @@ const {
   imageWidth = profile.socialImageWidth,
   imageHeight = profile.socialImageHeight,
   type = 'website',
-  structuredData = []
+  structuredData = [],
 } = Astro.props;
 
 const personId = new URL('/#person', profile.canonicalUrl).href;
@@ -34,11 +34,11 @@ const personJsonLd = {
   address: {
     '@type': 'PostalAddress',
     addressLocality: profile.location.city,
-    addressCountry: profile.location.country
+    addressCountry: profile.location.country,
   },
   sameAs: profile.sameAs,
   knowsAbout: siteContent.skills.flatMap((skill) => skill.tags),
-  description: profile.aiSummary
+  description: profile.aiSummary,
 };
 
 const websiteJsonLd = {
@@ -49,9 +49,9 @@ const websiteJsonLd = {
   name: profile.name,
   description: profile.description,
   publisher: {
-    '@id': personId
+    '@id': personId,
   },
-  inLanguage: 'en'
+  inLanguage: 'en',
 };
 
 const profilePageJsonLd = {
@@ -66,12 +66,12 @@ const profilePageJsonLd = {
     '@type': 'ImageObject',
     url: new URL(profile.socialImage, profile.canonicalUrl).href,
     width: profile.socialImageWidth,
-    height: profile.socialImageHeight
+    height: profile.socialImageHeight,
   },
   mainEntity: {
-    '@id': personId
+    '@id': personId,
   },
-  inLanguage: 'en'
+  inLanguage: 'en',
 };
 
 const absoluteImage = new URL(image, profile.canonicalUrl).href;
@@ -79,20 +79,23 @@ const isHome = page === 'home';
 const jsonLd = [
   personJsonLd,
   ...(isHome ? [websiteJsonLd, profilePageJsonLd] : []),
-  ...structuredData
+  ...structuredData,
 ];
 const jsonLdHtml = jsonLd
-  .map((item) => `<script type="application/ld+json">${JSON.stringify(item).replace(/</g, '\\u003c')}</script>`)
+  .map(
+    (item) =>
+      `<script type="application/ld+json">${JSON.stringify(item).replace(/</g, '\\u003c')}</script>`,
+  )
   .join('\n');
 const geistFontFaces = [
   { weight: '400', url: geistLatin400Url },
   { weight: '500', url: geistLatin500Url },
-  { weight: '600', url: geistLatin600Url }
+  { weight: '600', url: geistLatin600Url },
 ];
 const geistFontFaceCssHtml = `<style data-font-face="geist">${geistFontFaces
   .map(
     ({ weight, url }) =>
-      `@font-face{font-family:'Geist';font-style:normal;font-display:swap;font-weight:${weight};src:url(${JSON.stringify(url)}) format('woff2');}`
+      `@font-face{font-family:'Geist';font-style:normal;font-display:swap;font-weight:${weight};src:url(${JSON.stringify(url)}) format('woff2');}`,
   )
   .join('')}</style>`;
 const criticalHomeCssHtml = `<style data-critical-css="home">${criticalHomeStyles.replace(/<\/style/gi, '<\\/style')}</style>`;
@@ -120,7 +123,7 @@ const noScriptStylesheetHtml = isHome
   : '';
 ---
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" data-color-scheme="dark">
   <head>
     <meta charset="UTF-8" />
@@ -130,8 +133,17 @@ const noScriptStylesheetHtml = isHome
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/brand/jj-signal-icon.svg" type="image/svg+xml" />
-    <link rel="shortcut icon" href="/brand/jj-signal-icon.svg" type="image/svg+xml" />
-    <link rel="alternate" type="application/rss+xml" title={`${profile.name} - Blog`} href={new URL('/rss.xml', profile.canonicalUrl).href} />
+    <link
+      rel="shortcut icon"
+      href="/brand/jj-signal-icon.svg"
+      type="image/svg+xml"
+    />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={`${profile.name} - Blog`}
+      href={new URL('/rss.xml', profile.canonicalUrl).href}
+    />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content={type} />
@@ -146,8 +158,28 @@ const noScriptStylesheetHtml = isHome
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={absoluteImage} />
     <meta name="twitter:image:alt" content={imageAlt} />
-    {isHome && geistFontFaces.map((font) => <link rel="preload" as="font" href={font.url} type="font/woff2" crossorigin />)}
-    {isHome && <link rel="preload" as="image" href={homePortraitImage} fetchpriority="high" />}
+    {
+      isHome &&
+        geistFontFaces.map((font) => (
+          <link
+            rel="preload"
+            as="font"
+            href={font.url}
+            type="font/woff2"
+            crossorigin
+          />
+        ))
+    }
+    {
+      isHome && (
+        <link
+          rel="preload"
+          as="image"
+          href={homePortraitImage}
+          fetchpriority="high"
+        />
+      )
+    }
     <Fragment set:html={geistFontFaceCssHtml} />
     <Fragment set:html={stylesheetHtml} />
     <Fragment set:html={noScriptStylesheetHtml} />
