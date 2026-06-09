@@ -5,23 +5,23 @@
   </desc>
   <defs>
     <linearGradient id="jj-logo-ring" x1="10" x2="59" y1="11" y2="55" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#818CF8"/>
-      <stop offset="1" stop-color="#4338CA"/>
+      <stop stop-color="#90D5FF"/>
+      <stop offset="1" stop-color="#517891"/>
     </linearGradient>
     <linearGradient id="jj-logo-orbit" x1="8" x2="71" y1="29" y2="35" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#F59E0B"/>
-      <stop offset=".5" stop-color="#FBBF24"/>
-      <stop offset="1" stop-color="#F59E0B"/>
+      <stop stop-color="#57B9FF"/>
+      <stop offset=".5" stop-color="#90D5FF"/>
+      <stop offset="1" stop-color="#57B9FF"/>
     </linearGradient>
     <linearGradient id="jj-logo-gloss" x1="30" x2="40" y1="14" y2="48" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#E0E7FF"/>
-      <stop offset=".45" stop-color="#818CF8"/>
-      <stop offset="1" stop-color="#4338CA"/>
+      <stop stop-color="#D6EFFF"/>
+      <stop offset=".45" stop-color="#57B9FF"/>
+      <stop offset="1" stop-color="#517891"/>
     </linearGradient>
     <linearGradient id="jj-wordmark" x1="87" x2="246" y1="32" y2="32" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#818CF8"/>
-      <stop offset=".45" stop-color="#6366F1"/>
-      <stop offset="1" stop-color="#FBBF24"/>
+      <stop stop-color="#90D5FF"/>
+      <stop offset=".45" stop-color="#57B9FF"/>
+      <stop offset="1" stop-color="#90D5FF"/>
     </linearGradient>
     <mask id="jj-cut" width="70" height="64" x="0" y="0" maskUnits="userSpaceOnUse">
       <path fill="#fff" d="M0 0h70v64H0z"/>

@@ -48,7 +48,7 @@ export const siteContent = {
       theme: {
         backgroundColor: '0F1117',
         textColor: 'E8E8EA',
-        primaryColor: '6366F1',
+        primaryColor: '57B9FF',
         hideEventTypeDetails: true,
       },
     },

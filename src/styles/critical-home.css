@@ -4,15 +4,15 @@
   --color-surface: #ffffff;
   --color-text: #1a1a2e;
   --color-text-secondary: #555562;
-  --color-primary: #4338ca;
-  --color-primary-hover: #3730a3;
-  --color-primary-active: #312a8a;
-  --color-primary-rgb: 67, 56, 202;
-  --color-accent: #f59e0b;
-  --color-accent-hover: #d98906;
-  --color-accent-muted-bg: #fef3e2;
-  --color-accent-on-muted: #92610a;
-  --color-accent-rgb: 245, 158, 11;
+  --color-primary: #517891;
+  --color-primary-hover: #426074;
+  --color-primary-active: #36505f;
+  --color-primary-rgb: 81, 120, 145;
+  --color-accent: #2f6e96;
+  --color-accent-hover: #255a7d;
+  --color-accent-muted-bg: #e3f1fb;
+  --color-accent-on-muted: #2f6e96;
+  --color-accent-rgb: 47, 110, 150;
   --color-border: #e5e5e3;
   --color-border-strong: rgba(26, 26, 46, 0.45);
   --color-btn-primary-text: #ffffff;
@@ -85,14 +85,14 @@
     --color-surface: var(--color-dark-secondary);
     --color-text: rgba(232, 232, 234, 1);
     --color-text-secondary: rgba(154, 154, 165, 1);
-    --color-primary: #6366f1;
-    --color-primary-hover: #818cf8;
-    --color-primary-rgb: 99, 102, 241;
-    --color-accent: #fbbf24;
-    --color-accent-hover: #fbbf50;
-    --color-accent-muted-bg: #3a2a12;
-    --color-accent-on-muted: #fbbf50;
-    --color-accent-rgb: 251, 191, 36;
+    --color-primary: #57b9ff;
+    --color-primary-hover: #90d5ff;
+    --color-primary-rgb: 87, 185, 255;
+    --color-accent: #90d5ff;
+    --color-accent-hover: #b4e2ff;
+    --color-accent-muted-bg: #122a3a;
+    --color-accent-on-muted: #90d5ff;
+    --color-accent-rgb: 144, 213, 255;
     --color-border: var(--color-hairline);
     --color-border-strong: var(--color-hairline-strong);
     --color-btn-primary-text: #0f1117;
@@ -102,15 +102,15 @@
 [data-color-scheme='dark'] {
   --color-background: var(--color-dark-primary);
   --color-surface: var(--color-dark-secondary);
-  --color-primary: #6366f1;
-  --color-primary-hover: #818cf8;
-  --color-primary-active: #4f46e5;
-  --color-primary-rgb: 99, 102, 241;
-  --color-accent: #fbbf24;
-  --color-accent-hover: #fbbf50;
-  --color-accent-muted-bg: #3a2a12;
-  --color-accent-on-muted: #fbbf50;
-  --color-accent-rgb: 251, 191, 36;
+  --color-primary: #57b9ff;
+  --color-primary-hover: #90d5ff;
+  --color-primary-active: #77b1d4;
+  --color-primary-rgb: 87, 185, 255;
+  --color-accent: #90d5ff;
+  --color-accent-hover: #b4e2ff;
+  --color-accent-muted-bg: #122a3a;
+  --color-accent-on-muted: #90d5ff;
+  --color-accent-rgb: 144, 213, 255;
   --color-text: rgba(232, 232, 234, 1);
   --color-text-secondary: rgba(154, 154, 165, 1);
   --color-text-muted: rgba(122, 124, 134, 0.9);
@@ -540,8 +540,8 @@ body[data-page='home'] .navbar.brand-expanded .nav-brand-wordmark {
   font-size: clamp(2.65rem, 8vw, 6rem);
   font-weight: var(--font-weight-bold);
   line-height: 0.98;
-  /* Fluid fill: white -> soft amber meniscus rises slowly with indigo behind ->
-     gentle slosh (swirl) -> settles indigo->amber. */
+  /* Fluid fill: white -> light-blue meniscus rises slowly with deeper blue behind ->
+     gentle slosh (swirl) -> settles blue->light-blue. */
   color: transparent;
   background-image: linear-gradient(
     105deg,
