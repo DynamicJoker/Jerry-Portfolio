@@ -1,0 +1,7 @@
+# Revisions to skip in `git blame` (bulk reformatting, no logic changes).
+# Enable locally with:
+#   git config blame.ignoreRevsFile .git-blame-ignore-revs
+# GitHub honors this file automatically in its blame view.
+
+# style: reformat js/mjs/css/json/astro with Prettier
+e3ed1a4102ca3bc0161b640977127c9f6e6655a6
