@@ -13,7 +13,8 @@ function getBlogSitemapMetadata() {
   if (!fs.existsSync(blogDir)) return new Map();
 
   return new Map(
-    fs.readdirSync(blogDir)
+    fs
+      .readdirSync(blogDir)
       .filter((file) => /\.(md|mdx)$/.test(file))
       .map((file) => {
         const source = fs.readFileSync(path.join(blogDir, file), 'utf8');
@@ -22,16 +23,21 @@ function getBlogSitemapMetadata() {
         const pubDate = source.match(/^pubDate:\s*(.+)$/m)?.[1]?.trim();
         return [`/blog/${slug}/`, updatedDate ?? pubDate];
       })
-      .filter(([, lastmod]) => Boolean(lastmod))
+      .filter(([, lastmod]) => Boolean(lastmod)),
   );
 }
 
 const blogSitemapMetadata = getBlogSitemapMetadata();
-const blogIndexLastmod = [...blogSitemapMetadata.values()].sort().at(-1) ?? '2026-05-17';
+const blogIndexLastmod =
+  [...blogSitemapMetadata.values()].sort().at(-1) ?? '2026-05-17';
 
 function openMdxLinksInNewTab() {
   const visit = (node) => {
-    if (node?.type === 'element' && node.tagName === 'a' && node.properties?.href) {
+    if (
+      node?.type === 'element' &&
+      node.tagName === 'a' &&
+      node.properties?.href
+    ) {
       node.properties.target = '_blank';
       node.properties.rel = ['noopener', 'noreferrer'];
     }
@@ -47,37 +53,41 @@ function openMdxLinksInNewTab() {
 export default defineConfig({
   site: siteUrl,
   devToolbar: {
-    enabled: false
+    enabled: false,
   },
   integrations: [
     mdx({
-      rehypePlugins: [openMdxLinksInNewTab]
+      rehypePlugins: [openMdxLinksInNewTab],
     }),
     sitemap({
       filter: (page) => !page.includes('/drafts/'),
       serialize: (item) => {
         const pathname = new URL(item.url).pathname;
-        const lastmod = pathname === '/'
-          ? '2026-05-17'
-          : pathname === '/blog/'
-            ? blogIndexLastmod
-            : blogSitemapMetadata.get(pathname);
+        const lastmod =
+          pathname === '/'
+            ? '2026-05-17'
+            : pathname === '/blog/'
+              ? blogIndexLastmod
+              : blogSitemapMetadata.get(pathname);
 
         return {
           ...item,
           lastmod,
-          changefreq: pathname.startsWith('/blog/') && pathname !== '/blog/' ? 'monthly' : 'weekly',
-          priority: pathname === '/' ? 1 : pathname === '/blog/' ? 0.8 : 0.7
+          changefreq:
+            pathname.startsWith('/blog/') && pathname !== '/blog/'
+              ? 'monthly'
+              : 'weekly',
+          priority: pathname === '/' ? 1 : pathname === '/blog/' ? 0.8 : 0.7,
         };
-      }
-    })
+      },
+    }),
   ],
   vite: {
     css: {
       transformer: 'lightningcss',
       lightningcss: {
-        targets: browserslistToTargets(browserslist('>= 0.25%'))
-      }
+        targets: browserslistToTargets(browserslist('>= 0.25%')),
+      },
     },
     optimizeDeps: {
       noDiscovery: true,
@@ -86,11 +96,11 @@ export default defineConfig({
         'aria-query',
         'axobject-query',
         'html-escaper',
-        'astro/runtime/client/dev-toolbar/entrypoint.js'
-      ]
+        'astro/runtime/client/dev-toolbar/entrypoint.js',
+      ],
     },
     build: {
-      cssMinify: 'lightningcss'
-    }
-  }
+      cssMinify: 'lightningcss',
+    },
+  },
 });

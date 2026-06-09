@@ -12,7 +12,7 @@ function runAstro(cwd) {
   return spawnSync(process.execPath, [astroBin, command, ...args], {
     cwd,
     env,
-    stdio: 'inherit'
+    stdio: 'inherit',
   });
 }
 

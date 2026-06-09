@@ -13,7 +13,7 @@ const links = [
   { href: `${prefix}#portfolio`, label: 'Portfolio', id: 'portfolio' },
   { href: `${prefix}#experience`, label: 'Experience', id: 'experience' },
   { href: current === 'home' ? '#blog' : '/blog/', label: 'Blog', id: 'blog' },
-  { href: `${prefix}#contact`, label: 'Contact', id: 'contact' }
+  { href: `${prefix}#contact`, label: 'Contact', id: 'contact' },
 ];
 
 const currentLabel = links.find((link) => link.id === current)?.label ?? 'Home';
@@ -21,7 +21,11 @@ const currentLabel = links.find((link) => link.id === current)?.label ?? 'Home';
 
 <nav class="navbar" id="navbar">
   <div class="nav-container">
-    <a href={current === 'home' ? '#hero' : '/'} class="nav-brand" aria-label="Jerry James home">
+    <a
+      href={current === 'home' ? '#hero' : '/'}
+      class="nav-brand"
+      aria-label="Jerry James home"
+    >
       <BrandLogo />
     </a>
     <div class="nav-actions">
@@ -33,7 +37,8 @@ const currentLabel = links.find((link) => link.id === current)?.label ?? 'Home';
         aria-controls="nav-menu"
         aria-expanded="false"
       >
-        <span class="nav-toggle-label" data-current-section>{currentLabel}</span>
+        <span class="nav-toggle-label" data-current-section>{currentLabel}</span
+        >
         <span class="nav-toggle-icon" aria-hidden="true">
           <span></span>
           <span></span>
@@ -81,7 +86,7 @@ const currentLabel = links.find((link) => link.id === current)?.label ?? 'Home';
         control.setAttribute('aria-expanded', String(isOpen));
         control.setAttribute(
           'aria-label',
-          `${isOpen ? 'Close' : 'Open'} navigation menu, currently ${currentLabel?.textContent?.trim() || 'Blog'}`
+          `${isOpen ? 'Close' : 'Open'} navigation menu, currently ${currentLabel?.textContent?.trim() || 'Blog'}`,
         );
       });
     };
@@ -102,19 +107,25 @@ const currentLabel = links.find((link) => link.id === current)?.label ?? 'Home';
         closeNav({ restoreFocus: true });
       }
     });
-    document.addEventListener('pointerdown', (event) => {
-      if (!isNavOpen()) return;
-      if (hamburger.contains(event.target) || navMenu.contains(event.target)) return;
+    document.addEventListener(
+      'pointerdown',
+      (event) => {
+        if (!isNavOpen()) return;
+        if (hamburger.contains(event.target) || navMenu.contains(event.target))
+          return;
 
-      closeNav();
-    }, { passive: true });
+        closeNav();
+      },
+      { passive: true },
+    );
     navMenuQuery.addEventListener('change', (event) => {
       if (!event.matches) {
         closeNav();
       }
     });
 
-    const updateScrolled = () => navbar?.classList.toggle('scrolled', window.scrollY > 10);
+    const updateScrolled = () =>
+      navbar?.classList.toggle('scrolled', window.scrollY > 10);
     updateScrolled();
     window.addEventListener('scroll', updateScrolled, { passive: true });
   })();

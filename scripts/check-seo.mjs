@@ -10,7 +10,7 @@ const requiredArtifacts = [
   'sitemap-index.xml',
   'sitemap-0.xml',
   'rss.xml',
-  'llms.txt'
+  'llms.txt',
 ];
 
 const errors = [];
@@ -39,15 +39,23 @@ function stripNoscriptBlocks(html) {
 }
 
 function getJsonLd(html, file) {
-  const scripts = [...html.matchAll(/<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)];
-  return scripts.map((match, index) => {
-    try {
-      return JSON.parse(match[1]);
-    } catch (error) {
-      fail(`${file}: JSON-LD script ${index + 1} is invalid JSON (${error.message})`);
-      return null;
-    }
-  }).filter(Boolean);
+  const scripts = [
+    ...html.matchAll(
+      /<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi,
+    ),
+  ];
+  return scripts
+    .map((match, index) => {
+      try {
+        return JSON.parse(match[1]);
+      } catch (error) {
+        fail(
+          `${file}: JSON-LD script ${index + 1} is invalid JSON (${error.message})`,
+        );
+        return null;
+      }
+    })
+    .filter(Boolean);
 }
 
 function hasType(jsonLd, type) {
@@ -55,7 +63,9 @@ function hasType(jsonLd, type) {
 }
 
 function getCanonicalHref(html) {
-  return html.match(/<link\s+rel=["']canonical["'][^>]+href=["']([^"']+)["']/i)?.[1];
+  return html.match(
+    /<link\s+rel=["']canonical["'][^>]+href=["']([^"']+)["']/i,
+  )?.[1];
 }
 
 function assertCanonicalHost(value, label) {
@@ -83,45 +93,74 @@ if (!fs.existsSync(distDir)) {
     const relative = path.relative(distDir, file).replaceAll(path.sep, '/');
     const jsonLd = getJsonLd(html, relative);
 
-    if (countMatches(html, /<title\b/gi) !== 1) fail(`${relative}: expected exactly one title element.`);
-    if (countMatches(html, /<meta\s+name=["']description["']/gi) !== 1) fail(`${relative}: expected exactly one meta description.`);
-    if (countMatches(html, /<link\s+rel=["']canonical["']/gi) !== 1) fail(`${relative}: expected exactly one canonical link.`);
+    if (countMatches(html, /<title\b/gi) !== 1)
+      fail(`${relative}: expected exactly one title element.`);
+    if (countMatches(html, /<meta\s+name=["']description["']/gi) !== 1)
+      fail(`${relative}: expected exactly one meta description.`);
+    if (countMatches(html, /<link\s+rel=["']canonical["']/gi) !== 1)
+      fail(`${relative}: expected exactly one canonical link.`);
     const canonicalHref = getCanonicalHref(html);
     if (!canonicalHref?.startsWith(`${canonicalOrigin}/`)) {
       fail(`${relative}: canonical link must use ${canonicalOrigin}.`);
     }
     assertCanonicalHost(html, relative);
-    if (countMatches(html, /<h1\b/gi) !== 1) fail(`${relative}: expected exactly one h1.`);
-    if (countMatches(html, /<main\b/gi) !== 1) fail(`${relative}: expected exactly one main landmark.`);
-    if (!/<meta\s+name=["']robots["']\s+content=["'][^"']*index[^"']*follow[^"']*max-image-preview:large[^"']*["']/i.test(html)) {
+    if (countMatches(html, /<h1\b/gi) !== 1)
+      fail(`${relative}: expected exactly one h1.`);
+    if (countMatches(html, /<main\b/gi) !== 1)
+      fail(`${relative}: expected exactly one main landmark.`);
+    if (
+      !/<meta\s+name=["']robots["']\s+content=["'][^"']*index[^"']*follow[^"']*max-image-preview:large[^"']*["']/i.test(
+        html,
+      )
+    ) {
       fail(`${relative}: missing expected robots meta policy.`);
     }
-    if (!/<link\s+rel=["']alternate["'][^>]+type=["']application\/rss\+xml["'][^>]+href=["']https:\/\/www\.jerryjames\.me\/rss\.xml["']/i.test(html)) {
+    if (
+      !/<link\s+rel=["']alternate["'][^>]+type=["']application\/rss\+xml["'][^>]+href=["']https:\/\/www\.jerryjames\.me\/rss\.xml["']/i.test(
+        html,
+      )
+    ) {
       fail(`${relative}: missing RSS autodiscovery link.`);
     }
     if (!/<div[^>]+data-beta-banner[^>]+data-nosnippet/i.test(html)) {
       fail(`${relative}: beta banner is not protected with data-nosnippet.`);
     }
-    if (!hasType(jsonLd, 'Person')) fail(`${relative}: missing Person JSON-LD.`);
+    if (!hasType(jsonLd, 'Person'))
+      fail(`${relative}: missing Person JSON-LD.`);
 
     if (relative === 'index.html') {
-      if (!hasType(jsonLd, 'WebSite')) fail(`${relative}: missing WebSite JSON-LD.`);
-      if (!hasType(jsonLd, 'ProfilePage')) fail(`${relative}: missing ProfilePage JSON-LD.`);
+      if (!hasType(jsonLd, 'WebSite'))
+        fail(`${relative}: missing WebSite JSON-LD.`);
+      if (!hasType(jsonLd, 'ProfilePage'))
+        fail(`${relative}: missing ProfilePage JSON-LD.`);
       if (/\bSiteNav\.[^"'\s<>]+\.css\b/i.test(html)) {
         fail(`${relative}: must not reference a blocking SiteNav CSS chunk.`);
       }
 
       const htmlWithoutNoscript = stripNoscriptBlocks(html);
-      if (/<link\b(?=[^>]*\brel=["']stylesheet["'])[^>]*>/i.test(htmlWithoutNoscript)) {
-        fail(`${relative}: homepage must not emit blocking stylesheet links outside noscript.`);
+      if (
+        /<link\b(?=[^>]*\brel=["']stylesheet["'])[^>]*>/i.test(
+          htmlWithoutNoscript,
+        )
+      ) {
+        fail(
+          `${relative}: homepage must not emit blocking stylesheet links outside noscript.`,
+        );
       }
-      if (!/<noscript>\s*<link\b(?=[^>]*\brel=["']stylesheet["'])(?=[^>]*\bhref=["'][^"']*\/_astro\/global\.[^"']+\.css["'])[^>]*>\s*<\/noscript>/i.test(html)) {
-        fail(`${relative}: missing expected noscript global stylesheet fallback.`);
+      if (
+        !/<noscript>\s*<link\b(?=[^>]*\brel=["']stylesheet["'])(?=[^>]*\bhref=["'][^"']*\/_astro\/global\.[^"']+\.css["'])[^>]*>\s*<\/noscript>/i.test(
+          html,
+        )
+      ) {
+        fail(
+          `${relative}: missing expected noscript global stylesheet fallback.`,
+        );
       }
     }
 
     if (relative === 'blog/index.html') {
-      if (!hasType(jsonLd, 'BreadcrumbList')) fail(`${relative}: missing BreadcrumbList JSON-LD.`);
+      if (!hasType(jsonLd, 'BreadcrumbList'))
+        fail(`${relative}: missing BreadcrumbList JSON-LD.`);
     }
 
     if (relative.startsWith('blog/') && relative !== 'blog/index.html') {
@@ -129,20 +168,37 @@ if (!fs.existsSync(distDir)) {
       if (!article) {
         fail(`${relative}: missing BlogPosting JSON-LD.`);
       } else {
-        if (!article.mainEntityOfPage?.['@id']) fail(`${relative}: BlogPosting missing mainEntityOfPage @id.`);
-        if (!article.publisher) fail(`${relative}: BlogPosting missing publisher.`);
-        if (!article.image?.url || !article.image?.width || !article.image?.height) {
-          fail(`${relative}: BlogPosting image must include url, width, and height.`);
+        if (!article.mainEntityOfPage?.['@id'])
+          fail(`${relative}: BlogPosting missing mainEntityOfPage @id.`);
+        if (!article.publisher)
+          fail(`${relative}: BlogPosting missing publisher.`);
+        if (
+          !article.image?.url ||
+          !article.image?.width ||
+          !article.image?.height
+        ) {
+          fail(
+            `${relative}: BlogPosting image must include url, width, and height.`,
+          );
         }
       }
-      if (!hasType(jsonLd, 'BreadcrumbList')) fail(`${relative}: missing BreadcrumbList JSON-LD.`);
+      if (!hasType(jsonLd, 'BreadcrumbList'))
+        fail(`${relative}: missing BreadcrumbList JSON-LD.`);
     }
   }
 
-  const sitemap = fs.existsSync(path.join(distDir, 'sitemap-0.xml')) ? read(path.join(distDir, 'sitemap-0.xml')) : '';
-  const robots = fs.existsSync(path.join(distDir, 'robots.txt')) ? read(path.join(distDir, 'robots.txt')) : '';
-  const llms = fs.existsSync(path.join(distDir, 'llms.txt')) ? read(path.join(distDir, 'llms.txt')) : '';
-  const rss = fs.existsSync(path.join(distDir, 'rss.xml')) ? read(path.join(distDir, 'rss.xml')) : '';
+  const sitemap = fs.existsSync(path.join(distDir, 'sitemap-0.xml'))
+    ? read(path.join(distDir, 'sitemap-0.xml'))
+    : '';
+  const robots = fs.existsSync(path.join(distDir, 'robots.txt'))
+    ? read(path.join(distDir, 'robots.txt'))
+    : '';
+  const llms = fs.existsSync(path.join(distDir, 'llms.txt'))
+    ? read(path.join(distDir, 'llms.txt'))
+    : '';
+  const rss = fs.existsSync(path.join(distDir, 'rss.xml'))
+    ? read(path.join(distDir, 'rss.xml'))
+    : '';
 
   if (!/<lastmod>\d{4}-\d{2}-\d{2}(?:T[^<]+)?<\/lastmod>/.test(sitemap)) {
     fail('sitemap-0.xml is missing lastmod entries.');
