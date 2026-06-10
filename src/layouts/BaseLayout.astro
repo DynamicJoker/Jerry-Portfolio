@@ -196,6 +196,12 @@ const noScriptStylesheetHtml = isHome
           display: none;
         }
 
+        /* Sections are revealed by the scroll script; without JS show them all */
+        .section {
+          opacity: 1;
+          transform: none;
+        }
+
         #gantt-chart-container {
           opacity: 1;
         }
@@ -209,6 +215,7 @@ const noScriptStylesheetHtml = isHome
     <slot name="head" />
   </head>
   <body data-page={page}>
+    <a class="skip-link" href="#main-content">Skip to content</a>
     <BetaBanner />
     <slot />
   </body>
