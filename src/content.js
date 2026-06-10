@@ -4,6 +4,8 @@ export const siteContent = {
     pageTitle: 'Jerry James - Technical Marketing Specialist',
     jobTitle: 'Technical Marketing Specialist',
     canonicalUrl: 'https://www.jerryjames.me/',
+    portraitImage: '/images/jerry-james-portrait.jpg',
+    portraitAlt: 'Portrait of Jerry James',
     socialImage: '/images/seo/jerry-james-og.png',
     socialImageAlt: 'Jerry James technical marketing portfolio preview',
     socialImageWidth: 1200,
@@ -19,7 +21,7 @@ export const siteContent = {
     sameAs: ['https://linkedin.com/in/jerry-james-tech/'],
     experienceStartYear: 2014,
     availability: {
-      status: 'Available for projects',
+      status: 'Available Worldwide',
     },
     heroStats: [
       {
@@ -52,12 +54,47 @@ export const siteContent = {
         hideEventTypeDetails: true,
       },
     },
-    sitemap: {
-      lastmod: '2026-05-17',
-      changefreq: 'monthly',
-      priority: '1.0',
-    },
   },
+
+  // About section
+  about: {
+    description:
+      'Experienced technical marketing specialist who specializes in strategic content marketing, demand generation, and coherent technical communication for B2B and B2C clients. I bridge the gap between complex technology and market demand – creating compelling narratives that convert prospects into customers.',
+    highlights: [
+      {
+        icon: 'pen',
+        title: 'Technical Content Creation',
+        description:
+          'I create compelling white papers, case studies, and documentation that translate complex technical features into clear business value, driving lead generation and establishing thought leadership.',
+      },
+      {
+        icon: 'target',
+        title: 'B2B & B2C Marketing Strategy',
+        description:
+          'From account-based marketing (ABM) for enterprise clients to broad consumer campaigns, I develop and execute cohesive strategies that resonate with the target audience and achieve measurable goals.',
+      },
+      {
+        icon: 'compass',
+        title: 'Complex Product Positioning',
+        description:
+          'I specialize in taking multifaceted tech products and positioning them in crowded markets. I build the narrative that highlights unique strengths and solves real-world customer problems.',
+      },
+      {
+        icon: 'bar-chart',
+        title: 'Data-Driven Results',
+        description:
+          'Every decision is backed by data. I leverage analytics from Google, HubSpot, and other platforms to track KPIs, optimize campaign performance, and demonstrate clear marketing ROI.',
+      },
+    ],
+  },
+
+  // Logo bar ("Experience With")
+  clientLogos: [
+    { src: '/logos/microsoft.svg', alt: 'Microsoft logo' },
+    { src: '/logos/cgdirector.svg', alt: 'CGDirector logo' },
+    { src: '/logos/msi.svg', alt: 'MSI logo' },
+    { src: '/logos/licensespring.svg', alt: 'LicenseSpring logo' },
+  ],
 
   // Experience data
   experience: [
@@ -158,6 +195,13 @@ export const siteContent = {
   ],
 
   // Portfolio data
+  // Filter buttons and category badges are generated from the `category` keys
+  // below; add a display label here when introducing a new category.
+  portfolioCategoryLabels: {
+    b2b: 'B2B',
+    b2c: 'B2C',
+    content: 'Content',
+  },
   portfolio: [
     {
       category: 'b2b',
@@ -377,6 +421,13 @@ export const siteContent = {
         'The marketing automation system Jerry put in place saved us countless hours and significantly increased our sales-ready leads.',
     },
   ],
+
+  // Contact form (Web3Forms; the access key is public by design)
+  contactForm: {
+    endpoint: 'https://api.web3forms.com/submit',
+    accessKey: 'c813bf75-f553-4abb-9e16-b19a84e83537',
+    subject: 'New Submission from Portfolio',
+  },
 
   // Contact Info
   contactInfo: {

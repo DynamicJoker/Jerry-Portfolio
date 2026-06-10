@@ -1,6 +1,7 @@
 ---
 import { siteContent } from '../content.js';
 import Icon from './Icon.astro';
+import SiteFooter from './SiteFooter.astro';
 
 const profile = siteContent.profile;
 
@@ -49,6 +50,16 @@ function getGanttDurationText(startDate, endDate) {
   return parts.join(' ');
 }
 
+// Portfolio filters follow the categories present in the data
+const categoryLabel = (category) =>
+  siteContent.portfolioCategoryLabels?.[category] ?? category.toUpperCase();
+const portfolioFilters = [
+  { id: 'all', label: 'All' },
+  ...[...new Set(siteContent.portfolio.map((item) => item.category))].map(
+    (category) => ({ id: category, label: categoryLabel(category) }),
+  ),
+];
+
 // Split testimonials into 3 columns
 const numColumns = 3;
 const testimonialColumns = Array.from({ length: numColumns }, () => []);
@@ -74,8 +85,8 @@ siteContent.testimonials.forEach((testimonial, index) => {
           <span class="hero-rings__pulse hero-rings__pulse--2"></span>
         </div>
         <img
-          src="/images/jerry-james-portrait.jpg"
-          alt="Portrait of Jerry James"
+          src={profile.portraitImage}
+          alt={profile.portraitAlt}
           class="neon-frame-image"
           width="300"
           height="300"
@@ -135,7 +146,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
             href="#schedule"
             aria-label="Go to scheduling section"
           >
-            <span>Available Worldwide</span>
+            <span>{profile.availability.status}</span>
             <span
               class="availability-dot subtitle-location-dot"
               aria-hidden="true"></span>
@@ -162,82 +173,28 @@ siteContent.testimonials.forEach((testimonial, index) => {
   <section id="about" class="section">
     <div class="container">
       <div class="section-header">
-        <span class="section-kicker">01 / About</span>
+        <span class="section-kicker">About</span>
         <h2 class="section-title">About Me</h2>
       </div>
       <div class="about-content">
         <div class="about-text">
-          <p class="about-description">
-            Experienced technical marketing specialist who specializes in
-            strategic content marketing, demand generation, and coherent
-            technical communication for B2B and B2C clients. I bridge the gap
-            between complex technology and market demand – creating compelling
-            narratives that convert prospects into customers.
-          </p>
+          <p class="about-description">{siteContent.about.description}</p>
           <div class="about-highlights">
-            <div class="highlight-item" tabindex="0">
-              <div class="highlight-header">
-                <div class="highlight-icon" aria-hidden="true">
-                  <Icon name="pen" />
+            {
+              siteContent.about.highlights.map((highlight) => (
+                <div class="highlight-item" tabindex="0">
+                  <div class="highlight-header">
+                    <div class="highlight-icon" aria-hidden="true">
+                      <Icon name={highlight.icon} />
+                    </div>
+                    <h3 class="highlight-title">{highlight.title}</h3>
+                  </div>
+                  <div class="highlight-description">
+                    <p>{highlight.description}</p>
+                  </div>
                 </div>
-                <h3 class="highlight-title">Technical Content Creation</h3>
-              </div>
-              <div class="highlight-description">
-                <p>
-                  I create compelling white papers, case studies, and
-                  documentation that translate complex technical features into
-                  clear business value, driving lead generation and establishing
-                  thought leadership.
-                </p>
-              </div>
-            </div>
-            <div class="highlight-item" tabindex="0">
-              <div class="highlight-header">
-                <div class="highlight-icon" aria-hidden="true">
-                  <Icon name="target" />
-                </div>
-                <h3 class="highlight-title">B2B & B2C Marketing Strategy</h3>
-              </div>
-              <div class="highlight-description">
-                <p>
-                  From account-based marketing (ABM) for enterprise clients to
-                  broad consumer campaigns, I develop and execute cohesive
-                  strategies that resonate with the target audience and achieve
-                  measurable goals.
-                </p>
-              </div>
-            </div>
-            <div class="highlight-item" tabindex="0">
-              <div class="highlight-header">
-                <div class="highlight-icon" aria-hidden="true">
-                  <Icon name="compass" />
-                </div>
-                <h3 class="highlight-title">Complex Product Positioning</h3>
-              </div>
-              <div class="highlight-description">
-                <p>
-                  I specialize in taking multifaceted tech products and
-                  positioning them in crowded markets. I build the narrative
-                  that highlights unique strengths and solves real-world
-                  customer problems.
-                </p>
-              </div>
-            </div>
-            <div class="highlight-item" tabindex="0">
-              <div class="highlight-header">
-                <div class="highlight-icon" aria-hidden="true">
-                  <Icon name="bar-chart" />
-                </div>
-                <h3 class="highlight-title">Data-Driven Results</h3>
-              </div>
-              <div class="highlight-description">
-                <p>
-                  Every decision is backed by data. I leverage analytics from
-                  Google, HubSpot, and other platforms to track KPIs, optimize
-                  campaign performance, and demonstrate clear marketing ROI.
-                </p>
-              </div>
-            </div>
+              ))
+            }
           </div>
         </div>
       </div>
@@ -250,50 +207,21 @@ siteContent.testimonials.forEach((testimonial, index) => {
       <div class="logo-bar">
         <div class="logo-bar-label">Experience With</div>
         <div class="logo-set-container">
-          <div class="logo-item">
-            <img
-              src="logos/microsoft.svg"
-              alt="Microsoft logo"
-              class="logo-img"
-              loading="lazy"
-              decoding="async"
-              width="150"
-              height="40"
-            />
-          </div>
-          <div class="logo-item">
-            <img
-              src="logos/cgdirector.svg"
-              alt="CGDirector logo"
-              class="logo-img"
-              loading="lazy"
-              decoding="async"
-              width="150"
-              height="40"
-            />
-          </div>
-          <div class="logo-item">
-            <img
-              src="logos/msi.svg"
-              alt="MSI logo"
-              class="logo-img"
-              loading="lazy"
-              decoding="async"
-              width="150"
-              height="40"
-            />
-          </div>
-          <div class="logo-item">
-            <img
-              src="logos/licensespring.svg"
-              alt="LicenseSpring logo"
-              class="logo-img"
-              loading="lazy"
-              decoding="async"
-              width="150"
-              height="40"
-            />
-          </div>
+          {
+            siteContent.clientLogos.map((logo) => (
+              <div class="logo-item">
+                <img
+                  src={logo.src}
+                  alt={logo.alt}
+                  class="logo-img"
+                  loading="lazy"
+                  decoding="async"
+                  width="150"
+                  height="40"
+                />
+              </div>
+            ))
+          }
         </div>
       </div>
     </div>
@@ -303,7 +231,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
   <section id="skills" class="section">
     <div class="container">
       <div class="section-header">
-        <span class="section-kicker">02 / Expertise</span>
+        <span class="section-kicker">Expertise</span>
         <h2 class="section-title">Skills & Expertise</h2>
       </div>
       <div class="skills-grid" id="skills-grid">
@@ -339,7 +267,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
   <section id="services" class="section">
     <div class="container">
       <div class="section-header">
-        <span class="section-kicker">03 / Services</span>
+        <span class="section-kicker">Services</span>
         <h2 class="section-title">You Build It. I'll Bring the Party</h2>
       </div>
       <div class="services-grid" id="services-grid">
@@ -362,7 +290,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
   <section id="testimonials" class="section">
     <div class="container">
       <div class="section-header">
-        <span class="section-kicker">04 / Testimonials</span>
+        <span class="section-kicker">Testimonials</span>
         <h2 class="section-title">I Didn't Even Have to Bribe Them</h2>
       </div>
       <div class="testimonials-controls">
@@ -416,7 +344,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
   <section id="portfolio" class="section">
     <div class="container">
       <div class="section-header">
-        <span class="section-kicker">05 / Selected Work</span>
+        <span class="section-kicker">Selected Work</span>
         <h2 class="section-title">Spoiler Alert: It Went Well</h2>
       </div>
       <div
@@ -424,30 +352,18 @@ siteContent.testimonials.forEach((testimonial, index) => {
         role="group"
         aria-label="Filter portfolio projects"
       >
-        <button
-          type="button"
-          class="filter-btn active"
-          data-filter="all"
-          aria-pressed="true">All</button
-        >
-        <button
-          type="button"
-          class="filter-btn"
-          data-filter="b2b"
-          aria-pressed="false">B2B</button
-        >
-        <button
-          type="button"
-          class="filter-btn"
-          data-filter="b2c"
-          aria-pressed="false">B2C</button
-        >
-        <button
-          type="button"
-          class="filter-btn"
-          data-filter="content"
-          aria-pressed="false">Content</button
-        >
+        {
+          portfolioFilters.map((filter) => (
+            <button
+              type="button"
+              class:list={['filter-btn', { active: filter.id === 'all' }]}
+              data-filter={filter.id}
+              aria-pressed={filter.id === 'all' ? 'true' : 'false'}
+            >
+              {filter.label}
+            </button>
+          ))
+        }
       </div>
       <div class="portfolio-grid" id="portfolio-grid">
         {
@@ -457,7 +373,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
                 <div class="portfolio-header">
                   <h3 class="portfolio-title">{item.title}</h3>
                   <span class="portfolio-category">
-                    {item.category.toUpperCase()}
+                    {categoryLabel(item.category)}
                   </span>
                 </div>
                 <p class="portfolio-description">{item.description}</p>
@@ -483,7 +399,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
   <section id="experience" class="section">
     <div class="container">
       <div class="section-header">
-        <span class="section-kicker">06 / Experience</span>
+        <span class="section-kicker">Experience</span>
         <h2 class="section-title">Experience</h2>
         <div id="gantt-chart-container">
           <div class="gantt-timeline">
@@ -555,7 +471,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
     <section id="contact" class="section">
       <div class="container">
         <div class="section-header">
-          <span class="section-kicker">08 / Contact</span>
+          <span class="section-kicker">Contact</span>
           <h2 class="section-title">Let's Work Together</h2>
         </div>
         <!-- Booking CTA Block -->
@@ -655,10 +571,10 @@ siteContent.testimonials.forEach((testimonial, index) => {
                 </div>
                 <div class="contact-text">
                   <a
-                    href="https://linkedin.com/in/jerry-james-tech/"
+                    href={siteContent.contactInfo.linkedin.url}
                     id="contact-linkedin"
                     target="_blank"
-                    rel="noopener">Reach out via LinkedIn</a
+                    rel="noopener">{siteContent.contactInfo.linkedin.label}</a
                   >
                 </div>
               </div>
@@ -668,18 +584,18 @@ siteContent.testimonials.forEach((testimonial, index) => {
             <form
               class="contact-form"
               id="contact-form"
-              action="https://api.web3forms.com/submit"
+              action={siteContent.contactForm.endpoint}
               method="POST"
             >
               <input
                 type="hidden"
                 name="access_key"
-                value="c813bf75-f553-4abb-9e16-b19a84e83537"
+                value={siteContent.contactForm.accessKey}
               />
               <input
                 type="hidden"
                 name="subject"
-                value="New Submission from Portfolio"
+                value={siteContent.contactForm.subject}
               />
               <div class="form-group">
                 <label for="name" class="form-label">Name</label>
@@ -733,20 +649,5 @@ siteContent.testimonials.forEach((testimonial, index) => {
     </section>
   </section>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-content">
-        <div class="footer-text">
-          <p>
-            &copy; <span id="footer-year">{new Date().getFullYear()}</span> Jerry
-            James. All rights reserved.
-          </p>
-        </div>
-        <div class="footer-links">
-          <a href="#hero" class="footer-link">Back to Top</a>
-        </div>
-      </div>
-    </div>
-  </footer>
+  <SiteFooter />
 </main>

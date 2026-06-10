@@ -100,7 +100,7 @@ const geistFontFaceCssHtml = `<style data-font-face="geist">${geistFontFaces
   )
   .join('')}</style>`;
 const criticalHomeCssHtml = `<style data-critical-css="home">${criticalHomeStyles.replace(/<\/style/gi, '<\\/style')}</style>`;
-const homePortraitImage = '/images/jerry-james-portrait.jpg';
+const homePortraitImage = profile.portraitImage;
 const stylesheetHtml = isHome
   ? `${criticalHomeCssHtml}<script type="module" data-deferred-stylesheet>
 const href=${JSON.stringify(globalStylesUrl)};

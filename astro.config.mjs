@@ -5,8 +5,12 @@ import browserslist from 'browserslist';
 import { browserslistToTargets } from 'lightningcss';
 import fs from 'node:fs';
 import path from 'node:path';
+import { siteContent } from './src/content.js';
 
-const siteUrl = 'https://www.jerryjames.me';
+// Single source of truth for the site origin lives in src/content.js.
+const siteUrl = siteContent.profile.canonicalUrl.replace(/\/$/, '');
+// Bump when the homepage content changes; blog lastmod comes from frontmatter.
+const homepageLastmod = '2026-05-17';
 
 function getBlogSitemapMetadata() {
   const blogDir = path.resolve('./src/content/blog');
@@ -29,7 +33,7 @@ function getBlogSitemapMetadata() {
 
 const blogSitemapMetadata = getBlogSitemapMetadata();
 const blogIndexLastmod =
-  [...blogSitemapMetadata.values()].sort().at(-1) ?? '2026-05-17';
+  [...blogSitemapMetadata.values()].sort().at(-1) ?? homepageLastmod;
 
 function openMdxLinksInNewTab() {
   const visit = (node) => {
@@ -65,7 +69,7 @@ export default defineConfig({
         const pathname = new URL(item.url).pathname;
         const lastmod =
           pathname === '/'
-            ? '2026-05-17'
+            ? homepageLastmod
             : pathname === '/blog/'
               ? blogIndexLastmod
               : blogSitemapMetadata.get(pathname);

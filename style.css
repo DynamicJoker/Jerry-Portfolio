@@ -1796,6 +1796,12 @@ body[data-page='home'] .navbar.brand-expanded .nav-brand-wordmark {
   margin-bottom: var(--section-header-gap);
 }
 
+/* Kickers are auto-numbered ("01 / About") in DOM order via a CSS counter,
+   so sections can be added or reordered without renumbering markup. */
+body {
+  counter-reset: section-kicker;
+}
+
 .section-kicker {
   display: inline-flex;
   align-items: center;
@@ -1806,10 +1812,16 @@ body[data-page='home'] .navbar.brand-expanded .nav-brand-wordmark {
   font-weight: var(--font-weight-semibold);
   letter-spacing: 0.14em;
   text-transform: uppercase;
+  counter-increment: section-kicker;
 }
 
 .section-kicker::before {
+  content: counter(section-kicker, decimal-leading-zero) ' /';
+}
+
+.section-kicker::after {
   content: '';
+  order: -1;
   width: 2rem;
   height: 2px;
   border-radius: 2px;
@@ -2378,6 +2390,7 @@ section[id] {
   border-radius: var(--radius-full);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
   white-space: nowrap;
 }
 
@@ -3881,6 +3894,30 @@ section[id] {
   background: rgba(var(--color-primary-rgb), 0.12);
   border-color: var(--color-primary);
   color: var(--color-text);
+}
+
+/* Signal pulse on hover: one soft ring emanates from the button and fades,
+   echoing the hero heartbeat. Uses box-shadow rather than a pseudo-element
+   because these buttons clip overflow; runs once per hover. */
+@keyframes btnSignalPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(var(--color-primary-rgb), 0.3);
+  }
+  100% {
+    box-shadow: 0 0 0 14px rgba(var(--color-primary-rgb), 0);
+  }
+}
+
+.btn--primary:not(.is-close-state):hover,
+.btn--outline:hover {
+  animation: btnSignalPulse 1.1s ease-out 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn--primary:hover,
+  .btn--outline:hover {
+    animation: none;
+  }
 }
 
 /* Shape Assembler Animation */

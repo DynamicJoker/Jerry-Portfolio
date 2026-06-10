@@ -1,4 +1,6 @@
 ---
+import { siteContent } from '../content.js';
+
 const { backHref = '#hero' } = Astro.props;
 ---
 
@@ -7,8 +9,8 @@ const { backHref = '#hero' } = Astro.props;
     <div class="footer-content">
       <div class="footer-text">
         <p>
-          &copy; <span id="footer-year">{new Date().getFullYear()}</span> Jerry James.
-          All rights reserved.
+          &copy; <span id="footer-year">{new Date().getFullYear()}</span>
+          {siteContent.profile.name}. All rights reserved.
         </p>
       </div>
       <div class="footer-links">
