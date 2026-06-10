@@ -100,7 +100,6 @@ function handleScroll() {
 // All visual updates triggered by scroll happen here
 function updateUIOnScroll(scrollY) {
   const navbar = document.getElementById('navbar');
-  const heroBackground = document.querySelector('.hero-background');
 
   // Navbar scrolled state
   if (navbar) {
@@ -113,11 +112,6 @@ function updateUIOnScroll(scrollY) {
   // Active nav link + underline glow
   updateActiveNavLink();
   updateNavGlow();
-
-  // Hero parallax
-  if (heroBackground) {
-    heroBackground.style.transform = `translateY(${scrollY * -0.5}px)`;
-  }
 }
 
 window.addEventListener('scroll', handleScroll, { passive: true });
@@ -632,10 +626,13 @@ function showNotification(message, type = 'info') {
 function buildCalendlyUrl(cta) {
   const url = new URL(cta.url, window.location.href);
   const theme = cta.theme || {};
+  const scheme =
+    document.documentElement.dataset.colorScheme === 'light' ? 'light' : 'dark';
+  const schemeColors = theme[scheme] || {};
   const params = {
-    background_color: theme.backgroundColor,
-    text_color: theme.textColor,
-    primary_color: theme.primaryColor,
+    background_color: schemeColors.backgroundColor,
+    text_color: schemeColors.textColor,
+    primary_color: schemeColors.primaryColor,
   };
 
   Object.entries(params).forEach(([key, value]) => {
@@ -830,6 +827,15 @@ function initializeCalendlyBookingPanel() {
     if (event.data.event === 'calendly.event_scheduled') {
       bookedMessage.hidden = false;
       panel.classList.add('is-booked');
+    }
+  });
+
+  // Re-embed with the matching Calendly theme if the user switches color
+  // scheme while the scheduler is open (closed panels re-theme on open).
+  window.addEventListener('colorschemechange', () => {
+    if (isOpen && hasInitializedCalendly) {
+      clearCalendlyEmbed();
+      initializeCalendly();
     }
   });
 

@@ -48,9 +48,16 @@ export const siteContent = {
       closeLabel: 'Close scheduler',
       bookedText: 'You are booked. Thanks, I will see you on the call.',
       theme: {
-        backgroundColor: '0F1117',
-        textColor: 'E8E8EA',
-        primaryColor: '57B9FF',
+        dark: {
+          backgroundColor: '0F1117',
+          textColor: 'E8E8EA',
+          primaryColor: '57B9FF',
+        },
+        light: {
+          backgroundColor: 'FFFFFF',
+          textColor: '1A1A2E',
+          primaryColor: '517891',
+        },
         hideEventTypeDetails: true,
       },
     },

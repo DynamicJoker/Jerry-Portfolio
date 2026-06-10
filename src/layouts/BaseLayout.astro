@@ -125,10 +125,40 @@ const noScriptStylesheetHtml = isHome
 ---
 
 <!doctype html>
-<html lang="en" data-color-scheme="dark">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Resolve the color scheme before any CSS so there is no wrong-theme
+         flash. No JS = no attribute, and the prefers-color-scheme media
+         block in the stylesheets takes over. -->
+    <script is:inline>
+      (() => {
+        let stored = null;
+        try {
+          stored = localStorage.getItem('color-scheme');
+        } catch {
+          /* storage blocked: follow system */
+        }
+        const scheme =
+          stored === 'light' || stored === 'dark'
+            ? stored
+            : window.matchMedia('(prefers-color-scheme: dark)').matches
+              ? 'dark'
+              : 'light';
+        document.documentElement.dataset.colorScheme = scheme;
+      })();
+    </script>
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: light)"
+      content="#fafaf9"
+    />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: dark)"
+      content="#0f1117"
+    />
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta

@@ -60,9 +60,79 @@ const currentLabel = links.find((link) => link.id === current)?.label ?? 'Home';
           }
         </div>
       </div>
+      <button
+        class="theme-toggle"
+        id="theme-toggle"
+        type="button"
+        aria-label="Toggle color theme"
+        hidden
+      >
+        <span class="theme-toggle__ring" aria-hidden="true"></span>
+        <span class="theme-toggle__core" aria-hidden="true"></span>
+      </button>
     </div>
   </div>
 </nav>
+
+<script is:inline>
+  /* Theme controller — runs on EVERY page (unlike main.js, which is
+     home-only). The pre-paint script in BaseLayout already set the
+     attribute; this adds the toggle behavior and system-change tracking. */
+  (() => {
+    const KEY = 'color-scheme';
+    const root = document.documentElement;
+    const button = document.getElementById('theme-toggle');
+    const media = window.matchMedia('(prefers-color-scheme: dark)');
+    const metas = document.querySelectorAll('meta[name="theme-color"]');
+    const getStored = () => {
+      try {
+        return localStorage.getItem(KEY);
+      } catch {
+        return null;
+      }
+    };
+    const apply = (scheme) => {
+      root.dataset.colorScheme = scheme;
+      metas.forEach((meta) =>
+        meta.setAttribute('content', scheme === 'dark' ? '#0f1117' : '#fafaf9'),
+      );
+      button?.setAttribute(
+        'aria-label',
+        scheme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme',
+      );
+      window.dispatchEvent(
+        new CustomEvent('colorschemechange', { detail: { scheme } }),
+      );
+    };
+
+    apply(root.dataset.colorScheme || (media.matches ? 'dark' : 'light'));
+
+    if (button) {
+      button.hidden = false;
+      button.addEventListener('click', () => {
+        const next = root.dataset.colorScheme === 'dark' ? 'light' : 'dark';
+        try {
+          localStorage.setItem(KEY, next);
+        } catch {
+          /* storage blocked: theme still applies for this page view */
+        }
+        apply(next);
+        button.classList.remove('is-pulsing');
+        void button.offsetWidth; /* restart the one-shot pulse */
+        button.classList.add('is-pulsing');
+      });
+      button.addEventListener('animationend', () =>
+        button.classList.remove('is-pulsing'),
+      );
+    }
+
+    /* Follow live system changes only while there is no stored preference */
+    media.addEventListener('change', (event) => {
+      if (getStored()) return;
+      apply(event.matches ? 'dark' : 'light');
+    });
+  })();
+</script>
 
 <script is:inline>
   (() => {
