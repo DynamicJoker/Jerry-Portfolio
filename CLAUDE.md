@@ -35,8 +35,10 @@ Personal portfolio + blog, deployed on Vercel at https://www.jerryjames.me.
 - `npm run dev` is broken on this machine (spaced path + subst drive). Verify
   changes with `npm run build` then `npm run preview` (restart preview after
   each build).
-- `npm run build` runs `prettier --check` first — format with `npm run format`
-  before building. A pre-commit hook enforces formatting.
+- `npm run build` runs `prettier --check` and `eslint .` first — format with
+  `npm run format` and lint with `npm run lint` before building. The pre-commit
+  hook enforces both. ESLint flat config is `eslint.config.mjs` (browser
+  globals for `src/`, node globals for build-time code).
 - Do NOT commit or push automatically; the user commits manually.
 
 ## Gotchas

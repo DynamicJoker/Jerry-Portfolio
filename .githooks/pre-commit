@@ -1,5 +1,5 @@
 #!/bin/sh
-# Block commits that contain unformatted staged files.
+# Block commits that contain unformatted or lint-failing staged files.
 # Enabled via the npm "prepare" script: git config core.hooksPath .githooks
 
 staged=$(git diff --cached --name-only --diff-filter=ACMR -- \
@@ -14,5 +14,20 @@ status=$?
 if [ "$status" -ne 0 ]; then
   echo
   echo "Prettier found unformatted files. Run 'npm run format' and re-stage." >&2
+  exit 1
+fi
+
+lintable=$(echo "$staged" | grep -E '\.(js|mjs|cjs|astro)$')
+
+[ -z "$lintable" ] && exit 0
+
+# --no-warn-ignored: staged files covered by eslint.config.mjs ignores
+# (e.g. public/) would otherwise fail on the "file ignored" warning.
+echo "$lintable" | xargs npx eslint --no-warn-ignored
+status=$?
+
+if [ "$status" -ne 0 ]; then
+  echo
+  echo "ESLint found problems. Run 'npm run lint' to see them." >&2
   exit 1
 fi
