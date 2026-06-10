@@ -19,7 +19,7 @@ const links = [
 const currentLabel = links.find((link) => link.id === current)?.label ?? 'Home';
 ---
 
-<nav class="navbar" id="navbar">
+<nav class="navbar" id="navbar" aria-label="Primary">
   <div class="nav-container">
     <a
       href={current === 'home' ? '#hero' : '/'}
@@ -46,7 +46,7 @@ const currentLabel = links.find((link) => link.id === current)?.label ?? 'Home';
         </span>
       </button>
       <div class="nav-menu" id="nav-menu">
-        <div class="nav-rail" aria-label="Primary navigation">
+        <div class="nav-rail">
           {
             links.map((link) => (
               <a

@@ -240,7 +240,12 @@ siteContent.testimonials.forEach((testimonial, index) => {
             <div class="skill-category">
               <h3 class="skill-category-title">{category.category}</h3>
               {category.type === 'pane' ? (
-                <div class="skill-pane-container">
+                <div
+                  class="skill-pane-container"
+                  tabindex="0"
+                  role="region"
+                  aria-label={`${category.category} skills`}
+                >
                   <div class="skill-tags">
                     {category.tags.map((tagText) => (
                       <span class="skill-tag">{tagText}</span>
@@ -464,190 +469,190 @@ siteContent.testimonials.forEach((testimonial, index) => {
         </div>
       </div>
     </div>
+  </section>
 
-    <slot name="blog-section" />
+  <slot name="blog-section" />
 
-    <!-- Contact Section -->
-    <section id="contact" class="section">
-      <div class="container">
-        <div class="section-header">
-          <span class="section-kicker">Contact</span>
-          <h2 class="section-title">Let's Work Together</h2>
-        </div>
-        <!-- Booking CTA Block -->
-        <div class="booking-cta" id="schedule" data-calendly-booking>
-          <div class="booking-cta-bar">
-            <div class="booking-cta-message">
-              <span class="availability-dot booking-cta-dot" aria-hidden="true"
-              ></span>
-              <span>{profile.bookingCta.text}</span>
-            </div>
-            <a
-              class="btn btn--primary booking-cta-button"
-              href={profile.bookingCta.url}
-              target="_blank"
-              rel="noopener"
-              data-calendly-open
-              aria-expanded="false"
-              aria-controls="calendly-booking-panel"
-              aria-label={profile.bookingCta.buttonLabel}
-            >
-              <span class="booking-cta-labels" aria-hidden="true">
-                <span class="booking-cta-label booking-cta-label--open"
-                  >{profile.bookingCta.buttonLabel}</span
-                >
-                <span class="booking-cta-label booking-cta-label--close"
-                  >{profile.bookingCta.closeLabel}</span
-                >
-              </span>
-            </a>
+  <!-- Contact Section -->
+  <section id="contact" class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-kicker">Contact</span>
+        <h2 class="section-title">Let's Work Together</h2>
+      </div>
+      <!-- Booking CTA Block -->
+      <div class="booking-cta" id="schedule" data-calendly-booking>
+        <div class="booking-cta-bar">
+          <div class="booking-cta-message">
+            <span class="availability-dot booking-cta-dot" aria-hidden="true"
+            ></span>
+            <span>{profile.bookingCta.text}</span>
           </div>
-          <div class="calendly-panel" id="calendly-booking-panel" hidden>
-            <div class="calendly-panel-inner">
-              <div class="calendly-panel-header">
-                <div>
-                  <h3 class="calendly-panel-title">
-                    {profile.bookingCta.expandedTitle}
-                  </h3>
-                  <p class="calendly-panel-helper">
-                    {profile.bookingCta.helperText}
-                  </p>
-                </div>
-              </div>
-              <div class="calendly-booked-message" data-calendly-booked hidden>
-                {profile.bookingCta.bookedText}
-              </div>
-              <div class="calendly-loading" data-calendly-loading>
-                {profile.bookingCta.loadingText}
-              </div>
-              <div class="calendly-inline-host" data-calendly-container></div>
-            </div>
-          </div>
-        </div>
-        <div class="contact-content">
-          <div class="contact-info">
-            <h3>Get In Touch</h3>
-            <p>
-              Ready to elevate your technical marketing? Let's discuss how I can
-              help drive growth for your B2B or B2C business.
-            </p>
-            <div class="contact-details">
-              <div class="contact-item">
-                <div class="contact-icon" aria-hidden="true">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="1em"
-                    height="1em"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    aria-hidden="true"
-                    focusable="false"
-                  >
-                    <path
-                      d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"
-                    ></path>
-                  </svg>
-                </div>
-                <div class="contact-text" id="contact-email">
-                  <span class="sr-only">Email: </span>jerry@placeholder.com
-                </div>
-              </div>
-
-              <div class="contact-item">
-                <div class="contact-icon" aria-hidden="true">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="1em"
-                    height="1em"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    aria-hidden="true"
-                    focusable="false"
-                  >
-                    <path
-                      d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.761 0 5-2.239 5-5v-14c0-2.761-2.239-5-5-5zm-11 19h-3v-10h3v10zm-1.5-11.268c-.966 0-1.75-.784-1.75-1.75s.784-1.75 1.75-1.75 1.75.784 1.75 1.75-.784 1.75-1.75 1.75zm13.5 11.268h-3v-5.604c0-1.337-.026-3.063-1.868-3.063-1.868 0-2.154 1.459-2.154 2.967v5.7h-3v-10h2.881v1.367h.041c.401-.761 1.379-1.563 2.838-1.563 3.036 0 3.599 2 3.599 4.594v5.602z"
-                    ></path>
-                  </svg>
-                </div>
-                <div class="contact-text">
-                  <a
-                    href={siteContent.contactInfo.linkedin.url}
-                    id="contact-linkedin"
-                    target="_blank"
-                    rel="noopener">{siteContent.contactInfo.linkedin.label}</a
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="contact-form-container">
-            <form
-              class="contact-form"
-              id="contact-form"
-              action={siteContent.contactForm.endpoint}
-              method="POST"
-            >
-              <input
-                type="hidden"
-                name="access_key"
-                value={siteContent.contactForm.accessKey}
-              />
-              <input
-                type="hidden"
-                name="subject"
-                value={siteContent.contactForm.subject}
-              />
-              <div class="form-group">
-                <label for="name" class="form-label">Name</label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  class="form-control"
-                  required
-                />
-              </div>
-              <div class="form-group">
-                <label for="email" class="form-label">Email</label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  class="form-control"
-                  required
-                />
-              </div>
-              <div class="form-group">
-                <label for="company" class="form-label">Company</label>
-                <input
-                  type="text"
-                  id="company"
-                  name="company"
-                  class="form-control"
-                />
-              </div>
-              <div class="form-group">
-                <label for="message" class="form-label">Message</label>
-                <textarea
-                  id="message"
-                  name="message"
-                  rows="5"
-                  class="form-control"
-                  required></textarea>
-              </div>
-
-              <!-- Frictionless Spam Protection -->
-              <input type="checkbox" name="botcheck" class="hidden" />
-
-              <button type="submit" class="btn btn--primary btn--full-width"
-                >Send Message</button
+          <a
+            class="btn btn--primary booking-cta-button"
+            href={profile.bookingCta.url}
+            target="_blank"
+            rel="noopener"
+            data-calendly-open
+            aria-expanded="false"
+            aria-controls="calendly-booking-panel"
+            aria-label={profile.bookingCta.buttonLabel}
+          >
+            <span class="booking-cta-labels" aria-hidden="true">
+              <span class="booking-cta-label booking-cta-label--open"
+                >{profile.bookingCta.buttonLabel}</span
               >
-            </form>
+              <span class="booking-cta-label booking-cta-label--close"
+                >{profile.bookingCta.closeLabel}</span
+              >
+            </span>
+          </a>
+        </div>
+        <div class="calendly-panel" id="calendly-booking-panel" hidden>
+          <div class="calendly-panel-inner">
+            <div class="calendly-panel-header">
+              <div>
+                <h3 class="calendly-panel-title">
+                  {profile.bookingCta.expandedTitle}
+                </h3>
+                <p class="calendly-panel-helper">
+                  {profile.bookingCta.helperText}
+                </p>
+              </div>
+            </div>
+            <div class="calendly-booked-message" data-calendly-booked hidden>
+              {profile.bookingCta.bookedText}
+            </div>
+            <div class="calendly-loading" data-calendly-loading>
+              {profile.bookingCta.loadingText}
+            </div>
+            <div class="calendly-inline-host" data-calendly-container></div>
           </div>
         </div>
       </div>
-    </section>
-  </section>
+      <div class="contact-content">
+        <div class="contact-info">
+          <h3>Get In Touch</h3>
+          <p>
+            Ready to elevate your technical marketing? Let's discuss how I can
+            help drive growth for your B2B or B2C business.
+          </p>
+          <div class="contact-details">
+            <div class="contact-item">
+              <div class="contact-icon" aria-hidden="true">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="1em"
+                  height="1em"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  aria-hidden="true"
+                  focusable="false"
+                >
+                  <path
+                    d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"
+                  ></path>
+                </svg>
+              </div>
+              <div class="contact-text" id="contact-email">
+                <span class="sr-only">Email: </span>jerry@placeholder.com
+              </div>
+            </div>
 
-  <SiteFooter />
+            <div class="contact-item">
+              <div class="contact-icon" aria-hidden="true">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="1em"
+                  height="1em"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  aria-hidden="true"
+                  focusable="false"
+                >
+                  <path
+                    d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.761 0 5-2.239 5-5v-14c0-2.761-2.239-5-5-5zm-11 19h-3v-10h3v10zm-1.5-11.268c-.966 0-1.75-.784-1.75-1.75s.784-1.75 1.75-1.75 1.75.784 1.75 1.75-.784 1.75-1.75 1.75zm13.5 11.268h-3v-5.604c0-1.337-.026-3.063-1.868-3.063-1.868 0-2.154 1.459-2.154 2.967v5.7h-3v-10h2.881v1.367h.041c.401-.761 1.379-1.563 2.838-1.563 3.036 0 3.599 2 3.599 4.594v5.602z"
+                  ></path>
+                </svg>
+              </div>
+              <div class="contact-text">
+                <a
+                  href={siteContent.contactInfo.linkedin.url}
+                  id="contact-linkedin"
+                  target="_blank"
+                  rel="noopener">{siteContent.contactInfo.linkedin.label}</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="contact-form-container">
+          <form
+            class="contact-form"
+            id="contact-form"
+            action={siteContent.contactForm.endpoint}
+            method="POST"
+          >
+            <input
+              type="hidden"
+              name="access_key"
+              value={siteContent.contactForm.accessKey}
+            />
+            <input
+              type="hidden"
+              name="subject"
+              value={siteContent.contactForm.subject}
+            />
+            <div class="form-group">
+              <label for="name" class="form-label">Name</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                class="form-control"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="email" class="form-label">Email</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                class="form-control"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="company" class="form-label">Company</label>
+              <input
+                type="text"
+                id="company"
+                name="company"
+                class="form-control"
+              />
+            </div>
+            <div class="form-group">
+              <label for="message" class="form-label">Message</label>
+              <textarea
+                id="message"
+                name="message"
+                rows="5"
+                class="form-control"
+                required></textarea>
+            </div>
+
+            <!-- Frictionless Spam Protection -->
+            <input type="checkbox" name="botcheck" class="hidden" />
+
+            <button type="submit" class="btn btn--primary btn--full-width"
+              >Send Message</button
+            >
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
+
+<SiteFooter />

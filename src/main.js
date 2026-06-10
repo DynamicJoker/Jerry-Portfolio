@@ -163,7 +163,6 @@ document.addEventListener('DOMContentLoaded', () => {
   updateFooterYear();
   initializeLogoCarousel();
   initializeExpandableHighlights();
-  console.log('Jerry James Portfolio initialized.');
 });
 
 function initializeContactInfo() {
@@ -800,6 +799,16 @@ function initializeCalendlyBookingPanel() {
     panel.addEventListener('transitionend', finishClose, { once: true });
   };
 
+  // The trigger is an <a> (no-JS fallback opens Calendly in a new tab); once
+  // enhanced it behaves as a disclosure button, so expose button semantics
+  // and the Space key alongside the link's native Enter activation.
+  trigger.setAttribute('role', 'button');
+  trigger.addEventListener('keydown', (event) => {
+    if (event.key !== ' ') return;
+    event.preventDefault();
+    trigger.click();
+  });
+
   trigger.addEventListener('click', (event) => {
     event.preventDefault();
     if (isOpen) {
@@ -828,32 +837,90 @@ function initializeCalendlyBookingPanel() {
 }
 
 function initializeInfiniteScroller() {
-  document
-    .querySelectorAll('.testimonials-scroller-column')
-    .forEach((scroller) => {
-      const scrollerInner = scroller.querySelector(
-        '.testimonials-scroller-inner',
-      );
-      if (!scrollerInner) return;
-      if (scrollerInner.dataset.scrollerEnhanced === 'true') return;
+  const scroller = document.getElementById('testimonials-container');
+  if (!scroller || scroller.dataset.scrollerEnhanced === 'true') return;
 
-      const scrollerContent = Array.from(scrollerInner.children);
-      scrollerContent.forEach((item) => {
-        const duplicatedItem = item.cloneNode(true);
-        duplicatedItem.setAttribute('aria-hidden', true);
-        scrollerInner.appendChild(duplicatedItem);
-      });
-      const durationRange =
-        config.testimonials.scrollSpeedMax - config.testimonials.scrollSpeedMin;
-      const randomDuration =
-        Math.floor(Math.random() * durationRange) +
-        config.testimonials.scrollSpeedMin;
-      scrollerInner.style.setProperty(
-        '--scroll-duration',
-        `${randomDuration}s`,
-      );
-      scrollerInner.dataset.scrollerEnhanced = 'true';
+  const inners = Array.from(
+    scroller.querySelectorAll('.testimonials-scroller-inner'),
+  );
+  if (inners.length === 0) return;
+
+  // Baseline cards per column, used to keep the pixel speed of the loop
+  // steady no matter how many cards a column ends up holding.
+  const cardsPerColumn = Math.max(
+    1,
+    ...inners.map((inner) => inner.childElementCount),
+  );
+
+  // Remember each card's build-time column so it can be restored on resize.
+  inners.forEach((inner, columnIndex) => {
+    Array.from(inner.children).forEach((card) => {
+      card.dataset.homeColumn = String(columnIndex);
     });
+  });
+
+  const refreshColumn = (inner) => {
+    inner
+      .querySelectorAll('[data-scroller-clone]')
+      .forEach((clone) => clone.remove());
+    const cards = Array.from(inner.children);
+    // Reduced motion gets a static, user-scrollable column instead of a loop.
+    if (cards.length === 0 || prefersReducedMotion) return;
+
+    cards.forEach((card) => {
+      const duplicatedItem = card.cloneNode(true);
+      duplicatedItem.setAttribute('aria-hidden', 'true');
+      duplicatedItem.dataset.scrollerClone = 'true';
+      inner.appendChild(duplicatedItem);
+    });
+
+    const durationRange =
+      config.testimonials.scrollSpeedMax - config.testimonials.scrollSpeedMin;
+    const baseDuration =
+      Math.floor(Math.random() * durationRange) +
+      config.testimonials.scrollSpeedMin;
+    const duration = Math.round((baseDuration * cards.length) / cardsPerColumn);
+    inner.style.setProperty('--scroll-duration', `${duration}s`);
+  };
+
+  // Columns beyond the first are display:none below the md breakpoint, so
+  // their cards are merged into the first column there and moved back to
+  // their home columns on wider viewports.
+  const compactQuery = window.matchMedia(
+    `(max-width: ${getBreakpointPx('md')}px)`,
+  );
+  const distributeCards = () => {
+    const isCompact = compactQuery.matches;
+    inners.forEach((inner) =>
+      inner
+        .querySelectorAll('[data-scroller-clone]')
+        .forEach((clone) => clone.remove()),
+    );
+    inners
+      .flatMap((inner) => Array.from(inner.children))
+      .forEach((card) => {
+        const home = isCompact ? 0 : Number(card.dataset.homeColumn) || 0;
+        inners[home].appendChild(card);
+      });
+    inners.forEach(refreshColumn);
+  };
+
+  if (inners.length > 1) {
+    compactQuery.addEventListener('change', distributeCards);
+  }
+  distributeCards();
+
+  if (prefersReducedMotion) {
+    scroller
+      .querySelectorAll('.testimonials-scroller-column')
+      .forEach((column, index) => {
+        column.setAttribute('tabindex', '0');
+        column.setAttribute('role', 'region');
+        column.setAttribute('aria-label', `Testimonials list ${index + 1}`);
+      });
+  }
+
+  scroller.dataset.scrollerEnhanced = 'true';
 }
 
 function initializeTestimonialPauseControl() {
@@ -979,6 +1046,19 @@ function enhanceGanttRows() {
     document.addEventListener('click', (event) => {
       if (container.contains(event.target)) return;
       closeGanttDetails(container);
+    });
+    // WCAG 1.4.13: Escape dismisses hover/focus tooltips; they may reappear
+    // once the pointer moves again.
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return;
+      closeGanttDetails(container);
+      container.classList.add('gantt-tooltips-suppressed');
+      if (container.contains(document.activeElement)) {
+        document.activeElement.blur();
+      }
+    });
+    container.addEventListener('pointermove', () => {
+      container.classList.remove('gantt-tooltips-suppressed');
     });
     container.dataset.ganttOutsideListener = 'true';
   }
