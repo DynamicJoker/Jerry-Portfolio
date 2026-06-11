@@ -60,6 +60,31 @@
   --line-height-normal: 1.5;
   --letter-spacing-tight: -0.01em;
 
+  /* Heading role tokens — one edit point per heading role. The hero tokens
+     are mirrored in src/styles/critical-home.css; keep them byte-identical. */
+  --text-hero: clamp(2.65rem, 8vw, 6rem);
+  --text-hero-weight: var(--font-weight-bold);
+  --text-hero-line-height: 0.98;
+  --text-hero-sub: clamp(1.35rem, 4vw, 2.5rem);
+  --text-section-title: clamp(1.9rem, 4vw, 2.75rem);
+  --text-kicker: var(--font-size-sm);
+  --text-kicker-tracking: 0.14em;
+  --text-card-title: var(--font-size-xl);
+  --text-panel-title: var(--font-size-2xl);
+  --text-timeline-title: var(--font-size-lg);
+  --text-timeline-title-compact: var(--font-size-base);
+  --text-article-title: clamp(2.4rem, 8vw, 5rem);
+  --text-article-title-line-height: 0.98;
+  --text-article-h2: clamp(1.65rem, 3vw, 2.25rem);
+  --text-article-h3: clamp(1.32rem, 2vw, 1.65rem);
+  --text-article-heading-line-height: 1.18;
+  --text-blog-feature: clamp(1.75rem, 4vw, 3rem);
+  --text-blog-feature-line-height: 1.02;
+  --text-blog-card: clamp(1.25rem, 2.4vw, 1.55rem);
+  --text-blog-card-line-height: 1.16;
+  --text-blog-list-card: clamp(1.35rem, 3vw, 1.85rem);
+  --text-blog-list-card-line-height: 1.12;
+
   /* Spacing */
   --space-0: 0;
   --space-1: 0.0625rem; /* 1px */
@@ -1660,9 +1685,9 @@ html.theme-transition *::after {
 }
 
 .hero-name {
-  font-size: clamp(2.65rem, 8vw, 6rem);
-  font-weight: var(--font-weight-bold);
-  line-height: 0.98;
+  font-size: var(--text-hero);
+  font-weight: var(--text-hero-weight);
+  line-height: var(--text-hero-line-height);
   margin-bottom: var(--space-16);
   /* Fluid fill: name starts white, a light-blue meniscus rises slowly with deeper blue
      behind it, sloshes gently (swirl), and settles blue (Jerry) -> light-blue (James). */
@@ -1719,7 +1744,7 @@ html.theme-transition *::after {
 }
 
 .hero-title {
-  font-size: clamp(1.35rem, 4vw, 2.5rem);
+  font-size: var(--text-hero-sub);
   margin-bottom: var(--space-24);
   min-height: clamp(3.5rem, 11vw, 5rem);
   display: flex;
@@ -2076,9 +2101,9 @@ body {
   gap: var(--space-12);
   margin-bottom: var(--space-12);
   color: var(--color-electric-blue);
-  font-size: var(--font-size-sm);
+  font-size: var(--text-kicker);
   font-weight: var(--font-weight-semibold);
-  letter-spacing: 0.14em;
+  letter-spacing: var(--text-kicker-tracking);
   text-transform: uppercase;
   counter-increment: section-kicker;
 }
@@ -2097,7 +2122,7 @@ body {
 }
 
 .section-title {
-  font-size: clamp(1.9rem, 4vw, 2.75rem);
+  font-size: var(--text-section-title);
   max-width: 26ch;
   text-wrap: balance;
   color: var(--color-text);
@@ -2201,7 +2226,7 @@ section[id] {
 }
 
 .highlight-title {
-  font-size: var(--font-size-xl);
+  font-size: var(--text-card-title);
 }
 
 .highlight-text {
@@ -2327,7 +2352,7 @@ section[id] {
 }
 
 .skill-category-title {
-  font-size: var(--font-size-xl);
+  font-size: var(--text-card-title);
   margin-bottom: var(--space-20);
   color: var(--color-electric-blue);
 }
@@ -2424,7 +2449,7 @@ section[id] {
 }
 
 .service-title {
-  font-size: var(--font-size-xl);
+  font-size: var(--text-card-title);
   margin-bottom: var(--space-16);
   color: var(--color-electric-blue);
 }
@@ -2643,7 +2668,7 @@ section[id] {
 }
 
 .portfolio-title {
-  font-size: var(--font-size-xl);
+  font-size: var(--text-card-title);
   color: var(--color-electric-blue);
   flex: 1;
   min-width: min(100%, 12rem);
@@ -2736,8 +2761,8 @@ section[id] {
 }
 
 .gantt-label h3 {
-  font-size: var(--font-size-lg);
-  font-weight: 500;
+  font-size: var(--text-timeline-title);
+  font-weight: var(--font-weight-medium);
   margin-bottom: var(--space-4);
   color: var(--color-text);
   transition: color 0.3s ease;
@@ -2910,7 +2935,7 @@ section[id] {
   }
 
   .gantt-label h3 {
-    font-size: var(--font-size-base);
+    font-size: var(--text-timeline-title-compact);
     line-height: 1.35;
   }
 
@@ -3175,7 +3200,7 @@ section[id] {
 
 .calendly-panel-title {
   color: var(--color-electric-blue);
-  font-size: var(--font-size-2xl);
+  font-size: var(--text-panel-title);
   margin-bottom: var(--space-8);
 }
 
@@ -3232,7 +3257,7 @@ section[id] {
 }
 
 .contact-info h3 {
-  font-size: var(--font-size-2xl);
+  font-size: var(--text-panel-title);
   margin-bottom: var(--space-16);
   color: var(--color-electric-blue);
 }
@@ -3396,8 +3421,8 @@ section[id] {
 .article-header h1 {
   margin: 0;
   color: var(--color-text);
-  font-size: clamp(2.4rem, 8vw, 5rem);
-  line-height: 0.98;
+  font-size: var(--text-article-title);
+  line-height: var(--text-article-title-line-height);
   letter-spacing: 0;
   overflow-wrap: anywhere;
 }
@@ -3461,8 +3486,8 @@ section[id] {
 
 .blog-card h2 {
   margin: 0;
-  font-size: clamp(1.35rem, 3vw, 1.85rem);
-  line-height: 1.12;
+  font-size: var(--text-blog-list-card);
+  line-height: var(--text-blog-list-card-line-height);
   overflow-wrap: anywhere;
 }
 
@@ -3543,8 +3568,8 @@ section[id] {
 .home-blog-copy h3 {
   margin: 0;
   color: var(--color-text);
-  font-size: clamp(1.75rem, 4vw, 3rem);
-  line-height: 1.02;
+  font-size: var(--text-blog-feature);
+  line-height: var(--text-blog-feature-line-height);
   letter-spacing: 0;
   overflow-wrap: anywhere;
 }
@@ -3602,8 +3627,8 @@ section[id] {
 
 .home-blog-card h3 {
   margin: 0;
-  font-size: clamp(1.25rem, 2.4vw, 1.55rem);
-  line-height: 1.16;
+  font-size: var(--text-blog-card);
+  line-height: var(--text-blog-card-line-height);
   overflow-wrap: anywhere;
 }
 
@@ -3673,16 +3698,16 @@ section[id] {
 .article-content h2,
 .article-content h3 {
   color: var(--color-text);
-  line-height: 1.18;
+  line-height: var(--text-article-heading-line-height);
   margin-top: 2.4rem;
 }
 
 .article-content h2 {
-  font-size: clamp(1.65rem, 3vw, 2.25rem);
+  font-size: var(--text-article-h2);
 }
 
 .article-content h3 {
-  font-size: clamp(1.32rem, 2vw, 1.65rem);
+  font-size: var(--text-article-h3);
 }
 
 .article-content a {
