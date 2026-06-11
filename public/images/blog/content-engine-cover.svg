@@ -1,0 +1,64 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="45%" r="85%">
+      <stop offset="0" stop-color="#0f1e29"/>
+      <stop offset="1" stop-color="#0a141c"/>
+    </radialGradient>
+    <linearGradient id="title" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#57B9FF"/>
+      <stop offset="1" stop-color="#90D5FF"/>
+    </linearGradient>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="12"/>
+    </filter>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <!-- Raw inputs: modular expertise blocks, some still missing -->
+  <g>
+    <rect x="200" y="310" width="64" height="64" rx="10" fill="#517891"/>
+    <rect x="278" y="310" width="64" height="64" rx="10" fill="#57B9FF"/>
+    <rect x="356" y="310" width="64" height="64" rx="10" stroke="#517891" stroke-width="3" stroke-dasharray="8 8"/>
+    <rect x="200" y="388" width="64" height="64" rx="10" fill="#57B9FF" fill-opacity=".75"/>
+    <rect x="278" y="388" width="64" height="64" rx="10" fill="#517891"/>
+    <rect x="356" y="388" width="64" height="64" rx="10" fill="#90D5FF"/>
+    <rect x="200" y="466" width="64" height="64" rx="10" stroke="#517891" stroke-width="3" stroke-dasharray="8 8"/>
+    <rect x="278" y="466" width="64" height="64" rx="10" fill="#517891" fill-opacity=".7"/>
+    <rect x="356" y="466" width="64" height="64" rx="10" fill="#57B9FF" fill-opacity=".6"/>
+  </g>
+  <!-- Intake pipeline -->
+  <path d="M440 420 C 560 420 620 450 700 450" stroke="#517891" stroke-width="4"/>
+  <circle cx="520" cy="428" r="9" fill="#90D5FF"/>
+  <circle cx="610" cy="442" r="9" fill="#90D5FF" fill-opacity=".7"/>
+  <!-- The engine -->
+  <circle cx="820" cy="450" r="112" stroke="#57B9FF" stroke-opacity=".25" stroke-width="2"/>
+  <circle cx="820" cy="450" r="90" stroke="#57B9FF" stroke-width="4"/>
+  <circle cx="820" cy="450" r="56" stroke="#517891" stroke-width="3"/>
+  <circle cx="820" cy="450" r="34" fill="#57B9FF" opacity=".3" filter="url(#glow)"/>
+  <circle cx="820" cy="450" r="16" fill="#90D5FF"/>
+  <g stroke="#90D5FF" stroke-width="4" stroke-linecap="round">
+    <path d="M820 340 V322"/>
+    <path d="M820 560 V578"/>
+    <path d="M710 450 H692"/>
+    <path d="M948 450 H930"/>
+    <path d="M898 372 L911 359"/>
+    <path d="M742 528 L729 541"/>
+    <path d="M898 528 L911 541"/>
+    <path d="M742 372 L729 359"/>
+  </g>
+  <!-- Output pipeline -->
+  <path d="M932 450 H1040" stroke="#517891" stroke-width="4"/>
+  <circle cx="990" cy="450" r="9" fill="#90D5FF"/>
+  <!-- The finished asset: clear page, rising results -->
+  <rect x="1044" y="240" width="390" height="420" rx="20" fill="#0f1d28" stroke="#77B1D4" stroke-opacity=".55" stroke-width="3"/>
+  <rect x="1086" y="290" width="230" height="26" rx="13" fill="url(#title)"/>
+  <rect x="1086" y="348" width="306" height="14" rx="7" fill="#77B1D4" fill-opacity=".55"/>
+  <rect x="1086" y="382" width="266" height="14" rx="7" fill="#77B1D4" fill-opacity=".55"/>
+  <rect x="1086" y="416" width="288" height="14" rx="7" fill="#77B1D4" fill-opacity=".55"/>
+  <rect x="1086" y="450" width="196" height="14" rx="7" fill="#77B1D4" fill-opacity=".55"/>
+  <g>
+    <rect x="1086" y="560" width="44" height="56" rx="6" fill="#517891"/>
+    <rect x="1146" y="532" width="44" height="84" rx="6" fill="#57B9FF" fill-opacity=".75"/>
+    <rect x="1206" y="506" width="44" height="110" rx="6" fill="#57B9FF"/>
+    <rect x="1266" y="472" width="44" height="144" rx="6" fill="#90D5FF"/>
+  </g>
+</svg>

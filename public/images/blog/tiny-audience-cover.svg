@@ -1,0 +1,51 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg" cx="38%" cy="50%" r="85%">
+      <stop offset="0" stop-color="#10202b"/>
+      <stop offset="1" stop-color="#0a141c"/>
+    </radialGradient>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="16"/>
+    </filter>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <!-- Radar: the whole market -->
+  <circle cx="600" cy="450" r="130" stroke="#57B9FF" stroke-opacity=".5" stroke-width="2.5"/>
+  <circle cx="600" cy="450" r="240" stroke="#57B9FF" stroke-opacity=".3" stroke-width="2"/>
+  <circle cx="600" cy="450" r="360" stroke="#517891" stroke-opacity=".34" stroke-width="2"/>
+  <circle cx="600" cy="450" r="490" stroke="#517891" stroke-opacity=".16" stroke-width="2"/>
+  <circle cx="600" cy="450" r="52" fill="#57B9FF" opacity=".32" filter="url(#glow)"/>
+  <circle cx="600" cy="450" r="18" fill="#90D5FF"/>
+  <!-- The broad audience: present but quiet -->
+  <g fill="#3d5666">
+    <circle cx="300" cy="240" r="7"/>
+    <circle cx="430" cy="700" r="7"/>
+    <circle cx="180" cy="520" r="6"/>
+    <circle cx="760" cy="760" r="7"/>
+    <circle cx="950" cy="640" r="6"/>
+    <circle cx="250" cy="370" r="6"/>
+    <circle cx="520" cy="160" r="7"/>
+    <circle cx="1080" cy="740" r="6"/>
+    <circle cx="120" cy="690" r="7"/>
+    <circle cx="700" cy="105" r="6"/>
+    <circle cx="380" cy="450" r="6"/>
+    <circle cx="840" cy="560" r="7"/>
+  </g>
+  <!-- The tiny audience: lit up, on signal -->
+  <path d="M854 195 A360 360 0 0 1 938 327" stroke="#90D5FF" stroke-width="6" stroke-linecap="round" stroke-opacity=".9"/>
+  <circle cx="905" cy="259" r="26" fill="#90D5FF" opacity=".25" filter="url(#glow)"/>
+  <g fill="#90D5FF">
+    <circle cx="905" cy="259" r="11"/>
+    <circle cx="869" cy="214" r="9"/>
+    <circle cx="930" cy="300" r="9"/>
+    <circle cx="893" cy="237" r="7" fill-opacity=".8"/>
+  </g>
+  <!-- Their voice becomes the content everyone else reads -->
+  <path d="M940 259 H1056" stroke="#77B1D4" stroke-width="4" stroke-dasharray="2 14" stroke-linecap="round"/>
+  <rect x="1060" y="150" width="390" height="250" rx="20" fill="#0f1d28" stroke="#77B1D4" stroke-opacity=".55" stroke-width="3"/>
+  <rect x="1102" y="196" width="240" height="22" rx="11" fill="#D6EFFF"/>
+  <rect x="1102" y="248" width="300" height="14" rx="7" fill="#77B1D4" fill-opacity=".55"/>
+  <rect x="1102" y="282" width="262" height="14" rx="7" fill="#77B1D4" fill-opacity=".55"/>
+  <rect x="1102" y="316" width="180" height="14" rx="7" fill="#77B1D4" fill-opacity=".55"/>
+  <polyline points="1102,372 1170,352 1240,360 1330,330 1408,338" stroke="#57B9FF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
