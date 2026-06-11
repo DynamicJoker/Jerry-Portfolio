@@ -1198,9 +1198,33 @@ body[data-page='home'] .navbar.brand-expanded .nav-brand-wordmark {
   top: calc(100% - 0.125rem);
 }
 
-/* Theme toggle: "signal beacon" — a brand-blue core inside a radar ring.
-   The icon previews the theme it switches TO: a crescent in light mode
-   (carved by a background-colored bite) and a full disc in dark mode. */
+/* Gradual scheme change. Preferred path: the controller swaps the theme
+   inside a view transition, and these pseudos pace the GPU-composited
+   cross-fade between the page snapshots. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.45s;
+  animation-timing-function: ease-in-out;
+}
+
+/* Fallback fade for browsers without the View Transitions API: the
+   controller adds this class around a toggle. Kept to the cheap color
+   properties (no box-shadow/opacity) to limit main-thread repaints.
+   Removed ~0.5s later; never used under prefers-reduced-motion (JS guard). */
+html.theme-transition,
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+  transition:
+    background-color 0.45s ease-in-out,
+    border-color 0.45s ease-in-out,
+    color 0.45s ease-in-out,
+    fill 0.45s ease-in-out !important;
+}
+
+/* Theme toggle: borderless icon button; hovering fires the same one-shot
+   btnSignalPulse the primary buttons use. The icon previews the theme it
+   switches TO: sun while in dark mode, moon while in light mode. */
 .theme-toggle {
   position: relative;
   display: inline-flex;
@@ -1212,16 +1236,13 @@ body[data-page='home'] .navbar.brand-expanded .nav-brand-wordmark {
   margin-left: var(--space-8);
   padding: 0;
   background: transparent;
-  border: 1px solid transparent;
+  border: 0;
   border-radius: var(--radius-base);
   cursor: pointer;
-  transition:
-    border-color 0.2s ease-out,
-    background-color 0.2s ease-out;
 }
 
 .theme-toggle:hover {
-  border-color: var(--color-control-border);
+  animation: btnSignalPulse 1.1s ease-out 1;
 }
 
 .theme-toggle:focus-visible {
@@ -1229,42 +1250,32 @@ body[data-page='home'] .navbar.brand-expanded .nav-brand-wordmark {
   outline-offset: 3px;
 }
 
-.theme-toggle__core {
-  position: relative;
-  width: 1.125rem;
-  height: 1.125rem;
-  border-radius: 50%;
-  background: var(--color-primary);
+.theme-toggle__icon {
+  width: 1.375rem;
+  height: 1.375rem;
 }
 
-/* The "bite" that carves the crescent; matches the page background so the
-   cut looks transparent. Slides away in dark mode to leave a full disc. */
-.theme-toggle__core::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: var(--color-background);
-  transform: translate(30%, -30%) scale(0.92);
-  transition: transform 0.35s var(--animation-curve);
+.theme-toggle__sun,
+.theme-toggle__moon {
+  transform-origin: center;
+  transition:
+    opacity 0.25s ease-out,
+    transform 0.35s var(--animation-curve);
 }
 
-[data-color-scheme='dark'] .theme-toggle__core::after {
-  transform: translate(120%, -120%) scale(0.6);
+.theme-toggle__sun {
+  opacity: 0;
+  transform: scale(0.6) rotate(-45deg);
 }
 
-.theme-toggle__ring {
-  position: absolute;
-  inset: 0.625rem;
-  border: 1px solid rgba(var(--color-primary-rgb), 0.4);
-  border-radius: 50%;
-  opacity: 0.7;
-  pointer-events: none;
+[data-color-scheme='dark'] .theme-toggle__sun {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
 }
 
-/* One heartbeat pulse per toggle; the global reduced-motion block kills it */
-.theme-toggle.is-pulsing .theme-toggle__ring {
-  animation: signalHeartbeat 1.44s ease-out 1;
+[data-color-scheme='dark'] .theme-toggle__moon {
+  opacity: 0;
+  transform: scale(0.6) rotate(45deg);
 }
 
 @media (max-width: 64rem) {
@@ -4178,7 +4189,8 @@ section[id] {
 
 @media (prefers-reduced-motion: reduce) {
   .btn--primary:hover,
-  .btn--outline:hover {
+  .btn--outline:hover,
+  .theme-toggle:hover {
     animation: none;
   }
 }

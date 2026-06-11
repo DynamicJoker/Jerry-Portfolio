@@ -67,8 +67,61 @@ const currentLabel = links.find((link) => link.id === current)?.label ?? 'Home';
         aria-label="Toggle color theme"
         hidden
       >
-        <span class="theme-toggle__ring" aria-hidden="true"></span>
-        <span class="theme-toggle__core" aria-hidden="true"></span>
+        <svg
+          class="theme-toggle__icon"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <defs>
+            <clipPath id="theme-sun-clip">
+              <circle cx="12" cy="12" r="4.7"></circle>
+            </clipPath>
+            <clipPath id="theme-moon-clip">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </clipPath>
+          </defs>
+          <g class="theme-toggle__sun">
+            <circle cx="12" cy="12" r="4.7" fill="var(--color-primary-hover)"
+            ></circle>
+            <circle
+              cx="12.9"
+              cy="12.7"
+              r="4.7"
+              fill="var(--color-primary)"
+              clip-path="url(#theme-sun-clip)"></circle>
+            <g
+              stroke="var(--color-primary)"
+              stroke-width="1.4"
+              stroke-linecap="round"
+            >
+              <path d="M18.7 12H21.7"></path>
+              <path d="M17.8 15.35L19.36 16.25"></path>
+              <path d="M15.35 17.8L16.85 20.4"></path>
+              <path d="M12 18.7V20.5"></path>
+              <path d="M8.65 17.8L7.15 20.4"></path>
+              <path d="M6.2 15.35L4.64 16.25"></path>
+              <path d="M5.3 12H2.3"></path>
+              <path d="M6.2 8.65L4.64 7.75"></path>
+              <path d="M8.65 6.2L7.15 3.6"></path>
+              <path d="M12 5.3V3.5"></path>
+              <path d="M15.35 6.2L16.85 3.6"></path>
+              <path d="M17.8 8.65L19.36 7.75"></path>
+            </g>
+          </g>
+          <g class="theme-toggle__moon">
+            <path
+              d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
+              fill="var(--color-primary)"></path>
+            <circle
+              cx="10.5"
+              cy="11.3"
+              r="8"
+              fill="var(--color-accent)"
+              opacity="0.45"
+              clip-path="url(#theme-moon-clip)"></circle>
+          </g>
+        </svg>
       </button>
     </div>
   </div>
@@ -84,6 +137,33 @@ const currentLabel = links.find((link) => link.id === current)?.label ?? 'Home';
     const button = document.getElementById('theme-toggle');
     const media = window.matchMedia('(prefers-color-scheme: dark)');
     const metas = document.querySelectorAll('meta[name="theme-color"]');
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let crossFadeResetTimer;
+    /* Legacy fallback fade (see html.theme-transition in the CSS) for
+       browsers without the View Transitions API. */
+    const crossFadeSchemes = () => {
+      root.classList.add('theme-transition');
+      window.clearTimeout(crossFadeResetTimer);
+      crossFadeResetTimer = window.setTimeout(() => {
+        root.classList.remove('theme-transition');
+      }, 520);
+    };
+    /* Gradual scheme swap. Preferred path is a view transition: the browser
+       GPU-composites one cross-fade between page snapshots instead of
+       transitioning paint properties on every element (which stutters).
+       Only around user/system-initiated changes — never the initial paint. */
+    const swapScheme = (applyChange) => {
+      if (reducedMotion.matches) {
+        applyChange();
+        return;
+      }
+      if (document.startViewTransition) {
+        document.startViewTransition(applyChange);
+        return;
+      }
+      crossFadeSchemes();
+      applyChange();
+    };
     const getStored = () => {
       try {
         return localStorage.getItem(KEY);
@@ -116,20 +196,14 @@ const currentLabel = links.find((link) => link.id === current)?.label ?? 'Home';
         } catch {
           /* storage blocked: theme still applies for this page view */
         }
-        apply(next);
-        button.classList.remove('is-pulsing');
-        void button.offsetWidth; /* restart the one-shot pulse */
-        button.classList.add('is-pulsing');
+        swapScheme(() => apply(next));
       });
-      button.addEventListener('animationend', () =>
-        button.classList.remove('is-pulsing'),
-      );
     }
 
     /* Follow live system changes only while there is no stored preference */
     media.addEventListener('change', (event) => {
       if (getStored()) return;
-      apply(event.matches ? 'dark' : 'light');
+      swapScheme(() => apply(event.matches ? 'dark' : 'light'));
     });
   })();
 </script>
