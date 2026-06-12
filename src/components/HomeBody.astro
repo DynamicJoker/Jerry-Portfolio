@@ -171,11 +171,15 @@ siteContent.testimonials.forEach((testimonial, index) => {
 
   <!-- About Section -->
   <section id="about" class="section">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-kicker">About</span>
+    <div class="section-header">
+      <div class="container section-header-inner">
+        <span class="section-kicker"
+          ><span class="section-kicker-label">About</span></span
+        >
         <h2 class="section-title">About Me</h2>
       </div>
+    </div>
+    <div class="container">
       <div class="about-content">
         <div class="about-text">
           <p class="about-description">{siteContent.about.description}</p>
@@ -229,11 +233,15 @@ siteContent.testimonials.forEach((testimonial, index) => {
 
   <!-- Skills Section -->
   <section id="skills" class="section">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-kicker">Expertise</span>
+    <div class="section-header">
+      <div class="container section-header-inner">
+        <span class="section-kicker"
+          ><span class="section-kicker-label">Expertise</span></span
+        >
         <h2 class="section-title">Skills & Expertise</h2>
       </div>
+    </div>
+    <div class="container">
       <div class="skills-grid" id="skills-grid">
         {
           siteContent.skills.map((category) => (
@@ -270,11 +278,15 @@ siteContent.testimonials.forEach((testimonial, index) => {
 
   <!-- Services Section -->
   <section id="services" class="section">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-kicker">Services</span>
+    <div class="section-header">
+      <div class="container section-header-inner">
+        <span class="section-kicker"
+          ><span class="section-kicker-label">Services</span></span
+        >
         <h2 class="section-title">You Build It. I'll Bring the Party</h2>
       </div>
+    </div>
+    <div class="container">
       <div class="services-grid" id="services-grid">
         {
           siteContent.services.map((service) => (
@@ -293,11 +305,15 @@ siteContent.testimonials.forEach((testimonial, index) => {
 
   <!-- Testimonials Section -->
   <section id="testimonials" class="section">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-kicker">Testimonials</span>
+    <div class="section-header">
+      <div class="container section-header-inner">
+        <span class="section-kicker"
+          ><span class="section-kicker-label">Testimonials</span></span
+        >
         <h2 class="section-title">I Didn't Even Have to Bribe Them</h2>
       </div>
+    </div>
+    <div class="container">
       <div class="testimonials-controls">
         <button
           type="button"
@@ -347,11 +363,15 @@ siteContent.testimonials.forEach((testimonial, index) => {
 
   <!-- Portfolio Section -->
   <section id="portfolio" class="section">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-kicker">Selected Work</span>
+    <div class="section-header">
+      <div class="container section-header-inner">
+        <span class="section-kicker"
+          ><span class="section-kicker-label">Selected Work</span></span
+        >
         <h2 class="section-title">Spoiler Alert: It Went Well</h2>
       </div>
+    </div>
+    <div class="container">
       <div
         class="portfolio-filters"
         role="group"
@@ -402,71 +422,75 @@ siteContent.testimonials.forEach((testimonial, index) => {
 
   <!-- Experience Section -->
   <section id="experience" class="section">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-kicker">Experience</span>
+    <div class="section-header">
+      <div class="container section-header-inner">
+        <span class="section-kicker"
+          ><span class="section-kicker-label">Experience</span></span
+        >
         <h2 class="section-title">Experience</h2>
-        <div id="gantt-chart-container">
-          <div class="gantt-timeline">
-            {ganttYears.map((year) => <span>{year}</span>)}
-          </div>
-          {
-            jobs.map((job, index) => {
-              const offset =
-                ((job.startDate.getTime() - firstDate.getTime()) /
-                  totalDuration) *
-                100;
-              const width =
-                ((job.endDate.getTime() - job.startDate.getTime()) /
-                  totalDuration) *
-                100;
-              const durationText = getGanttDurationText(
-                job.startDate,
-                job.endDate,
-              );
-              const delay = index * 100; // Animation delay increment (100ms)
-              const isPresent = job.period.toLowerCase().includes('present');
+      </div>
+    </div>
+    <div class="container">
+      <div id="gantt-chart-container">
+        <div class="gantt-timeline">
+          {ganttYears.map((year) => <span>{year}</span>)}
+        </div>
+        {
+          jobs.map((job, index) => {
+            const offset =
+              ((job.startDate.getTime() - firstDate.getTime()) /
+                totalDuration) *
+              100;
+            const width =
+              ((job.endDate.getTime() - job.startDate.getTime()) /
+                totalDuration) *
+              100;
+            const durationText = getGanttDurationText(
+              job.startDate,
+              job.endDate,
+            );
+            const delay = index * 100; // Animation delay increment (100ms)
+            const isPresent = job.period.toLowerCase().includes('present');
 
-              return (
-                <div class="gantt-row">
-                  <div class="gantt-label">
-                    <h3>{job.title}</h3>
-                    <p>{job.company}</p>
-                    <div class="gantt-meta">
-                      <span class="gantt-period">{job.period}</span>
-                      <span class="gantt-duration">{durationText}</span>
-                    </div>
-                  </div>
-                  <div
-                    class="gantt-bar-area"
-                    tabindex="0"
-                    role="button"
-                    aria-expanded="false"
-                    aria-label={`Show details for ${job.title} at ${job.company}`}
-                  >
-                    <div
-                      class={`gantt-bar ${isPresent ? 'present' : ''}`}
-                      style={`margin-left:${offset.toFixed(2)}%;width:${width.toFixed(2)}%;--anim-delay:${delay}ms`}
-                    />
-                    <div class="gantt-tooltip">
-                      <div class="tooltip-period">{job.period}</div>
-                      <ul class="tooltip-achievements">
-                        {job.achievements.map((a) => (
-                          <li>
-                            <span class="achievement-icon" aria-hidden="true">
-                              <Icon name={a.icon} />
-                            </span>
-                            <span set:html={a.text} />
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+            return (
+              <div class="gantt-row">
+                <div class="gantt-label">
+                  <h3>{job.title}</h3>
+                  <p>{job.company}</p>
+                  <div class="gantt-meta">
+                    <span class="gantt-period">{job.period}</span>
+                    <span class="gantt-duration">{durationText}</span>
                   </div>
                 </div>
-              );
-            })
-          }
-        </div>
+                <div
+                  class="gantt-bar-area"
+                  tabindex="0"
+                  role="button"
+                  aria-expanded="false"
+                  aria-label={`Show details for ${job.title} at ${job.company}`}
+                >
+                  <div
+                    class={`gantt-bar ${isPresent ? 'present' : ''}`}
+                    style={`margin-left:${offset.toFixed(2)}%;width:${width.toFixed(2)}%;--anim-delay:${delay}ms`}
+                  />
+                  <div class="gantt-tooltip">
+                    <div class="tooltip-period">{job.period}</div>
+                    <ul class="tooltip-achievements">
+                      {job.achievements.map((a) => (
+                        <li>
+                          <span class="achievement-icon" aria-hidden="true">
+                            <Icon name={a.icon} />
+                          </span>
+                          <span set:html={a.text} />
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            );
+          })
+        }
       </div>
     </div>
   </section>
@@ -475,11 +499,15 @@ siteContent.testimonials.forEach((testimonial, index) => {
 
   <!-- Contact Section -->
   <section id="contact" class="section">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-kicker">Contact</span>
+    <div class="section-header">
+      <div class="container section-header-inner">
+        <span class="section-kicker"
+          ><span class="section-kicker-label">Contact</span></span
+        >
         <h2 class="section-title">Let's Work Together</h2>
       </div>
+    </div>
+    <div class="container">
       <!-- Booking CTA Block -->
       <div class="booking-cta" id="schedule" data-calendly-booking>
         <div class="booking-cta-bar">

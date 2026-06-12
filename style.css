@@ -151,6 +151,17 @@
   --viewport-inline-padding: clamp(var(--space-16), 5vw, var(--space-32));
   --section-header-gap: clamp(var(--space-32), 6vw, 3.75rem);
 
+  /* Docked section headings: each heading shrinks on approach (main.js scrubs
+     --dock-progress) and sticks below the navbar as a slim bar until the next
+     section pushes it out. (No --dock-top token: the navbar+banner calc must
+     resolve at the header element, because --beta-banner-offset is overridden
+     on body — a :root-level token would bake in the 0rem fallback.) */
+  --dock-bar-height: 3rem;
+  --dock-scrub-range: 7.5rem;
+  --text-section-title-compact: clamp(1rem, 1.4vw, 1.125rem);
+  --dock-prefix-width: 5.75rem;
+  --dock-title-rise: 2.1rem;
+
   /* Common style patterns */
   --focus-ring: 0 0 0 4px var(--color-focus-ring);
   --focus-outline: 3px solid var(--color-focus-visible);
@@ -1251,6 +1262,27 @@ body[data-page='home'] .navbar.brand-expanded .nav-brand-wordmark {
   animation-timing-function: ease-in-out;
 }
 
+/* The toggle gets its own view-transition group: the root cross-fade's old
+   snapshot otherwise sits on top of the button and masks the sun/moon icon's
+   own scale/rotate transition. Showing the live (new) button immediately
+   lets that icon animation play unmasked during the page fade. */
+.theme-toggle {
+  view-transition-name: theme-toggle;
+}
+
+::view-transition-old(theme-toggle),
+::view-transition-new(theme-toggle) {
+  animation: none;
+}
+
+::view-transition-old(theme-toggle) {
+  opacity: 0;
+}
+
+::view-transition-new(theme-toggle) {
+  opacity: 1;
+}
+
 /* Fallback fade for browsers without the View Transitions API: the
    controller adds this class around a toggle. Kept to the cheap color
    properties (no box-shadow/opacity) to limit main-thread repaints.
@@ -1454,6 +1486,14 @@ html.theme-transition *::after {
 
   .navbar:has(.nav-menu.active) {
     background-color: var(--color-background) !important;
+  }
+
+  /* The docked heading bar is redundant nav chrome while the sheet is open,
+     and its translucent strip flickers in the gutters beside the sheet as
+     content scrolls/docks beneath — hide it for the duration. Full-size
+     (undocked) headings are page content and stay visible. */
+  body:has(.nav-menu.active) .section-header.is-docked {
+    visibility: hidden;
   }
 
   body:has(.beta-banner) .nav-menu,
@@ -2104,7 +2144,9 @@ html.theme-transition *::after {
 
 .section.visible {
   opacity: 1;
-  transform: translateY(0);
+  /* `none` rather than translateY(0): a transformed ancestor must not linger
+     around the sticky .section-header. */
+  transform: none;
 }
 
 .section:nth-child(even) {
@@ -2152,6 +2194,98 @@ body {
   max-width: 26ch;
   text-wrap: balance;
   color: var(--color-text);
+}
+
+/* Docked section headings. The header is a full-bleed direct child of
+   .section with its own inner .container, so the bar background can span
+   edge to edge while the text stays aligned with the content column.
+   main.js reserves the header's natural height as an inline min-height, so
+   the compact swap never reflows the content below (transform/opacity only
+   during the scrub). */
+.section .section-header {
+  position: sticky;
+  top: calc(var(--navbar-height) + var(--beta-banner-offset, 0rem));
+  z-index: 100;
+}
+
+/* Bar chrome lives on a pseudo so it can fade independently of the swap.
+   z-index: -1 keeps it under the text row (a positioned pseudo otherwise
+   paints over in-flow content); it can't escape the header's own stacking
+   context, so it still covers content scrolling beneath the bar. */
+.section-header::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: -1;
+  height: var(--dock-bar-height);
+  background: var(--color-navbar-scrolled-bg);
+  border-bottom: 1px solid var(--color-hairline);
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-standard);
+  pointer-events: none;
+}
+
+.section-header.is-docked::before {
+  opacity: 1;
+}
+
+/* The reserved (mostly empty) header box must not block clicks on content
+   scrolling beneath it; only the compact row stays interactive. */
+.section-header.is-docked {
+  pointer-events: none;
+}
+
+.section-header.is-docked .section-header-inner {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  height: var(--dock-bar-height);
+}
+
+.section-header.is-docked .section-kicker {
+  margin-bottom: 0;
+  flex-shrink: 0;
+}
+
+/* Hide only the label word; the counter number and accent dash render on the
+   kicker's pseudo-elements and survive into the compact bar. */
+.section-header.is-docked .section-kicker-label {
+  display: none;
+}
+
+.section-header.is-docked .section-title {
+  font-size: var(--text-section-title-compact);
+  max-width: none;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transform: none;
+}
+
+/* Scrub layer: as the header approaches the dock line, the title scales
+   toward its compact size and glides toward its slot in the bar row while
+   the kicker label fades out. --dock-scale-end (compact/full font ratio) is
+   measured by main.js; --dock-progress stays 0 for reduced-motion users. */
+.section-header:not(.is-docked) .section-title {
+  transform-origin: left top;
+  transform: translate(
+      calc(var(--dock-progress, 0) * var(--dock-prefix-width)),
+      calc(var(--dock-progress, 0) * -1 * var(--dock-title-rise))
+    )
+    scale(calc(1 - (1 - var(--dock-scale-end, 0.45)) * var(--dock-progress, 0)));
+}
+
+.section-header:not(.is-docked) .section-kicker-label {
+  opacity: calc(1 - var(--dock-progress, 0) * 1.4);
+}
+
+@media (max-width: 48rem) {
+  :root {
+    --dock-bar-height: 2.5rem;
+    --dock-scrub-range: 5rem;
+  }
 }
 
 /* Legacy centered underline — superseded by the kicker. */

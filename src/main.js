@@ -149,6 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initializeTestimonialPauseControl();
   enhanceGanttRows();
   initializeScrollAnimations();
+  initializeDockedSectionHeaders();
   initializeBrandCollapse();
   initializePortfolioFilters();
   initializeContactForm();
@@ -439,6 +440,82 @@ function initializeScrollAnimations() {
       start: 'top 85%',
       once: true,
       onEnter: () => section.classList.add('visible'),
+    });
+  });
+}
+
+// Docked section headings: each .section-header is position:sticky (CSS). On
+// approach we scrub --dock-progress (CSS scales the title toward its compact
+// size); at the dock line .is-docked swaps in the slim bar layout. The
+// header's natural height is pinned as an inline min-height so the swap never
+// reflows the content below — see "Docked section headings" in style.css.
+function initializeDockedSectionHeaders() {
+  const headers = gsap.utils.toArray('section.section .section-header');
+  if (!headers.length) return;
+
+  // Re-measured on every ScrollTrigger refresh (load, resize) so the reserved
+  // height and scale ratio track font settling and breakpoint changes.
+  const measureHeaders = () => {
+    headers.forEach((header) => {
+      const title = header.querySelector('.section-title');
+      const wasDocked = header.classList.contains('is-docked');
+      header.classList.remove('is-docked');
+      header.style.removeProperty('min-height');
+      const naturalHeight = header.offsetHeight;
+      let scaleEnd = 0.45;
+      if (title) {
+        const fullSize = Number.parseFloat(getComputedStyle(title).fontSize);
+        header.classList.add('is-docked');
+        const compactSize = Number.parseFloat(getComputedStyle(title).fontSize);
+        header.classList.remove('is-docked');
+        if (fullSize > 0 && compactSize > 0) {
+          scaleEnd = compactSize / fullSize;
+        }
+      }
+      header.style.minHeight = `${naturalHeight}px`;
+      header.style.setProperty('--dock-scale-end', scaleEnd.toFixed(4));
+      if (wasDocked) header.classList.add('is-docked');
+    });
+  };
+
+  ScrollTrigger.addEventListener('refreshInit', measureHeaders);
+  measureHeaders();
+
+  headers.forEach((header) => {
+    const section = header.closest('section');
+    // Sticky offset below the navbar (+ beta banner when present).
+    const dockY = () => Number.parseFloat(getComputedStyle(header).top) || 0;
+    // The header's natural offset inside its section. Not header.offsetTop:
+    // a stuck sticky element reports its displaced position, which would
+    // corrupt trigger positions on mid-page refreshes. The header is always
+    // the section's first child, so its flow offset is the section's padding.
+    const headerTop = () =>
+      Number.parseFloat(getComputedStyle(section).paddingTop) || 0;
+    const scrubRange = () =>
+      cssLengthToPx(
+        getComputedStyle(header).getPropertyValue('--dock-scrub-range'),
+        7.5,
+      );
+
+    if (!prefersReducedMotion) {
+      ScrollTrigger.create({
+        trigger: section,
+        start: () => `top+=${headerTop() - scrubRange()} top+=${dockY()}`,
+        end: () => `top+=${headerTop()} top+=${dockY()}`,
+        scrub: true,
+        onUpdate: (self) =>
+          header.style.setProperty('--dock-progress', self.progress.toFixed(4)),
+      });
+    }
+
+    ScrollTrigger.create({
+      trigger: section,
+      start: () => `top+=${headerTop()} top+=${dockY()}`,
+      end: 'bottom top',
+      onEnter: () => header.classList.add('is-docked'),
+      onEnterBack: () => header.classList.add('is-docked'),
+      onLeave: () => header.classList.remove('is-docked'),
+      onLeaveBack: () => header.classList.remove('is-docked'),
     });
   });
 }

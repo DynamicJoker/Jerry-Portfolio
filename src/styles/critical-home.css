@@ -591,6 +591,27 @@ body[data-page='home'] .navbar.brand-expanded .nav-brand-wordmark {
   animation-timing-function: ease-in-out;
 }
 
+/* The toggle gets its own view-transition group: the root cross-fade's old
+   snapshot otherwise sits on top of the button and masks the sun/moon icon's
+   own scale/rotate transition. Showing the live (new) button immediately
+   lets that icon animation play unmasked during the page fade. */
+.theme-toggle {
+  view-transition-name: theme-toggle;
+}
+
+::view-transition-old(theme-toggle),
+::view-transition-new(theme-toggle) {
+  animation: none;
+}
+
+::view-transition-old(theme-toggle) {
+  opacity: 0;
+}
+
+::view-transition-new(theme-toggle) {
+  opacity: 1;
+}
+
 /* Fallback fade for browsers without the View Transitions API: the
    controller adds this class around a toggle. Kept to the cheap color
    properties (no box-shadow/opacity) to limit main-thread repaints.
