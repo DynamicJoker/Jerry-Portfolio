@@ -1,4 +1,5 @@
-/* Jerry James Portfolio - Refactored and Reformatted CSS */
+/* Full site stylesheet (deferred on the home page). Styles that also exist in
+   src/styles/critical-home.css must be changed in both files. */
 
 :root {
   /* Colors */
@@ -12,30 +13,15 @@
   --color-primary-rgb: 81, 120, 145;
   --color-accent: #2f6e96;
   --color-accent-hover: #255a7d;
-  --color-accent-muted-bg: #e3f1fb;
-  --color-accent-on-muted: #2f6e96;
   --color-accent-rgb: 47, 110, 150;
   --color-secondary: rgba(26, 26, 46, 0.06);
   --color-secondary-hover: rgba(26, 26, 46, 0.1);
   --color-secondary-active: rgba(26, 26, 46, 0.14);
-  --color-border: #e5e5e3;
   --color-border-strong: rgba(26, 26, 46, 0.45);
   --color-btn-primary-text: #ffffff;
-  --color-card-border: #e5e5e3;
-  --color-card-border-inner: rgba(26, 26, 46, 0.08);
   --color-error: rgba(192, 21, 47, 1);
-  --color-success: rgba(33, 128, 141, 1);
-  --color-warning: rgba(168, 75, 47, 1);
-  --color-info: rgba(98, 108, 113, 1);
   --color-focus-ring: rgba(var(--color-primary-rgb), 0.4);
   --color-focus-visible: var(--color-primary);
-  --color-select-caret: rgba(26, 26, 46, 0.8);
-
-  /* RGB versions for opacity control */
-  --color-success-rgb: 33, 128, 141;
-  --color-error-rgb: 192, 21, 47;
-  --color-warning-rgb: 168, 75, 47;
-  --color-info-rgb: 98, 108, 113;
 
   /* Typography */
   --font-family-base:
@@ -55,7 +41,6 @@
   --font-size-2xl: 1.375rem; /* 22px */
   --font-size-3xl: 1.625rem; /* 26px */
   --font-size-4xl: clamp(1.5rem, 5vw, 1.875rem); /* Fluid: 24px to 30px */
-  --font-weight-normal: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 550;
   --font-weight-bold: 600;
@@ -92,9 +77,7 @@
   --text-blog-list-card-line-height: 1.12;
 
   /* Spacing */
-  --space-0: 0;
   --space-1: 0.0625rem; /* 1px */
-  --space-2: 0.125rem; /* 2px */
   --space-4: 0.25rem; /* 4px */
   --space-6: 0.375rem; /* 6px */
   --space-8: 0.5rem; /* 8px */
@@ -113,14 +96,10 @@
   --radius-full: 999rem; /* Infinite */
 
   /* Shadows */
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.02);
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
   --shadow-md:
     0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
   --shadow-lg:
     0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
-  --shadow-inset-sm:
-    inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -1px 0 rgba(0, 0, 0, 0.03);
 
   /* Animation */
   --duration-fast: 150ms;
@@ -132,9 +111,7 @@
   --container-md: 48rem; /* 768px */
   --container-lg: 64rem; /* 1024px */
   --container-xl: 80rem; /* 1280px */
-  --breakpoint-sm: 40rem; /* 640px */
   --breakpoint-md: 48rem; /* 768px */
-  --breakpoint-lg: 64rem; /* 1024px */
   --navbar-height: 4.375rem; /* 70px */
   --section-padding: 6.25rem; /* 100px */
   --section-padding-mobile: 3.75rem; /* 60px */
@@ -163,10 +140,7 @@
   --dock-title-rise: 2.1rem;
 
   /* Common style patterns */
-  --focus-ring: 0 0 0 4px var(--color-focus-ring);
   --focus-outline: 3px solid var(--color-focus-visible);
-  --status-bg-opacity: 0.15;
-  --status-border-opacity: 0.25;
   --select-caret-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23134252' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
   --select-caret-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23f5f5f5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
 
@@ -233,7 +207,6 @@
   --hero-name-rest: #1a1a2e;
   /* Legacy accent names now alias the indigo primary so existing usages flip automatically */
   --color-electric-blue: var(--color-primary);
-  --color-electric-blue-hover: var(--color-primary-hover);
   --color-accent-teal: var(--color-primary);
   --animation-speed: 0.3s;
   --animation-curve: cubic-bezier(0.4, 0, 0.2, 1);
@@ -261,8 +234,6 @@
     --color-primary-rgb: 87, 185, 255;
     --color-accent: #90d5ff;
     --color-accent-hover: #b4e2ff;
-    --color-accent-muted-bg: #122a3a;
-    --color-accent-on-muted: #90d5ff;
     --color-accent-rgb: 144, 213, 255;
     --color-text: rgba(232, 232, 234, 1);
     --color-text-secondary: rgba(154, 154, 165, 1);
@@ -270,25 +241,11 @@
     --color-secondary: rgba(154, 154, 165, 0.12);
     --color-secondary-hover: rgba(154, 154, 165, 0.2);
     --color-secondary-active: rgba(154, 154, 165, 0.26);
-    --color-border: var(--color-hairline);
     --color-border-strong: var(--color-hairline-strong);
     --color-error: rgba(255, 84, 89, 1);
-    --color-success: rgba(50, 184, 198, 1);
-    --color-warning: rgba(230, 129, 97, 1);
-    --color-info: rgba(167, 169, 169, 1);
     --color-focus-ring: rgba(var(--color-primary-rgb), 0.4);
     --color-focus-visible: var(--color-primary-hover);
     --color-btn-primary-text: #0f1117;
-    --color-card-border: var(--color-hairline);
-    --color-card-border-inner: rgba(232, 232, 234, 0.06);
-    --color-border-secondary: rgba(232, 232, 234, 0.1);
-    --color-select-caret: rgba(232, 232, 234, 0.8);
-    --shadow-inset-sm:
-      inset 0 1px 0 rgba(255, 255, 255, 0.06), inset 0 -1px 0 rgba(0, 0, 0, 0.2);
-    --color-success-rgb: 50, 184, 198;
-    --color-error-rgb: 255, 84, 89;
-    --color-warning-rgb: 230, 129, 97;
-    --color-info-rgb: 167, 169, 169;
     --color-surface-raised: #232633;
     --color-hairline: rgba(229, 231, 238, 0.08);
     --color-hairline-strong: rgba(229, 231, 238, 0.16);
@@ -370,8 +327,6 @@ body {
   --color-primary-rgb: 87, 185, 255;
   --color-accent: #90d5ff;
   --color-accent-hover: #b4e2ff;
-  --color-accent-muted-bg: #122a3a;
-  --color-accent-on-muted: #90d5ff;
   --color-accent-rgb: 144, 213, 255;
   --color-text: rgba(232, 232, 234, 1);
   --color-text-secondary: rgba(154, 154, 165, 1);
@@ -380,25 +335,11 @@ body {
   --color-secondary: rgba(154, 154, 165, 0.12);
   --color-secondary-hover: rgba(154, 154, 165, 0.2);
   --color-secondary-active: rgba(154, 154, 165, 0.26);
-  --color-border: var(--color-hairline);
   --color-border-strong: var(--color-hairline-strong);
   --color-error: rgba(255, 84, 89, 1);
-  --color-success: rgba(50, 184, 198, 1);
-  --color-warning: rgba(230, 129, 97, 1);
-  --color-info: rgba(167, 169, 169, 1);
   --color-focus-ring: rgba(var(--color-primary-rgb), 0.4);
   --color-focus-visible: var(--color-primary-hover);
   --color-btn-primary-text: #0f1117;
-  --color-card-border: var(--color-hairline);
-  --color-card-border-inner: rgba(232, 232, 234, 0.06);
-  --color-border-secondary: rgba(232, 232, 234, 0.1);
-  --color-select-caret: rgba(232, 232, 234, 0.8);
-  --shadow-inset-sm:
-    inset 0 1px 0 rgba(255, 255, 255, 0.06), inset 0 -1px 0 rgba(0, 0, 0, 0.2);
-  --color-success-rgb: 50, 184, 198;
-  --color-error-rgb: 255, 84, 89;
-  --color-warning-rgb: 230, 129, 97;
-  --color-info-rgb: 167, 169, 169;
   --color-surface-raised: #232633;
   --color-hairline: rgba(229, 231, 238, 0.08);
   --color-hairline-strong: rgba(229, 231, 238, 0.16);
@@ -602,19 +543,6 @@ pre code {
   background: var(--color-primary-active);
 }
 
-.btn--secondary {
-  background: var(--color-secondary);
-  color: var(--color-text);
-}
-
-.btn--secondary:hover {
-  background: var(--color-secondary-hover);
-}
-
-.btn--secondary:active {
-  background: var(--color-secondary-active);
-}
-
 .btn--outline {
   background: transparent;
   border: 1px solid var(--color-border-strong);
@@ -623,12 +551,6 @@ pre code {
 
 .btn--outline:hover {
   background: var(--color-secondary);
-}
-
-.btn--sm {
-  padding: var(--space-4) var(--space-12);
-  font-size: var(--font-size-sm);
-  border-radius: var(--radius-sm);
 }
 
 .btn--lg {
@@ -720,63 +642,6 @@ select.form-control {
   border-color: var(--color-hairline-strong);
 }
 
-.card {
-  background-color: var(--color-surface);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--color-card-border);
-  box-shadow: var(--shadow-sm);
-  overflow: hidden;
-  transition: box-shadow var(--duration-normal) var(--ease-standard);
-}
-
-.card:hover {
-  box-shadow: var(--shadow-md);
-}
-
-.card__body {
-  padding: var(--space-16);
-}
-
-.card__header,
-.card__footer {
-  padding: var(--space-16);
-  border-bottom: 1px solid var(--color-card-border-inner);
-}
-
-/* --- STATUS INDICATORS --- */
-.status {
-  display: inline-flex;
-  align-items: center;
-  padding: var(--space-6) var(--space-12);
-  border-radius: var(--radius-full);
-  font-weight: var(--font-weight-medium);
-  font-size: var(--font-size-sm);
-}
-
-.status--success {
-  background-color: rgba(var(--color-success-rgb), var(--status-bg-opacity));
-  color: var(--color-success);
-  border: 1px solid rgba(var(--color-success-rgb), var(--status-border-opacity));
-}
-
-.status--error {
-  background-color: rgba(var(--color-error-rgb), var(--status-bg-opacity));
-  color: var(--color-error);
-  border: 1px solid rgba(var(--color-error-rgb), var(--status-border-opacity));
-}
-
-.status--warning {
-  background-color: rgba(var(--color-warning-rgb), var(--status-bg-opacity));
-  color: var(--color-warning);
-  border: 1px solid rgba(var(--color-warning-rgb), var(--status-border-opacity));
-}
-
-.status--info {
-  background-color: rgba(var(--color-info-rgb), var(--status-bg-opacity));
-  color: var(--color-info);
-  border: 1px solid rgba(var(--color-info-rgb), var(--status-border-opacity));
-}
-
 /* --- LAYOUT & UTILITIES --- */
 .container {
   width: 100%;
@@ -806,59 +671,6 @@ select.form-control {
   .container {
     max-width: var(--container-xl);
   }
-}
-
-.flex {
-  display: flex;
-}
-
-.flex-col {
-  flex-direction: column;
-}
-
-.items-center {
-  align-items: center;
-}
-
-.justify-center {
-  justify-content: center;
-}
-
-.justify-between {
-  justify-content: space-between;
-}
-
-.gap-4 {
-  gap: var(--space-4);
-}
-
-.gap-8 {
-  gap: var(--space-8);
-}
-
-.gap-16 {
-  gap: var(--space-16);
-}
-
-.m-0 {
-  margin: 0;
-}
-
-.mt-8 {
-  margin-top: var(--space-8);
-}
-
-.mb-8 {
-  margin-bottom: var(--space-8);
-}
-
-.p-0 {
-  padding: 0;
-}
-
-.py-8 {
-  padding-top: var(--space-8);
-  padding-bottom: var(--space-8);
 }
 
 .block {
@@ -2032,9 +1844,7 @@ html.theme-transition *::after {
   min-width: 0;
   padding-inline: var(--viewport-inline-padding);
   max-width: min(50rem, 100%);
-  /* Constrains the width of the text on large screens */
   margin: 0 auto;
-  /* This creates the stacked, centered column layout */
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
@@ -2042,7 +1852,6 @@ html.theme-transition *::after {
   justify-content: center;
   text-align: center;
   gap: clamp(var(--space-20), 5vw, 2.5rem);
-  /* Vertical space between portrait and text */
   transition: gap 0.4s ease-in-out;
 }
 
@@ -2055,10 +1864,8 @@ html.theme-transition *::after {
   justify-content: center;
 }
 
-/* --- 2. Portrait Component Styles --- */
-/* These rules ensure the portrait and its neon circle are styled correctly. */
+/* Hero portrait + neon ring */
 .neon-frame-container {
-  /* We set a fixed size to prevent stretching */
   width: clamp(10.5rem, 42vw, 15rem);
   height: clamp(10.5rem, 42vw, 15rem);
   position: relative;
@@ -2079,7 +1886,6 @@ html.theme-transition *::after {
 
   .hero-content {
     gap: 1.25rem;
-    /* Reduce the gap between portrait and text on mobile */
   }
 }
 
@@ -2088,7 +1894,6 @@ html.theme-transition *::after {
   height: 90%;
   object-fit: cover;
   border-radius: 50%;
-  /* This will now work correctly */
   filter: grayscale(30%);
 }
 
@@ -2116,17 +1921,13 @@ html.theme-transition *::after {
   }
 }
 
-/* --- 3. Desktop Scaling Adjustments --- */
-/* We no longer change the layout, we just scale things up for a better look. */
 @media (min-width: 51.25rem) {
   .neon-frame-container {
-    /* Make the portrait larger on desktop for more impact */
     width: clamp(15rem, 24vw, 18.75rem);
     height: clamp(15rem, 24vw, 18.75rem);
   }
 
   .hero-content {
-    /* Add a bit more vertical spacing on larger screens */
     gap: clamp(2.5rem, 5vw, 3.125rem);
   }
 }
@@ -2288,11 +2089,6 @@ body {
   }
 }
 
-/* Legacy centered underline — superseded by the kicker. */
-.section-line {
-  display: none;
-}
-
 section[id] {
   scroll-margin-top: calc(
     var(--navbar-height) + var(--beta-banner-offset, 0rem) + var(--space-24)
@@ -2387,11 +2183,6 @@ section[id] {
 
 .highlight-title {
   font-size: var(--text-card-title);
-}
-
-.highlight-text {
-  font-weight: var(--font-weight-medium);
-  font-size: var(--font-size-lg);
 }
 
 /* Logo Bar */
@@ -4468,18 +4259,13 @@ section[id] {
   animation-delay: 0.7s;
 }
 
+/* Smooth the padding/gap jumps that responsive breakpoints cause on resize
+   (grid column changes themselves can't be transitioned). */
 .section,
 .container {
-  /* We animate the padding change that happens on smaller screens. */
   transition: padding 0.4s ease-in-out;
 }
 
-/* 2. For the main content grids */
-/* 
-   While we can't easily animate the grid columns themselves, we can
-   smooth out the resizing of the containers that hold them, which
-   gives a much less jarring effect.
-*/
 .skills-grid,
 .services-grid,
 .portfolio-grid,
@@ -4487,29 +4273,20 @@ section[id] {
   transition: gap 0.4s ease-in-out;
 }
 
-/* 3. For specific components that resize */
 .filter-btn {
-  /* 
-       This smoothes the font-size and padding change, AND it has the
-       added benefit of making the button's hover effects animate smoothly too.
-    */
   transition:
     background-color 0.3s ease-in-out,
     color 0.3s ease-in-out,
     border-color 0.3s ease-in-out;
 }
 
-/* 4. For the About Me highlights */
 .highlight-item {
-  /* Smoothes the transition when it stacks vertically */
   transition:
     border-color 0.3s ease,
     box-shadow 0.3s ease;
 }
 
-/* 5. For the Gantt Chart rows */
 .gantt-row {
-  /* Smoothes the change when it switches from row to column on mobile */
   transition:
     padding 0.4s ease-in-out,
     background 0.4s ease-in-out;

@@ -308,7 +308,7 @@ export const siteContent = {
     },
     {
       category: 'Tools & Platforms',
-      type: 'pane', // Using 'pane' to identify this new layout
+      type: 'pane', // renders as the full-width pane layout in HomeBody's skills grid
       tags: [
         'HubSpot',
         'Salesforce',

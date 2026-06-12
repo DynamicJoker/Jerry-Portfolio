@@ -5,7 +5,7 @@ import SiteFooter from './SiteFooter.astro';
 
 const profile = siteContent.profile;
 
-// Prepare Gantt Chart calculation
+// Gantt data: period strings must be 'MM/YYYY - MM/YYYY' (or '- Present').
 const jobs = siteContent.experience
   .map((job) => {
     const [startStr, endStr] = job.period.split(' - ');
@@ -60,7 +60,6 @@ const portfolioFilters = [
   ),
 ];
 
-// Split testimonials into 3 columns
 const numColumns = 3;
 const testimonialColumns = Array.from({ length: numColumns }, () => []);
 siteContent.testimonials.forEach((testimonial, index) => {
@@ -449,7 +448,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
               job.startDate,
               job.endDate,
             );
-            const delay = index * 100; // Animation delay increment (100ms)
+            const delay = index * 100; // ms, staggers the bar reveal
             const isPresent = job.period.toLowerCase().includes('present');
 
             return (

@@ -1,6 +1,3 @@
-// Jerry James Portfolio - Interactive JavaScript
-
-// --- ES Module Imports ---
 import { siteContent } from './content.js';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -13,10 +10,9 @@ const config = {
   notificationDuration: 5000,
   breakpoints: {
     md: { cssVar: '--breakpoint-md', fallbackRem: 48 },
-    lg: { cssVar: '--breakpoint-lg', fallbackRem: 64 },
   },
   navbar: {
-    scrollThreshold: 10, // Scroll threshold to change navbar style
+    scrollThreshold: 10, // px
   },
   testimonials: {
     scrollSpeedMin: 80, // seconds
@@ -75,7 +71,6 @@ function getBreakpointPx(key) {
   return cssLengthToPx(value, breakpoint.fallbackRem);
 }
 
-// --- Consolidated Scroll Handler for Performance ---
 let lastKnownScrollPosition = 0;
 let ticking = false;
 
@@ -101,7 +96,6 @@ function handleScroll() {
 function updateUIOnScroll(scrollY) {
   const navbar = document.getElementById('navbar');
 
-  // Navbar scrolled state
   if (navbar) {
     navbar.classList.toggle(
       'scrolled',
@@ -109,7 +103,6 @@ function updateUIOnScroll(scrollY) {
     );
   }
 
-  // Active nav link + underline glow
   updateActiveNavLink();
   updateNavGlow();
 }
@@ -234,7 +227,6 @@ function initializeContactInfo() {
   }
 }
 
-// Loading Screen Animation
 function initializeLoadingScreen() {
   const loadingScreen = document.getElementById('loading-screen');
   setTimeout(() => {
@@ -245,7 +237,6 @@ function initializeLoadingScreen() {
   }, config.loadingScreenDuration);
 }
 
-// Navigation functionality
 function initializeNavigation() {
   const hamburger = document.getElementById('hamburger');
   const navMenu = document.getElementById('nav-menu');
@@ -366,7 +357,6 @@ function updateActiveNavLink() {
   const scrollY = window.scrollY;
   let currentSectionId = '';
 
-  // 1. Get all navigable sections
   const sections = Array.from(document.querySelectorAll('section[id]')).filter(
     (section) => {
       return document.querySelector(`.nav-link[href="#${section.id}"]`);
@@ -375,14 +365,12 @@ function updateActiveNavLink() {
 
   if (sections.length === 0) return;
 
-  // 2. Check if at the very bottom
   const atBottom =
     window.innerHeight + scrollY >= document.documentElement.scrollHeight - 20;
 
   if (atBottom) {
     currentSectionId = sections[sections.length - 1].id;
   } else {
-    // 3. Find active section based on top-most candidate
     // A section is active if its top has crossed the upper 30% of the viewport
     const threshold = window.innerHeight * 0.3;
 
@@ -398,7 +386,6 @@ function updateActiveNavLink() {
     }
   }
 
-  // 4. Update nav links
   let activeLink = null;
   navLinks.forEach((link) => {
     const isActive = link.getAttribute('href') === `#${currentSectionId}`;
@@ -550,7 +537,6 @@ function initializePortfolioFilters() {
   });
 
   filterContainer.addEventListener('click', (event) => {
-    // Find the button that was actually clicked, even if the user clicks an inner element
     const clickedButton = event.target.closest('.filter-btn');
 
     if (!clickedButton) return;
@@ -609,7 +595,6 @@ function initializeContactForm() {
       return;
     }
 
-    // Basic email sanity check regex
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(formData.get('email'))) {
       fields.email?.setAttribute('aria-invalid', 'true');
@@ -686,7 +671,6 @@ function showNotification(message, type = 'info') {
 
   const close = () => {
     notification.classList.remove('visible');
-    // Wait for the animation to finish before removing the element
     notification.addEventListener(
       'transitionend',
       () => notification.remove(),
@@ -1070,7 +1054,6 @@ function initializeExpandableHighlights() {
     const highlightItem = event.target.closest('.highlight-item');
     if (!highlightItem) return;
 
-    // Ensure only Enter or Space keys trigger the action
     if (event.type === 'keydown' && !['Enter', ' '].includes(event.key)) {
       return;
     }
@@ -1079,7 +1062,6 @@ function initializeExpandableHighlights() {
 
     const currentlyExpanded = container.querySelector('.expanded');
 
-    // Close any other item that might already be open
     if (currentlyExpanded && currentlyExpanded !== highlightItem) {
       setExpanded(currentlyExpanded, false);
     }
@@ -1090,9 +1072,9 @@ function initializeExpandableHighlights() {
   container.addEventListener('click', handleInteraction);
   container.addEventListener('keydown', handleInteraction);
 
-  // Add a listener to the document to handle clicks outside the component
+  // Clicking outside the component collapses any open item.
   document.addEventListener('click', (event) => {
-    // Ignore clicks within the component itself; the container's listener handles those.
+    // The container's own listener handles inside clicks.
     if (container.contains(event.target)) {
       return;
     }
