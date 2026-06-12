@@ -39,10 +39,13 @@
 
   /* Typography */
   --font-family-base:
-    'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    'Krub', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-family-mono:
     'Berkeley Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
     monospace;
+  /* Display face for all headings (h1-h6) incl. the hero name. Mirrored in
+     src/styles/critical-home.css. */
+  --font-family-display: 'Inter', system-ui, -apple-system, sans-serif;
   --font-size-xs: 0.75rem; /* 12px */
   --font-size-sm: 0.875rem; /* 14px */
   --font-size-base: 1rem; /* 16px */
@@ -63,8 +66,11 @@
   /* Heading role tokens — one edit point per heading role. The hero tokens
      are mirrored in src/styles/critical-home.css; keep them byte-identical. */
   --text-hero: clamp(2.65rem, 8vw, 6rem);
-  --text-hero-weight: var(--font-weight-bold);
+  --text-hero-weight: 460;
   --text-hero-line-height: 0.98;
+  /* Bottom padding (em) that keeps the gradient paint box tall enough to
+     contain the display font's descenders. See .hero-name. */
+  --hero-paint-pad: 0.2em;
   --text-hero-sub: clamp(1.35rem, 4vw, 2.5rem);
   --text-section-title: clamp(1.9rem, 4vw, 2.75rem);
   --text-kicker: var(--font-size-sm);
@@ -468,6 +474,7 @@ h4,
 h5,
 h6 {
   margin: 0;
+  font-family: var(--font-family-display);
   font-weight: var(--font-weight-semibold);
   line-height: var(--line-height-tight);
   letter-spacing: var(--letter-spacing-tight);
@@ -548,6 +555,8 @@ pre code {
   padding: var(--space-10) var(--space-16);
   min-height: var(--nav-touch-target);
   border-radius: var(--radius-base);
+  /* Native <button> elements don't inherit the page font */
+  font-family: inherit;
   font-size: var(--font-size-base);
   font-weight: 500;
   line-height: 1.5;
@@ -632,6 +641,8 @@ pre code {
   width: 100%;
   padding: var(--space-10) var(--space-12);
   min-height: var(--nav-touch-target);
+  /* Native inputs/selects don't inherit the page font */
+  font-family: inherit;
   font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--color-text);
@@ -1005,6 +1016,14 @@ select.form-control {
   transition:
     opacity 0.35s ease,
     transform 0.4s var(--ease-standard);
+}
+
+/* SVG user units, not screen px: 22 units in the 260x64 viewBox reproduces
+   the old outlined wordmark's cap height; scales with the rendered logo. */
+.nav-brand-wordmark-text {
+  font-family: var(--font-family-display);
+  font-size: 22px;
+  font-weight: var(--text-hero-weight);
 }
 
 /* Home: brand starts collapsed to the J monogram, expands past the hero name */
@@ -1685,10 +1704,17 @@ html.theme-transition *::after {
 }
 
 .hero-name {
+  font-family: var(--font-family-display);
   font-size: var(--text-hero);
   font-weight: var(--text-hero-weight);
   line-height: var(--text-hero-line-height);
-  margin-bottom: var(--space-16);
+  /* The display font's glyph box is taller than the tight line-height, so with
+     background-clip:text the descenders fall outside the painted box and get
+     cropped. Extend the paint box with em padding (scales with font-size) and
+     reclaim it from the margin so the gap to the title stays a constant 1rem at
+     every size. Tune --hero-paint-pad if a future display font clips. */
+  padding-bottom: var(--hero-paint-pad);
+  margin-bottom: calc(var(--space-16) - var(--hero-paint-pad));
   /* Fluid fill: name starts white, a light-blue meniscus rises slowly with deeper blue
      behind it, sloshes gently (swirl), and settles blue (Jerry) -> light-blue (James). */
   color: transparent;
@@ -2607,6 +2633,7 @@ section[id] {
 .filter-btn {
   padding: var(--space-10) var(--space-20);
   min-height: var(--nav-touch-target);
+  font-family: inherit;
   background: transparent;
   color: var(--color-text);
   border: 1px solid var(--color-border-strong);
@@ -4650,7 +4677,7 @@ body.has-beta-banner .article-shell {
 }
 
 .nf-code {
-  font-family: var(--font-family-base, 'Geist', system-ui, sans-serif);
+  font-family: var(--font-family-base, 'Krub', system-ui, sans-serif);
   font-size: 52px;
   font-weight: var(--font-weight-semibold, 600);
   letter-spacing: 0.04em;

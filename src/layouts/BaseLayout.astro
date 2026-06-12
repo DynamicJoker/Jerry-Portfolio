@@ -1,7 +1,10 @@
 ---
-import geistLatin400Url from '@fontsource/geist/files/geist-latin-400-normal.woff2?url';
-import geistLatin500Url from '@fontsource/geist/files/geist-latin-500-normal.woff2?url';
-import geistLatin600Url from '@fontsource/geist/files/geist-latin-600-normal.woff2?url';
+// Krub is the body face (all pages).
+import bodyLatin400Url from '@fontsource/krub/files/krub-latin-400-normal.woff2?url';
+import bodyLatin500Url from '@fontsource/krub/files/krub-latin-500-normal.woff2?url';
+import bodyLatin600Url from '@fontsource/krub/files/krub-latin-600-normal.woff2?url';
+// Inter variable (wght axis) is the display face for all headings (all pages).
+import displayFontUrl from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
 import globalStylesUrl from '../styles/global.css?url';
 import criticalHomeStyles from '../styles/critical-home.css?raw';
 import { siteContent } from '../content.js';
@@ -88,17 +91,18 @@ const jsonLdHtml = jsonLd
       `<script type="application/ld+json">${JSON.stringify(item).replace(/</g, '\\u003c')}</script>`,
   )
   .join('\n');
-const geistFontFaces = [
-  { weight: '400', url: geistLatin400Url },
-  { weight: '500', url: geistLatin500Url },
-  { weight: '600', url: geistLatin600Url },
+const bodyFontFaces = [
+  { weight: '400', url: bodyLatin400Url },
+  { weight: '500', url: bodyLatin500Url },
+  { weight: '600', url: bodyLatin600Url },
 ];
-const geistFontFaceCssHtml = `<style data-font-face="geist">${geistFontFaces
+const bodyFontFaceCssHtml = `<style data-font-face="body">${bodyFontFaces
   .map(
     ({ weight, url }) =>
-      `@font-face{font-family:'Geist';font-style:normal;font-display:swap;font-weight:${weight};src:url(${JSON.stringify(url)}) format('woff2');}`,
+      `@font-face{font-family:'Krub';font-style:normal;font-display:swap;font-weight:${weight};src:url(${JSON.stringify(url)}) format('woff2');}`,
   )
   .join('')}</style>`;
+const displayFontFaceCssHtml = `<style data-font-face="display">@font-face{font-family:'Inter';font-style:normal;font-display:swap;font-weight:100 900;src:url(${JSON.stringify(displayFontUrl)}) format('woff2-variations');}</style>`;
 const criticalHomeCssHtml = `<style data-critical-css="home">${criticalHomeStyles.replace(/<\/style/gi, '<\\/style')}</style>`;
 const homePortraitImage = profile.portraitImage;
 const stylesheetHtml = isHome
@@ -197,7 +201,7 @@ const noScriptStylesheetHtml = isHome
     <meta name="twitter:image:alt" content={imageAlt} />
     {
       isHome &&
-        geistFontFaces.map((font) => (
+        bodyFontFaces.map((font) => (
           <link
             rel="preload"
             as="font"
@@ -211,13 +215,25 @@ const noScriptStylesheetHtml = isHome
       isHome && (
         <link
           rel="preload"
+          as="font"
+          href={displayFontUrl}
+          type="font/woff2"
+          crossorigin
+        />
+      )
+    }
+    {
+      isHome && (
+        <link
+          rel="preload"
           as="image"
           href={homePortraitImage}
           fetchpriority="high"
         />
       )
     }
-    <Fragment set:html={geistFontFaceCssHtml} />
+    <Fragment set:html={bodyFontFaceCssHtml} />
+    <Fragment set:html={displayFontFaceCssHtml} />
     <Fragment set:html={stylesheetHtml} />
     <Fragment set:html={noScriptStylesheetHtml} />
     <noscript>

@@ -19,7 +19,9 @@
   --color-focus-ring: rgba(var(--color-primary-rgb), 0.4);
   --color-focus-visible: var(--color-primary);
   --font-family-base:
-    'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    'Krub', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  /* Heading display face — must mirror --font-family-display in /style.css. */
+  --font-family-display: 'Inter', system-ui, -apple-system, sans-serif;
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
   --font-size-base: 1rem;
@@ -36,8 +38,9 @@
   --letter-spacing-tight: -0.01em;
   /* Hero heading role tokens — must mirror the heading role tokens in /style.css. */
   --text-hero: clamp(2.65rem, 8vw, 6rem);
-  --text-hero-weight: var(--font-weight-bold);
+  --text-hero-weight: 460;
   --text-hero-line-height: 0.98;
+  --hero-paint-pad: 0.2em;
   --text-hero-sub: clamp(1.35rem, 4vw, 2.5rem);
   --space-4: 0.25rem;
   --space-6: 0.375rem;
@@ -278,6 +281,7 @@ h4,
 h5,
 h6 {
   margin: 0;
+  font-family: var(--font-family-display);
   font-weight: var(--font-weight-semibold);
   line-height: var(--line-height-tight);
   letter-spacing: var(--letter-spacing-tight);
@@ -413,6 +417,14 @@ a {
   transition:
     opacity 0.35s ease,
     transform 0.4s var(--ease-standard);
+}
+
+/* SVG user units, not screen px: 22 units in the 260x64 viewBox reproduces
+   the old outlined wordmark's cap height; scales with the rendered logo. */
+.nav-brand-wordmark-text {
+  font-family: var(--font-family-display);
+  font-size: 22px;
+  font-weight: var(--text-hero-weight);
 }
 
 /* Home: brand starts collapsed to the J monogram, expands past the hero name */
@@ -869,7 +881,12 @@ html.theme-transition *::after {
 }
 
 .hero-name {
-  margin-bottom: var(--space-16);
+  /* Extend the background-clip:text paint box so the display font's descenders
+     aren't cropped; reclaimed from margin so the gap to the title is a constant
+     1rem at any size. Mirror of /style.css. */
+  padding-bottom: var(--hero-paint-pad);
+  margin-bottom: calc(var(--space-16) - var(--hero-paint-pad));
+  font-family: var(--font-family-display);
   font-size: var(--text-hero);
   font-weight: var(--text-hero-weight);
   line-height: var(--text-hero-line-height);
@@ -1071,6 +1088,8 @@ html.theme-transition *::after {
   border: 0;
   border-radius: var(--radius-base);
   color: var(--color-text);
+  /* Native <button> elements don't inherit the page font */
+  font-family: inherit;
   font-size: var(--font-size-base);
   font-weight: 500;
   line-height: 1.5;
