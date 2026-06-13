@@ -69,24 +69,24 @@ siteContent.testimonials.forEach((testimonial, index) => {
 
 <main id="main-content">
   <!-- Hero Section -->
-  <section id="hero" class="hero">
-    <div class="hero-background" aria-hidden="true">
-      <div class="hero-aurora">
-        <span class="hero-aurora__bloom hero-aurora__bloom--1"></span>
-        <span class="hero-aurora__bloom hero-aurora__bloom--2"></span>
-        <span class="hero-aurora__bloom hero-aurora__bloom--3"></span>
+  <section id="hero" class="c-hero">
+    <div class="c-hero__background" aria-hidden="true">
+      <div class="c-hero__aurora">
+        <span class="c-hero__aurora-bloom c-hero__aurora-bloom--1"></span>
+        <span class="c-hero__aurora-bloom c-hero__aurora-bloom--2"></span>
+        <span class="c-hero__aurora-bloom c-hero__aurora-bloom--3"></span>
       </div>
     </div>
-    <div class="hero-content">
-      <div class="neon-frame-container">
-        <div class="hero-rings" aria-hidden="true">
-          <span class="hero-rings__pulse"></span>
-          <span class="hero-rings__pulse hero-rings__pulse--2"></span>
+    <div class="c-hero__content">
+      <div class="c-neon-frame">
+        <div class="c-hero__rings" aria-hidden="true">
+          <span class="c-hero__rings-pulse"></span>
+          <span class="c-hero__rings-pulse c-hero__rings-pulse--2"></span>
         </div>
         <img
           src={profile.portraitImage}
           alt={profile.portraitAlt}
-          class="neon-frame-image"
+          class="c-neon-frame__image"
           width="300"
           height="300"
           loading="eager"
@@ -95,7 +95,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
         />
 
         <svg
-          class="neon-circle-svg"
+          class="c-neon-frame__circle-svg"
           viewBox="0 0 102 102"
           xmlns="http://www.w3.org/2000/svg"
           aria-hidden="true"
@@ -111,88 +111,96 @@ siteContent.testimonials.forEach((testimonial, index) => {
               </feMerge>
             </filter>
           </defs>
-          <circle class="neon-circle" cx="51" cy="51" r="49"></circle>
+          <circle class="c-neon-frame__circle" cx="51" cy="51" r="49"></circle>
         </svg>
       </div>
-      <div class="hero-text">
-        <h1 class="hero-name">{profile.name}</h1>
-        <div class="hero-title">
-          <span class="typing-text" id="typing-text">{profile.jobTitle}</span>
+      <div class="c-hero__text">
+        <h1 class="c-hero__name">{profile.name}</h1>
+        <div class="c-hero__title">
+          <span class="c-hero__typing-text" id="typing-text"
+            >{profile.jobTitle}</span
+          >
         </div>
-        <div class="hero-stats">
+        <div class="c-hero__stats">
           {
             profile.heroStats.map((stat) => (
-              <div class="hero-stat">
-                <span class="hero-stat-value">{stat.value}</span>
-                <span class="hero-stat-label">{stat.label}</span>
+              <div class="c-hero__stat">
+                <span class="c-hero__stat-value">{stat.value}</span>
+                <span class="c-hero__stat-label">{stat.label}</span>
               </div>
             ))
           }
         </div>
-        <p class="hero-subtitle">
-          <span class="subtitle-experience">
+        <p class="c-hero__subtitle">
+          <span class="c-hero__subtitle-experience">
             <span id="years-experience"
               >{new Date().getFullYear() - profile.experienceStartYear}</span
             >+ Years Experience
           </span>
-          <span class="shape-assembler" id="shape-assembler" aria-hidden="true">
+          <span
+            class="c-shape-assembler"
+            id="shape-assembler"
+            aria-hidden="true"
+          >
             <i></i><i></i><i></i>
             <i></i><i></i><i></i>
             <i></i><i></i><i></i>
           </span>
           <a
-            class="subtitle-location"
+            class="c-hero__subtitle-location"
             href="#schedule"
             aria-label={`${profile.availability.status}, go to scheduling section`}
           >
             <span>{profile.availability.status}</span>
             <span
-              class="availability-dot subtitle-location-dot"
+              class="c-availability-dot c-hero__subtitle-location-dot"
               aria-hidden="true"></span>
           </a>
         </p>
-        <div class="hero-buttons">
-          <a href="#portfolio" class="btn btn--primary btn--lg"
+        <div class="c-hero__buttons">
+          <a href="#portfolio" class="c-btn c-btn--primary c-btn--lg"
             >View Portfolio</a
           >
-          <a href="#contact" class="btn btn--outline btn--lg">Contact Me</a>
+          <a href="#contact" class="c-btn c-btn--outline c-btn--lg"
+            >Contact Me</a
+          >
         </div>
       </div>
     </div>
     <a
       href="#about"
-      class="scroll-indicator"
+      class="c-scroll-indicator"
       aria-label="Scroll to next section"
     >
-      <div class="scroll-arrow"></div>
+      <div class="c-scroll-indicator__arrow"></div>
     </a>
   </section>
 
   <!-- About Section -->
-  <section id="about" class="section">
-    <div class="section-header">
-      <div class="container section-header-inner">
-        <span class="section-kicker"
-          ><span class="section-kicker-label">About</span></span
+  <section id="about" class="c-section">
+    <div class="c-section__header">
+      <div class="o-container c-section__header-inner">
+        <span class="c-section__kicker"
+          ><span class="c-section__kicker-label">About</span></span
         >
-        <h2 class="section-title">About Me</h2>
+        <h2 class="c-section__title">About Me</h2>
       </div>
     </div>
-    <div class="container">
-      <div class="about-content">
-        <div class="about-text">
-          <p class="about-description">{siteContent.about.description}</p>
-          <div class="about-highlights">
+    <div class="o-container">
+      <div class="c-about__content">
+        <div class="c-about__text">
+          <p class="c-about__description">{siteContent.about.description}</p>
+          <div class="c-about__highlights">
             {
               siteContent.about.highlights.map((highlight) => (
-                <div class="highlight-item" tabindex="0">
-                  <div class="highlight-header">
-                    <div class="highlight-icon" aria-hidden="true">
+                <div class="c-highlight" tabindex="0">
+                  <div class="c-highlight__header">
+                    <div class="c-highlight__icon" aria-hidden="true">
                       <Icon name={highlight.icon} />
                     </div>
-                    <h3 class="highlight-title">{highlight.title}</h3>
+                    <h3 class="c-highlight__title">{highlight.title}</h3>
                   </div>
-                  <div class="highlight-description">
+                  <div class="c-highlight__description">
                     <p>{highlight.description}</p>
                   </div>
                 </div>
@@ -205,18 +213,18 @@ siteContent.testimonials.forEach((testimonial, index) => {
   </section>
 
   <!-- Logo Bar Section -->
-  <section id="logos" class="logo-bar-section">
-    <div class="logo-bar-wrapper">
-      <div class="logo-bar">
-        <div class="logo-bar-label">Experience With</div>
-        <div class="logo-set-container">
+  <section id="logos" class="c-logo-bar">
+    <div class="c-logo-bar__wrapper">
+      <div class="c-logo-bar__bar">
+        <div class="c-logo-bar__label">Experience With</div>
+        <div class="c-logo-bar__set">
           {
             siteContent.clientLogos.map((logo) => (
-              <div class="logo-item">
+              <div class="c-logo-bar__item">
                 <img
                   src={logo.src}
                   alt={logo.alt}
-                  class="logo-img"
+                  class="c-logo-bar__img"
                   loading="lazy"
                   decoding="async"
                   width="150"
@@ -231,39 +239,39 @@ siteContent.testimonials.forEach((testimonial, index) => {
   </section>
 
   <!-- Skills Section -->
-  <section id="skills" class="section">
-    <div class="section-header">
-      <div class="container section-header-inner">
-        <span class="section-kicker"
-          ><span class="section-kicker-label">Expertise</span></span
+  <section id="skills" class="c-section">
+    <div class="c-section__header">
+      <div class="o-container c-section__header-inner">
+        <span class="c-section__kicker"
+          ><span class="c-section__kicker-label">Expertise</span></span
         >
-        <h2 class="section-title">Skills & Expertise</h2>
+        <h2 class="c-section__title">Skills & Expertise</h2>
       </div>
     </div>
-    <div class="container">
-      <div class="skills-grid" id="skills-grid">
+    <div class="o-container">
+      <div class="c-skills-grid" id="skills-grid">
         {
           siteContent.skills.map((category) => (
-            <div class="skill-category">
-              <h3 class="skill-category-title">{category.category}</h3>
+            <div class="c-skill-category">
+              <h3 class="c-skill-category__title">{category.category}</h3>
               {category.type === 'pane' ? (
                 <div
-                  class="skill-pane-container"
+                  class="c-skill-category__pane"
                   tabindex="0"
                   role="region"
                   aria-label={`${category.category} skills`}
                 >
-                  <div class="skill-tags">
+                  <div class="c-skill-category__tags">
                     {category.tags.map((tagText) => (
-                      <span class="skill-tag">{tagText}</span>
+                      <span class="c-skill-category__tag">{tagText}</span>
                     ))}
                   </div>
                 </div>
               ) : (
-                <div class="skill-tags">
+                <div class="c-skill-category__tags">
                   <div>
                     {category.tags.map((tagText) => (
-                      <span class="skill-tag">{tagText}</span>
+                      <span class="c-skill-category__tag">{tagText}</span>
                     ))}
                   </div>
                 </div>
@@ -276,25 +284,25 @@ siteContent.testimonials.forEach((testimonial, index) => {
   </section>
 
   <!-- Services Section -->
-  <section id="services" class="section">
-    <div class="section-header">
-      <div class="container section-header-inner">
-        <span class="section-kicker"
-          ><span class="section-kicker-label">Services</span></span
+  <section id="services" class="c-section">
+    <div class="c-section__header">
+      <div class="o-container c-section__header-inner">
+        <span class="c-section__kicker"
+          ><span class="c-section__kicker-label">Services</span></span
         >
-        <h2 class="section-title">You Build It. I'll Bring the Party</h2>
+        <h2 class="c-section__title">You Build It. I'll Bring the Party</h2>
       </div>
     </div>
-    <div class="container">
-      <div class="services-grid" id="services-grid">
+    <div class="o-container">
+      <div class="c-services-grid" id="services-grid">
         {
           siteContent.services.map((service) => (
-            <div class="service-card">
-              <div class="service-icon" aria-hidden="true">
+            <div class="c-service-card">
+              <div class="c-service-card__icon" aria-hidden="true">
                 <Icon name={service.icon} />
               </div>
-              <h3 class="service-title">{service.title}</h3>
-              <p class="service-description">{service.description}</p>
+              <h3 class="c-service-card__title">{service.title}</h3>
+              <p class="c-service-card__description">{service.description}</p>
             </div>
           ))
         }
@@ -303,51 +311,55 @@ siteContent.testimonials.forEach((testimonial, index) => {
   </section>
 
   <!-- Testimonials Section -->
-  <section id="testimonials" class="section">
-    <div class="section-header">
-      <div class="container section-header-inner">
-        <span class="section-kicker"
-          ><span class="section-kicker-label">Testimonials</span></span
+  <section id="testimonials" class="c-section">
+    <div class="c-section__header">
+      <div class="o-container c-section__header-inner">
+        <span class="c-section__kicker"
+          ><span class="c-section__kicker-label">Testimonials</span></span
         >
-        <h2 class="section-title">I Didn't Even Have to Bribe Them</h2>
+        <h2 class="c-section__title">I Didn't Even Have to Bribe Them</h2>
       </div>
     </div>
-    <div class="container">
-      <div class="testimonials-controls">
+    <div class="o-container">
+      <div class="c-testimonials-controls">
         <button
           type="button"
-          class="btn btn--outline testimonial-pause-button"
+          class="c-btn c-btn--outline c-testimonials-controls__pause-button"
           aria-pressed="false"
           aria-controls="testimonials-container"
           data-testimonials-pause
         >
-          <span class="pause-label--pause">Pause testimonials</span>
-          <span class="pause-label--resume">Resume testimonials</span>
+          <span class="c-testimonials-controls__label--pause"
+            >Pause testimonials</span
+          >
+          <span class="c-testimonials-controls__label--resume"
+            >Resume testimonials</span
+          >
         </button>
       </div>
-      <div id="testimonials-container" class="testimonials-scroller">
+      <div id="testimonials-container" class="c-testimonials-scroller">
         {
           testimonialColumns.map((column) => (
-            <div class="testimonials-scroller-column">
-              <div class="testimonials-scroller-inner">
+            <div class="c-testimonials-scroller__column">
+              <div class="c-testimonials-scroller__inner">
                 {column.map((testimonial) => (
-                  <div class="testimonial-card">
-                    <div class="testimonial-header">
-                      <span class="testimonial-avatar" aria-hidden="true">
+                  <div class="c-testimonial">
+                    <div class="c-testimonial__header">
+                      <span class="c-testimonial__avatar" aria-hidden="true">
                         {testimonial.name
                           .split(' ')
                           .map((part) => part[0])
                           .slice(0, 2)
                           .join('')}
                       </span>
-                      <div class="testimonial-author-info">
-                        <p class="testimonial-author">{testimonial.name}</p>
-                        <p class="testimonial-title">
+                      <div class="c-testimonial__author-info">
+                        <p class="c-testimonial__author">{testimonial.name}</p>
+                        <p class="c-testimonial__title">
                           {testimonial.title}, {testimonial.company}
                         </p>
                       </div>
                     </div>
-                    <p class="testimonial-quote">
+                    <p class="c-testimonial__quote">
                       &ldquo;{testimonial.quote}&rdquo;
                     </p>
                   </div>
@@ -361,18 +373,18 @@ siteContent.testimonials.forEach((testimonial, index) => {
   </section>
 
   <!-- Portfolio Section -->
-  <section id="portfolio" class="section">
-    <div class="section-header">
-      <div class="container section-header-inner">
-        <span class="section-kicker"
-          ><span class="section-kicker-label">Selected Work</span></span
+  <section id="portfolio" class="c-section">
+    <div class="c-section__header">
+      <div class="o-container c-section__header-inner">
+        <span class="c-section__kicker"
+          ><span class="c-section__kicker-label">Selected Work</span></span
         >
-        <h2 class="section-title">Spoiler Alert: It Went Well</h2>
+        <h2 class="c-section__title">Spoiler Alert: It Went Well</h2>
       </div>
     </div>
-    <div class="container">
+    <div class="o-container">
       <div
-        class="portfolio-filters"
+        class="c-portfolio-filters"
         role="group"
         aria-label="Filter portfolio projects"
       >
@@ -380,7 +392,10 @@ siteContent.testimonials.forEach((testimonial, index) => {
           portfolioFilters.map((filter) => (
             <button
               type="button"
-              class:list={['filter-btn', { active: filter.id === 'all' }]}
+              class:list={[
+                'c-portfolio-filters__btn',
+                { 'is-active': filter.id === 'all' },
+              ]}
               data-filter={filter.id}
               aria-pressed={filter.id === 'all' ? 'true' : 'false'}
             >
@@ -389,26 +404,26 @@ siteContent.testimonials.forEach((testimonial, index) => {
           ))
         }
       </div>
-      <div class="portfolio-grid" id="portfolio-grid">
+      <div class="c-portfolio-grid" id="portfolio-grid">
         {
           siteContent.portfolio.map((item) => (
-            <div class="portfolio-item" data-category={item.category}>
-              <div class="portfolio-card card-base">
-                <div class="portfolio-header">
-                  <h3 class="portfolio-title">{item.title}</h3>
-                  <span class="portfolio-category">
+            <div class="c-portfolio-grid__item" data-category={item.category}>
+              <div class="c-portfolio-card c-card">
+                <div class="c-portfolio-card__header">
+                  <h3 class="c-portfolio-card__title">{item.title}</h3>
+                  <span class="c-portfolio-card__category">
                     {categoryLabel(item.category)}
                   </span>
                 </div>
-                <p class="portfolio-description">{item.description}</p>
-                <div class="portfolio-results">
+                <p class="c-portfolio-card__description">{item.description}</p>
+                <div class="c-portfolio-card__results">
                   {item.results.map((resultText) => (
-                    <div class="result-item">{resultText}</div>
+                    <div class="c-portfolio-card__result">{resultText}</div>
                   ))}
                 </div>
-                <div class="portfolio-tags">
+                <div class="c-portfolio-card__tags">
                   {item.tags.map((tagText) => (
-                    <span class="tag">{tagText}</span>
+                    <span class="c-tag">{tagText}</span>
                   ))}
                 </div>
               </div>
@@ -420,18 +435,18 @@ siteContent.testimonials.forEach((testimonial, index) => {
   </section>
 
   <!-- Experience Section -->
-  <section id="experience" class="section">
-    <div class="section-header">
-      <div class="container section-header-inner">
-        <span class="section-kicker"
-          ><span class="section-kicker-label">Experience</span></span
+  <section id="experience" class="c-section">
+    <div class="c-section__header">
+      <div class="o-container c-section__header-inner">
+        <span class="c-section__kicker"
+          ><span class="c-section__kicker-label">Experience</span></span
         >
-        <h2 class="section-title">Experience</h2>
+        <h2 class="c-section__title">Experience</h2>
       </div>
     </div>
-    <div class="container">
+    <div class="o-container">
       <div id="gantt-chart-container">
-        <div class="gantt-timeline">
+        <div class="c-gantt__timeline">
           {ganttYears.map((year) => <span>{year}</span>)}
         </div>
         {
@@ -452,32 +467,35 @@ siteContent.testimonials.forEach((testimonial, index) => {
             const isPresent = job.period.toLowerCase().includes('present');
 
             return (
-              <div class="gantt-row">
-                <div class="gantt-label">
+              <div class="c-gantt__row">
+                <div class="c-gantt__label">
                   <h3>{job.title}</h3>
                   <p>{job.company}</p>
-                  <div class="gantt-meta">
-                    <span class="gantt-period">{job.period}</span>
-                    <span class="gantt-duration">{durationText}</span>
+                  <div class="c-gantt__meta">
+                    <span class="c-gantt__period">{job.period}</span>
+                    <span class="c-gantt__duration">{durationText}</span>
                   </div>
                 </div>
                 <div
-                  class="gantt-bar-area"
+                  class="c-gantt__bar-area"
                   tabindex="0"
                   role="button"
                   aria-expanded="false"
                   aria-label={`Show details for ${job.title} at ${job.company}`}
                 >
                   <div
-                    class={`gantt-bar ${isPresent ? 'present' : ''}`}
+                    class={`c-gantt__bar ${isPresent ? 'is-present' : ''}`}
                     style={`margin-left:${offset.toFixed(2)}%;width:${width.toFixed(2)}%;--anim-delay:${delay}ms`}
                   />
-                  <div class="gantt-tooltip">
-                    <div class="tooltip-period">{job.period}</div>
-                    <ul class="tooltip-achievements">
+                  <div class="c-gantt__tooltip">
+                    <div class="c-gantt__tooltip-period">{job.period}</div>
+                    <ul class="c-gantt__tooltip-achievements">
                       {job.achievements.map((a) => (
                         <li>
-                          <span class="achievement-icon" aria-hidden="true">
+                          <span
+                            class="c-gantt__achievement-icon"
+                            aria-hidden="true"
+                          >
                             <Icon name={a.icon} />
                           </span>
                           <span set:html={a.text} />
@@ -497,26 +515,27 @@ siteContent.testimonials.forEach((testimonial, index) => {
   <slot name="blog-section" />
 
   <!-- Contact Section -->
-  <section id="contact" class="section">
-    <div class="section-header">
-      <div class="container section-header-inner">
-        <span class="section-kicker"
-          ><span class="section-kicker-label">Contact</span></span
+  <section id="contact" class="c-section">
+    <div class="c-section__header">
+      <div class="o-container c-section__header-inner">
+        <span class="c-section__kicker"
+          ><span class="c-section__kicker-label">Contact</span></span
         >
-        <h2 class="section-title">Let's Work Together</h2>
+        <h2 class="c-section__title">Let's Work Together</h2>
       </div>
     </div>
-    <div class="container">
+    <div class="o-container">
       <!-- Booking CTA Block -->
-      <div class="booking-cta" id="schedule" data-calendly-booking>
-        <div class="booking-cta-bar">
-          <div class="booking-cta-message">
-            <span class="availability-dot booking-cta-dot" aria-hidden="true"
-            ></span>
+      <div class="c-booking-cta" id="schedule" data-calendly-booking>
+        <div class="c-booking-cta__bar">
+          <div class="c-booking-cta__message">
+            <span
+              class="c-availability-dot c-booking-cta__dot"
+              aria-hidden="true"></span>
             <span>{profile.bookingCta.text}</span>
           </div>
           <a
-            class="btn btn--primary booking-cta-button"
+            class="c-btn c-btn--primary c-booking-cta__button"
             href={profile.bookingCta.url}
             target="_blank"
             rel="noopener"
@@ -525,48 +544,48 @@ siteContent.testimonials.forEach((testimonial, index) => {
             aria-controls="calendly-booking-panel"
             aria-label={profile.bookingCta.buttonLabel}
           >
-            <span class="booking-cta-labels" aria-hidden="true">
-              <span class="booking-cta-label booking-cta-label--open"
+            <span class="c-booking-cta__labels" aria-hidden="true">
+              <span class="c-booking-cta__label c-booking-cta__label--open"
                 >{profile.bookingCta.buttonLabel}</span
               >
-              <span class="booking-cta-label booking-cta-label--close"
+              <span class="c-booking-cta__label c-booking-cta__label--close"
                 >{profile.bookingCta.closeLabel}</span
               >
             </span>
           </a>
         </div>
-        <div class="calendly-panel" id="calendly-booking-panel" hidden>
-          <div class="calendly-panel-inner">
-            <div class="calendly-panel-header">
+        <div class="c-calendly-panel" id="calendly-booking-panel" hidden>
+          <div class="c-calendly-panel__inner">
+            <div class="c-calendly-panel__header">
               <div>
-                <h3 class="calendly-panel-title">
+                <h3 class="c-calendly-panel__title">
                   {profile.bookingCta.expandedTitle}
                 </h3>
-                <p class="calendly-panel-helper">
+                <p class="c-calendly-panel__helper">
                   {profile.bookingCta.helperText}
                 </p>
               </div>
             </div>
-            <div class="calendly-booked-message" data-calendly-booked hidden>
+            <div class="c-calendly-panel__booked" data-calendly-booked hidden>
               {profile.bookingCta.bookedText}
             </div>
-            <div class="calendly-loading" data-calendly-loading>
+            <div class="c-calendly-panel__loading" data-calendly-loading>
               {profile.bookingCta.loadingText}
             </div>
-            <div class="calendly-inline-host" data-calendly-container></div>
+            <div class="c-calendly-panel__host" data-calendly-container></div>
           </div>
         </div>
       </div>
-      <div class="contact-content">
-        <div class="contact-info">
+      <div class="c-contact__content">
+        <div class="c-contact__info">
           <h3>Get In Touch</h3>
           <p>
             Ready to elevate your technical marketing? Let's discuss how I can
             help drive growth for your B2B or B2C business.
           </p>
-          <div class="contact-details">
-            <div class="contact-item">
-              <div class="contact-icon" aria-hidden="true">
+          <div class="c-contact__details">
+            <div class="c-contact__item">
+              <div class="c-contact__icon" aria-hidden="true">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="1em"
@@ -581,13 +600,13 @@ siteContent.testimonials.forEach((testimonial, index) => {
                   ></path>
                 </svg>
               </div>
-              <div class="contact-text" id="contact-email">
-                <span class="sr-only">Email: </span>jerry@placeholder.com
+              <div class="c-contact__text" id="contact-email">
+                <span class="u-sr-only">Email: </span>jerry@placeholder.com
               </div>
             </div>
 
-            <div class="contact-item">
-              <div class="contact-icon" aria-hidden="true">
+            <div class="c-contact__item">
+              <div class="c-contact__icon" aria-hidden="true">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="1em"
@@ -602,7 +621,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
                   ></path>
                 </svg>
               </div>
-              <div class="contact-text">
+              <div class="c-contact__text">
                 <a
                   href={siteContent.contactInfo.linkedin.url}
                   id="contact-linkedin"
@@ -613,9 +632,9 @@ siteContent.testimonials.forEach((testimonial, index) => {
             </div>
           </div>
         </div>
-        <div class="contact-form-container">
+        <div class="c-contact__form-container">
           <form
-            class="contact-form"
+            class="c-contact-form"
             id="contact-form"
             action={siteContent.contactForm.endpoint}
             method="POST"
@@ -630,49 +649,49 @@ siteContent.testimonials.forEach((testimonial, index) => {
               name="subject"
               value={siteContent.contactForm.subject}
             />
-            <div class="form-group">
-              <label for="name" class="form-label">Name</label>
+            <div class="c-form-group">
+              <label for="name" class="c-form-label">Name</label>
               <input
                 type="text"
                 id="name"
                 name="name"
-                class="form-control"
+                class="c-form-control"
                 required
               />
             </div>
-            <div class="form-group">
-              <label for="email" class="form-label">Email</label>
+            <div class="c-form-group">
+              <label for="email" class="c-form-label">Email</label>
               <input
                 type="email"
                 id="email"
                 name="email"
-                class="form-control"
+                class="c-form-control"
                 required
               />
             </div>
-            <div class="form-group">
-              <label for="company" class="form-label">Company</label>
+            <div class="c-form-group">
+              <label for="company" class="c-form-label">Company</label>
               <input
                 type="text"
                 id="company"
                 name="company"
-                class="form-control"
+                class="c-form-control"
               />
             </div>
-            <div class="form-group">
-              <label for="message" class="form-label">Message</label>
+            <div class="c-form-group">
+              <label for="message" class="c-form-label">Message</label>
               <textarea
                 id="message"
                 name="message"
                 rows="5"
-                class="form-control"
+                class="c-form-control"
                 required></textarea>
             </div>
 
             <!-- Frictionless Spam Protection -->
-            <input type="checkbox" name="botcheck" class="hidden" />
+            <input type="checkbox" name="botcheck" class="u-hidden" />
 
-            <button type="submit" class="btn btn--primary btn--full-width"
+            <button type="submit" class="c-btn c-btn--primary c-btn--full-width"
               >Send Message</button
             >
           </form>

@@ -108,11 +108,11 @@ const breadcrumbJsonLd = {
     {post.data.tags.map((tag) => <meta property="article:tag" content={tag} />)}
   </Fragment>
   <SiteNav current="blog" />
-  <main id="main-content" class="article-shell">
-    <article class="article-layout">
-      <header class="article-header">
-        <a href="/blog/" class="article-back">Blog</a>
-        <div class="article-meta">
+  <main id="main-content" class="c-article-shell">
+    <article class="c-article">
+      <header class="c-article__header">
+        <a href="/blog/" class="c-article__back">Blog</a>
+        <div class="c-article__meta">
           <time datetime={post.data.pubDate.toISOString()}
             >{formatDate(post.data.pubDate)}</time
           >
@@ -124,13 +124,13 @@ const breadcrumbJsonLd = {
         </div>
         <h1>{post.data.title}</h1>
         <p>{post.data.description}</p>
-        <div class="article-tags">
+        <div class="c-article__tags">
           {post.data.tags.map((tag) => <span>{tag}</span>)}
         </div>
       </header>
 
       <img
-        class="article-cover"
+        class="c-article__cover"
         src={post.data.coverImage}
         alt={post.data.coverAlt}
         width={post.data.coverWidth}
@@ -140,13 +140,14 @@ const breadcrumbJsonLd = {
         decoding="async"
       />
 
-      <div class="article-content">
+      <div class="c-article__content">
         <Content />
       </div>
 
-      <footer class="article-cta">
+      <footer class="c-article__cta">
         <p>Need technical content that makes complex products easier to buy?</p>
-        <a href="/#contact" class="btn btn--primary">Start a conversation</a>
+        <a href="/#contact" class="c-btn c-btn--primary">Start a conversation</a
+        >
       </footer>
     </article>
   </main>

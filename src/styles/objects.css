@@ -1,0 +1,35 @@
+/* Objects — structural layout patterns (o-*). */
+/* Above-the-fold rules that also exist in critical-home.css must be
+   changed in both places. */
+
+/* --- LAYOUT & UTILITIES --- */
+
+.o-container {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 var(--space-16);
+}
+
+@media (min-width: 40rem) {
+  .o-container {
+    max-width: var(--container-sm);
+  }
+}
+
+@media (min-width: 48rem) {
+  .o-container {
+    max-width: var(--container-md);
+  }
+}
+
+@media (min-width: 64rem) {
+  .o-container {
+    max-width: var(--container-lg);
+  }
+}
+
+@media (min-width: 80rem) {
+  .o-container {
+    max-width: var(--container-xl);
+  }
+}

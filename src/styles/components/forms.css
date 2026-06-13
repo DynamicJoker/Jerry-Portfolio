@@ -1,0 +1,158 @@
+/* Component: forms */
+/* Above-the-fold rules that also exist in critical-home.css must be
+   changed in both places. */
+
+/* --- CONSOLIDATED DARK MODE --- */
+
+/* No-JS fallback: full mirror of the [data-color-scheme='dark'] block below.
+   With JS, the pre-paint script always sets an explicit attribute instead. */
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-color-scheme='light']) {
+    --color-background: var(--color-dark-primary);
+    --color-surface: var(--color-dark-secondary);
+    --color-primary: #57b9ff;
+    --color-primary-hover: #90d5ff;
+    --color-primary-active: #77b1d4;
+    --color-primary-rgb: 87, 185, 255;
+    --color-accent: #90d5ff;
+    --color-accent-hover: #b4e2ff;
+    --color-accent-rgb: 144, 213, 255;
+    --color-text: rgba(232, 232, 234, 1);
+    --color-text-secondary: rgba(154, 154, 165, 1);
+    --color-text-muted: rgba(174, 176, 186, 1);
+    --color-secondary: rgba(154, 154, 165, 0.12);
+    --color-secondary-hover: rgba(154, 154, 165, 0.2);
+    --color-secondary-active: rgba(154, 154, 165, 0.26);
+    --color-border-strong: var(--color-hairline-strong);
+    --color-error: rgba(255, 84, 89, 1);
+    --color-focus-ring: rgba(var(--color-primary-rgb), 0.4);
+    --color-focus-visible: var(--color-primary-hover);
+    --color-btn-primary-text: #0f1117;
+    --color-surface-raised: #232633;
+    --color-hairline: rgba(229, 231, 238, 0.08);
+    --color-hairline-strong: rgba(229, 231, 238, 0.16);
+    --color-text-strong: rgba(245, 245, 245, 1);
+    --color-overlay-faint: rgba(255, 255, 255, 0.02);
+    --color-overlay-weak: rgba(255, 255, 255, 0.04);
+    --color-overlay-medium: rgba(255, 255, 255, 0.08);
+    --color-overlay-strong: rgba(255, 255, 255, 0.1);
+    --color-chip-border: rgba(245, 245, 245, 0.24);
+    --color-dot-muted: rgba(255, 255, 255, 0.35);
+    --color-navbar-scrolled-bg: rgba(15, 17, 23, 0.92);
+    --shadow-navbar-scrolled: 0 8px 28px rgba(0, 0, 0, 0.32);
+    --shadow-sheet: 0 1rem 2rem rgba(0, 0, 0, 0.4);
+    --shadow-banner: 0 1px 0 rgba(0, 0, 0, 0.4);
+    --shadow-banner-expanded: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.32);
+    --color-control-bg-start: rgba(13, 15, 18, 0.76);
+    --color-control-bg-end: rgba(13, 15, 18, 0.6);
+    --color-control-border: rgba(245, 245, 245, 0.34);
+    --color-control-glyph: rgba(245, 245, 245, 0.86);
+    --color-tooltip-bg: rgba(26, 29, 41, 0.95);
+    --color-tooltip-bg-inline: rgba(26, 29, 41, 0.75);
+    --color-card-translucent: rgba(18, 22, 28, 0.78);
+    --color-embed-bg: rgba(10, 10, 10, 0.6);
+    --color-inset-bg: rgba(10, 10, 10, 0.28);
+    --color-btn-neutral: rgba(62, 68, 72, 0.98);
+    --color-btn-neutral-hover: rgba(72, 79, 84, 0.98);
+    --color-btn-neutral-active: rgba(54, 59, 63, 0.98);
+    --color-on-fill: #0f1117;
+    --shell-tint-violet: rgba(143, 92, 255, 0.12);
+    --loading-screen-bg: linear-gradient(135deg, #0f1117 0%, #1a1d29 100%);
+    --hero-vignette: radial-gradient(
+      ellipse at 50% 40%,
+      rgba(15, 17, 23, 0) 45%,
+      rgba(15, 17, 23, 0.6) 100%
+    );
+    --hero-bloom-blend: screen;
+    --hero-bloom-opacity: 0.5;
+    --hero-bloom-1: radial-gradient(
+      circle,
+      rgba(87, 185, 255, 0.7),
+      rgba(87, 185, 255, 0) 65%
+    );
+    --hero-bloom-2: radial-gradient(
+      circle,
+      rgba(144, 213, 255, 0.5),
+      rgba(144, 213, 255, 0) 65%
+    );
+    --hero-bloom-3: radial-gradient(
+      circle,
+      rgba(81, 120, 145, 0.65),
+      rgba(81, 120, 145, 0) 65%
+    );
+    --hero-name-rest: #fff;
+  }
+
+  :root:not([data-color-scheme='light']) select.c-form-control {
+    background-image: var(--select-caret-dark);
+  }
+}
+
+html,
+body {
+  overflow-x: clip;
+}
+
+@supports not (overflow-x: clip) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
+}
+
+/* --- FORM ELEMENTS --- */
+
+.c-form-control {
+  display: block;
+  width: 100%;
+  padding: var(--space-10) var(--space-12);
+  min-height: var(--nav-touch-target);
+  /* Native inputs/selects don't inherit the page font */
+  font-family: inherit;
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+  color: var(--color-text);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-base);
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    box-shadow var(--duration-fast) var(--ease-standard);
+}
+
+textarea.c-form-control {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+}
+
+select.c-form-control {
+  appearance: none;
+  background-image: var(--select-caret-light);
+  background-repeat: no-repeat;
+  background-position: right var(--space-12) center;
+  background-size: 16px;
+  padding-right: var(--space-32);
+}
+
+.c-form-control:focus {
+  border-color: var(--color-primary);
+  outline: var(--focus-outline);
+  outline-offset: 3px;
+}
+
+.c-form-control[aria-invalid='true'] {
+  border-color: var(--color-error);
+  outline: 2px solid var(--color-error);
+}
+
+.c-form-label {
+  display: block;
+  margin-bottom: var(--space-8);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-sm);
+}
+
+.c-form-group {
+  margin-bottom: var(--space-16);
+}

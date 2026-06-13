@@ -12,11 +12,11 @@ const description =
 
 <BaseLayout title={title} description={description} page="blog" noindex>
   <SiteNav current="" />
-  <main id="main-content" class="blog-shell">
-    <section class="blog-hero">
-      <div class="container blog-hero-inner not-found">
+  <main id="main-content" class="c-blog-shell">
+    <section class="c-blog-hero">
+      <div class="o-container c-blog-hero__inner c-not-found">
         <svg
-          class="not-found-graphic"
+          class="c-not-found__graphic"
           viewBox="0 0 280 200"
           role="img"
           aria-label="A monogram-style ring containing the number 404, its orbital signal line breaking apart on one side"
@@ -70,7 +70,7 @@ const description =
           </defs>
 
           <circle
-            class="nf-halo"
+            class="c-not-found__halo"
             cx="140"
             cy="100"
             r="72"
@@ -87,7 +87,7 @@ const description =
             stroke-width="2.5"></circle>
 
           <text
-            class="nf-code"
+            class="c-not-found__code"
             x="140"
             y="103"
             text-anchor="middle"
@@ -96,7 +96,7 @@ const description =
           >
 
           <path
-            class="nf-orbit-solid"
+            class="c-not-found__orbit-solid"
             d="M10 100c63-21 197-21 260 0"
             fill="none"
             stroke="url(#nf-orbit)"
@@ -105,7 +105,7 @@ const description =
             pathLength="100"
             stroke-dasharray="66 34"></path>
           <path
-            class="nf-orbit-fragments"
+            class="c-not-found__orbit-fragments"
             d="M10 100c63-21 197-21 260 0"
             fill="none"
             stroke="url(#nf-orbit)"
@@ -113,20 +113,26 @@ const description =
             stroke-linecap="round"
             pathLength="100"
             stroke-dasharray="0 70 5 6 3 7 1.5 100"></path>
-          <circle class="nf-blip" cx="200" cy="87.5" r="3.5" fill="#90D5FF"
-          ></circle>
+          <circle
+            class="c-not-found__blip"
+            cx="200"
+            cy="87.5"
+            r="3.5"
+            fill="#90D5FF"></circle>
         </svg>
 
-        <p class="blog-kicker">Error 404 · Signal lost</p>
-        <h1 class="blog-title">You found the vaporware.</h1>
-        <p class="blog-intro">
+        <p class="c-blog-kicker">Error 404 · Signal lost</p>
+        <h1 class="c-blog-hero__title">You found the vaporware.</h1>
+        <p class="c-blog-hero__intro">
           This page was announced by your URL bar, but it never shipped. Could
           be a typo, could be a link that outlived its redirect. Everything
           below, though, is in production.
         </p>
-        <div class="not-found-actions">
-          <a href="/" class="btn btn--primary">Back to production</a>
-          <a href="/blog/" class="btn btn--outline">Browse the field notes</a>
+        <div class="c-not-found__actions">
+          <a href="/" class="c-btn c-btn--primary">Back to production</a>
+          <a href="/blog/" class="c-btn c-btn--outline"
+            >Browse the field notes</a
+          >
         </div>
       </div>
     </section>

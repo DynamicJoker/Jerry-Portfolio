@@ -1,0 +1,323 @@
+/* Settings — design tokens (colors, spacing, fonts, breakpoints) and the
+   consolidated dark-mode token overrides. */
+/* Above-the-fold rules that also exist in critical-home.css must be
+   changed in both places. */
+
+:root {
+  /* Colors */
+  --color-background: #fafaf9;
+  --color-surface: #ffffff;
+  --color-text: #1a1a2e;
+  --color-text-secondary: #555562;
+  --color-primary: #517891;
+  --color-primary-hover: #426074;
+  --color-primary-active: #36505f;
+  --color-primary-rgb: 81, 120, 145;
+  --color-accent: #2f6e96;
+  --color-accent-hover: #255a7d;
+  --color-accent-rgb: 47, 110, 150;
+  --color-secondary: rgba(26, 26, 46, 0.06);
+  --color-secondary-hover: rgba(26, 26, 46, 0.1);
+  --color-secondary-active: rgba(26, 26, 46, 0.14);
+  --color-border-strong: rgba(26, 26, 46, 0.45);
+  --color-btn-primary-text: #ffffff;
+  --color-error: rgba(192, 21, 47, 1);
+  --color-focus-ring: rgba(var(--color-primary-rgb), 0.4);
+  --color-focus-visible: var(--color-primary);
+
+  /* Typography */
+  --font-family-base:
+    'Krub', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-family-mono:
+    'Berkeley Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    monospace;
+  /* Display face for all headings (h1-h6) incl. the hero name. Mirrored in
+     src/styles/critical-home.css. */
+  --font-family-display: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-size-xs: 0.75rem; /* 12px */
+  --font-size-sm: 0.875rem; /* 14px */
+  --font-size-base: 1rem; /* 16px */
+  --font-size-md: 1rem; /* 16px */
+  --font-size-lg: 1.125rem; /* 18px */
+  --font-size-xl: 1.25rem; /* 20px */
+  --font-size-2xl: 1.375rem; /* 22px */
+  --font-size-3xl: 1.625rem; /* 26px */
+  --font-size-4xl: clamp(1.5rem, 5vw, 1.875rem); /* Fluid: 24px to 30px */
+  --font-weight-medium: 500;
+  --font-weight-semibold: 550;
+  --font-weight-bold: 600;
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --letter-spacing-tight: -0.01em;
+
+  /* Heading role tokens — one edit point per heading role. The hero tokens
+     are mirrored in src/styles/critical-home.css; keep them byte-identical. */
+  --text-hero: clamp(2.65rem, 8vw, 6rem);
+  --text-hero-weight: 460;
+  --text-hero-line-height: 0.98;
+  /* Bottom padding (em) that keeps the gradient paint box tall enough to
+     contain the display font's descenders. See .c-hero__name. */
+  --hero-paint-pad: 0.2em;
+  --text-hero-sub: clamp(1.35rem, 4vw, 2.5rem);
+  --text-section-title: clamp(1.9rem, 4vw, 2.75rem);
+  --text-kicker: var(--font-size-sm);
+  --text-kicker-tracking: 0.14em;
+  --text-card-title: var(--font-size-xl);
+  --text-panel-title: var(--font-size-2xl);
+  --text-timeline-title: var(--font-size-lg);
+  --text-timeline-title-compact: var(--font-size-base);
+  --text-article-title: clamp(2.4rem, 8vw, 5rem);
+  --text-article-title-line-height: 0.98;
+  --text-article-h2: clamp(1.65rem, 3vw, 2.25rem);
+  --text-article-h3: clamp(1.32rem, 2vw, 1.65rem);
+  --text-article-heading-line-height: 1.18;
+  --text-blog-feature: clamp(1.75rem, 4vw, 3rem);
+  --text-blog-feature-line-height: 1.02;
+  --text-blog-card: clamp(1.25rem, 2.4vw, 1.55rem);
+  --text-blog-card-line-height: 1.16;
+  --text-blog-list-card: clamp(1.35rem, 3vw, 1.85rem);
+  --text-blog-list-card-line-height: 1.12;
+
+  /* Spacing */
+  --space-1: 0.0625rem; /* 1px */
+  --space-4: 0.25rem; /* 4px */
+  --space-6: 0.375rem; /* 6px */
+  --space-8: 0.5rem; /* 8px */
+  --space-10: 0.625rem; /* 10px */
+  --space-12: 0.75rem; /* 12px */
+  --space-16: 1rem; /* 16px */
+  --space-20: 1.25rem; /* 20px */
+  --space-24: 1.5rem; /* 24px */
+  --space-32: 2rem; /* 32px */
+
+  /* Border Radius */
+  --radius-sm: 0.375rem; /* 6px */
+  --radius-base: 0.5rem; /* 8px */
+  --radius-md: 0.625rem; /* 10px */
+  --radius-lg: 0.75rem; /* 12px */
+  --radius-full: 999rem; /* Infinite */
+
+  /* Shadows */
+  --shadow-md:
+    0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+  --shadow-lg:
+    0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+
+  /* Animation */
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Layout */
+  --container-sm: 40rem; /* 640px */
+  --container-md: 48rem; /* 768px */
+  --container-lg: 64rem; /* 1024px */
+  --container-xl: 80rem; /* 1280px */
+  --breakpoint-md: 48rem; /* 768px */
+  --navbar-height: 4.375rem; /* 70px */
+  --section-padding: 6.25rem; /* 100px */
+  --section-padding-mobile: 3.75rem; /* 60px */
+  --nav-touch-target: 2.75rem;
+  --nav-toggle-max-width: 13rem;
+  --nav-toggle-mobile-max-width: 12.5rem;
+  --nav-toggle-fluid-width: 44vw;
+  --nav-sheet-max-block-size: 29rem;
+  --nav-sheet-viewport-gap: 1rem;
+  --nav-link-font-size: clamp(0.875rem, 0.9vw, 0.9375rem);
+  --nav-link-inline-padding: clamp(0.35rem, 0.58vw, 0.625rem);
+  --nav-menu-closed-offset: -0.375rem;
+  --nav-menu-open-offset: var(--space-8);
+  --viewport-inline-padding: clamp(var(--space-16), 5vw, var(--space-32));
+  --section-header-gap: clamp(var(--space-32), 6vw, 3.75rem);
+
+  /* Docked section headings: each heading shrinks on approach (main.js scrubs
+     --dock-progress) and sticks below the navbar as a slim bar until the next
+     section pushes it out. (No --dock-top token: the navbar+banner calc must
+     resolve at the header element, because --beta-banner-offset is overridden
+     on body — a :root-level token would bake in the 0rem fallback.) */
+  --dock-bar-height: 3rem;
+  --dock-scrub-range: 7.5rem;
+  --text-section-title-compact: clamp(1rem, 1.4vw, 1.125rem);
+  --dock-prefix-width: 5.75rem;
+  --dock-title-rise: 2.1rem;
+
+  /* Common style patterns */
+  --focus-outline: 3px solid var(--color-focus-visible);
+  --select-caret-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23134252' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  --select-caret-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23f5f5f5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+
+  /* Custom styles for Jerry James Portfolio */
+  --color-dark-primary: #0f1117;
+  --color-dark-secondary: #1a1d29;
+  --color-surface-raised: #ffffff;
+  --color-hairline: rgba(26, 26, 46, 0.08);
+  --color-hairline-strong: rgba(26, 26, 46, 0.18);
+  --color-text-muted: #5a5a67;
+  --color-text-strong: #11111f;
+
+  /* Theme-dependent surfaces, overlays, and effects. Light values live here;
+     dark twins live in BOTH dark blocks below (media + attribute). */
+  --color-overlay-faint: rgba(26, 26, 46, 0.02);
+  --color-overlay-weak: rgba(26, 26, 46, 0.04);
+  --color-overlay-medium: rgba(26, 26, 46, 0.07);
+  --color-overlay-strong: rgba(26, 26, 46, 0.1);
+  --color-chip-border: rgba(26, 26, 46, 0.24);
+  --color-dot-muted: rgba(26, 26, 46, 0.35);
+  --color-navbar-scrolled-bg: rgba(250, 250, 249, 0.92);
+  --shadow-navbar-scrolled: 0 8px 28px rgba(26, 26, 46, 0.1);
+  --shadow-sheet: 0 1rem 2rem rgba(26, 26, 46, 0.16);
+  --shadow-banner: 0 1px 0 rgba(26, 26, 46, 0.08);
+  --shadow-banner-expanded: 0 0.5rem 1.5rem rgba(26, 26, 46, 0.12);
+  --color-control-bg-start: rgba(255, 255, 255, 0.82);
+  --color-control-bg-end: rgba(255, 255, 255, 0.65);
+  --color-control-border: rgba(26, 26, 46, 0.38);
+  --color-control-glyph: rgba(26, 26, 46, 0.82);
+  --color-tooltip-bg: rgba(255, 255, 255, 0.97);
+  --color-tooltip-bg-inline: rgba(26, 26, 46, 0.05);
+  --color-card-translucent: rgba(255, 255, 255, 0.85);
+  --color-embed-bg: rgba(255, 255, 255, 0.6);
+  --color-inset-bg: rgba(26, 26, 46, 0.04);
+  --color-btn-neutral: #e7e7e4;
+  --color-btn-neutral-hover: #dcdcd8;
+  --color-btn-neutral-active: #d2d2cd;
+  --color-on-fill: #ffffff;
+  --shell-tint-violet: rgba(143, 92, 255, 0.08);
+  --loading-screen-bg: linear-gradient(135deg, #fafaf9 0%, #e3f1fb 100%);
+  --hero-vignette: radial-gradient(
+    ellipse at 50% 40%,
+    rgba(250, 250, 249, 0) 45%,
+    rgba(81, 120, 145, 0.16) 100%
+  );
+  /* screen blend washes out on light backgrounds; multiply reads as a tint */
+  --hero-bloom-blend: multiply;
+  --hero-bloom-opacity: 0.45;
+  --hero-bloom-1: radial-gradient(
+    circle,
+    rgba(87, 185, 255, 0.55),
+    rgba(87, 185, 255, 0) 65%
+  );
+  --hero-bloom-2: radial-gradient(
+    circle,
+    rgba(144, 213, 255, 0.5),
+    rgba(144, 213, 255, 0) 65%
+  );
+  --hero-bloom-3: radial-gradient(
+    circle,
+    rgba(81, 120, 145, 0.45),
+    rgba(81, 120, 145, 0) 65%
+  );
+  --hero-name-rest: #1a1a2e;
+  /* Legacy accent names now alias the indigo primary so existing usages flip automatically */
+  --color-electric-blue: var(--color-primary);
+  --color-accent-teal: var(--color-primary);
+  --animation-speed: 0.3s;
+  --animation-curve: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Icon sizes */
+  --font-size-icon-sm: 1.5rem;
+  --font-size-icon-md: 1.75rem;
+  --font-size-icon-lg: 2.5rem;
+
+  /* Gantt chart layout split */
+  --gantt-label-width: 30%;
+  --gantt-bar-width: 70%;
+}
+
+[data-color-scheme='dark'] {
+  --color-background: var(--color-dark-primary);
+  --color-surface: var(--color-dark-secondary);
+  --color-primary: #57b9ff;
+  --color-primary-hover: #90d5ff;
+  --color-primary-active: #77b1d4;
+  --color-primary-rgb: 87, 185, 255;
+  --color-accent: #90d5ff;
+  --color-accent-hover: #b4e2ff;
+  --color-accent-rgb: 144, 213, 255;
+  --color-text: rgba(232, 232, 234, 1);
+  --color-text-secondary: rgba(154, 154, 165, 1);
+  /* AA contrast: must stay >=4.5:1 on raised chip backgrounds (.c-tag) */
+  --color-text-muted: rgba(174, 176, 186, 1);
+  --color-secondary: rgba(154, 154, 165, 0.12);
+  --color-secondary-hover: rgba(154, 154, 165, 0.2);
+  --color-secondary-active: rgba(154, 154, 165, 0.26);
+  --color-border-strong: var(--color-hairline-strong);
+  --color-error: rgba(255, 84, 89, 1);
+  --color-focus-ring: rgba(var(--color-primary-rgb), 0.4);
+  --color-focus-visible: var(--color-primary-hover);
+  --color-btn-primary-text: #0f1117;
+  --color-surface-raised: #232633;
+  --color-hairline: rgba(229, 231, 238, 0.08);
+  --color-hairline-strong: rgba(229, 231, 238, 0.16);
+  --color-text-strong: rgba(245, 245, 245, 1);
+  --color-overlay-faint: rgba(255, 255, 255, 0.02);
+  --color-overlay-weak: rgba(255, 255, 255, 0.04);
+  --color-overlay-medium: rgba(255, 255, 255, 0.08);
+  --color-overlay-strong: rgba(255, 255, 255, 0.1);
+  --color-chip-border: rgba(245, 245, 245, 0.24);
+  --color-dot-muted: rgba(255, 255, 255, 0.35);
+  --color-navbar-scrolled-bg: rgba(15, 17, 23, 0.92);
+  --shadow-navbar-scrolled: 0 8px 28px rgba(0, 0, 0, 0.32);
+  --shadow-sheet: 0 1rem 2rem rgba(0, 0, 0, 0.4);
+  --shadow-banner: 0 1px 0 rgba(0, 0, 0, 0.4);
+  --shadow-banner-expanded: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.32);
+  --color-control-bg-start: rgba(13, 15, 18, 0.76);
+  --color-control-bg-end: rgba(13, 15, 18, 0.6);
+  --color-control-border: rgba(245, 245, 245, 0.34);
+  --color-control-glyph: rgba(245, 245, 245, 0.86);
+  --color-tooltip-bg: rgba(26, 29, 41, 0.95);
+  --color-tooltip-bg-inline: rgba(26, 29, 41, 0.75);
+  --color-card-translucent: rgba(18, 22, 28, 0.78);
+  --color-embed-bg: rgba(10, 10, 10, 0.6);
+  --color-inset-bg: rgba(10, 10, 10, 0.28);
+  --color-btn-neutral: rgba(62, 68, 72, 0.98);
+  --color-btn-neutral-hover: rgba(72, 79, 84, 0.98);
+  --color-btn-neutral-active: rgba(54, 59, 63, 0.98);
+  --color-on-fill: #0f1117;
+  --shell-tint-violet: rgba(143, 92, 255, 0.12);
+  --loading-screen-bg: linear-gradient(135deg, #0f1117 0%, #1a1d29 100%);
+  --hero-vignette: radial-gradient(
+    ellipse at 50% 40%,
+    rgba(15, 17, 23, 0) 45%,
+    rgba(15, 17, 23, 0.6) 100%
+  );
+  --hero-bloom-blend: screen;
+  --hero-bloom-opacity: 0.5;
+  --hero-bloom-1: radial-gradient(
+    circle,
+    rgba(87, 185, 255, 0.7),
+    rgba(87, 185, 255, 0) 65%
+  );
+  --hero-bloom-2: radial-gradient(
+    circle,
+    rgba(144, 213, 255, 0.5),
+    rgba(144, 213, 255, 0) 65%
+  );
+  --hero-bloom-3: radial-gradient(
+    circle,
+    rgba(81, 120, 145, 0.65),
+    rgba(81, 120, 145, 0) 65%
+  );
+  --hero-name-rest: #fff;
+}
+
+[data-color-scheme='dark'] select.c-form-control {
+  background-image: var(--select-caret-dark);
+}
+
+[data-color-scheme='dark'] .c-theme-toggle__sun {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+[data-color-scheme='dark'] .c-theme-toggle__moon {
+  opacity: 0;
+  transform: scale(0.6) rotate(45deg);
+}
+
+/* Beta Banner */
+
+:root {
+  --beta-banner-expanded-height: 3.25rem;
+  --beta-banner-collapsed-height: 1.5rem;
+  --beta-banner-offset: 0rem;
+}

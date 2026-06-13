@@ -1,0 +1,136 @@
+/* Component: portfolio */
+/* Above-the-fold rules that also exist in critical-home.css must be
+   changed in both places. */
+
+/* --- CONSOLIDATED HOVER EFFECT for Cards --- */
+
+/* Portfolio is the one elevated "showcase" card; skills and services are editorial (no lift). */
+
+.c-portfolio-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* Portfolio Section */
+
+.c-portfolio-filters {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-16);
+  margin-bottom: var(--section-header-gap);
+  flex-wrap: wrap;
+}
+
+.c-portfolio-filters__btn {
+  padding: var(--space-10) var(--space-20);
+  min-height: var(--nav-touch-target);
+  font-family: inherit;
+  background: transparent;
+  color: var(--color-text);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition:
+    background-color var(--animation-speed) var(--animation-curve),
+    color var(--animation-speed) var(--animation-curve),
+    border-color var(--animation-speed) var(--animation-curve);
+  font-weight: var(--font-weight-medium);
+}
+
+.c-portfolio-filters__btn:hover,
+.c-portfolio-filters__btn.is-active {
+  background: var(--color-primary);
+  color: var(--color-btn-primary-text);
+  border-color: var(--color-primary);
+}
+
+.c-portfolio-filters__btn:focus-visible {
+  outline: var(--focus-outline);
+  outline-offset: 4px;
+}
+
+.c-portfolio-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 25rem), 1fr));
+  gap: var(--space-32);
+}
+
+.c-portfolio-grid__item {
+  transition:
+    opacity var(--animation-speed) var(--animation-curve),
+    transform var(--animation-speed) var(--animation-curve);
+  will-change: opacity, transform;
+}
+
+.c-portfolio-grid__item.u-hidden {
+  opacity: 0;
+  transform: scale(0.8);
+  pointer-events: none;
+}
+
+.c-portfolio-card {
+  padding: var(--space-32);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.c-portfolio-card__header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-16);
+  gap: var(--space-16);
+}
+
+.c-portfolio-card__title {
+  font-size: var(--text-card-title);
+  color: var(--color-electric-blue);
+  flex: 1;
+  min-width: min(100%, 12rem);
+  overflow-wrap: anywhere;
+}
+
+.c-portfolio-card__category {
+  padding: var(--space-4) var(--space-12);
+  background: rgba(var(--color-primary-rgb), 0.18);
+  color: var(--color-primary-hover);
+  border: 1px solid rgba(var(--color-primary-rgb), 0.46);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.c-portfolio-card__description {
+  margin-bottom: var(--space-20);
+  line-height: 1.6;
+  flex: 1;
+}
+
+.c-portfolio-card__results {
+  margin-bottom: var(--space-20);
+}
+
+.c-portfolio-card__result {
+  padding: var(--space-8) 0 var(--space-8) var(--space-16);
+  border-left: 3px solid var(--color-electric-blue);
+  margin-bottom: var(--space-8);
+  font-weight: var(--font-weight-medium);
+}
+
+.c-portfolio-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+}
+
+.c-portfolio-filters__btn {
+  transition:
+    background-color 0.3s ease-in-out,
+    color 0.3s ease-in-out,
+    border-color 0.3s ease-in-out;
+}

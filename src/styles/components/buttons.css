@@ -1,0 +1,198 @@
+/* Component: buttons */
+/* Above-the-fold rules that also exist in critical-home.css must be
+   changed in both places. */
+
+/* --- BUTTONS --- */
+
+.c-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-10) var(--space-16);
+  min-height: var(--nav-touch-target);
+  border-radius: var(--radius-base);
+  /* Native <button> elements don't inherit the page font */
+  font-family: inherit;
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  line-height: 1.5;
+  cursor: pointer;
+  transition:
+    background-color var(--duration-normal) var(--ease-standard),
+    color var(--duration-normal) var(--ease-standard),
+    border-color var(--duration-normal) var(--ease-standard),
+    box-shadow var(--duration-normal) var(--ease-standard),
+    transform var(--duration-normal) var(--ease-standard);
+  border: none;
+  text-decoration: none;
+  position: relative;
+}
+
+.c-btn:focus-visible {
+  outline: var(--focus-outline);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 5px rgba(var(--color-primary-rgb), 0.18);
+}
+
+.c-btn--primary {
+  background: var(--color-primary);
+  color: var(--color-btn-primary-text);
+}
+
+.c-btn--primary:hover {
+  background: var(--color-primary-hover);
+}
+
+.c-btn--primary:active {
+  background: var(--color-primary-active);
+}
+
+.c-btn--outline {
+  background: transparent;
+  border: 1px solid var(--color-border-strong);
+  color: var(--color-text);
+}
+
+.c-btn--outline:hover {
+  background: var(--color-secondary);
+}
+
+.c-btn--lg {
+  padding: var(--space-10) var(--space-20);
+  font-size: var(--font-size-lg);
+  border-radius: var(--radius-md);
+}
+
+.c-btn--full-width {
+  width: 100%;
+}
+
+.c-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.c-btn.c-booking-cta__button {
+  flex-shrink: 0;
+  isolation: isolate;
+  background: var(--color-accent);
+  color: var(--color-btn-primary-text);
+  transition:
+    background 0.3s var(--ease-standard),
+    color 0.45s var(--ease-standard),
+    border-color 0.45s var(--ease-standard),
+    box-shadow 0.45s var(--ease-standard),
+    transform 0.35s var(--ease-standard);
+}
+
+.c-btn.c-booking-cta__button:not(.is-close-state):hover {
+  background: var(--color-accent-hover);
+}
+
+.c-btn.c-booking-cta__button.is-close-state {
+  color: var(--color-text);
+  border-color: var(--color-border-strong);
+  box-shadow: none;
+}
+
+.c-btn.c-booking-cta__button.is-close-state::before {
+  opacity: 1;
+}
+
+.c-btn.c-booking-cta__button.is-close-state .c-booking-cta__label--open {
+  opacity: 0;
+  transform: translateY(-0.35rem);
+}
+
+.c-btn.c-booking-cta__button.is-close-state .c-booking-cta__label--close {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.c-btn.c-booking-cta__button.is-close-state:hover {
+  color: var(--color-text);
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 1px rgba(var(--color-accent-rgb), 0.3);
+}
+
+.c-btn.c-booking-cta__button.is-close-state:hover::before {
+  background-color: var(--color-btn-neutral-hover);
+}
+
+.c-btn.c-booking-cta__button.is-close-state:active {
+  color: var(--color-text);
+  border-color: var(--color-accent);
+}
+
+.c-btn.c-booking-cta__button.is-close-state:active::before {
+  background-color: var(--color-btn-neutral-active);
+}
+
+/* Custom button overrides */
+
+.c-btn--primary,
+.c-btn--outline {
+  border: 2px solid transparent;
+  font-weight: var(--font-weight-semibold);
+  position: relative;
+  overflow: hidden;
+  transition:
+    background 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.c-btn--primary:hover,
+.c-btn--outline:hover {
+  transform: translateY(-1px);
+}
+
+.c-btn--primary {
+  background: var(--color-primary);
+  color: var(--color-btn-primary-text);
+}
+
+.c-btn--primary:hover {
+  background: var(--color-primary-hover);
+  color: var(--color-btn-primary-text);
+}
+
+.c-btn--outline {
+  background: transparent;
+  border-color: var(--color-primary);
+  color: var(--color-text);
+}
+
+.c-btn--outline:hover {
+  background: rgba(var(--color-primary-rgb), 0.12);
+  border-color: var(--color-primary);
+  color: var(--color-text);
+}
+
+/* Signal pulse on hover: one soft ring emanates from the button and fades,
+   echoing the hero heartbeat. Uses box-shadow rather than a pseudo-element
+   because these buttons clip overflow; runs once per hover. */
+
+@keyframes btnSignalPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(var(--color-primary-rgb), 0.3);
+  }
+  100% {
+    box-shadow: 0 0 0 0.875rem rgba(var(--color-primary-rgb), 0);
+  }
+}
+
+.c-btn--primary:not(.is-close-state):hover,
+.c-btn--outline:hover {
+  animation: btnSignalPulse 1.1s ease-out 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c-btn--primary:hover,
+  .c-btn--outline:hover,
+  .c-theme-toggle:hover {
+    animation: none;
+  }
+}

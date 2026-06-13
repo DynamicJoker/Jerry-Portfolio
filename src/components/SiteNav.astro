@@ -19,39 +19,43 @@ const links = [
 const currentLabel = links.find((link) => link.id === current)?.label ?? 'Home';
 ---
 
-<nav class="navbar" id="navbar" aria-label="Primary">
-  <div class="nav-container">
+<nav class="c-nav" id="navbar" aria-label="Primary">
+  <div class="c-nav__container">
     <a
       href={current === 'home' ? '#hero' : '/'}
-      class="nav-brand"
+      class="c-nav__brand"
       aria-label="Jerry James home"
     >
       <BrandLogo />
     </a>
-    <div class="nav-actions">
+    <div class="c-nav__actions">
       <button
-        class="hamburger nav-toggle"
+        class="c-nav__toggle"
         id="hamburger"
         type="button"
         aria-label={`Open navigation menu, currently ${currentLabel}`}
         aria-controls="nav-menu"
         aria-expanded="false"
       >
-        <span class="nav-toggle-label" data-current-section>{currentLabel}</span
+        <span class="c-nav__toggle-label" data-current-section
+          >{currentLabel}</span
         >
-        <span class="nav-toggle-icon" aria-hidden="true">
+        <span class="c-nav__toggle-icon" aria-hidden="true">
           <span></span>
           <span></span>
           <span></span>
         </span>
       </button>
-      <div class="nav-menu" id="nav-menu">
-        <div class="nav-rail">
+      <div class="c-nav__menu" id="nav-menu">
+        <div class="c-nav__rail">
           {
             links.map((link) => (
               <a
                 href={link.href}
-                class:list={['nav-link', { active: current === link.id }]}
+                class:list={[
+                  'c-nav__link',
+                  { 'is-active': current === link.id },
+                ]}
                 aria-current={current === link.id ? 'location' : undefined}
               >
                 {link.label}
@@ -61,14 +65,14 @@ const currentLabel = links.find((link) => link.id === current)?.label ?? 'Home';
         </div>
       </div>
       <button
-        class="theme-toggle"
+        class="c-theme-toggle"
         id="theme-toggle"
         type="button"
         aria-label="Toggle color theme"
         hidden
       >
         <svg
-          class="theme-toggle__icon"
+          class="c-theme-toggle__icon"
           viewBox="0 0 24 24"
           aria-hidden="true"
           focusable="false"
@@ -81,7 +85,7 @@ const currentLabel = links.find((link) => link.id === current)?.label ?? 'Home';
               <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
             </clipPath>
           </defs>
-          <g class="theme-toggle__sun">
+          <g class="c-theme-toggle__sun">
             <circle cx="12" cy="12" r="4.7" fill="var(--color-primary-hover)"
             ></circle>
             <circle
@@ -109,7 +113,7 @@ const currentLabel = links.find((link) => link.id === current)?.label ?? 'Home';
               <path d="M17.8 8.65L19.36 7.75"></path>
             </g>
           </g>
-          <g class="theme-toggle__moon">
+          <g class="c-theme-toggle__moon">
             <path
               d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
               fill="var(--color-primary)"></path>
@@ -142,10 +146,10 @@ const currentLabel = links.find((link) => link.id === current)?.label ?? 'Home';
     /* Legacy fallback fade (see html.theme-transition in the CSS) for
        browsers without the View Transitions API. */
     const crossFadeSchemes = () => {
-      root.classList.add('theme-transition');
+      root.classList.add('is-theme-transitioning');
       window.clearTimeout(crossFadeResetTimer);
       crossFadeResetTimer = window.setTimeout(() => {
-        root.classList.remove('theme-transition');
+        root.classList.remove('is-theme-transitioning');
       }, 520);
     };
     /* Gradual scheme swap. Preferred path is a view transition: the browser
@@ -216,7 +220,7 @@ const currentLabel = links.find((link) => link.id === current)?.label ?? 'Home';
     const currentLabel = document.querySelector('[data-current-section]');
     const navMenu = document.getElementById('nav-menu');
     const navbar = document.getElementById('navbar');
-    const links = document.querySelectorAll('.nav-link');
+    const links = document.querySelectorAll('.c-nav__link');
 
     if (!hamburger || !navMenu) return;
 
@@ -224,8 +228,8 @@ const currentLabel = links.find((link) => link.id === current)?.label ?? 'Home';
     const navMenuQuery = window.matchMedia('(max-width: 64rem)');
 
     const setNavOpen = (isOpen) => {
-      hamburger.classList.toggle('active', isOpen);
-      navMenu.classList.toggle('active', isOpen);
+      hamburger.classList.toggle('is-active', isOpen);
+      navMenu.classList.toggle('is-active', isOpen);
       controls.forEach((control) => {
         control.setAttribute('aria-expanded', String(isOpen));
         control.setAttribute(
@@ -234,7 +238,7 @@ const currentLabel = links.find((link) => link.id === current)?.label ?? 'Home';
         );
       });
     };
-    const isNavOpen = () => navMenu.classList.contains('active');
+    const isNavOpen = () => navMenu.classList.contains('is-active');
     const closeNav = ({ restoreFocus = false } = {}) => {
       if (!isNavOpen()) return;
 
@@ -269,7 +273,7 @@ const currentLabel = links.find((link) => link.id === current)?.label ?? 'Home';
     });
 
     const updateScrolled = () =>
-      navbar?.classList.toggle('scrolled', window.scrollY > 10);
+      navbar?.classList.toggle('is-scrolled', window.scrollY > 10);
     updateScrolled();
     window.addEventListener('scroll', updateScrolled, { passive: true });
   })();

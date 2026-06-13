@@ -1,0 +1,33 @@
+/* Component: footer */
+/* Above-the-fold rules that also exist in critical-home.css must be
+   changed in both places. */
+
+/* Footer */
+
+.c-footer {
+  background: transparent;
+  padding: var(--space-20) 0;
+  border-top: 1px solid rgba(var(--color-primary-rgb), 0.15);
+  font-size: var(--font-size-sm);
+}
+
+.c-footer__content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.c-footer__text {
+  color: var(--color-text-secondary);
+}
+
+.c-footer__link {
+  color: var(--color-electric-blue);
+  text-decoration: none;
+  font-weight: var(--font-weight-medium);
+  transition: color var(--animation-speed) var(--animation-curve);
+}
+
+.c-footer__link:hover {
+  color: var(--color-electric-blue);
+}

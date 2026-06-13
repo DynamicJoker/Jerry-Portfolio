@@ -1,0 +1,88 @@
+/* Component: skills */
+/* Above-the-fold rules that also exist in critical-home.css must be
+   changed in both places. */
+
+/* Skills Section */
+
+.c-skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18.75rem), 1fr));
+  gap: var(--space-32);
+}
+
+.c-skill-category {
+  padding: var(--space-20) 0;
+  border-top: 1px solid var(--color-hairline);
+}
+
+.c-skill-category__title {
+  font-size: var(--text-card-title);
+  margin-bottom: var(--space-20);
+  color: var(--color-electric-blue);
+}
+
+.c-skill-category__tags .c-skill-category__tag {
+  display: block;
+  padding: var(--space-8) 0 var(--space-8) var(--space-20);
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  position: relative;
+  transition: color var(--animation-speed) var(--animation-curve);
+}
+
+.c-skill-category__tags .c-skill-category__tag::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 60%;
+  background: var(--color-electric-blue);
+  opacity: 0.9;
+  border-radius: 2px;
+  transition:
+    opacity var(--animation-speed) var(--animation-curve),
+    height var(--animation-speed) var(--animation-curve);
+}
+
+.c-skill-category__tags .c-skill-category__tag:hover {
+  color: var(--color-electric-blue);
+}
+
+.c-skill-category__tags .c-skill-category__tag:hover::before {
+  opacity: 1;
+  height: 80%;
+}
+
+.c-skill-category__pane {
+  max-height: clamp(14rem, 32dvh, 15.625rem);
+  overflow-y: auto;
+  padding-right: var(--space-10);
+  mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
+}
+
+.c-skill-category__pane::-webkit-scrollbar {
+  width: 5px;
+}
+
+.c-skill-category__pane::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.c-skill-category__pane::-webkit-scrollbar-thumb {
+  background: var(--color-dot-muted);
+  border-radius: 10px;
+  transition: background 0.2s ease-in-out;
+}
+
+.c-skill-category__pane::-webkit-scrollbar-thumb:hover {
+  background: rgba(98, 108, 113, 0.7);
+}
+
+.c-skills-grid,
+.c-services-grid,
+.c-portfolio-grid,
+.c-contact__content {
+  transition: gap 0.4s ease-in-out;
+}

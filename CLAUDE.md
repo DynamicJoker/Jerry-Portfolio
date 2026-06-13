@@ -14,21 +14,36 @@ Personal portfolio + blog, deployed on Vercel at https://www.jerryjames.me.
 - Blog posts: `src/content/blog/*.mdx` (editable via Pages CMS, `.pages.yml`).
   Blog images go in `public/images/blog/`.
 - Section kickers ("01 / About") are auto-numbered with a CSS counter
-  (`.section-kicker` in `style.css`) — write only the label text in markup.
+  (`.c-section__kicker` in `src/styles/components/section.css`) — write only
+  the label text in markup.
 - Footer markup is `src/components/SiteFooter.astro` only (HomeBody includes it).
 
 ## CSS rules (important)
 
+- Class naming is **BEMIT-lite**: `c-block__element--modifier` for components,
+  `o-*` for layout objects (`o-container`), `u-*` for utilities
+  (`u-hidden`, `u-sr-only`), `is-*`/`has-*` for all JS-toggled states.
+  No bare state classes (`active`, `expanded`, etc.) — fold new states into
+  `is-*`/`has-*`. JS behavior hooks prefer `data-*` attributes over classes.
+- The stylesheet is split into ITCSS layers under `src/styles/`, assembled by
+  `src/styles/global.css` in cascade order: `settings.css` (design tokens +
+  dark-mode token overrides) → `generic.css` (reset + element styles) →
+  `objects.css` → `components/*.css` (one file per component family) →
+  `utilities.css` (last so utilities win). **Do not reorder the imports** in
+  `global.css`; new component files are appended before `utilities.css`.
 - The home page's above-the-fold CSS is **duplicated** in
-  `src/styles/critical-home.css` (inlined) AND root `style.css` (deferred full
-  stylesheet). Any change to styles that exist in both files must be made in
+  `src/styles/critical-home.css` (inlined) AND the layer files (deferred full
+  stylesheet). Any change to styles that exist in both places must be made in
   **both**, or the page will flash/shift when the full stylesheet loads.
 - `<style>` blocks in `.astro` pages are silently dropped from the build —
-  put all CSS in root `style.css` (imported via `src/styles/global.css`).
-- Design tokens (colors, spacing, fonts, breakpoints) are CSS variables at the
-  top of `style.css`; use them instead of raw values. Brand SVGs
+  put all CSS in the `src/styles/` layer files.
+- Design tokens (colors, spacing, fonts, breakpoints) are CSS variables in
+  `src/styles/settings.css`; use them instead of raw values. Brand SVGs
   (`BrandLogo.astro`, 404 graphic, `public/brand/*`) intentionally hardcode the
   brand gradient hexes because standalone SVG files can't use CSS variables.
+- The MDX chart classes (`c-article-chart*`, `c-stacked-bar*`) are written by
+  hand in blog post bodies — renaming them means editing published
+  `src/content/blog/*.mdx` too.
 
 ## Workflows
 

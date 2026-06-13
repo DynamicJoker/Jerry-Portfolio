@@ -1,0 +1,111 @@
+/* Component: not-found */
+/* Above-the-fold rules that also exist in critical-home.css must be
+   changed in both places. */
+
+/* ==========================================================================
+   Not found (404) page
+   ========================================================================== */
+
+.c-not-found {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.c-not-found__graphic {
+  width: clamp(13.75rem, 38vw, 20rem);
+  height: auto;
+  margin-bottom: var(--space-24, 1.5rem);
+}
+
+.c-not-found__code {
+  font-family: var(--font-family-base, 'Krub', system-ui, sans-serif);
+  font-size: 52px;
+  font-weight: var(--font-weight-semibold, 600);
+  letter-spacing: 0.04em;
+}
+
+.c-not-found__halo {
+  animation: nf-pulse 4.5s ease-in-out infinite;
+}
+
+.c-not-found__orbit-fragments {
+  animation: nf-flicker 2.8s linear infinite;
+}
+
+.c-not-found__blip {
+  transform-origin: 200px 87.5px;
+  animation: nf-blink 1.8s ease-in-out infinite;
+}
+
+.c-not-found__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-16, 1rem);
+  margin-top: var(--space-32, 2rem);
+}
+
+@keyframes nf-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+
+  50% {
+    opacity: 0.85;
+  }
+}
+
+@keyframes nf-flicker {
+  0%,
+  100% {
+    opacity: 0.9;
+  }
+
+  8% {
+    opacity: 0.2;
+  }
+
+  16% {
+    opacity: 0.75;
+  }
+
+  34% {
+    opacity: 0.3;
+  }
+
+  48% {
+    opacity: 0.85;
+  }
+
+  62% {
+    opacity: 0.15;
+  }
+
+  78% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes nf-blink {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.15;
+    transform: scale(0.7);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c-not-found__halo,
+  .c-not-found__orbit-fragments,
+  .c-not-found__blip {
+    animation: none;
+  }
+}

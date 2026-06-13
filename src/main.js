@@ -98,7 +98,7 @@ function updateUIOnScroll(scrollY) {
 
   if (navbar) {
     navbar.classList.toggle(
-      'scrolled',
+      'is-scrolled',
       scrollY > config.navbar.scrollThreshold,
     );
   }
@@ -160,7 +160,7 @@ function initializeContactInfo() {
   if (emailEl && siteContent.contactInfo.email) {
     const revealButton = document.createElement('button');
     revealButton.type = 'button';
-    revealButton.className = 'contact-reveal-button';
+    revealButton.className = 'c-contact__reveal-button';
     revealButton.setAttribute('aria-label', 'Reveal email address');
     revealButton.title = 'Reveal email address';
 
@@ -240,18 +240,18 @@ function initializeLoadingScreen() {
 function initializeNavigation() {
   const hamburger = document.getElementById('hamburger');
   const navMenu = document.getElementById('nav-menu');
-  navLinks = document.querySelectorAll('.nav-link');
+  navLinks = document.querySelectorAll('.c-nav__link');
   const navbar = document.getElementById('navbar');
   const controls = [hamburger].filter(Boolean);
   const navMenuQuery = window.matchMedia('(max-width: 64rem)');
   const setNavOpen = (isOpen) => {
     if (!hamburger || !navMenu) return;
 
-    hamburger.classList.toggle('active', isOpen);
-    navMenu.classList.toggle('active', isOpen);
+    hamburger.classList.toggle('is-active', isOpen);
+    navMenu.classList.toggle('is-active', isOpen);
     updateNavControls(isOpen, controls);
   };
-  const isNavOpen = () => Boolean(navMenu?.classList.contains('active'));
+  const isNavOpen = () => Boolean(navMenu?.classList.contains('is-active'));
   const closeNav = ({ restoreFocus = false } = {}) => {
     if (!isNavOpen()) return;
 
@@ -293,10 +293,10 @@ function initializeNavigation() {
   navLinks.forEach((link) => {
     link.addEventListener('click', () => {
       navLinks.forEach((navLink) => {
-        navLink.classList.remove('active');
+        navLink.classList.remove('is-active');
         navLink.removeAttribute('aria-current');
       });
-      link.classList.add('active');
+      link.classList.add('is-active');
       link.setAttribute('aria-current', 'location');
       updateCurrentSectionLabel(link);
       updateNavGlow();
@@ -317,7 +317,7 @@ function initializeNavigation() {
   });
   if (navbar) {
     navbar.classList.toggle(
-      'scrolled',
+      'is-scrolled',
       window.pageYOffset > config.navbar.scrollThreshold,
     );
     updateActiveNavLink();
@@ -359,7 +359,7 @@ function updateActiveNavLink() {
 
   const sections = Array.from(document.querySelectorAll('section[id]')).filter(
     (section) => {
-      return document.querySelector(`.nav-link[href="#${section.id}"]`);
+      return document.querySelector(`.c-nav__link[href="#${section.id}"]`);
     },
   );
 
@@ -389,7 +389,7 @@ function updateActiveNavLink() {
   let activeLink = null;
   navLinks.forEach((link) => {
     const isActive = link.getAttribute('href') === `#${currentSectionId}`;
-    link.classList.toggle('active', isActive);
+    link.classList.toggle('is-active', isActive);
     if (isActive) {
       link.setAttribute('aria-current', 'location');
       activeLink = link;
@@ -404,7 +404,7 @@ function updateActiveNavLink() {
 function updateNavGlow() {
   const navMenu = document.getElementById('nav-menu');
   const activeLink = Array.from(navLinks).find((link) =>
-    link.classList.contains('active'),
+    link.classList.contains('is-active'),
   );
   if (activeLink && navMenu) {
     const menuRect = navMenu.getBoundingClientRect();
@@ -421,30 +421,31 @@ function updateNavGlow() {
 }
 
 function initializeScrollAnimations() {
-  document.querySelectorAll('.section').forEach((section) => {
+  document.querySelectorAll('.c-section').forEach((section) => {
     ScrollTrigger.create({
       trigger: section,
       start: 'top 85%',
       once: true,
-      onEnter: () => section.classList.add('visible'),
+      onEnter: () => section.classList.add('is-visible'),
     });
   });
 }
 
-// Docked section headings: each .section-header is position:sticky (CSS). On
+// Docked section headings: each .c-section__header is position:sticky (CSS). On
 // approach we scrub --dock-progress (CSS scales the title toward its compact
 // size); at the dock line .is-docked swaps in the slim bar layout. The
 // header's natural height is pinned as an inline min-height so the swap never
-// reflows the content below — see "Docked section headings" in style.css.
+// reflows the content below — see "Docked section headings" in
+// src/styles/components/section.css.
 function initializeDockedSectionHeaders() {
-  const headers = gsap.utils.toArray('section.section .section-header');
+  const headers = gsap.utils.toArray('section.c-section .c-section__header');
   if (!headers.length) return;
 
   // Re-measured on every ScrollTrigger refresh (load, resize) so the reserved
   // height and scale ratio track font settling and breakpoint changes.
   const measureHeaders = () => {
     headers.forEach((header) => {
-      const title = header.querySelector('.section-title');
+      const title = header.querySelector('.c-section__title');
       const wasDocked = header.classList.contains('is-docked');
       header.classList.remove('is-docked');
       header.style.removeProperty('min-height');
@@ -511,33 +512,35 @@ function initializeDockedSectionHeaders() {
 // expand to the full logo once the name scrolls under the navbar.
 function initializeBrandCollapse() {
   const navbar = document.getElementById('navbar');
-  const heroName = document.querySelector('.hero-name');
+  const heroName = document.querySelector('.c-hero__name');
   if (!navbar || !heroName) return;
 
   ScrollTrigger.create({
     trigger: heroName,
     start: () => `bottom top+=${navbar.offsetHeight}`,
-    onEnter: () => navbar.classList.add('brand-expanded'),
-    onLeaveBack: () => navbar.classList.remove('brand-expanded'),
+    onEnter: () => navbar.classList.add('is-brand-expanded'),
+    onLeaveBack: () => navbar.classList.remove('is-brand-expanded'),
   });
 }
 
 function initializePortfolioFilters() {
-  const filterContainer = document.querySelector('.portfolio-filters');
-  const portfolioItems = document.querySelectorAll('.portfolio-item');
+  const filterContainer = document.querySelector('.c-portfolio-filters');
+  const portfolioItems = document.querySelectorAll('.c-portfolio-grid__item');
 
   if (!filterContainer) return;
 
-  const filterButtons = filterContainer.querySelectorAll('.filter-btn');
+  const filterButtons = filterContainer.querySelectorAll(
+    '.c-portfolio-filters__btn',
+  );
   filterButtons.forEach((button) => {
     button.setAttribute(
       'aria-pressed',
-      String(button.classList.contains('active')),
+      String(button.classList.contains('is-active')),
     );
   });
 
   filterContainer.addEventListener('click', (event) => {
-    const clickedButton = event.target.closest('.filter-btn');
+    const clickedButton = event.target.closest('.c-portfolio-filters__btn');
 
     if (!clickedButton) return;
 
@@ -545,13 +548,13 @@ function initializePortfolioFilters() {
 
     filterButtons.forEach((btn) => {
       const isActive = btn === clickedButton;
-      btn.classList.toggle('active', isActive);
+      btn.classList.toggle('is-active', isActive);
       btn.setAttribute('aria-pressed', String(isActive));
     });
 
     portfolioItems.forEach((item) => {
       const isVisible = filter === 'all' || item.dataset.category === filter;
-      item.classList.toggle('hidden', !isVisible);
+      item.classList.toggle('u-hidden', !isVisible);
       item.toggleAttribute('hidden', !isVisible);
       item.setAttribute('aria-hidden', String(!isVisible));
       item.inert = !isVisible;
@@ -651,26 +654,26 @@ function updateFooterYear() {
 }
 
 function showNotification(message, type = 'info') {
-  document.querySelectorAll('.notification').forEach((n) => n.remove());
+  document.querySelectorAll('.c-notification').forEach((n) => n.remove());
 
   const notification = document.createElement('div');
-  notification.className = `notification notification--${type}`;
+  notification.className = `c-notification c-notification--${type}`;
   notification.setAttribute('role', type === 'error' ? 'alert' : 'status');
   notification.setAttribute(
     'aria-live',
     type === 'error' ? 'assertive' : 'polite',
   );
-  notification.innerHTML = `<div class="notification-content"><span class="notification-message">${message}</span><button class="notification-close" aria-label="Close notification">&times;</button></div>`;
+  notification.innerHTML = `<div class="c-notification__content"><span class="c-notification__message">${message}</span><button class="c-notification__close" aria-label="Close notification">&times;</button></div>`;
 
   document.body.appendChild(notification);
 
   // Use requestAnimationFrame to ensure the transition is applied correctly
   requestAnimationFrame(() => {
-    notification.classList.add('visible');
+    notification.classList.add('is-visible');
   });
 
   const close = () => {
-    notification.classList.remove('visible');
+    notification.classList.remove('is-visible');
     notification.addEventListener(
       'transitionend',
       () => notification.remove(),
@@ -679,7 +682,7 @@ function showNotification(message, type = 'info') {
   };
 
   notification
-    .querySelector('.notification-close')
+    .querySelector('.c-notification__close')
     .addEventListener('click', close);
   setTimeout(close, config.notificationDuration);
 }
@@ -754,7 +757,7 @@ function initializeCalendlyBookingPanel() {
     return;
 
   const trigger = booking.querySelector('[data-calendly-open]');
-  const panel = booking.querySelector('.calendly-panel');
+  const panel = booking.querySelector('.c-calendly-panel');
   const loading = booking.querySelector('[data-calendly-loading]');
   const container = booking.querySelector('[data-calendly-container]');
   const bookedMessage = booking.querySelector('[data-calendly-booked]');
@@ -908,7 +911,7 @@ function initializeInfiniteScroller() {
   if (!scroller || scroller.dataset.scrollerEnhanced === 'true') return;
 
   const inners = Array.from(
-    scroller.querySelectorAll('.testimonials-scroller-inner'),
+    scroller.querySelectorAll('.c-testimonials-scroller__inner'),
   );
   if (inners.length === 0) return;
 
@@ -979,7 +982,7 @@ function initializeInfiniteScroller() {
 
   if (prefersReducedMotion) {
     scroller
-      .querySelectorAll('.testimonials-scroller-column')
+      .querySelectorAll('.c-testimonials-scroller__column')
       .forEach((column, index) => {
         column.setAttribute('tabindex', '0');
         column.setAttribute('role', 'region');
@@ -1021,24 +1024,24 @@ function initializeTestimonialPauseControl() {
 }
 
 function initializeLogoCarousel() {
-  const logos = document.querySelectorAll('.logo-bar .logo-item');
+  const logos = document.querySelectorAll('.c-logo-bar__bar .c-logo-bar__item');
   if (logos.length === 0) return;
   let currentIndex = 0;
-  logos[currentIndex].classList.add('active');
+  logos[currentIndex].classList.add('is-active');
   if (prefersReducedMotion) return;
 
   setInterval(() => {
     logos.forEach((logo, index) =>
-      logo.classList.toggle('active', index === currentIndex),
+      logo.classList.toggle('is-active', index === currentIndex),
     );
     currentIndex = (currentIndex + 1) % logos.length;
   }, config.logoCarousel.interval);
 }
 
 function initializeExpandableHighlights() {
-  const container = document.querySelector('.about-highlights');
+  const container = document.querySelector('.c-about__highlights');
   if (!container) return;
-  const items = container.querySelectorAll('.highlight-item');
+  const items = container.querySelectorAll('.c-highlight');
 
   items.forEach((item) => {
     item.setAttribute('role', 'button');
@@ -1046,12 +1049,12 @@ function initializeExpandableHighlights() {
   });
 
   const setExpanded = (item, isExpanded) => {
-    item.classList.toggle('expanded', isExpanded);
+    item.classList.toggle('is-expanded', isExpanded);
     item.setAttribute('aria-expanded', String(isExpanded));
   };
 
   const handleInteraction = (event) => {
-    const highlightItem = event.target.closest('.highlight-item');
+    const highlightItem = event.target.closest('.c-highlight');
     if (!highlightItem) return;
 
     if (event.type === 'keydown' && !['Enter', ' '].includes(event.key)) {
@@ -1060,13 +1063,16 @@ function initializeExpandableHighlights() {
 
     event.preventDefault();
 
-    const currentlyExpanded = container.querySelector('.expanded');
+    const currentlyExpanded = container.querySelector('.is-expanded');
 
     if (currentlyExpanded && currentlyExpanded !== highlightItem) {
       setExpanded(currentlyExpanded, false);
     }
 
-    setExpanded(highlightItem, !highlightItem.classList.contains('expanded'));
+    setExpanded(
+      highlightItem,
+      !highlightItem.classList.contains('is-expanded'),
+    );
   };
 
   container.addEventListener('click', handleInteraction);
@@ -1079,7 +1085,7 @@ function initializeExpandableHighlights() {
       return;
     }
 
-    const currentlyExpanded = container.querySelector('.expanded');
+    const currentlyExpanded = container.querySelector('.is-expanded');
     if (currentlyExpanded) {
       setExpanded(currentlyExpanded, false);
     }
@@ -1087,16 +1093,18 @@ function initializeExpandableHighlights() {
 }
 
 function setGanttAreaExpanded(barArea, isExpanded) {
-  barArea.classList.toggle('active', isExpanded);
+  barArea.classList.toggle('is-active', isExpanded);
   barArea.setAttribute('aria-expanded', String(isExpanded));
 }
 
 function closeGanttDetails(container, exceptArea = null) {
-  container.querySelectorAll('.gantt-bar-area.active').forEach((activeArea) => {
-    if (activeArea !== exceptArea) {
-      setGanttAreaExpanded(activeArea, false);
-    }
-  });
+  container
+    .querySelectorAll('.c-gantt__bar-area.is-active')
+    .forEach((activeArea) => {
+      if (activeArea !== exceptArea) {
+        setGanttAreaExpanded(activeArea, false);
+      }
+    });
 }
 
 function isCompactGanttCardView() {
@@ -1117,26 +1125,26 @@ function enhanceGanttRows() {
     document.addEventListener('keydown', (event) => {
       if (event.key !== 'Escape') return;
       closeGanttDetails(container);
-      container.classList.add('gantt-tooltips-suppressed');
+      container.classList.add('has-tooltips-suppressed');
       if (container.contains(document.activeElement)) {
         document.activeElement.blur();
       }
     });
     container.addEventListener('pointermove', () => {
-      container.classList.remove('gantt-tooltips-suppressed');
+      container.classList.remove('has-tooltips-suppressed');
     });
     container.dataset.ganttOutsideListener = 'true';
   }
 
-  const rows = Array.from(container.querySelectorAll('.gantt-row'));
+  const rows = Array.from(container.querySelectorAll('.c-gantt__row'));
   rows.forEach((row) => {
-    const barArea = row.querySelector('.gantt-bar-area');
+    const barArea = row.querySelector('.c-gantt__bar-area');
     if (!barArea) return;
 
     if (barArea.dataset.ganttEnhanced === 'true') return;
 
     barArea.addEventListener('click', () => {
-      const isActive = barArea.classList.contains('active');
+      const isActive = barArea.classList.contains('is-active');
       closeGanttDetails(container, barArea);
       setGanttAreaExpanded(barArea, !isActive);
     });
@@ -1160,6 +1168,6 @@ function revealGanttChartOnScroll(container) {
     trigger: container,
     start: 'top 85%',
     once: true,
-    onEnter: () => container.classList.add('visible'),
+    onEnter: () => container.classList.add('is-visible'),
   });
 }

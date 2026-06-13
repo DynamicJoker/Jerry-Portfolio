@@ -1,0 +1,309 @@
+/* Component: section */
+/* Above-the-fold rules that also exist in critical-home.css must be
+   changed in both places. */
+
+/* Sections */
+
+.c-section {
+  padding-block: var(--section-padding);
+  position: relative;
+  opacity: 0;
+  transform: translateY(1rem);
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s ease;
+}
+
+.c-section.is-visible {
+  opacity: 1;
+  /* `none` rather than translateY(0): a transformed ancestor must not linger
+     around the sticky .c-section__header. */
+  transform: none;
+}
+
+.c-section:nth-child(even) {
+  background: var(--color-overlay-faint);
+}
+
+.c-section__header {
+  margin-bottom: var(--section-header-gap);
+}
+
+/* Kickers are auto-numbered ("01 / About") in DOM order via a CSS counter,
+   so sections can be added or reordered without renumbering markup. */
+
+body {
+  counter-reset: section-kicker;
+}
+
+.c-section__kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-12);
+  margin-bottom: var(--space-12);
+  color: var(--color-electric-blue);
+  font-size: var(--text-kicker);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--text-kicker-tracking);
+  text-transform: uppercase;
+  counter-increment: section-kicker;
+}
+
+.c-section__kicker::before {
+  content: counter(section-kicker, decimal-leading-zero) ' /';
+}
+
+.c-section__kicker::after {
+  content: '';
+  order: -1;
+  width: 2rem;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--color-accent);
+}
+
+.c-section__title {
+  font-size: var(--text-section-title);
+  max-width: 26ch;
+  text-wrap: balance;
+  color: var(--color-text);
+}
+
+/* Docked section headings. The header is a full-bleed direct child of
+   .c-section with its own inner .o-container, so the bar background can span
+   edge to edge while the text stays aligned with the content column.
+   main.js reserves the header's natural height as an inline min-height, so
+   the compact swap never reflows the content below (transform/opacity only
+   during the scrub). */
+
+.c-section .c-section__header {
+  position: sticky;
+  top: calc(var(--navbar-height) + var(--beta-banner-offset, 0rem));
+  z-index: 100;
+}
+
+/* Bar chrome lives on a pseudo so it can fade independently of the swap.
+   z-index: -1 keeps it under the text row (a positioned pseudo otherwise
+   paints over in-flow content); it can't escape the header's own stacking
+   context, so it still covers content scrolling beneath the bar. */
+
+.c-section__header::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: -1;
+  height: var(--dock-bar-height);
+  background: var(--color-navbar-scrolled-bg);
+  border-bottom: 1px solid var(--color-hairline);
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-standard);
+  pointer-events: none;
+}
+
+.c-section__header.is-docked::before {
+  opacity: 1;
+}
+
+/* The reserved (mostly empty) header box must not block clicks on content
+   scrolling beneath it; only the compact row stays interactive. */
+
+.c-section__header.is-docked {
+  pointer-events: none;
+}
+
+.c-section__header.is-docked .c-section__header-inner {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  height: var(--dock-bar-height);
+}
+
+.c-section__header.is-docked .c-section__kicker {
+  margin-bottom: 0;
+  flex-shrink: 0;
+}
+
+/* Hide only the label word; the counter number and accent dash render on the
+   kicker's pseudo-elements and survive into the compact bar. */
+
+.c-section__header.is-docked .c-section__kicker-label {
+  display: none;
+}
+
+.c-section__header.is-docked .c-section__title {
+  font-size: var(--text-section-title-compact);
+  max-width: none;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transform: none;
+}
+
+/* Scrub layer: as the header approaches the dock line, the title scales
+   toward its compact size and glides toward its slot in the bar row while
+   the kicker label fades out. --dock-scale-end (compact/full font ratio) is
+   measured by main.js; --dock-progress stays 0 for reduced-motion users. */
+
+.c-section__header:not(.is-docked) .c-section__title {
+  transform-origin: left top;
+  transform: translate(
+      calc(var(--dock-progress, 0) * var(--dock-prefix-width)),
+      calc(var(--dock-progress, 0) * -1 * var(--dock-title-rise))
+    )
+    scale(calc(1 - (1 - var(--dock-scale-end, 0.45)) * var(--dock-progress, 0)));
+}
+
+.c-section__header:not(.is-docked) .c-section__kicker-label {
+  opacity: calc(1 - var(--dock-progress, 0) * 1.4);
+}
+
+@media (max-width: 48rem) {
+  :root {
+    --dock-bar-height: 2.5rem;
+    --dock-scrub-range: 5rem;
+  }
+}
+
+section[id] {
+  scroll-margin-top: calc(
+    var(--navbar-height) + var(--beta-banner-offset, 0rem) + var(--space-24)
+  );
+}
+
+.c-section.is-visible .c-skill-category__tag {
+  transform: translateY(0) scale(1);
+}
+
+@media (max-width: 30rem) {
+  .c-section {
+    padding-block: var(--section-padding-mobile);
+  }
+
+  .o-container {
+    padding-inline: var(--viewport-inline-padding);
+  }
+
+  .c-hero {
+    align-items: flex-start;
+    padding-block-end: var(--space-24);
+  }
+
+  .c-hero__stats {
+    gap: var(--space-8) 0;
+  }
+
+  .c-highlight {
+    flex: 1 1 100%;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .c-portfolio-filters__btn {
+    padding: var(--space-6) var(--space-16);
+    font-size: var(--font-size-sm);
+  }
+
+  .c-hero__stat {
+    padding: 0 var(--space-8);
+  }
+
+  .c-hero__stat-value {
+    font-size: 1.25rem;
+  }
+
+  .c-hero__stat-label {
+    font-size: var(--font-size-xs);
+    overflow-wrap: anywhere;
+  }
+
+  .c-booking-cta__bar,
+  .c-calendly-panel__inner {
+    padding: var(--space-16);
+  }
+}
+
+/* Smooth the padding/gap jumps that responsive breakpoints cause on resize
+   (grid column changes themselves can't be transitioned). */
+
+.c-section,
+.o-container {
+  transition: padding 0.4s ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
+  .c-section,
+  #gantt-chart-container {
+    opacity: 1;
+    transform: none;
+  }
+
+  .c-hero__name,
+  .c-hero__subtitle,
+  .c-hero__stat,
+  .c-hero__buttons,
+  .c-scroll-indicator,
+  .c-loading-screen__dot,
+  .c-neon-frame__circle,
+  .c-testimonials-scroller__inner,
+  .c-shape-assembler i,
+  #gantt-chart-container.is-visible .c-gantt__bar {
+    animation: none !important;
+  }
+
+  /* Without the marquee animation, let users scroll the columns themselves
+     (main.js skips card cloning and makes the columns focusable regions). */
+  .c-testimonials-scroller__column {
+    overflow-y: auto;
+    mask-image: none;
+  }
+
+  .c-hero__name {
+    background-position: 0 0;
+  }
+
+  .c-gantt__bar {
+    transform: none;
+  }
+
+  .c-shape-assembler i,
+  .c-loading-screen__dot {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: none;
+  }
+
+  .c-availability-dot::before,
+  .c-availability-dot::after {
+    animation: none !important;
+    opacity: 0;
+  }
+
+  .c-nav.is-scrolled::before,
+  .c-nav__menu::before {
+    animation: none !important;
+    opacity: 0;
+  }
+
+  .c-nav__link.is-active::before {
+    animation: none !important;
+  }
+
+  .c-calendly-panel {
+    transform: none;
+    transition:
+      max-height 0.01ms linear,
+      opacity 0.01ms linear,
+      border-color 0.01ms linear;
+  }
+}

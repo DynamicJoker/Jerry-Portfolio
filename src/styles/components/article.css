@@ -1,0 +1,309 @@
+/* Component: article */
+/* Above-the-fold rules that also exist in critical-home.css must be
+   changed in both places. */
+
+.c-article-shell {
+  padding-block: calc(var(--navbar-height) + 3rem) 5rem;
+}
+
+.c-article {
+  width: min(100% - 2rem, 54rem);
+  margin-inline: auto;
+}
+
+.c-article__header {
+  display: grid;
+  gap: var(--space-16);
+  margin-bottom: 2rem;
+}
+
+.c-article__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.c-article__tags span,
+.c-blog-card__meta span {
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-full);
+  padding: 0.25rem 0.65rem;
+  color: var(--color-electric-blue);
+  background: rgba(var(--color-primary-rgb), 0.08);
+  text-transform: none;
+}
+
+.c-article__cover {
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-base);
+  margin-bottom: 2.5rem;
+}
+
+.c-article__content {
+  color: var(--color-text-secondary);
+  font-size: clamp(1.02rem, 1.2vw, 1.12rem);
+  line-height: 1.82;
+}
+
+.c-article__content > * + * {
+  margin-top: 1.25rem;
+}
+
+.c-article__content h2,
+.c-article__content h3 {
+  color: var(--color-text);
+  line-height: var(--text-article-heading-line-height);
+  margin-top: 2.4rem;
+}
+
+.c-article__content h2 {
+  font-size: var(--text-article-h2);
+}
+
+.c-article__content h3 {
+  font-size: var(--text-article-h3);
+}
+
+.c-article__content a {
+  color: var(--color-electric-blue);
+}
+
+.c-article__content ul,
+.c-article__content ol {
+  padding-left: 1.35rem;
+}
+
+.c-article__content li + li {
+  margin-top: 0.45rem;
+}
+
+.c-article__content blockquote {
+  margin-inline: 0;
+  padding: 1rem 1.25rem;
+  border-left: 3px solid var(--color-electric-blue);
+  background: rgba(var(--color-primary-rgb), 0.08);
+  color: var(--color-text);
+}
+
+.c-article__content pre,
+.c-article__content code {
+  border-radius: var(--radius-base);
+  background: var(--color-overlay-medium);
+}
+
+.c-article__content code {
+  padding: 0.15rem 0.35rem;
+}
+
+.c-article__content pre {
+  overflow-x: auto;
+  padding: 1rem;
+}
+
+.c-article__content pre code {
+  padding: 0;
+  background: transparent;
+}
+
+.c-article__content table {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+}
+
+.c-article__content th,
+.c-article__content td {
+  border: 1px solid var(--color-border-strong);
+  padding: 0.7rem;
+}
+
+.c-article-chart {
+  --chart-fill-start: var(--color-electric-blue);
+  --chart-fill-end: var(--color-accent-teal);
+  --chart-fill-accent: var(--color-accent-teal);
+  padding: clamp(1rem, 2.5vw, 1.15rem);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-base);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(var(--color-primary-rgb), 0.1),
+      rgba(var(--color-primary-rgb), 0.05)
+    ),
+    var(--color-overlay-weak);
+}
+
+.c-article-chart figcaption {
+  display: grid;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+  color: var(--color-text-secondary);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.c-article-chart figcaption strong {
+  color: var(--color-text);
+  font-size: 1.02rem;
+}
+
+.c-article-chart__metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  gap: 0.75rem;
+}
+
+.c-article-chart__metric {
+  display: grid;
+  gap: 0.65rem;
+  min-block-size: clamp(8rem, 18vw, 9rem);
+  align-content: end;
+  padding: 0.85rem;
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-base);
+  background: var(--color-inset-bg);
+}
+
+.c-article-chart__metric-label {
+  color: var(--color-text-secondary);
+  font-size: 0.82rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.c-article-chart__metric-value {
+  color: var(--color-text);
+  font-size: clamp(1.65rem, 4vw, 2.45rem);
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
+}
+
+.c-article-chart__bar,
+.c-article-chart__track {
+  display: block;
+  block-size: 0.55rem;
+  inline-size: 100%;
+  overflow: hidden;
+  border-radius: var(--radius-full);
+  background: var(--color-overlay-strong);
+}
+
+.c-article-chart__bar::before,
+.c-article-chart__track > span {
+  display: block;
+  inline-size: var(--bar-size);
+  block-size: 100%;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    var(--chart-fill-start),
+    var(--chart-fill-end)
+  );
+  content: '';
+}
+
+.c-article-chart__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 2fr) auto;
+  gap: 0.8rem;
+  align-items: center;
+}
+
+.c-article-chart__row + .c-article-chart__row {
+  margin-top: 0.8rem;
+}
+
+.c-article-chart__row span {
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.c-article-chart__row strong {
+  min-inline-size: 3.75rem;
+  color: var(--color-text);
+  font-size: 1rem;
+  text-align: right;
+}
+
+.c-article-chart__note {
+  margin: 1rem 0 0;
+  color: var(--color-text-secondary);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.c-stacked-bar {
+  display: flex;
+  min-block-size: 3.6rem;
+  overflow: hidden;
+  border-radius: var(--radius-base);
+  background: var(--color-overlay-medium);
+}
+
+.c-stacked-bar__segment {
+  display: grid;
+  inline-size: var(--bar-size);
+  place-items: center;
+  min-inline-size: 0;
+  color: var(--color-on-fill);
+  font-weight: var(--font-weight-bold);
+  background: linear-gradient(
+    90deg,
+    var(--chart-fill-start),
+    var(--chart-fill-end)
+  );
+}
+
+.c-stacked-bar__segment--accent {
+  background: var(--chart-fill-accent);
+}
+
+.c-article-chart__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.2rem;
+  margin-top: 0.85rem;
+  color: var(--color-text-secondary);
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+
+.c-article-chart__legend span {
+  display: inline-flex;
+  gap: 0.45rem;
+  align-items: center;
+}
+
+.c-article-chart__legend-swatch {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 2px;
+  background: var(--color-electric-blue);
+}
+
+.c-article-chart__legend-swatch--accent {
+  background: var(--chart-fill-accent);
+}
+
+.c-article__cta {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 3rem;
+  padding: 1.25rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-base);
+  background: rgba(var(--color-primary-rgb), 0.08);
+  min-width: 0;
+}
+
+.c-article__cta p {
+  margin: 0;
+  color: var(--color-text);
+  font-weight: var(--font-weight-semibold);
+}

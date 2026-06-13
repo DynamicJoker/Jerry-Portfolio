@@ -4,17 +4,17 @@ import { siteContent } from '../content.js';
 const { backHref = '#hero' } = Astro.props;
 ---
 
-<footer class="footer">
-  <div class="container">
-    <div class="footer-content">
-      <div class="footer-text">
+<footer class="c-footer">
+  <div class="o-container">
+    <div class="c-footer__content">
+      <div class="c-footer__text">
         <p>
           &copy; <span id="footer-year">{new Date().getFullYear()}</span>
           {siteContent.profile.name}. All rights reserved.
         </p>
       </div>
-      <div class="footer-links">
-        <a href={backHref} class="footer-link">Back to Top</a>
+      <div class="c-footer__links">
+        <a href={backHref} class="c-footer__link">Back to Top</a>
       </div>
     </div>
   </div>

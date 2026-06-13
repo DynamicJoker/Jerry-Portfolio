@@ -1,1 +1,32 @@
-@import '../../style.css';
+/* Full site stylesheet (deferred on the home page), assembled from ITCSS
+   layers: settings -> generic -> elements -> objects -> components ->
+   utilities. Import order is the cascade order - do not reorder.
+   Styles that also exist in src/styles/critical-home.css must be changed
+   in both files. */
+@import './settings.css';
+@import './generic.css';
+@import './objects.css';
+@import './components/forms.css';
+@import './components/buttons.css';
+@import './components/common.css';
+@import './components/loading-screen.css';
+@import './components/nav.css';
+@import './components/notification.css';
+@import './components/hero.css';
+@import './components/section.css';
+@import './components/about.css';
+@import './components/logo-bar.css';
+@import './components/skills.css';
+@import './components/portfolio.css';
+@import './components/services.css';
+@import './components/testimonials.css';
+@import './components/gantt.css';
+@import './components/booking.css';
+@import './components/contact.css';
+@import './components/footer.css';
+@import './components/blog.css';
+@import './components/home-blog.css';
+@import './components/article.css';
+@import './components/beta-banner.css';
+@import './components/not-found.css';
+@import './utilities.css';

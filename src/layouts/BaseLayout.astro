@@ -243,7 +243,7 @@ const noScriptStylesheetHtml = isHome
         }
 
         /* Sections are revealed by the scroll script; without JS show them all */
-        .section {
+        .c-section {
           opacity: 1;
           transform: none;
         }
@@ -252,7 +252,7 @@ const noScriptStylesheetHtml = isHome
           opacity: 1;
         }
 
-        #gantt-chart-container .gantt-bar {
+        #gantt-chart-container .c-gantt__bar {
           transform: none;
         }
       </style>
@@ -261,7 +261,7 @@ const noScriptStylesheetHtml = isHome
     <slot name="head" />
   </head>
   <body data-page={page}>
-    <a class="skip-link" href="#main-content">Skip to content</a>
+    <a class="c-skip-link" href="#main-content">Skip to content</a>
     <BetaBanner />
     <slot />
   </body>

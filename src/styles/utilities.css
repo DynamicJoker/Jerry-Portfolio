@@ -1,0 +1,28 @@
+/* Utilities — single-purpose helpers (u-*). Last so they win. */
+/* Above-the-fold rules that also exist in critical-home.css must be
+   changed in both places. */
+
+.u-block {
+  display: block;
+}
+
+.u-hidden {
+  display: none;
+}
+
+.u-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+:focus-visible {
+  outline: var(--focus-outline);
+  outline-offset: 3px;
+}

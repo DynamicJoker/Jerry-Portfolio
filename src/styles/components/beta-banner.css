@@ -1,0 +1,198 @@
+/* Component: beta-banner */
+/* Above-the-fold rules that also exist in critical-home.css must be
+   changed in both places. */
+
+body:has(.c-beta-banner),
+body.has-beta-banner {
+  --beta-banner-offset: var(--beta-banner-collapsed-height);
+}
+
+body:has(.c-beta-banner.is-expanded),
+body.is-beta-banner-expanded {
+  --beta-banner-offset: var(--beta-banner-expanded-height);
+}
+
+.c-beta-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1002;
+  width: 100%;
+  height: var(--beta-banner-collapsed-height);
+  overflow: hidden;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-hairline-strong);
+  box-shadow: var(--shadow-banner);
+  transition:
+    height 0.48s var(--ease-standard),
+    box-shadow 0.48s var(--ease-standard),
+    border-color 0.48s var(--ease-standard);
+}
+
+.c-beta-banner.is-expanded {
+  height: var(--beta-banner-expanded-height);
+  border-bottom-color: var(--color-hairline-strong);
+  box-shadow: var(--shadow-banner-expanded);
+}
+
+.c-beta-banner__control {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  text-align: center;
+}
+
+.c-beta-banner__control:focus-visible {
+  outline: var(--focus-outline);
+  outline-offset: -4px;
+}
+
+.c-beta-banner__strip {
+  position: absolute;
+  inset: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--beta-banner-collapsed-height);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(var(--color-primary-rgb), 0.18),
+    transparent
+  );
+  opacity: 0;
+  transition: opacity 0.18s ease-out;
+}
+
+.c-beta-banner.is-collapsed .c-beta-banner__strip {
+  opacity: 1;
+}
+
+.c-beta-banner__strip-label {
+  color: var(--color-primary-hover);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+
+.c-beta-banner__content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--beta-banner-expanded-height);
+  gap: var(--space-10);
+  padding: 0 var(--space-16);
+  opacity: 0;
+  transform: translateY(-0.35rem);
+  transition:
+    opacity 0.34s ease-out,
+    transform 0.48s var(--ease-standard);
+}
+
+.c-beta-banner.is-expanded .c-beta-banner__content {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.c-beta-banner__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.6rem;
+  padding: 0 var(--space-10);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-full);
+  background: rgba(var(--color-primary-rgb), 0.08);
+  color: var(--color-primary-hover);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.c-beta-banner__message {
+  color: var(--color-text-strong);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.35;
+}
+
+body:has(.c-beta-banner) .c-nav,
+body.has-beta-banner .c-nav {
+  top: var(--beta-banner-offset);
+  transition:
+    top 0.48s var(--ease-standard),
+    background-color 0.4s var(--ease-standard),
+    backdrop-filter 0.4s var(--ease-standard),
+    box-shadow 0.4s var(--ease-standard);
+}
+
+body:has(.c-beta-banner) .c-blog-hero,
+body.has-beta-banner .c-blog-hero {
+  padding-block-start: calc(
+    var(--navbar-height) + var(--beta-banner-offset) + 5rem
+  );
+  transition: padding-block-start 0.48s var(--ease-standard);
+}
+
+body:has(.c-beta-banner) .c-article-shell,
+body.has-beta-banner .c-article-shell {
+  padding-block-start: calc(
+    var(--navbar-height) + var(--beta-banner-offset) + 3rem
+  );
+  transition: padding-block-start 0.48s var(--ease-standard);
+}
+
+@media (max-width: 48rem) {
+  :root {
+    --beta-banner-expanded-height: 4.25rem;
+    --beta-banner-collapsed-height: 1.5rem;
+  }
+
+  .c-beta-banner__content {
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-10) var(--space-16);
+  }
+
+  .c-beta-banner__message {
+    max-width: 20rem;
+  }
+
+  body:has(.c-beta-banner) .c-nav__menu,
+  body.has-beta-banner .c-nav__menu {
+    top: calc(var(--beta-banner-offset) + var(--navbar-height));
+    max-height: min(
+      var(--nav-sheet-max-block-size),
+      calc(
+        100vh - var(--beta-banner-offset) - var(--navbar-height) -
+          var(--nav-sheet-viewport-gap)
+      )
+    );
+    max-height: min(
+      var(--nav-sheet-max-block-size),
+      calc(
+        100dvh - var(--beta-banner-offset) - var(--navbar-height) -
+          var(--nav-sheet-viewport-gap)
+      )
+    );
+  }
+
+  body:has(.c-beta-banner) .c-blog-hero,
+  body.has-beta-banner .c-blog-hero {
+    padding-block-start: calc(
+      var(--navbar-height) + var(--beta-banner-offset) + 3rem
+    );
+  }
+}

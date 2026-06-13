@@ -1,0 +1,74 @@
+/* Component: notification */
+/* Above-the-fold rules that also exist in critical-home.css must be
+   changed in both places. */
+
+/* Notifications */
+
+.c-notification {
+  position: fixed;
+  top: calc(
+    var(--navbar-height) + var(--beta-banner-offset, 0rem) + var(--space-20)
+  );
+  right: var(--viewport-inline-padding);
+  left: auto;
+  color: white;
+  padding: var(--space-16) var(--space-20);
+  border-radius: var(--radius-base);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  z-index: 10000;
+  transform: translateX(120%);
+  /* Start further off-screen */
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  backdrop-filter: blur(10px);
+  width: min(
+    21.875rem,
+    calc(
+      100vw - var(--viewport-inline-padding) - var(--viewport-inline-padding)
+    )
+  );
+  max-width: calc(
+    100vw - var(--viewport-inline-padding) - var(--viewport-inline-padding)
+  );
+}
+
+.c-notification.is-visible {
+  transform: translateX(0);
+}
+
+/* AA contrast: backgrounds must stay >=4.5:1 against the white toast text */
+
+.c-notification--success {
+  background: rgba(15, 118, 110, 0.95);
+}
+
+.c-notification--error {
+  background: rgba(185, 28, 28, 0.95);
+}
+
+.c-notification__content {
+  display: flex;
+  align-items: center;
+  gap: 0.9375rem;
+}
+
+.c-notification__message {
+  flex-grow: 1;
+}
+
+.c-notification__close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: var(--font-size-3xl);
+  line-height: 1;
+  padding: 0 var(--space-4);
+  min-width: 2rem;
+  min-height: 2rem;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.c-notification__close:hover {
+  opacity: 1;
+}

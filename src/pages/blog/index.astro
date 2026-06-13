@@ -50,28 +50,30 @@ const formatDate = (date) =>
   structuredData={[breadcrumbJsonLd]}
 >
   <SiteNav current="blog" />
-  <main id="main-content" class="blog-shell">
-    <section class="blog-hero">
-      <div class="container blog-hero-inner">
-        <p class="blog-kicker">Field Notes</p>
-        <h1 class="blog-title">Technical marketing, without the fog machine</h1>
-        <p class="blog-intro">
+  <main id="main-content" class="c-blog-shell">
+    <section class="c-blog-hero">
+      <div class="o-container c-blog-hero__inner">
+        <p class="c-blog-kicker">Field Notes</p>
+        <h1 class="c-blog-hero__title">
+          Technical marketing, without the fog machine
+        </h1>
+        <p class="c-blog-hero__intro">
           Practical notes on content systems, product storytelling, and turning
           dense technical ideas into work that earns attention.
         </p>
       </div>
     </section>
 
-    <section class="blog-list-section">
-      <div class="container">
+    <section class="c-blog-list">
+      <div class="o-container">
         {
           posts.length > 0 ? (
-            <div class="blog-grid">
+            <div class="c-blog-list__grid">
               {posts.map((post) => (
-                <article class="blog-card">
+                <article class="c-blog-card">
                   <a
                     href={`/blog/${post.id}/`}
-                    class="blog-card-media"
+                    class="c-blog-card__media"
                     aria-label={`Read ${post.data.title}`}
                   >
                     <img
@@ -83,8 +85,8 @@ const formatDate = (date) =>
                       decoding="async"
                     />
                   </a>
-                  <div class="blog-card-body">
-                    <div class="blog-card-meta">
+                  <div class="c-blog-card__body">
+                    <div class="c-blog-card__meta">
                       <time datetime={post.data.pubDate.toISOString()}>
                         {formatDate(post.data.pubDate)}
                       </time>
@@ -96,7 +98,7 @@ const formatDate = (date) =>
                       <a href={`/blog/${post.id}/`}>{post.data.title}</a>
                     </h2>
                     <p>{post.data.description}</p>
-                    <a href={`/blog/${post.id}/`} class="blog-read-link">
+                    <a href={`/blog/${post.id}/`} class="c-blog-read-link">
                       Read article
                     </a>
                   </div>
@@ -104,7 +106,7 @@ const formatDate = (date) =>
               ))}
             </div>
           ) : (
-            <div class="blog-empty">
+            <div class="c-blog-empty">
               <h2>Articles are coming soon.</h2>
               <p>
                 Drafts can already be created in Pages CMS and will appear here

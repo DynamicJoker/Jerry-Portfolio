@@ -1,23 +1,23 @@
 <div
   id="beta-banner"
-  class="beta-banner is-expanded"
+  class="c-beta-banner is-expanded"
   data-beta-banner
   data-nosnippet
   data-state="expanded"
 >
   <button
-    class="beta-banner__control"
+    class="c-beta-banner__control"
     type="button"
     aria-expanded="true"
     aria-controls="beta-banner-message"
     data-beta-banner-control
   >
-    <span class="beta-banner__strip" aria-hidden="true">
-      <span class="beta-banner__strip-label">Beta</span>
+    <span class="c-beta-banner__strip" aria-hidden="true">
+      <span class="c-beta-banner__strip-label">Beta</span>
     </span>
-    <span class="beta-banner__content" id="beta-banner-message">
-      <span class="beta-banner__eyebrow">Beta site</span>
-      <span class="beta-banner__message"
+    <span class="c-beta-banner__content" id="beta-banner-message">
+      <span class="c-beta-banner__eyebrow">Beta site</span>
+      <span class="c-beta-banner__message"
         >this website is still a work in progress.</span
       >
     </span>
@@ -40,8 +40,8 @@
 
     const syncBodyState = (isExpanded) => {
       body.classList.add('has-beta-banner');
-      body.classList.toggle('beta-banner-expanded', isExpanded);
-      body.classList.toggle('beta-banner-collapsed', !isExpanded);
+      body.classList.toggle('is-beta-banner-expanded', isExpanded);
+      body.classList.toggle('is-beta-banner-collapsed', !isExpanded);
     };
 
     const setExpanded = (isExpanded) => {
