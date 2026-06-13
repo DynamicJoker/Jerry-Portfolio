@@ -431,18 +431,29 @@ function initializeScrollAnimations() {
   });
 }
 
-// Docked section headings: each .c-section__header is position:sticky (CSS). On
-// approach we scrub --dock-progress (CSS scales the title toward its compact
-// size); at the dock line .is-docked swaps in the slim bar layout. The
-// header's natural height is pinned as an inline min-height so the swap never
-// reflows the content below — see "Docked section headings" in
-// src/styles/components/section.css.
+// Docked section headings: each .c-section__header is position:sticky (CSS). As
+// a header nears the dock line we scrub --dock-progress (CSS scales the title
+// toward its compact size); once it reaches the line .is-docked swaps in the
+// slim bar layout. The header's natural height is pinned as an inline
+// min-height so the swap never reflows the content below — see "Docked section
+// headings" in src/styles/components/section.css.
+//
+// Both the docked state and the scrub are derived from each header's *live*
+// position relative to the dock line on every scroll — never from cached scroll
+// offsets. The previous version used two ScrollTriggers per header whose
+// start/end were measured once per refresh; any layout shift afterwards (font
+// swap, lazy media, reveal animations, or a refresh fired while scrolled
+// mid-page) left those offsets stale, so .is-docked was dropped while the header
+// was still pinned and the bar vanished under a shrunken, floating title. Live
+// geometry can't fall out of sync.
 function initializeDockedSectionHeaders() {
   const headers = gsap.utils.toArray('section.c-section .c-section__header');
   if (!headers.length) return;
 
-  // Re-measured on every ScrollTrigger refresh (load, resize) so the reserved
-  // height and scale ratio track font settling and breakpoint changes.
+  // Reserve each header's natural height as a min-height so the compact swap
+  // never reflows the content below, and measure the compact/full title ratio
+  // (--dock-scale-end) the scrub scales toward. Re-run whenever layout can
+  // change (load, fonts settling, resize).
   const measureHeaders = () => {
     headers.forEach((header) => {
       const title = header.querySelector('.c-section__title');
@@ -466,46 +477,51 @@ function initializeDockedSectionHeaders() {
     });
   };
 
-  ScrollTrigger.addEventListener('refreshInit', measureHeaders);
-  measureHeaders();
-
-  headers.forEach((header) => {
-    const section = header.closest('section');
-    // Sticky offset below the navbar (+ beta banner when present).
-    const dockY = () => Number.parseFloat(getComputedStyle(header).top) || 0;
-    // The header's natural offset inside its section. Not header.offsetTop:
-    // a stuck sticky element reports its displaced position, which would
-    // corrupt trigger positions on mid-page refreshes. The header is always
-    // the section's first child, so its flow offset is the section's padding.
-    const headerTop = () =>
-      Number.parseFloat(getComputedStyle(section).paddingTop) || 0;
-    const scrubRange = () =>
-      cssLengthToPx(
-        getComputedStyle(header).getPropertyValue('--dock-scrub-range'),
-        7.5,
-      );
-
-    if (!prefersReducedMotion) {
-      ScrollTrigger.create({
-        trigger: section,
-        start: () => `top+=${headerTop() - scrubRange()} top+=${dockY()}`,
-        end: () => `top+=${headerTop()} top+=${dockY()}`,
-        scrub: true,
-        onUpdate: (self) =>
-          header.style.setProperty('--dock-progress', self.progress.toFixed(4)),
-      });
-    }
-
-    ScrollTrigger.create({
-      trigger: section,
-      start: () => `top+=${headerTop()} top+=${dockY()}`,
-      end: 'bottom top',
-      onEnter: () => header.classList.add('is-docked'),
-      onEnterBack: () => header.classList.add('is-docked'),
-      onLeave: () => header.classList.remove('is-docked'),
-      onLeaveBack: () => header.classList.remove('is-docked'),
+  // A header is docked while it sits pinned at the dock line or is sliding up
+  // through it (its top has reached the line, its bottom hasn't passed above
+  // it). --dock-progress fills in over the approach: 0 a scrub-range below the
+  // line, 1 once the header reaches it. dockY and the scrub range are shared by
+  // every header, so they're read once; the per-scroll cost is then one
+  // getBoundingClientRect per header (reads batched ahead of writes).
+  const update = () => {
+    const rootStyles = getComputedStyle(headers[0]);
+    const dockY = Number.parseFloat(rootStyles.top) || 0;
+    const scrubRange =
+      cssLengthToPx(rootStyles.getPropertyValue('--dock-scrub-range'), 7.5) ||
+      1;
+    const rects = headers.map((header) => header.getBoundingClientRect());
+    headers.forEach((header, index) => {
+      const { top, bottom } = rects[index];
+      header.classList.toggle('is-docked', top <= dockY + 1 && bottom > dockY);
+      if (!prefersReducedMotion) {
+        const progress = Math.min(
+          1,
+          Math.max(0, (dockY + scrubRange - top) / scrubRange),
+        );
+        header.style.setProperty('--dock-progress', progress.toFixed(4));
+      }
     });
-  });
+  };
+
+  const remeasure = () => {
+    measureHeaders();
+    update();
+  };
+
+  measureHeaders();
+  update();
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('load', remeasure);
+  document.fonts?.ready.then(remeasure);
+  let resizeId = 0;
+  window.addEventListener(
+    'resize',
+    () => {
+      window.clearTimeout(resizeId);
+      resizeId = window.setTimeout(remeasure, 200);
+    },
+    { passive: true },
+  );
 }
 
 // Collapse the brand to the J monogram while the hero name is visible;
