@@ -25,6 +25,11 @@ Personal portfolio + blog, deployed on Vercel at https://www.jerryjames.me.
   (`u-hidden`, `u-sr-only`), `is-*`/`has-*` for all JS-toggled states.
   No bare state classes (`active`, `expanded`, etc.) — fold new states into
   `is-*`/`has-*`. JS behavior hooks prefer `data-*` attributes over classes.
+  This convention is **build-enforced** by `npm run check:bemit`
+  (`scripts/check-bemit.mjs`): it validates class names in CSS selectors, Astro
+  `class`/`class:list`, and JS `classList`/`className` against the grammar, so a
+  non-conforming class fails the build. Genuine third-party exceptions go in
+  that script's `ALLOWLIST` constant (with a comment).
 - The stylesheet is split into ITCSS layers under `src/styles/`, assembled by
   `src/styles/global.css` in cascade order: `settings.css` (design tokens +
   dark-mode token overrides) → `generic.css` (reset + element styles) →
@@ -50,10 +55,13 @@ Personal portfolio + blog, deployed on Vercel at https://www.jerryjames.me.
 - `npm run dev` is broken on this machine (spaced path + subst drive). Verify
   changes with `npm run build` then `npm run preview` (restart preview after
   each build).
-- `npm run build` runs `prettier --check` and `eslint .` first — format with
-  `npm run format` and lint with `npm run lint` before building. The pre-commit
-  hook enforces both. ESLint flat config is `eslint.config.mjs` (browser
-  globals for `src/`, node globals for build-time code).
+- `npm run build` gates on `prettier --check`, `eslint .`, then the
+  `check:critical` and `check:bemit` scripts before building — format with
+  `npm run format` and lint with `npm run lint` first. The pre-commit hook
+  enforces format + lint only; the `check:*` gates run on build/CI (run them
+  standalone with `npm run check:bemit` / `check:critical`). ESLint flat config
+  is `eslint.config.mjs` (browser globals for `src/`, node globals for
+  build-time code).
 - Do NOT commit or push automatically; the user commits manually.
 
 ## Gotchas
