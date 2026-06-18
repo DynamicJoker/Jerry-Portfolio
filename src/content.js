@@ -66,7 +66,7 @@ export const siteContent = {
   // About section
   about: {
     description:
-      'I sit between your engineering teams and your marketing teams – making sure that the cool stuff your engineering is building behind-the-scenes each day translates into marketable narratives that focus on solving customer pain points.',
+      'I bridge your engineering and marketing teams – making sure that the cool stuff your engineering is building behind-the-scenes each day translates into marketing that focuses and targets real customer issues with data-driven narratives.',
     highlights: [
       {
         icon: 'pen',
@@ -133,7 +133,7 @@ export const siteContent = {
       responsibilities: [
         'Translate technical specs into effective marketing narrative.',
         'Strategize content marketing for new product launches.',
-        "Develop distinct brand voices for new product lines and sub-brands.",
+        'Develop distinct brand voices for new product lines and sub-brands.',
       ],
       achievements: [
         {
