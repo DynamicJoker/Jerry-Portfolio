@@ -66,13 +66,13 @@ export const siteContent = {
   // About section
   about: {
     description:
-      'Experienced technical marketing specialist who specializes in strategic content marketing, demand generation, and coherent technical communication for B2B and B2C clients. I bridge the gap between complex technology and market demand – creating compelling narratives that convert prospects into customers.',
+      'I sit between your engineering teams and your marketing teams – making sure that the cool stuff your engineering is building behind-the-scenes each day translates into marketable narratives that focus on solving customer pain points.',
     highlights: [
       {
         icon: 'pen',
         title: 'Technical Content Creation',
         description:
-          'I create compelling white papers, case studies, and documentation that translate complex technical features into clear business value, driving lead generation and establishing thought leadership.',
+          'I create compelling white papers, case studies, and documentation that turn complex technical features into clear benefits, while driving lead gen strategies and establishing your brand as a thought leader.',
       },
       {
         icon: 'target',
@@ -84,13 +84,13 @@ export const siteContent = {
         icon: 'compass',
         title: 'Complex Product Positioning',
         description:
-          'I specialize in taking multifaceted tech products and positioning them in crowded markets. I build the narrative that highlights unique strengths and solves real-world customer problems.',
+          'I weave narratives around complex tech products to position them within crowded markets by highlighting their unique strengths and targeting real-world customer problems.',
       },
       {
         icon: 'bar-chart',
         title: 'Data-Driven Results',
         description:
-          'Every decision is backed by data. I leverage analytics from Google, HubSpot, and other platforms to track KPIs, optimize campaign performance, and demonstrate clear marketing ROI.',
+          'Every decision is backed by data. I leverage analytics from Google, HubSpot, and other platforms to track KPIs, in addition to sales data to optimize campaign performance, and deliver clear marketing ROI.',
       },
     ],
   },
@@ -109,11 +109,11 @@ export const siteContent = {
       id: 'consulting',
       period: '10/2015 - Present',
       sortOrder: 1,
-      title: 'Technology Content Specialist | Editor',
+      title: 'Technical Marketing Specialist',
       company: 'Jerry James (Consulting)',
       location: 'Bangalore, India',
       responsibilities: [
-        'Founded a consulting firm for clients in the tech and finance industries.',
+        'Founded a consulting firm for clients in the tech niche.',
         'Specialized in PC Hardware, B2B/B2C Networking, Cybersecurity, and Cloud Computing.',
       ],
       achievements: [
@@ -127,13 +127,13 @@ export const siteContent = {
       id: 'msi',
       period: '05/2018 - Present',
       sortOrder: 3,
-      title: 'Freelance Technical Content Developer | Consultant',
+      title: 'Freelance Technical Marketing Consultant',
       company: "MSI (Micro-Star Int'l)",
       location: 'Remote, Taiwan',
       responsibilities: [
-        'Translate technical specs into effective marketing materials.',
+        'Translate technical specs into effective marketing narrative.',
         'Strategize content marketing for new product launches.',
-        "Develop a distinct brand voice for MSI's business product lineup.",
+        "Develop distinct brand voices for new product lines and sub-brands.",
       ],
       achievements: [
         {
@@ -156,6 +156,7 @@ export const siteContent = {
       responsibilities: [
         'Oversaw the hardware section, including content strategy and quality control.',
         'Managed and edited work from a team of writers to ensure quality standards.',
+        'Simplified technology for a general audience.',
       ],
       achievements: [
         {
