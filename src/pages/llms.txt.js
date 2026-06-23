@@ -18,8 +18,32 @@ export async function GET() {
       return `- ${job.company}, ${job.title}, ${job.period}: ${responsibilities} ${achievements}`;
     })
     .join('\n');
-  const portfolio = siteContent.portfolio
-    .map((item) => `- ${item.title}: ${item.description} Results: ${item.results.join('; ')}.`)
+  const featuredWork = siteContent.featuredCampaigns
+    .map((campaign) => {
+      const items = campaign.items
+        .map((item) => {
+          const link =
+            item.access === 'live' && item.url
+              ? ` ${item.url}`
+              : ' (on request)';
+          return `  - ${item.title} (${item.type})${link}`;
+        })
+        .join('\n');
+      return `- ${campaign.name} [${campaign.industry}, ${campaign.year}]: ${campaign.blurb}\n${items}`;
+    })
+    .join('\n');
+  const workArchive = siteContent.workArchive
+    .map((piece) => {
+      const linkable =
+        piece.status === 'live' ||
+        piece.status === 'press' ||
+        piece.status === 'archived';
+      const tail =
+        linkable && piece.url
+          ? ` ${piece.url}`
+          : ` (${piece.status === 'internal' ? 'internal' : 'no public link'})`;
+      return `- ${piece.title} — ${piece.campaign}, ${piece.year} (${piece.type}, ${piece.industry})${tail}`;
+    })
     .join('\n');
   const posts = (await getCollection('blog'))
     .filter((post) => !post.data.draft)
@@ -51,9 +75,13 @@ ${skills}.
 
 ${experience}
 
-## Portfolio Examples
+## Featured Work
 
-${portfolio}
+${featuredWork}
+
+## Full Body of Work
+
+${workArchive}
 
 ## Blog
 

@@ -50,15 +50,60 @@ function getGanttDurationText(startDate, endDate) {
   return parts.join(' ');
 }
 
-// Portfolio filters follow the categories present in the data
-const categoryLabel = (category) =>
-  siteContent.portfolioCategoryLabels?.[category] ?? category.toUpperCase();
-const portfolioFilters = [
-  { id: 'all', label: 'All' },
-  ...[...new Set(siteContent.portfolio.map((item) => item.category))].map(
-    (category) => ({ id: category, label: categoryLabel(category) }),
-  ),
+// Featured work: flagship spotlights + a filterable archive of the full body of
+// work. The archive is grouped category -> campaign -> rows; an industry filter
+// narrows it. Each row's `status` drives its badge + link via `workStatusMeta`.
+const featuredCampaigns = siteContent.featuredCampaigns;
+const workTypeMeta = siteContent.workTypeMeta;
+const workStatusMeta = siteContent.workStatusMeta;
+const workArchive = siteContent.workArchive;
+const industryOrder = [
+  'PC Hardware',
+  'Cybersecurity',
+  'Cloud',
+  'Software / SaaS',
 ];
+const industryRank = (x) => {
+  const i = industryOrder.indexOf(x);
+  return i === -1 ? 99 : i;
+};
+const archiveIndustries = [...new Set(workArchive.map((p) => p.industry))].sort(
+  (a, b) => industryRank(a) - industryRank(b),
+);
+const assetTypeLabels = siteContent.assetTypeLabels;
+const assetTypeOrder = [
+  'Product Launch',
+  'Case studies & Customer stories',
+  'Reviews',
+  'Guides & Explainers',
+  'Landing pages & Web copy',
+  'Blogs & Articles',
+  'Press & PR',
+  'Other',
+];
+const assetRank = (x) => {
+  const i = assetTypeOrder.indexOf(x);
+  return i === -1 ? 99 : i;
+};
+// Archive: asset-type chip-tabs (single-select) + an industry chip filter over a
+// flat, sorted list. `assetTypes` drives the tab bar; `archiveRows` is sorted by
+// type, then industry, then newest-first.
+const assetTypes = [...new Set(workArchive.map((p) => p.assetType))]
+  .sort((a, b) => assetRank(a) - assetRank(b))
+  .map((assetType) => ({
+    assetType,
+    count: workArchive.filter((p) => p.assetType === assetType).length,
+  }));
+const firstType = assetTypes[0]?.assetType;
+const archiveRows = [...workArchive].sort((a, b) => {
+  const byType = assetRank(a.assetType) - assetRank(b.assetType);
+  if (byType) return byType;
+  const byIndustry = industryRank(a.industry) - industryRank(b.industry);
+  if (byIndustry) return byIndustry;
+  return (b.year || '').localeCompare(a.year || '');
+});
+const archiveHasLink = (status) =>
+  status === 'live' || status === 'press' || status === 'archived';
 
 const numColumns = 3;
 const testimonialColumns = Array.from({ length: numColumns }, () => []);
@@ -383,56 +428,281 @@ siteContent.testimonials.forEach((testimonial, index) => {
       </div>
     </div>
     <div class="o-container">
+      <!-- Featured: rotating spotlight -->
       <div
-        class="c-portfolio-filters"
-        role="group"
-        aria-label="Filter portfolio projects"
+        class="c-featured"
+        data-carousel
+        role="region"
+        aria-roledescription="carousel"
+        aria-label="Featured work"
       >
-        {
-          portfolioFilters.map((filter) => (
-            <button
-              type="button"
-              class:list={[
-                'c-portfolio-filters__btn',
-                { 'is-active': filter.id === 'all' },
-              ]}
-              data-filter={filter.id}
-              aria-pressed={filter.id === 'all' ? 'true' : 'false'}
-            >
-              {filter.label}
-            </button>
-          ))
-        }
+        <div class="c-featured__viewport" data-carousel-slides>
+          {
+            featuredCampaigns.map((campaign, si) => {
+              const alt = campaign.screenshotAlt ?? campaign.name;
+              return (
+                <article
+                  class="c-spotlight c-featured__slide"
+                  data-carousel-slide
+                  role="group"
+                  aria-roledescription="slide"
+                  aria-label={`${si + 1} of ${featuredCampaigns.length}: ${campaign.name}`}
+                  hidden={si !== 0}
+                >
+                  <button
+                    type="button"
+                    class="c-work-card__media c-spotlight__media"
+                    data-work-screenshot={campaign.screenshot}
+                    data-work-alt={alt}
+                    data-work-title={campaign.name}
+                    data-work-campaign={`${campaign.industry} · ${campaign.year}`}
+                    aria-label={`Enlarge visual for ${campaign.name}`}
+                  >
+                    <img
+                      class="c-work-card__img"
+                      src={campaign.screenshot}
+                      alt={alt}
+                      loading="lazy"
+                      decoding="async"
+                      width="1200"
+                      height="750"
+                    />
+                  </button>
+                  <div class="c-spotlight__body">
+                    <div class="c-spotlight__chips">
+                      <span class="c-tag c-tag--accent">
+                        {campaign.industry}
+                      </span>
+                      <span class="c-tag">{campaign.year}</span>
+                    </div>
+                    <h3 class="c-spotlight__title">{campaign.name}</h3>
+                    <p class="c-spotlight__blurb">{campaign.blurb}</p>
+                    <div class="c-spotlight__links">
+                      {campaign.items.map((item) => {
+                        const meta = workTypeMeta[item.type] ?? {};
+                        return item.access === 'live' && item.url ? (
+                          <a
+                            class="c-spotlight__link"
+                            href={item.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <Icon name={meta.icon} />
+                            <span>{item.title}</span>
+                            <Icon name="external-link" />
+                          </a>
+                        ) : (
+                          <span class="c-spotlight__link c-spotlight__link--gated">
+                            <Icon name="lock" />
+                            <span>{item.title}</span>
+                          </span>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </article>
+              );
+            })
+          }
+        </div>
+        <div class="c-featured__controls">
+          <button
+            type="button"
+            class="c-featured__btn"
+            data-carousel-play
+            aria-label="Pause featured rotation"
+          >
+            <span class="c-featured__icon" data-carousel-pause-icon>
+              <Icon name="pause" />
+            </span>
+            <span class="c-featured__icon" data-carousel-play-icon hidden>
+              <Icon name="play" />
+            </span>
+          </button>
+          <button
+            type="button"
+            class="c-featured__btn"
+            data-carousel-prev
+            aria-label="Previous featured item"
+          >
+            <Icon name="chevron-left" />
+          </button>
+          <div class="c-featured__dots">
+            {
+              featuredCampaigns.map((campaign, di) => (
+                <button
+                  type="button"
+                  class:list={['c-featured__dot', { 'is-active': di === 0 }]}
+                  data-carousel-dot
+                  aria-label={`Show ${campaign.name}`}
+                  aria-current={di === 0 ? 'true' : 'false'}
+                >
+                  <span class="c-featured__dot-mark" aria-hidden="true" />
+                </button>
+              ))
+            }
+          </div>
+          <button
+            type="button"
+            class="c-featured__btn"
+            data-carousel-next
+            aria-label="Next featured item"
+          >
+            <Icon name="chevron-right" />
+          </button>
+          <span
+            class="u-sr-only"
+            data-carousel-status
+            role="status"
+            aria-live="off"></span>
+        </div>
       </div>
-      <div class="c-portfolio-grid" id="portfolio-grid">
-        {
-          siteContent.portfolio.map((item) => (
-            <div class="c-portfolio-grid__item" data-category={item.category}>
-              <div class="c-portfolio-card c-card">
-                <div class="c-portfolio-card__header">
-                  <h3 class="c-portfolio-card__title">{item.title}</h3>
-                  <span class="c-portfolio-card__category">
-                    {categoryLabel(item.category)}
-                  </span>
-                </div>
-                <p class="c-portfolio-card__description">{item.description}</p>
-                <div class="c-portfolio-card__results">
-                  {item.results.map((resultText) => (
-                    <div class="c-portfolio-card__result">{resultText}</div>
-                  ))}
-                </div>
-                <div class="c-portfolio-card__tags">
-                  {item.tags.map((tagText) => (
-                    <span class="c-tag">{tagText}</span>
-                  ))}
-                </div>
-              </div>
-            </div>
-          ))
-        }
+
+      <!-- Archive: full body of work -->
+      <div class="c-archive" data-archive>
+        <div class="c-archive__head">
+          <div class="c-archive__heading-group">
+            <h3 class="c-archive__heading">Full body of work</h3>
+            <span
+              class="c-archive__count"
+              data-archive-status
+              role="status"
+              aria-live="polite"
+            >
+              {workArchive.length} pieces
+            </span>
+          </div>
+        </div>
+
+        <!-- Asset-type chip-tabs (single-select) -->
+        <div
+          class="c-archive__tabs"
+          role="group"
+          aria-label="Filter work by type"
+        >
+          {
+            assetTypes.map((t) => (
+              <button
+                type="button"
+                class:list={[
+                  'c-archive__tab',
+                  { 'is-active': t.assetType === firstType },
+                ]}
+                data-type-tab={t.assetType}
+                aria-pressed={t.assetType === firstType ? 'true' : 'false'}
+              >
+                {assetTypeLabels[t.assetType] ?? t.assetType}
+                <span class="c-archive__tab-count" data-tab-count>
+                  {t.count}
+                </span>
+              </button>
+            ))
+          }
+        </div>
+
+        <!-- Industry sub-filter -->
+        <div
+          class="c-archive__filters"
+          role="group"
+          aria-label="Filter work by industry"
+        >
+          <button
+            type="button"
+            class="c-archive__filter is-active"
+            data-industry-filter="all"
+            aria-pressed="true"
+          >
+            All
+          </button>
+          {
+            archiveIndustries.map((industry) => (
+              <button
+                type="button"
+                class="c-archive__filter"
+                data-industry-filter={industry}
+                aria-pressed="false"
+              >
+                {industry}
+              </button>
+            ))
+          }
+        </div>
+
+        <ul class="c-archive__list" data-archive-list>
+          {
+            archiveRows.map((row) => {
+              const sm = workStatusMeta[row.status] ?? {};
+              const linkable = archiveHasLink(row.status) && row.url;
+              const Wrapper = linkable ? 'a' : 'div';
+              const wrapperProps = linkable
+                ? {
+                    href: row.url,
+                    target: '_blank',
+                    rel: 'noopener noreferrer',
+                  }
+                : {};
+              return (
+                <li
+                  class="c-archive__row"
+                  data-archive-row
+                  data-asset-type={row.assetType}
+                  data-industry={row.industry}
+                  hidden={row.assetType !== firstType}
+                >
+                  <Wrapper
+                    class={`c-archive__row-link${linkable ? '' : ' c-archive__row-link--static'}`}
+                    {...wrapperProps}
+                  >
+                    <span class="c-archive__row-main">
+                      <span class="c-archive__row-head">
+                        <span class="c-archive__row-title">{row.title}</span>
+                        {row.interview && (
+                          <span class="c-archive__tag">Interview</span>
+                        )}
+                      </span>
+                      <span class="c-archive__row-meta">{row.campaign}</span>
+                    </span>
+                    <span class:list={['c-status', `c-status--${sm.tone}`]}>
+                      <Icon name={sm.icon} />
+                      {sm.label}
+                    </span>
+                  </Wrapper>
+                </li>
+              );
+            })
+          }
+        </ul>
+        <div class="c-archive__more-wrap">
+          <button
+            type="button"
+            class="c-btn c-btn--outline"
+            data-archive-more
+            hidden></button>
+        </div>
+        <p class="c-archive__empty" data-archive-empty hidden>
+          No pieces match this filter.
+        </p>
       </div>
     </div>
   </section>
+
+  <dialog class="c-lightbox" data-lightbox aria-label="Work excerpt">
+    <figure class="c-lightbox__figure">
+      <button
+        type="button"
+        class="c-lightbox__close"
+        data-lightbox-close
+        aria-label="Close excerpt"
+      >
+        <Icon name="x" />
+      </button>
+      <img class="c-lightbox__img" data-lightbox-img src="" alt="" />
+      <figcaption class="c-lightbox__caption">
+        <span class="c-lightbox__title" data-lightbox-title></span>
+        <span class="c-lightbox__campaign" data-lightbox-campaign></span>
+      </figcaption>
+    </figure>
+  </dialog>
 
   <!-- Experience Section -->
   <section id="experience" class="c-section">

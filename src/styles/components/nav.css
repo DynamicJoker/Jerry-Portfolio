@@ -606,7 +606,7 @@ html.is-theme-transitioning *::after {
 
   .c-skills-grid,
   .c-services-grid,
-  .c-portfolio-grid,
+  .c-work-grid,
   .c-contact__content,
   .c-home-blog__feature {
     grid-template-columns: 1fr;

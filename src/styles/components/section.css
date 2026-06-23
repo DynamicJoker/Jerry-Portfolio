@@ -200,11 +200,6 @@ section[id] {
     text-align: center;
   }
 
-  .c-portfolio-filters__btn {
-    padding: var(--space-6) var(--space-16);
-    font-size: var(--font-size-sm);
-  }
-
   .c-hero__stat {
     padding: 0 var(--space-8);
   }

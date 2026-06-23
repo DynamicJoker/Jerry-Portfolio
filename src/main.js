@@ -144,7 +144,9 @@ document.addEventListener('DOMContentLoaded', () => {
   initializeScrollAnimations();
   initializeDockedSectionHeaders();
   initializeBrandCollapse();
-  initializePortfolioFilters();
+  initializeWorkLightbox();
+  initializeFeaturedRotator();
+  initializeWorkArchive();
   initializeContactForm();
   initializeContactInfo();
   updateYearsExperience();
@@ -539,50 +541,208 @@ function initializeBrandCollapse() {
   });
 }
 
-function initializePortfolioFilters() {
-  const filterContainer = document.querySelector('.c-portfolio-filters');
-  const portfolioItems = document.querySelectorAll('.c-portfolio-grid__item');
+function initializeWorkLightbox() {
+  const dialog = document.querySelector('[data-lightbox]');
+  if (!dialog || typeof dialog.showModal !== 'function') return;
 
-  if (!filterContainer) return;
+  const img = dialog.querySelector('[data-lightbox-img]');
+  const titleEl = dialog.querySelector('[data-lightbox-title]');
+  const campaignEl = dialog.querySelector('[data-lightbox-campaign]');
+  const closeButton = dialog.querySelector('[data-lightbox-close]');
 
-  const filterButtons = filterContainer.querySelectorAll(
-    '.c-portfolio-filters__btn',
-  );
-  filterButtons.forEach((button) => {
-    button.setAttribute(
-      'aria-pressed',
-      String(button.classList.contains('is-active')),
-    );
+  const openFromTrigger = (trigger) => {
+    img.src = trigger.dataset.workScreenshot ?? '';
+    img.alt = trigger.dataset.workAlt ?? '';
+    titleEl.textContent = trigger.dataset.workTitle ?? '';
+    campaignEl.textContent = trigger.dataset.workCampaign ?? '';
+    dialog.showModal();
+  };
+
+  // Only screengrab cards are <button>s; placeholder tiles share the class but
+  // have nothing to enlarge, so skip them.
+  document.querySelectorAll('.c-work-card__media').forEach((trigger) => {
+    if (trigger.tagName !== 'BUTTON') return;
+    trigger.addEventListener('click', () => openFromTrigger(trigger));
   });
 
-  filterContainer.addEventListener('click', (event) => {
-    const clickedButton = event.target.closest('.c-portfolio-filters__btn');
+  closeButton?.addEventListener('click', () => dialog.close());
 
-    if (!clickedButton) return;
+  // Backdrop dismiss: the dialog fills the viewport with the figure centered, so
+  // a press that both starts and ends on the dialog itself (the area around the
+  // figure) closes it. Tracking mousedown guards against the click that opened
+  // the dialog also dismissing it. Esc + focus-restore are native to showModal().
+  let pressedOnBackdrop = false;
+  dialog.addEventListener('mousedown', (event) => {
+    pressedOnBackdrop = event.target === dialog;
+  });
+  dialog.addEventListener('click', (event) => {
+    if (pressedOnBackdrop && event.target === dialog) dialog.close();
+    pressedOnBackdrop = false;
+  });
 
-    const filter = clickedButton.dataset.filter;
+  // Release the (potentially large) image once the lightbox is dismissed.
+  dialog.addEventListener('close', () => {
+    img.src = '';
+  });
+}
 
-    filterButtons.forEach((btn) => {
-      const isActive = btn === clickedButton;
-      btn.classList.toggle('is-active', isActive);
-      btn.setAttribute('aria-pressed', String(isActive));
+function initializeFeaturedRotator() {
+  const root = document.querySelector('[data-carousel]');
+  if (!root) return;
+  const slides = [...root.querySelectorAll('[data-carousel-slide]')];
+  const dots = [...root.querySelectorAll('[data-carousel-dot]')];
+  const status = root.querySelector('[data-carousel-status]');
+  const playBtn = root.querySelector('[data-carousel-play]');
+  const pauseIcon = root.querySelector('[data-carousel-pause-icon]');
+  const playIcon = root.querySelector('[data-carousel-play-icon]');
+  if (slides.length <= 1) return;
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let index = 0;
+  let playing = !reduce;
+  let timer = null;
+
+  const show = (i) => {
+    index = (i + slides.length) % slides.length;
+    slides.forEach((slide, n) => slide.toggleAttribute('hidden', n !== index));
+    dots.forEach((dot, n) => {
+      const on = n === index;
+      dot.classList.toggle('is-active', on);
+      dot.setAttribute('aria-current', on ? 'true' : 'false');
     });
+    if (status) status.textContent = `Slide ${index + 1} of ${slides.length}`;
+  };
 
-    portfolioItems.forEach((item) => {
-      const isVisible = filter === 'all' || item.dataset.category === filter;
-      item.classList.toggle('u-hidden', !isVisible);
-      item.toggleAttribute('hidden', !isVisible);
-      item.setAttribute('aria-hidden', String(!isVisible));
-      item.inert = !isVisible;
-      if (isVisible) {
-        item.style.opacity = '1';
-        item.style.transform = 'scale(1)';
-      } else {
-        item.style.opacity = '';
-        item.style.transform = '';
+  const stop = () => {
+    if (timer) {
+      clearInterval(timer);
+      timer = null;
+    }
+  };
+  const start = () => {
+    stop();
+    if (playing) timer = setInterval(() => show(index + 1), 7000);
+  };
+
+  const setPlaying = (next) => {
+    playing = next;
+    if (pauseIcon) pauseIcon.toggleAttribute('hidden', !playing);
+    if (playIcon) playIcon.toggleAttribute('hidden', playing);
+    playBtn.setAttribute(
+      'aria-label',
+      playing ? 'Pause featured rotation' : 'Play featured rotation',
+    );
+    // Announce slides only when not auto-rotating, so screen readers aren't spammed.
+    if (status) status.setAttribute('aria-live', playing ? 'off' : 'polite');
+    start();
+  };
+
+  playBtn.addEventListener('click', () => setPlaying(!playing));
+  root
+    .querySelector('[data-carousel-prev]')
+    .addEventListener('click', () => show(index - 1));
+  root
+    .querySelector('[data-carousel-next]')
+    .addEventListener('click', () => show(index + 1));
+  dots.forEach((dot, n) => dot.addEventListener('click', () => show(n)));
+
+  // Pause auto-rotation while the user hovers or keyboard-focuses the carousel.
+  root.addEventListener('mouseenter', stop);
+  root.addEventListener('mouseleave', start);
+  root.addEventListener('focusin', stop);
+  root.addEventListener('focusout', () => {
+    if (!root.contains(document.activeElement)) start();
+  });
+
+  show(0);
+  setPlaying(playing);
+}
+
+function initializeWorkArchive() {
+  const root = document.querySelector('[data-archive]');
+  if (!root) return;
+  const tabs = [...root.querySelectorAll('[data-type-tab]')];
+  const chips = [...root.querySelectorAll('[data-industry-filter]')];
+  const rows = [...root.querySelectorAll('[data-archive-row]')];
+  const statusEl = root.querySelector('[data-archive-status]');
+  const emptyEl = root.querySelector('[data-archive-empty]');
+  const moreBtn = root.querySelector('[data-archive-more]');
+  if (!tabs.length) return;
+
+  const LIMIT = 20; // rows shown per filter before "Show all" reveals the rest
+  let activeType = tabs[0].dataset.typeTab;
+  let activeIndustry = 'all';
+  let expanded = false;
+
+  const matchesIndustry = (row) =>
+    activeIndustry === 'all' || row.dataset.industry === activeIndustry;
+
+  const apply = () => {
+    let matched = 0;
+    rows.forEach((row) => {
+      const isMatch =
+        row.dataset.assetType === activeType && matchesIndustry(row);
+      if (isMatch) matched += 1;
+      // Within a matching set, collapse rows past LIMIT until expanded.
+      const show = isMatch && (expanded || matched <= LIMIT);
+      row.toggleAttribute('hidden', !show);
+    });
+    // Each tab's count reflects the active industry filter; dim empty tabs.
+    tabs.forEach((tab) => {
+      const count = rows.filter(
+        (r) =>
+          r.dataset.assetType === tab.dataset.typeTab && matchesIndustry(r),
+      ).length;
+      const countEl = tab.querySelector('[data-tab-count]');
+      if (countEl) countEl.textContent = String(count);
+      tab.classList.toggle('is-empty', count === 0);
+    });
+    if (emptyEl) emptyEl.toggleAttribute('hidden', matched !== 0);
+    if (statusEl) statusEl.textContent = `${matched} of ${rows.length} pieces`;
+    if (moreBtn) {
+      moreBtn.hidden = matched <= LIMIT;
+      moreBtn.textContent = expanded ? 'Show fewer' : `Show all ${matched}`;
+    }
+  };
+
+  const select = (items, chosen, attr, value) => {
+    items.forEach((item) => {
+      const on = item === chosen;
+      item.classList.toggle('is-active', on);
+      item.setAttribute('aria-pressed', String(on));
+    });
+    if (attr === 'type') activeType = value;
+    else activeIndustry = value;
+    expanded = false; // collapse back to the capped view on any filter change
+    apply();
+  };
+
+  tabs.forEach((tab) =>
+    tab.addEventListener('click', () =>
+      select(tabs, tab, 'type', tab.dataset.typeTab),
+    ),
+  );
+  chips.forEach((chip) =>
+    chip.addEventListener('click', () =>
+      select(chips, chip, 'industry', chip.dataset.industryFilter),
+    ),
+  );
+  if (moreBtn) {
+    moreBtn.addEventListener('click', () => {
+      expanded = !expanded;
+      apply();
+      // Collapsing from a long list: bring the archive back into view so the
+      // user isn't stranded far down the page.
+      if (!expanded) {
+        root.scrollIntoView({
+          block: 'start',
+          behavior: prefersReducedMotion ? 'auto' : 'smooth',
+        });
       }
     });
-  });
+  }
+
+  apply();
 }
 
 function initializeContactForm() {

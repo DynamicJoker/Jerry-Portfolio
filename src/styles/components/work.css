@@ -1,0 +1,608 @@
+/* Component: featured work showcase — carousel + archive + lightbox */
+/* Renders in the #portfolio section. Below the fold, so these rules are not
+   duplicated in critical-home.css. */
+
+/* Spotlight media: the clickable screengrab (a <button>) reused by the featured
+   carousel slides; opens the lightbox. */
+
+.c-work-card__media {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: var(--color-overlay-weak);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.c-work-card__media:focus-visible {
+  outline: var(--focus-outline);
+  outline-offset: -3px;
+}
+
+.c-work-card__img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  transition: transform var(--animation-speed) var(--animation-curve);
+}
+
+.c-work-card__media:hover .c-work-card__img {
+  transform: scale(1.03);
+}
+
+/* Lightbox: native <dialog> in the top layer. The dialog fills the viewport
+   and centers the figure; Esc + focus-restore come from showModal(). */
+
+.c-lightbox {
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  max-height: 100%;
+  margin: 0;
+  border: 0;
+  padding: var(--space-24);
+  background: transparent;
+}
+
+.c-lightbox:not([open]) {
+  display: none;
+}
+
+.c-lightbox[open] {
+  display: grid;
+  place-items: center;
+}
+
+.c-lightbox::backdrop {
+  /* Dark scrim is intentional in both themes (no semantic scrim token exists). */
+  background: rgba(8, 9, 13, 0.8);
+}
+
+.c-lightbox__figure {
+  position: relative;
+  margin: 0;
+  width: min(60rem, 92vw);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sheet);
+}
+
+.c-lightbox__img {
+  display: block;
+  width: 100%;
+  max-height: 75vh;
+  object-fit: contain;
+  background: var(--color-overlay-weak);
+}
+
+.c-lightbox__caption {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-16) var(--space-20);
+}
+
+.c-lightbox__title {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-strong);
+}
+
+.c-lightbox__campaign {
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+.c-lightbox__close {
+  position: absolute;
+  top: var(--space-12);
+  right: var(--space-12);
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  font-size: 1.25rem;
+  color: var(--color-text);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-hairline-strong);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: background-color var(--animation-speed) var(--animation-curve);
+}
+
+.c-lightbox__close:hover {
+  background: var(--color-overlay-strong);
+}
+
+.c-lightbox__close:focus-visible {
+  outline: var(--focus-outline);
+  outline-offset: 2px;
+}
+
+/* Spotlight tier: flagship campaigns (rich, screengrab + story) */
+
+/* Featured: rotating carousel of flagship spotlights. Only the active slide is
+   shown (others carry [hidden]); auto-rotation + a11y live region live in JS. */
+
+.c-featured {
+  margin-bottom: var(--space-32);
+}
+
+/* A slide's `.c-spotlight { display: grid }` outranks the UA [hidden] rule, so
+   hide inactive slides explicitly. */
+.c-featured__slide[hidden] {
+  display: none;
+}
+
+.c-featured__controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  margin-top: var(--space-16);
+}
+
+.c-featured__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  font-size: 1.1rem;
+  color: var(--color-text);
+  background: transparent;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition:
+    background-color var(--duration-normal) var(--ease-standard),
+    border-color var(--duration-normal) var(--ease-standard),
+    box-shadow var(--duration-normal) var(--ease-standard),
+    transform var(--duration-normal) var(--ease-standard);
+}
+
+/* Echo the hero buttons: lift + a single signal-pulse ring on hover. */
+.c-featured__btn:hover {
+  background: rgba(var(--color-primary-rgb), 0.12);
+  border-color: var(--color-primary);
+  transform: translateY(-1px);
+  animation: btnSignalPulse 1.1s ease-out 1;
+}
+
+.c-featured__btn:focus-visible {
+  outline: var(--focus-outline);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 5px rgba(var(--color-primary-rgb), 0.18);
+}
+
+.c-featured__icon {
+  display: inline-flex;
+}
+
+/* The play/pause button swaps icons by toggling [hidden]; the inline-flex above
+   would otherwise beat the UA [hidden] rule and show both icons at once. */
+.c-featured__icon[hidden] {
+  display: none;
+}
+
+.c-featured__dots {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin: 0 var(--space-8);
+}
+
+.c-featured__dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+}
+
+.c-featured__dot-mark {
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  border: 1px solid var(--color-border-strong);
+  transition: background-color var(--animation-speed) var(--animation-curve);
+}
+
+.c-featured__dot.is-active .c-featured__dot-mark {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.c-featured__dot:focus-visible {
+  outline: var(--focus-outline);
+  outline-offset: 2px;
+}
+
+.c-spotlight {
+  display: grid;
+  grid-template-columns: minmax(0, 20rem) 1fr;
+  gap: var(--space-24);
+  align-items: stretch;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.c-spotlight__media {
+  border-bottom: 0;
+  height: 100%;
+}
+
+.c-spotlight__media .c-work-card__img {
+  height: 100%;
+  min-height: 12rem;
+  aspect-ratio: auto;
+}
+
+.c-spotlight__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  padding: var(--space-24) var(--space-24) var(--space-24) 0;
+  min-width: 0;
+}
+
+.c-spotlight__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+}
+
+.c-spotlight__title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-strong);
+}
+
+.c-spotlight__blurb {
+  line-height: 1.6;
+  color: var(--color-text);
+  max-width: 60ch;
+}
+
+.c-spotlight__links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  margin-top: auto;
+}
+
+.c-spotlight__link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+/* Let a long deliverable title wrap instead of overflowing the card. */
+.c-spotlight__link > span {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.c-spotlight__link:hover {
+  color: var(--color-primary-hover);
+  text-decoration: underline;
+}
+
+.c-spotlight__link--gated,
+.c-spotlight__link--gated:hover {
+  color: var(--color-text-muted);
+  cursor: default;
+  text-decoration: none;
+}
+
+/* Stack the spotlight below tablet so the body never gets cramped. */
+@media (max-width: 48rem) {
+  .c-spotlight {
+    grid-template-columns: 1fr;
+  }
+
+  .c-spotlight__media .c-work-card__img {
+    height: auto;
+    aspect-ratio: 16 / 10;
+  }
+
+  .c-spotlight__body {
+    padding: 0 var(--space-20) var(--space-20);
+  }
+}
+
+/* Archive tier: full body of work (industry filter + category accordion) */
+
+.c-archive {
+  margin-top: var(--space-8);
+}
+
+.c-archive__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-16);
+  margin-bottom: var(--space-20);
+}
+
+.c-archive__heading-group {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-10);
+}
+
+.c-archive__heading {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-strong);
+}
+
+.c-archive__count {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* Asset-type chip-tabs (single-select) above the industry chips. */
+.c-archive__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+  margin-bottom: var(--space-12);
+}
+
+.c-archive__tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+  padding: var(--space-8) var(--space-16);
+  min-height: var(--nav-touch-target);
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition:
+    background-color var(--animation-speed) var(--animation-curve),
+    color var(--animation-speed) var(--animation-curve),
+    border-color var(--animation-speed) var(--animation-curve);
+}
+
+.c-archive__tab:hover {
+  border-color: var(--color-hairline-strong);
+}
+
+.c-archive__tab.is-active {
+  background: var(--color-primary);
+  color: var(--color-btn-primary-text);
+  border-color: var(--color-primary);
+}
+
+.c-archive__tab.is-empty {
+  opacity: 0.4;
+}
+
+.c-archive__tab:focus-visible {
+  outline: var(--focus-outline);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 5px rgba(var(--color-primary-rgb), 0.18);
+}
+
+.c-archive__tab-count {
+  font-size: var(--font-size-xs);
+  padding: 0 var(--space-6);
+  border-radius: var(--radius-full);
+  background: var(--color-overlay-strong);
+  color: var(--color-text-muted);
+}
+
+.c-archive__tab.is-active .c-archive__tab-count {
+  background: rgba(0, 0, 0, 0.18);
+  color: inherit;
+}
+
+.c-archive__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+  margin-bottom: var(--space-16);
+}
+
+.c-archive__filter {
+  padding: var(--space-6) var(--space-16);
+  min-height: var(--nav-touch-target);
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  background: transparent;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition:
+    background-color var(--animation-speed) var(--animation-curve),
+    color var(--animation-speed) var(--animation-curve),
+    border-color var(--animation-speed) var(--animation-curve);
+}
+
+.c-archive__filter:hover,
+.c-archive__filter.is-active {
+  background: var(--color-primary);
+  color: var(--color-btn-primary-text);
+  border-color: var(--color-primary);
+}
+
+.c-archive__filter:focus-visible {
+  outline: var(--focus-outline);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 5px rgba(var(--color-primary-rgb), 0.18);
+}
+
+.c-archive__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+/* The row <li> carries only the separator. The flex layout lives on the inner
+   link/wrapper, so the <li>'s [hidden] attribute actually hides filtered rows —
+   an author `display` on the <li> would beat the UA [hidden] rule. */
+.c-archive__row {
+  border-top: 1px solid var(--color-overlay-weak);
+}
+
+.c-archive__row[hidden] {
+  display: none;
+}
+
+.c-archive__row-link {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-8) var(--space-16);
+  padding: var(--space-10) var(--space-12);
+  color: inherit;
+  text-decoration: none;
+}
+
+a.c-archive__row-link {
+  transition: background-color var(--animation-speed) var(--animation-curve);
+}
+
+a.c-archive__row-link:hover {
+  background: var(--color-overlay-weak);
+}
+
+.c-archive__row-link--static {
+  cursor: default;
+}
+
+.c-archive__empty {
+  padding: var(--space-20) 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.c-archive__more-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-16);
+}
+
+.c-archive__row-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: min(100%, 16rem);
+  flex: 1;
+}
+
+.c-archive__row-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-8);
+}
+
+/* "Interview" marker on customer-story rows. */
+.c-archive__tag {
+  font-size: var(--font-size-xs);
+  padding: var(--space-4) var(--space-8);
+  border-radius: var(--radius-sm);
+  background: rgba(var(--color-primary-rgb), 0.14);
+  color: var(--color-primary-hover);
+  border: 1px solid rgba(var(--color-primary-rgb), 0.4);
+}
+
+.c-archive__row-title {
+  color: var(--color-text-strong);
+  overflow-wrap: anywhere;
+}
+
+/* Linkable rows colour the title to signal the whole row is clickable. */
+a.c-archive__row-link .c-archive__row-title {
+  color: var(--color-primary);
+}
+
+a.c-archive__row-link:hover .c-archive__row-title {
+  color: var(--color-primary-hover);
+}
+
+.c-archive__row-meta {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+/* Status badges (archive rows) */
+
+.c-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-10);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.c-status--live {
+  color: var(--color-primary-hover);
+  background: rgba(var(--color-primary-rgb), 0.14);
+  border: 1px solid rgba(var(--color-primary-rgb), 0.4);
+}
+
+.c-status--archived {
+  color: var(--color-text-strong);
+  background: var(--color-overlay-strong);
+  border: 1px solid var(--color-chip-border);
+}
+
+.c-status--muted {
+  color: var(--color-text-muted);
+  background: var(--color-overlay-weak);
+  border: 1px solid var(--color-hairline);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c-work-card__img,
+  .c-archive__filter,
+  .c-archive__tab {
+    transition: none;
+  }
+
+  .c-work-card__media:hover .c-work-card__img {
+    transform: none;
+  }
+
+  .c-featured__btn:hover {
+    transform: none;
+    animation: none;
+  }
+}

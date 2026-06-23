@@ -1,3 +1,5 @@
+import { workArchive } from './work-data.js';
+
 export const siteContent = {
   profile: {
     name: 'Jerry James',
@@ -202,74 +204,252 @@ export const siteContent = {
     },
   ],
 
-  // Portfolio data
-  // Filter buttons and category badges are generated from the `category` keys
-  // below; add a display label here when introducing a new category.
-  portfolioCategoryLabels: {
-    b2b: 'B2B',
-    b2c: 'B2C',
-    content: 'Content',
+  // Featured work showcase (renders in the #portfolio section). Two tiers:
+  // `featuredCampaigns` are hand-picked flagships shown as rich spotlight blocks
+  // (screengrab + story + key deliverables); `workArchive` (generated in
+  // work-data.js from the campaign map) is the full body of work, browsed via
+  // asset-type tabs + an industry filter. Each archive piece's `status` maps to
+  // a badge + link affordance via `workStatusMeta`; deliverable/item type badges
+  // and CTA verbs come from `workTypeMeta`. Flagship screengrabs live in
+  // public/images/work/ (~1200px, 16:10).
+  workTypeMeta: {
+    article: { label: 'Article', icon: 'file-text', verb: 'Read article' },
+    blog: { label: 'Blog', icon: 'file-text', verb: 'Read' },
+    video: { label: 'Video', icon: 'play', verb: 'Watch' },
+    whitepaper: {
+      label: 'Whitepaper',
+      icon: 'file-text',
+      verb: 'View whitepaper',
+    },
+    press: { label: 'Press', icon: 'news', verb: 'Read release' },
+    landing: {
+      label: 'Landing page',
+      icon: 'external-link',
+      verb: 'View campaign',
+    },
+    'case-study': {
+      label: 'Case study',
+      icon: 'file-text',
+      verb: 'Read case study',
+    },
+    review: { label: 'Review', icon: 'file-text', verb: 'Read review' },
+    guide: { label: 'Guide', icon: 'file-text', verb: 'Read guide' },
   },
-  portfolio: [
+  // status -> badge label + icon + tone. live/press/archived render the title as
+  // an outbound link; internal/none are credited without a link.
+  workStatusMeta: {
+    live: { label: 'Live', icon: 'external-link', tone: 'live' },
+    press: { label: 'Press', icon: 'news', tone: 'live' },
+    archived: { label: 'Archived', icon: 'archive', tone: 'archived' },
+    internal: { label: 'Internal', icon: 'lock', tone: 'muted' },
+    none: { label: 'No public link', icon: 'ban', tone: 'muted' },
+  },
+  // Display labels for the archive's asset-type sections. The internal keys in
+  // work-data.js stay stable; edit only the values to restyle the section names.
+  assetTypeLabels: {
+    'Product Launch': 'Liftoff',
+    'Case studies & Customer stories': 'Receipts',
+    Reviews: 'The Verdict',
+    'Guides & Explainers': 'Plainly Put',
+    'Landing pages & Web copy': 'Above the Fold',
+    'Blogs & Articles': 'Hot Takes',
+    'Press & PR': 'Stop the Press',
+    Other: 'B-Sides',
+  },
+  featuredCampaigns: [
     {
-      category: 'b2b',
-      title: 'SaaS Platform Launch Strategy',
-      description:
-        'Led the technical marketing strategy for a new SaaS platform, resulting in 300% increase in qualified leads and $2M ARR growth.',
-      results: [
-        '300% increase in qualified leads',
-        '$2M ARR growth',
-        '45% reduction in CAC',
+      name: 'EVA × MSI — Evangelion Gaming PC',
+      industry: 'PC Hardware',
+      year: '2022',
+      blurb:
+        'Go-to-market for the MSI × Evangelion collaboration — building a limited-edition build narrative true to the fanbase, across launch press and a campaign landing.',
+      screenshot: '/images/work/eva.jpg',
+      screenshotAlt: 'EVA × MSI Evangelion gaming PC campaign visual',
+      items: [
+        {
+          type: 'press',
+          title: 'Partnership launch press release',
+          access: 'live',
+          url: 'https://www.msi.com/news/detail/Be-brave-to-get-in-that-machine--MSI-teams-up-with-EVANGELION-e--PROJECT-to-build-an-ultimate-gaming-PC-that-will-make-true-Evangelion-fans-drool-139863',
+        },
+        {
+          type: 'landing',
+          title: 'Evangelion campaign landing',
+          access: 'live',
+          url: 'https://www.msi.com/Landing/evangelion-gaming-pc-components',
+        },
       ],
-      tags: ['B2B', 'SaaS', 'Technical Marketing', 'Lead Generation'],
     },
     {
-      category: 'b2c',
-      title: 'Consumer Electronics Campaign',
-      description:
-        'Developed and executed an integrated B2C campaign for consumer electronics brand, achieving 150% ROI.',
-      results: [
-        '150% ROI',
-        '2.5M+ impressions',
-        '25% increase in brand awareness',
-      ],
-      tags: [
-        'B2C',
-        'Consumer Electronics',
-        'Integrated Campaign',
-        'Brand Awareness',
-      ],
-    },
-    {
-      category: 'content',
-      title: 'Technical White Paper Series',
-      description:
-        'Created a series of technical white papers for a cybersecurity company, generating 1000+ qualified leads.',
-      results: [
-        '1000+ qualified leads',
-        '40% conversion rate',
-        'Industry thought leadership',
-      ],
-      tags: [
-        'Technical Writing',
-        'White Papers',
-        'Cybersecurity',
-        'Lead Generation',
+      name: 'DigiME — AI Virtual Avatar Launch',
+      industry: 'PC Hardware',
+      year: '2025',
+      blurb:
+        'Launch storytelling for MSI’s DigiME AI VTuber avatar — positioning an on-device AI feature as a creator-friendly headline across press, landing, and blog.',
+      screenshot: '/images/work/digime.webp',
+      screenshotAlt: 'DigiME AI virtual avatar launch campaign visual',
+      items: [
+        {
+          type: 'landing',
+          title: 'DigiME campaign landing',
+          access: 'live',
+          url: 'https://www.msi.com/Landing/digime-ai-virtual-avatar',
+        },
       ],
     },
     {
-      category: 'b2b',
-      title: 'Marketing Automation Implementation',
-      description:
-        'Implemented comprehensive marketing automation system for manufacturing company, improving lead nurturing by 85%.',
-      results: [
-        '85% improvement in lead nurturing',
-        '60% time savings',
-        '35% increase in sales-ready leads',
+      name: 'MPG OLED 322URDX36 — QD-OLED Gaming Monitor',
+      industry: 'PC Hardware',
+      year: '2026',
+      blurb:
+        'Launch narrative for MSI’s flagship 4K 360Hz QD-OLED monitor — turning panel tech (Penta Tandem, Dark Armor) into a clear gamer-and-creator value story.',
+      screenshot: '/images/work/oled-banner.png',
+      screenshotAlt: 'MPG OLED 322URDX36 QD-OLED gaming monitor launch visual',
+      items: [
+        {
+          type: 'blog',
+          title: 'Computex 2026 — QD-OLED monitor round-up',
+          access: 'live',
+          url: 'https://www.msi.com/blog/msi-computex-2026-ai-gaming-desktops-qd-oled-monitors-and-pro-max-series',
+        },
       ],
-      tags: ['Marketing Automation', 'B2B', 'Lead Nurturing', 'Manufacturing'],
+    },
+    {
+      name: 'Egen — Cloud Cost Optimization',
+      industry: 'Cloud',
+      year: '2020',
+      blurb:
+        'A cloud / DevOps demand-gen program for Egen (now NTT DATA) — a FinOps whitepaper and supporting blog alongside enterprise cloud case studies.',
+      screenshot: '/images/work/egen.png',
+      screenshotAlt: 'Cover of the “10 Ways to Reduce Cloud Costs” whitepaper',
+      items: [
+        {
+          type: 'whitepaper',
+          title: '10 Ways to Reduce Cloud Costs (whitepaper)',
+          access: 'live',
+          url: 'http://web.archive.org/web/20240623080931/https://insights.egen.solutions/hubfs/white-papers/10%20Ways%20to%20Reduce%20Cloud%20Costs.pdf',
+        },
+        {
+          type: 'case-study',
+          title: 'Caterpillar — predictive maintenance',
+          access: 'live',
+          url: 'https://egen.ai/customer-stories/caterpillar-building-predictive-maintenance-models/',
+        },
+        {
+          type: 'blog',
+          title: 'How to Reduce AWS Costs',
+          access: 'live',
+          url: 'http://web.archive.org/web/20230925065210/https://egen.solutions/articles/how-to-reduce-aws-costs-strategies-and-best-practices/',
+        },
+      ],
+    },
+    {
+      name: 'CGDirector — Hardware Reviews & Explainers',
+      industry: 'PC Hardware',
+      year: '2024',
+      blurb:
+        'Independent technical journalism for CGDirector — in-depth GPU/CPU reviews and evergreen explainers that built buyer trust and organic search authority.',
+      screenshot: '/images/work/cgdirector.png',
+      screenshotAlt: 'CGDirector hardware reviews and explainers visual',
+      items: [
+        {
+          type: 'review',
+          title: 'RTX 4080 SUPER review',
+          access: 'live',
+          url: 'https://www.cgdirector.com/nvidia-rtx-4080-super-review/',
+        },
+        {
+          type: 'review',
+          title: 'AMD Threadripper 3990X review',
+          access: 'live',
+          url: 'https://www.cgdirector.com/amd-threadripper-3990x-review/',
+        },
+        {
+          type: 'guide',
+          title: 'Motherboard buying guide',
+          access: 'live',
+          url: 'https://www.cgdirector.com/motherboard-buying-guide-for-workstations/',
+        },
+      ],
+    },
+    {
+      name: 'RedLegg — Cybersecurity Content',
+      industry: 'Cybersecurity',
+      year: '2019',
+      blurb:
+        'Top-of-funnel security education for RedLegg — explanatory guides on vulnerability management and threat intelligence aimed at enterprise security buyers.',
+      screenshot: '/images/work/redlegg.png',
+      screenshotAlt: 'RedLegg cybersecurity content visual',
+      items: [
+        {
+          type: 'guide',
+          title: 'Vulnerability Management — complete guide',
+          access: 'live',
+          url: 'https://www.redlegg.com/solutions/advisory-services/vulnerability-management-pretty-much-everything-you-need-to-know',
+        },
+        {
+          type: 'article',
+          title: 'Major data breaches',
+          access: 'live',
+          url: 'https://www.redlegg.com/blog/major-data-breaches',
+        },
+      ],
+    },
+    {
+      name: 'LicenseSpring — Product & Launch Content',
+      industry: 'Software / SaaS',
+      year: '2020',
+      blurb:
+        'Product marketing for LicenseSpring’s licensing platform — launch announcements, integration news, and conversion-focused website copy for a developer audience.',
+      screenshot: '/images/work/licensespring.png',
+      screenshotAlt: 'LicenseSpring product and launch content visual',
+      items: [
+        {
+          type: 'press',
+          title: 'New platform, license models & SDKs',
+          access: 'live',
+          url: 'https://licensespring.com/blog/news/announcement-new-platform-new-license-models-new-sdk',
+        },
+        {
+          type: 'press',
+          title: 'FastSpring integration',
+          access: 'live',
+          url: 'https://licensespring.com/blog/news/licensespring-integrated-with-fastspring',
+        },
+        {
+          type: 'landing',
+          title: 'Pricing page copy',
+          access: 'live',
+          url: 'https://licensespring.com/pricing',
+        },
+      ],
+    },
+    {
+      name: 'MSI Reward Program — Loyalty Campaign',
+      industry: 'PC Hardware',
+      year: '2023',
+      blurb:
+        'Relaunch messaging for the MSI Reward Program — turning a loyalty revamp into a clear member-value story across press and a program landing.',
+      screenshot: '/images/work/rewards.png',
+      screenshotAlt: 'MSI Reward Program loyalty campaign visual',
+      items: [
+        {
+          type: 'press',
+          title: 'Reward Program launch press release',
+          access: 'live',
+          url: 'https://www.msi.com/news/detail/MSI-Reward-Program-Launches---Seeking-MSI-Allies-143578',
+        },
+        {
+          type: 'landing',
+          title: 'Meet the new Reward Program',
+          access: 'live',
+          url: 'https://www.msi.com/Landing/meet-the-new-msi-reward-program',
+        },
+      ],
     },
   ],
+  // Full body of work — ~225 pieces, generated in work-data.js from the map.
+  workArchive,
 
   // Skills data
   skills: [
