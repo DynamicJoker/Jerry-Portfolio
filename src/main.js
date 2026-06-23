@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initializeDockedSectionHeaders();
   initializeBrandCollapse();
   initializeWorkLightbox();
-  initializeFeaturedRotator();
+  initializeFeaturedCarousel();
   initializeWorkArchive();
   initializeContactForm();
   initializeContactInfo();
@@ -586,15 +586,15 @@ function initializeWorkLightbox() {
   });
 }
 
-function initializeFeaturedRotator() {
-  const root = document.querySelector('[data-carousel]');
+function initializeFeaturedCarousel() {
+  const root = document.querySelector('[data-featured]');
   if (!root) return;
-  const slides = [...root.querySelectorAll('[data-carousel-slide]')];
-  const dots = [...root.querySelectorAll('[data-carousel-dot]')];
-  const status = root.querySelector('[data-carousel-status]');
-  const playBtn = root.querySelector('[data-carousel-play]');
-  const pauseIcon = root.querySelector('[data-carousel-pause-icon]');
-  const playIcon = root.querySelector('[data-carousel-play-icon]');
+  const slides = [...root.querySelectorAll('[data-featured-slide]')];
+  const dots = [...root.querySelectorAll('[data-featured-dot]')];
+  const status = root.querySelector('[data-featured-status]');
+  const playBtn = root.querySelector('[data-featured-play]');
+  const pauseIcon = root.querySelector('[data-featured-pause-icon]');
+  const playIcon = root.querySelector('[data-featured-play-icon]');
   if (slides.length <= 1) return;
 
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -639,10 +639,10 @@ function initializeFeaturedRotator() {
 
   playBtn.addEventListener('click', () => setPlaying(!playing));
   root
-    .querySelector('[data-carousel-prev]')
+    .querySelector('[data-featured-prev]')
     .addEventListener('click', () => show(index - 1));
   root
-    .querySelector('[data-carousel-next]')
+    .querySelector('[data-featured-next]')
     .addEventListener('click', () => show(index + 1));
   dots.forEach((dot, n) => dot.addEventListener('click', () => show(n)));
 

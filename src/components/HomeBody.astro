@@ -431,19 +431,19 @@ siteContent.testimonials.forEach((testimonial, index) => {
       <!-- Featured: rotating spotlight -->
       <div
         class="c-featured"
-        data-carousel
+        data-featured
         role="region"
         aria-roledescription="carousel"
         aria-label="Featured work"
       >
-        <div class="c-featured__viewport" data-carousel-slides>
+        <div class="c-featured__viewport" data-featured-slides>
           {
             featuredCampaigns.map((campaign, si) => {
               const alt = campaign.screenshotAlt ?? campaign.name;
               return (
                 <article
                   class="c-spotlight c-featured__slide"
-                  data-carousel-slide
+                  data-featured-slide
                   role="group"
                   aria-roledescription="slide"
                   aria-label={`${si + 1} of ${featuredCampaigns.length}: ${campaign.name}`}
@@ -509,20 +509,20 @@ siteContent.testimonials.forEach((testimonial, index) => {
           <button
             type="button"
             class="c-featured__btn"
-            data-carousel-play
+            data-featured-play
             aria-label="Pause featured rotation"
           >
-            <span class="c-featured__icon" data-carousel-pause-icon>
+            <span class="c-featured__icon" data-featured-pause-icon>
               <Icon name="pause" />
             </span>
-            <span class="c-featured__icon" data-carousel-play-icon hidden>
+            <span class="c-featured__icon" data-featured-play-icon hidden>
               <Icon name="play" />
             </span>
           </button>
           <button
             type="button"
             class="c-featured__btn"
-            data-carousel-prev
+            data-featured-prev
             aria-label="Previous featured item"
           >
             <Icon name="chevron-left" />
@@ -533,7 +533,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
                 <button
                   type="button"
                   class:list={['c-featured__dot', { 'is-active': di === 0 }]}
-                  data-carousel-dot
+                  data-featured-dot
                   aria-label={`Show ${campaign.name}`}
                   aria-current={di === 0 ? 'true' : 'false'}
                 >
@@ -545,14 +545,14 @@ siteContent.testimonials.forEach((testimonial, index) => {
           <button
             type="button"
             class="c-featured__btn"
-            data-carousel-next
+            data-featured-next
             aria-label="Next featured item"
           >
             <Icon name="chevron-right" />
           </button>
           <span
             class="u-sr-only"
-            data-carousel-status
+            data-featured-status
             role="status"
             aria-live="off"></span>
         </div>
