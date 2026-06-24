@@ -114,6 +114,10 @@ const loadStylesheet=()=>{
   link.rel='stylesheet';
   link.href=href;
   link.dataset.globalStylesheet='';
+  // The deferred sheet finalises below-the-fold layout (e.g. the work filmstrip),
+  // so any geometry measured before it lands (docked section headers, scroll-spy)
+  // is stale. A resize once it applies re-runs those recalcs.
+  link.addEventListener('load',()=>{window.dispatchEvent(new Event('resize'));},{once:true});
   document.head.append(link);
 };
 if('requestAnimationFrame' in window){

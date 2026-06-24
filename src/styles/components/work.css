@@ -137,10 +137,63 @@
   margin-bottom: var(--space-32);
 }
 
-/* A slide's `.c-spotlight { display: grid }` outranks the UA [hidden] rule, so
-   hide inactive slides explicitly. */
-.c-featured__slide[hidden] {
+/* Filmstrip: a horizontal scroll-snap rail. Slides sit side by side and the
+   user swipes/drags/arrows through them; the next card peeks in at the edge so
+   the strip reads as "more this way". No auto-rotation, no hard slide swaps. */
+.c-featured__viewport {
+  display: flex;
+  gap: var(--space-20);
+  overflow-x: auto;
+  /* Proximity (not mandatory) so wheel/drag free-scrolling can glance across
+     everything without the rail yanking to a snap point mid-gesture. */
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: var(--space-1);
+  /* Keep horizontal flicks/wheel from triggering the browser back/forward swipe. */
+  overscroll-behavior-x: contain;
+  /* Pad so focus rings + drag overscroll aren't clipped by overflow. */
+  padding: var(--space-1) var(--space-1) var(--space-8);
+  /* Hide the native scrollbar; the dots + arrows are the affordance. */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  cursor: grab;
+}
+
+/* Native image-drag and text selection both stutter a pointer drag — kill them. */
+.c-featured__viewport img {
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+.c-featured__viewport::-webkit-scrollbar {
   display: none;
+}
+
+.c-featured__viewport:focus-visible {
+  outline: var(--focus-outline);
+  outline-offset: 4px;
+  border-radius: var(--radius-lg);
+}
+
+/* Each slide takes most of the rail, leaving a sliver of the next one. */
+.c-featured__slide {
+  flex: 0 0 88%;
+  scroll-snap-align: start;
+}
+
+/* While dragging or wheeling, drop snap so programmatic scrolls aren't yanked
+   back; we settle on the nearest slide once the gesture ends. */
+.c-featured.is-free .c-featured__viewport {
+  scroll-snap-type: none;
+}
+
+.c-featured.is-grabbing .c-featured__viewport {
+  cursor: grabbing;
+  user-select: none;
+}
+
+/* Don't fight a pointer-drag scroll on touch; the swipe is the gesture. */
+.c-featured.is-grabbing .c-featured__slide {
+  pointer-events: none;
 }
 
 .c-featured__controls {

@@ -586,25 +586,27 @@ function initializeWorkLightbox() {
   });
 }
 
+// Featured work is a horizontal scroll-snap filmstrip: the user swipes, drags,
+// arrows, or taps a dot to move between flagship spotlights. No auto-rotation —
+// nothing moves unless the user drives it.
 function initializeFeaturedCarousel() {
   const root = document.querySelector('[data-featured]');
   if (!root) return;
+  const viewport = root.querySelector('[data-featured-slides]');
   const slides = [...root.querySelectorAll('[data-featured-slide]')];
   const dots = [...root.querySelectorAll('[data-featured-dot]')];
   const status = root.querySelector('[data-featured-status]');
-  const playBtn = root.querySelector('[data-featured-play]');
-  const pauseIcon = root.querySelector('[data-featured-pause-icon]');
-  const playIcon = root.querySelector('[data-featured-play-icon]');
-  if (slides.length <= 1) return;
+  const prevBtn = root.querySelector('[data-featured-prev]');
+  const nextBtn = root.querySelector('[data-featured-next]');
+  if (!viewport || slides.length <= 1) return;
 
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const behavior = reduce ? 'auto' : 'smooth';
   let index = 0;
-  let playing = !reduce;
-  let timer = null;
 
-  const show = (i) => {
-    index = (i + slides.length) % slides.length;
-    slides.forEach((slide, n) => slide.toggleAttribute('hidden', n !== index));
+  // Reflect the active slide on the dots + sr-only status, without scrolling.
+  const setActive = (i) => {
+    index = Math.max(0, Math.min(i, slides.length - 1));
     dots.forEach((dot, n) => {
       const on = n === index;
       dot.classList.toggle('is-active', on);
@@ -613,49 +615,241 @@ function initializeFeaturedCarousel() {
     if (status) status.textContent = `Slide ${index + 1} of ${slides.length}`;
   };
 
-  const stop = () => {
-    if (timer) {
-      clearInterval(timer);
-      timer = null;
-    }
-  };
-  const start = () => {
-    stop();
-    if (playing) timer = setInterval(() => show(index + 1), 7000);
+  // Wrap around so Next past the last lands on the first, and Prev before the
+  // first lands on the last.
+  const scrollToSlide = (i) => {
+    const n = (i + slides.length) % slides.length;
+    const target = slides[n];
+    if (target) viewport.scrollTo({ left: target.offsetLeft, behavior });
   };
 
-  const setPlaying = (next) => {
-    playing = next;
-    if (pauseIcon) pauseIcon.toggleAttribute('hidden', !playing);
-    if (playIcon) playIcon.toggleAttribute('hidden', playing);
-    playBtn.setAttribute(
-      'aria-label',
-      playing ? 'Pause featured rotation' : 'Play featured rotation',
-    );
-    // Announce slides only when not auto-rotating, so screen readers aren't spammed.
-    if (status) status.setAttribute('aria-live', playing ? 'off' : 'polite');
-    start();
+  const maxScroll = () =>
+    Math.max(0, viewport.scrollWidth - viewport.clientWidth);
+  const clampScroll = (v) => Math.max(0, Math.min(v, maxScroll()));
+
+  // The slide whose centre is nearest a given scroll position. `nearestIndex`
+  // reads the live position; the glide passes its target so it snaps toward where
+  // the wheel is heading, not where it currently is.
+  const nearestIndexTo = (left) => {
+    const center = left + viewport.clientWidth / 2;
+    let best = 0;
+    let bestDist = Infinity;
+    slides.forEach((slide, n) => {
+      const dist = Math.abs(slide.offsetLeft + slide.offsetWidth / 2 - center);
+      if (dist < bestDist) {
+        bestDist = dist;
+        best = n;
+      }
+    });
+    return best;
+  };
+  const nearestIndex = () => nearestIndexTo(viewport.scrollLeft);
+
+  // Derive the active dot from the real scroll position (not an observer that
+  // can latch the wrong slide before the deferred stylesheet lays the strip out).
+  // Lock to the first/last at the extremes so rounding never lands off-by-one.
+  const syncActive = () => {
+    const max = viewport.scrollWidth - viewport.clientWidth;
+    if (max <= 0 || viewport.scrollLeft <= 1) return setActive(0);
+    if (viewport.scrollLeft >= max - 1) return setActive(slides.length - 1);
+    return setActive(nearestIndex());
   };
 
-  playBtn.addEventListener('click', () => setPlaying(!playing));
-  root
-    .querySelector('[data-featured-prev]')
-    .addEventListener('click', () => show(index - 1));
-  root
-    .querySelector('[data-featured-next]')
-    .addEventListener('click', () => show(index + 1));
-  dots.forEach((dot, n) => dot.addEventListener('click', () => show(n)));
+  let scrollRaf = 0;
+  viewport.addEventListener(
+    'scroll',
+    () => {
+      if (scrollRaf) return;
+      scrollRaf = window.requestAnimationFrame(() => {
+        scrollRaf = 0;
+        syncActive();
+      });
+    },
+    { passive: true },
+  );
+  // The strip is laid out by the deferred stylesheet, so recompute once it lands
+  // and on any later reflow.
+  window.addEventListener('load', syncActive);
+  window.addEventListener('resize', syncActive, { passive: true });
 
-  // Pause auto-rotation while the user hovers or keyboard-focuses the carousel.
-  root.addEventListener('mouseenter', stop);
-  root.addEventListener('mouseleave', start);
-  root.addEventListener('focusin', stop);
-  root.addEventListener('focusout', () => {
-    if (!root.contains(document.activeElement)) start();
+  // Buttons/dots cancel any in-flight glide, then ease to their target.
+  const goTo = (i) => {
+    stopGlide();
+    scrollToSlide(i);
+  };
+  prevBtn.addEventListener('click', () => goTo(index - 1));
+  nextBtn.addEventListener('click', () => goTo(index + 1));
+  dots.forEach((dot, n) => dot.addEventListener('click', () => goTo(n)));
+
+  // Mouse drag-to-scroll. Touch already scrolls natively, so we ignore it here.
+  let dragging = false;
+  let startX = 0;
+  let startScroll = 0;
+  let moved = false;
+
+  viewport.addEventListener('pointerdown', (e) => {
+    if (e.pointerType === 'touch') return;
+    stopGlide(); // a grab cancels any in-flight wheel glide
+    dragging = true;
+    moved = false;
+    startX = e.clientX;
+    startScroll = viewport.scrollLeft;
+    viewport.setPointerCapture(e.pointerId);
+    // is-grabbing styles the cursor + suppresses selection; is-free drops snap so
+    // the drag isn't fought, then we snap to the nearest slide on release.
+    root.classList.add('is-grabbing', 'is-free');
   });
+  viewport.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
+    const dx = e.clientX - startX;
+    if (Math.abs(dx) > 4) moved = true;
+    viewport.scrollLeft = startScroll - dx;
+  });
+  const endDrag = () => {
+    if (!dragging) return;
+    dragging = false;
+    root.classList.remove('is-grabbing', 'is-free');
+    if (moved) scrollToSlide(nearestIndex());
+  };
+  viewport.addEventListener('pointerup', endDrag);
+  viewport.addEventListener('pointercancel', endDrag);
+  // Stop the browser's native image/element drag, which otherwise hijacks the
+  // pointer mid-drag and makes the scroll stutter.
+  viewport.addEventListener('dragstart', (e) => e.preventDefault());
 
-  show(0);
-  setPlaying(playing);
+  // Swallow the click that fires at the end of a drag so a dragged card doesn't
+  // open its lightbox or follow a link.
+  viewport.addEventListener(
+    'click',
+    (e) => {
+      if (!moved) return;
+      e.preventDefault();
+      e.stopPropagation();
+      moved = false;
+    },
+    true,
+  );
+
+  // Wheel = momentum glide with intent detection. The wheel always feeds a
+  // `glideTarget` that a rAF loop eases scrollLeft toward (fluid follow +
+  // deceleration, snap suspended via is-free). When the wheel goes idle we
+  // classify the whole gesture: a brief, modest one — a deliberate wheel
+  // "click" — steps to exactly the next/previous card; anything longer or
+  // bigger (a fast spin or trackpad swipe) settles on whichever card momentum
+  // reached. Under reduced-motion EASE is 1 (instant). A single physical notch
+  // is one gesture even though Chrome bursts it into several events, because we
+  // group by the idle gap, not per event.
+  const EASE = reduce ? 1 : 0.18;
+  const SETTLE_EPS = 0.5; // px: close enough to stop the loop
+  const SETTLE_MS = 90; // wheel-idle before we classify + settle
+  const NEW_GESTURE_GAP = 140; // idle gap (ms) that starts a fresh gesture
+  const CLICK_MAX_MS = 220; // a "click" gesture is brief…
+  const CLICK_MAX_EVENTS = 12; // …with few events…
+  const CLICK_MIN_DELTA = 16; // …and a real but…
+  const CLICK_MAX_DELTA = 200; // …modest total delta.
+  let glideTarget = viewport.scrollLeft;
+  let glideRaf = 0;
+  let glideIdle = 0;
+  let settling = false;
+  // Per-gesture accumulators used to tell a single click from a continuous scroll.
+  let gestureStart = 0;
+  let gestureDelta = 0;
+  let gestureEvents = 0;
+  let gestureFromIndex = 0;
+  let lastWheelTime = 0;
+
+  const stopGlide = () => {
+    if (glideRaf) window.cancelAnimationFrame(glideRaf);
+    glideRaf = 0;
+    window.clearTimeout(glideIdle);
+    settling = false;
+    lastWheelTime = 0; // next wheel starts a clean gesture
+    root.classList.remove('is-free');
+  };
+
+  const glideTick = () => {
+    const current = viewport.scrollLeft;
+    const diff = glideTarget - current;
+    if (Math.abs(diff) <= SETTLE_EPS) {
+      viewport.scrollLeft = glideTarget;
+      glideRaf = 0;
+      // Only release snap once we've actually settled onto a card.
+      if (settling) {
+        settling = false;
+        root.classList.remove('is-free');
+      }
+      return;
+    }
+    viewport.scrollLeft = current + diff * EASE;
+    glideRaf = window.requestAnimationFrame(glideTick);
+  };
+  const requestGlide = () => {
+    if (!glideRaf) glideRaf = window.requestAnimationFrame(glideTick);
+  };
+
+  // Decide where the just-finished wheel gesture should land, then ease there.
+  const settleGesture = () => {
+    const dir = Math.sign(gestureDelta) || 1;
+    const absDelta = Math.abs(gestureDelta);
+    const duration = lastWheelTime - gestureStart;
+    const isClick =
+      duration <= CLICK_MAX_MS &&
+      gestureEvents <= CLICK_MAX_EVENTS &&
+      absDelta >= CLICK_MIN_DELTA &&
+      absDelta <= CLICK_MAX_DELTA;
+    // A click moves exactly one card from where the gesture began; a longer
+    // scroll keeps wherever momentum carried it.
+    const targetIndex = isClick
+      ? Math.max(0, Math.min(gestureFromIndex + dir, slides.length - 1))
+      : nearestIndexTo(glideTarget);
+    settling = true;
+    glideTarget = clampScroll(slides[targetIndex].offsetLeft);
+    requestGlide();
+  };
+
+  // Only hijack a vertical wheel when the strip can still move that way — at
+  // either end we let it fall through so the page keeps scrolling past.
+  viewport.addEventListener(
+    'wheel',
+    (e) => {
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return; // native horizontal handles it
+      const max = maxScroll();
+      if (max <= 0) return;
+      const goingLeft = e.deltaY < 0;
+      if (
+        (goingLeft && glideTarget <= 0) ||
+        (!goingLeft && glideTarget >= max)
+      ) {
+        return;
+      }
+      e.preventDefault();
+      const now = performance.now();
+      // A gap since the last wheel event begins a fresh gesture — record where
+      // we started so a click can step exactly one card from here.
+      if (now - lastWheelTime > NEW_GESTURE_GAP) {
+        gestureStart = now;
+        gestureDelta = 0;
+        gestureEvents = 0;
+        gestureFromIndex = nearestIndex();
+        if (!glideRaf) glideTarget = viewport.scrollLeft;
+      }
+      lastWheelTime = now;
+      gestureEvents += 1;
+      root.classList.add('is-free');
+      settling = false;
+      // Some mice report deltas in lines, not pixels — scale those up to feel right.
+      const step = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
+      gestureDelta += step;
+      glideTarget = clampScroll(glideTarget + step);
+      requestGlide();
+      window.clearTimeout(glideIdle);
+      glideIdle = window.setTimeout(settleGesture, SETTLE_MS);
+    },
+    { passive: false },
+  );
+
+  if (status) status.setAttribute('aria-live', 'polite');
+  syncActive();
 }
 
 function initializeWorkArchive() {

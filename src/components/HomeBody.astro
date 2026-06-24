@@ -428,7 +428,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
       </div>
     </div>
     <div class="o-container">
-      <!-- Featured: rotating spotlight -->
+      <!-- Featured: horizontal scroll-snap filmstrip of flagship spotlights -->
       <div
         class="c-featured"
         data-featured
@@ -436,7 +436,12 @@ siteContent.testimonials.forEach((testimonial, index) => {
         aria-roledescription="carousel"
         aria-label="Featured work"
       >
-        <div class="c-featured__viewport" data-featured-slides>
+        <div
+          class="c-featured__viewport"
+          data-featured-slides
+          tabindex="0"
+          aria-label="Featured work — scroll horizontally"
+        >
           {
             featuredCampaigns.map((campaign, si) => {
               const alt = campaign.screenshotAlt ?? campaign.name;
@@ -447,7 +452,6 @@ siteContent.testimonials.forEach((testimonial, index) => {
                   role="group"
                   aria-roledescription="slide"
                   aria-label={`${si + 1} of ${featuredCampaigns.length}: ${campaign.name}`}
-                  hidden={si !== 0}
                 >
                   <button
                     type="button"
@@ -464,6 +468,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
                       alt={alt}
                       loading="lazy"
                       decoding="async"
+                      draggable="false"
                       width="1200"
                       height="750"
                     />
@@ -506,19 +511,6 @@ siteContent.testimonials.forEach((testimonial, index) => {
           }
         </div>
         <div class="c-featured__controls">
-          <button
-            type="button"
-            class="c-featured__btn"
-            data-featured-play
-            aria-label="Pause featured rotation"
-          >
-            <span class="c-featured__icon" data-featured-pause-icon>
-              <Icon name="pause" />
-            </span>
-            <span class="c-featured__icon" data-featured-play-icon hidden>
-              <Icon name="play" />
-            </span>
-          </button>
           <button
             type="button"
             class="c-featured__btn"

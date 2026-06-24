@@ -258,6 +258,29 @@ export const siteContent = {
   },
   featuredCampaigns: [
     {
+      name: 'MSI × NVIDIA DGX Station — AI Supercomputing',
+      industry: 'PC Hardware',
+      year: '2026',
+      blurb:
+        'Launch positioning for the MSI NVIDIA DGX Station — framing data-center-grade Grace Blackwell AI compute in a desktop form factor as a clear story for enterprise and research buyers, across a campaign landing and Computex press.',
+      screenshot: '/images/work/MSI-NVIDIA_DGX.webp',
+      screenshotAlt: 'MSI NVIDIA DGX Station AI supercomputing launch visual',
+      items: [
+        {
+          type: 'landing',
+          title: 'NVIDIA DGX Station campaign landing',
+          access: 'live',
+          url: 'https://www.msi.com/Landing/NVIDIA-DGX-STATION',
+        },
+        {
+          type: 'press',
+          title: 'Liquid-cooled AI infrastructure at Computex 2026',
+          access: 'live',
+          url: 'https://www.msi.com/news/detail/MSI-Showcases-Liquid-Cooled-AI-Infrastructure--NVIDIA-MGX--NVIDIA-DGX-Station-and-DC-MHS-Platforms-at-COMPUTEX-2026-148789',
+        },
+      ],
+    },
+    {
       name: 'EVA × MSI — Evangelion Gaming PC',
       industry: 'PC Hardware',
       year: '2022',
@@ -270,7 +293,7 @@ export const siteContent = {
           type: 'press',
           title: 'Partnership launch press release',
           access: 'live',
-          url: 'https://www.msi.com/news/detail/Be-brave-to-get-in-that-machine--MSI-teams-up-with-EVANGELION-e--PROJECT-to-build-an-ultimate-gaming-PC-that-will-make-true-Evangelion-fans-drool-139863',
+          url: 'https://www.techpowerup.com/294817/msi-launches-evangelion-e-project-themed-components',
         },
         {
           type: 'landing',
@@ -319,13 +342,13 @@ export const siteContent = {
       industry: 'Cloud',
       year: '2020',
       blurb:
-        'A cloud / DevOps demand-gen program for Egen (now NTT DATA) — a FinOps whitepaper and supporting blog alongside enterprise cloud case studies.',
+        'A cloud / DevOps demand-gen program for Egen — a FinOps whitepaper and supporting webinars, blogs, and enterprise cloud case studies.',
       screenshot: '/images/work/egen.png',
       screenshotAlt: 'Cover of the “10 Ways to Reduce Cloud Costs” whitepaper',
       items: [
         {
           type: 'whitepaper',
-          title: '10 Ways to Reduce Cloud Costs (whitepaper)',
+          title: '10 Ways to Reduce Cloud Costs White Paper (PDF))',
           access: 'live',
           url: 'http://web.archive.org/web/20240623080931/https://insights.egen.solutions/hubfs/white-papers/10%20Ways%20to%20Reduce%20Cloud%20Costs.pdf',
         },
