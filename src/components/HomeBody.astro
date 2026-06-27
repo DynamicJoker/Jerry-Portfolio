@@ -116,99 +116,80 @@ siteContent.testimonials.forEach((testimonial, index) => {
   <!-- Hero Section -->
   <section id="hero" class="c-hero">
     <div class="c-hero__background" aria-hidden="true">
+      <div class="c-hero__grid"></div>
       <div class="c-hero__aurora">
         <span class="c-hero__aurora-bloom c-hero__aurora-bloom--1"></span>
         <span class="c-hero__aurora-bloom c-hero__aurora-bloom--2"></span>
         <span class="c-hero__aurora-bloom c-hero__aurora-bloom--3"></span>
       </div>
     </div>
-    <div class="c-hero__content">
-      <div class="c-neon-frame">
-        <div class="c-hero__rings" aria-hidden="true">
-          <span class="c-hero__rings-pulse"></span>
-          <span class="c-hero__rings-pulse c-hero__rings-pulse--2"></span>
-        </div>
-        <img
-          src={profile.portraitImage}
-          alt={profile.portraitAlt}
-          class="c-neon-frame__image"
-          width="300"
-          height="300"
-          loading="eager"
-          fetchpriority="high"
-          decoding="async"
-        />
-
-        <svg
-          class="c-neon-frame__circle-svg"
-          viewBox="0 0 102 102"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-          focusable="false"
-        >
-          <defs>
-            <filter id="neon-glow">
-              <feGaussianBlur stdDeviation="1.5" result="coloredBlur"
-              ></feGaussianBlur>
-              <feMerge>
-                <feMergeNode in="coloredBlur"></feMergeNode>
-                <feMergeNode in="SourceGraphic"></feMergeNode>
-              </feMerge>
-            </filter>
-          </defs>
-          <circle class="c-neon-frame__circle" cx="51" cy="51" r="49"></circle>
-        </svg>
-      </div>
-      <div class="c-hero__text">
-        <h1 class="c-hero__name">{profile.name}</h1>
-        <div class="c-hero__title">
-          <span class="c-hero__typing-text" id="typing-text"
-            >{profile.jobTitle}</span
-          >
-        </div>
-        <div class="c-hero__stats">
-          {
-            profile.heroStats.map((stat) => (
-              <div class="c-hero__stat">
-                <span class="c-hero__stat-value">{stat.value}</span>
-                <span class="c-hero__stat-label">{stat.label}</span>
-              </div>
-            ))
-          }
-        </div>
-        <p class="c-hero__subtitle">
-          <span class="c-hero__subtitle-experience">
-            <span id="years-experience"
-              >{new Date().getFullYear() - profile.experienceStartYear}</span
-            >+ Years Experience
-          </span>
-          <span
-            class="c-shape-assembler"
-            id="shape-assembler"
-            aria-hidden="true"
-          >
-            <i></i><i></i><i></i>
-            <i></i><i></i><i></i>
-            <i></i><i></i><i></i>
-          </span>
+    <div class="c-hero__inner">
+      <div class="c-hero__lead">
+        <p class="c-hero__eyebrow">
+          <span class="c-hero__eyebrow-role">{profile.jobTitle}</span>
           <a
-            class="c-hero__subtitle-location"
+            class="c-hero__status"
             href="#schedule"
             aria-label={`${profile.availability.status}, go to scheduling section`}
           >
-            <span>{profile.availability.status}</span>
             <span
-              class="c-availability-dot c-hero__subtitle-location-dot"
+              class="c-availability-dot c-hero__status-dot"
               aria-hidden="true"></span>
+            <span>{profile.availability.status}</span>
           </a>
         </p>
+        <h1 class="c-hero__name">{profile.name}</h1>
+        <p class="c-hero__headline">
+          {profile.heroHeadline.pre}<span class="c-hero__headline-accent"
+            >{profile.heroHeadline.accent}</span
+          >{profile.heroHeadline.post}
+        </p>
+        <p class="c-hero__lede">{profile.heroLede}</p>
         <div class="c-hero__buttons">
           <a href="#portfolio" class="c-btn c-btn--primary c-btn--lg"
             >View Portfolio</a
           >
-          <a href="#contact" class="c-btn c-btn--outline c-btn--lg"
-            >Contact Me</a
+          <a href="#schedule" class="c-btn c-btn--outline c-btn--lg"
+            >Book a Discovery Call</a
           >
+        </div>
+        <ul class="c-hero__meta">
+          <li class="c-hero__meta-item">
+            <span id="years-experience"
+              >{new Date().getFullYear() - profile.experienceStartYear}</span
+            >+ yrs
+          </li>
+          <li class="c-hero__meta-item">
+            {profile.location.city}, {profile.location.country}
+          </li>
+          <li class="c-hero__meta-item">{profile.heroFocus}</li>
+        </ul>
+      </div>
+      <div class="c-hero__panel">
+        <div class="c-hero__portrait">
+          <img
+            src={profile.portraitImage}
+            alt={profile.portraitAlt}
+            class="c-hero__portrait-img"
+            width="300"
+            height="300"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+          />
+        </div>
+        <div class="c-hero__proof">
+          <span class="c-hero__proof-tag" aria-hidden="true">proof</span>
+          <dl class="c-hero__metrics">
+            {
+              profile.heroStats.map((stat) => (
+                <div class="c-hero__metric">
+                  <dt class="c-hero__metric-value">{stat.value}</dt>
+                  <dd class="c-hero__metric-label">{stat.label}</dd>
+                </div>
+              ))
+            }
+          </dl>
         </div>
       </div>
     </div>
@@ -232,26 +213,30 @@ siteContent.testimonials.forEach((testimonial, index) => {
       </div>
     </div>
     <div class="o-container">
-      <div class="c-about__content">
-        <div class="c-about__text">
-          <p class="c-about__description">{siteContent.about.description}</p>
-          <div class="c-about__highlights">
-            {
-              siteContent.about.highlights.map((highlight) => (
-                <div class="c-highlight" tabindex="0">
-                  <div class="c-highlight__header">
-                    <div class="c-highlight__icon" aria-hidden="true">
-                      <Icon name={highlight.icon} />
-                    </div>
-                    <h3 class="c-highlight__title">{highlight.title}</h3>
+      <div class="c-about__bento">
+        <div class="c-about__statement">
+          <span class="c-about__statement-tag" aria-hidden="true"
+            >how_i_work</span
+          >
+          <p class="c-about__statement-text">{siteContent.about.description}</p>
+        </div>
+        <div class="c-about__highlights">
+          {
+            siteContent.about.highlights.map((highlight) => (
+              <div class="c-highlight" tabindex="0">
+                <span class="c-highlight__index" aria-hidden="true" />
+                <div class="c-highlight__header">
+                  <div class="c-highlight__icon" aria-hidden="true">
+                    <Icon name={highlight.icon} />
                   </div>
-                  <div class="c-highlight__description">
-                    <p>{highlight.description}</p>
-                  </div>
+                  <h3 class="c-highlight__title">{highlight.title}</h3>
                 </div>
-              ))
-            }
-          </div>
+                <div class="c-highlight__description">
+                  <p>{highlight.description}</p>
+                </div>
+              </div>
+            ))
+          }
         </div>
       </div>
     </div>

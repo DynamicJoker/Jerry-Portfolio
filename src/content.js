@@ -25,6 +25,16 @@ export const siteContent = {
     availability: {
       status: 'Available Worldwide',
     },
+    // Hero headline: `accent` is rendered in the brand color inline between
+    // `pre` and `post`. Keep each part short — it wraps on small screens.
+    heroHeadline: {
+      pre: 'I turn ',
+      accent: 'deep tech',
+      post: ' into marketing that moves buyers.',
+    },
+    heroLede:
+      'Technical marketing for PC hardware, cybersecurity, cloud, and SaaS — translating what engineering builds into demand gen, positioning, and content that converts.',
+    heroFocus: 'B2B + B2C tech',
     heroStats: [
       {
         value: '50M+',

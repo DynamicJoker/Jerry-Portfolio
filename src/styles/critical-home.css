@@ -892,17 +892,18 @@ html.is-theme-transitioning *::after {
 }
 
 .c-hero__name {
-  /* Extend the background-clip:text paint box so the display font's descenders
-     aren't cropped; reclaimed from margin so the gap to the title is a constant
-     1rem at any size. Mirror of .c-hero__name in components/hero.css. */
+  /* Mirror of .c-hero__name in components/hero.css. The display font's
+     descenders are kept inside the background-clip:text paint box with em
+     bottom padding. */
+  margin: 0;
   padding-bottom: var(--hero-paint-pad);
-  margin-bottom: calc(var(--space-16) - var(--hero-paint-pad));
   font-family: var(--font-family-display);
-  font-size: var(--text-hero);
-  font-weight: var(--text-hero-weight);
-  line-height: var(--text-hero-line-height);
-  /* Fluid fill: white -> light-blue meniscus rises slowly with deeper blue behind ->
-     gentle slosh (swirl) -> settles blue->light-blue. */
+  font-size: clamp(1.5rem, 1rem + 2.2vw, 2.35rem);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1;
+  letter-spacing: var(--letter-spacing-tight);
+  /* Fluid gradient fill — the signature flourish: white settles to
+     blue -> light-blue. */
   color: transparent;
   background-image: linear-gradient(
     105deg,
@@ -1083,10 +1084,11 @@ html.is-theme-transitioning *::after {
 
 .c-hero__buttons {
   display: flex;
-  justify-content: center;
   flex-wrap: wrap;
+  justify-content: flex-start;
   gap: var(--space-16);
-  animation: fadeInUp 1s ease-out 1.2s both;
+  margin: 0;
+  animation: fadeInUp 1s ease-out 0.9s both;
 }
 
 .c-btn {
@@ -1453,27 +1455,6 @@ body.has-beta-banner .c-nav {
       var(--nav-toggle-mobile-max-width),
       var(--nav-toggle-fluid-width)
     );
-  }
-
-  .c-hero__buttons {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .c-hero__buttons .c-btn {
-    width: 100%;
-    max-width: min(100%, 18.75rem);
-  }
-
-  .c-hero__stats {
-    width: 100%;
-    max-width: 26rem;
-  }
-
-  .c-hero__stat {
-    flex: 1;
-    min-width: 0;
-    padding: 0 var(--space-12);
   }
 
   .c-beta-banner__content {
