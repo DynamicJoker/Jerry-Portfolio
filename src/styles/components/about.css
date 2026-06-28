@@ -1,171 +1,331 @@
-/* Component: about */
+/* Component: about — "Signal Pipeline" */
 
-/* About Section — a bento split: a large "how I work" statement tile beside a
-   grid of numbered, expandable capability tiles. */
+/* The second section literally diagrams the pitch: an Engineering -> Marketing
+   signal trace with the four capabilities as nodes on the line. The nodes are a
+   tablist (main.js initializePipeline); the active node's detail shows below. A
+   brand pulse travels the line, echoing the hero's signal motif. */
 
-.c-about__bento {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-24);
-  align-items: start;
-}
-
-@media (min-width: 64rem) {
-  .c-about__bento {
-    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
-    gap: var(--space-32);
-  }
-}
-
-.c-about__statement {
-  position: relative;
+.c-pipeline {
   display: flex;
   flex-direction: column;
-  gap: var(--space-16);
-  padding: clamp(var(--space-24), 4vw, var(--space-32));
-  border: 1px solid var(--color-hairline-strong);
-  border-radius: var(--radius-lg);
-  background: var(--color-surface-raised);
-  box-shadow: inset 3px 0 0 var(--color-electric-blue);
+  gap: clamp(2rem, 5vw, 3rem);
 }
 
-.c-about__statement-tag {
+.c-pipeline__caption {
+  margin: 0;
+  max-width: 62ch;
+  font-size: clamp(1.15rem, 0.95rem + 1vw, 1.5rem);
+  line-height: 1.55;
+  color: var(--color-text-secondary);
+}
+
+.c-pipeline__caption-tag {
+  display: block;
+  margin-bottom: var(--space-12);
   font-family: var(--font-family-mono);
   font-size: var(--font-size-xs);
   letter-spacing: 0.08em;
   color: var(--color-text-muted);
 }
 
-.c-about__statement-text {
-  margin: 0;
-  font-size: clamp(1.35rem, 0.9rem + 1.4vw, 1.85rem);
-  font-weight: var(--font-weight-medium);
-  line-height: 1.45;
-  color: var(--color-text);
+.c-pipeline__caption-tag::before {
+  content: '// ';
+  color: var(--color-primary);
 }
 
-.c-about__highlights {
-  counter-reset: highlight;
-  display: grid;
-  grid-template-columns: 1fr;
-  overflow: hidden;
-  border: 1px solid var(--color-hairline-strong);
-  border-radius: var(--radius-lg);
-}
-
-@media (min-width: 36rem) {
-  .c-about__highlights {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-.c-highlight {
-  position: relative;
+/* Track: [ENGINEERING] —— rail of nodes —— [MARKETING] */
+.c-pipeline__track {
   display: flex;
-  flex-direction: column;
-  padding: var(--space-20);
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  cursor: pointer;
-  transition:
-    background-color 0.25s ease,
-    color 0.25s ease;
-}
-
-/* Internal hairline rules turn the four cells into one engineered matrix
-   instead of four detached cards. */
-.c-highlight:not(:first-child) {
-  border-top: 1px solid var(--color-hairline);
-}
-
-@media (min-width: 36rem) {
-  .c-highlight:nth-child(2) {
-    border-top: 0;
-  }
-
-  .c-highlight:nth-child(even) {
-    border-left: 1px solid var(--color-hairline);
-  }
-}
-
-/* Accent bar on the active cell's leading edge. */
-.c-highlight::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 2px;
-  background: var(--color-electric-blue);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.25s ease;
-}
-
-.c-highlight:hover,
-.c-highlight:focus-visible {
-  background-color: var(--color-overlay-weak);
-}
-
-.c-highlight:hover::before,
-.c-highlight:focus-visible::before,
-.c-highlight.is-expanded::before {
-  transform: scaleX(1);
-}
-
-.c-highlight:focus-visible {
-  outline: var(--focus-outline);
-  outline-offset: -3px;
-}
-
-.c-highlight__index {
-  margin-bottom: var(--space-12);
-  font-family: var(--font-family-mono);
-  font-size: var(--font-size-sm);
-  letter-spacing: 0.06em;
-  color: var(--color-text-muted);
-}
-
-.c-highlight__index::before {
-  counter-increment: highlight;
-  content: counter(highlight, decimal-leading-zero);
-}
-
-.c-highlight__header {
-  display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--space-12);
 }
 
-.c-highlight__icon {
+.c-pipeline__terminus {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  height: 0.9rem;
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-text-muted);
+}
+
+.c-pipeline__terminus--in::after,
+.c-pipeline__terminus--out::before {
+  content: '\203A';
+  color: var(--color-primary);
+}
+
+.c-pipeline__terminus--in::after {
+  margin-left: var(--space-8);
+}
+
+.c-pipeline__terminus--out::before {
+  margin-right: var(--space-8);
+}
+
+.c-pipeline__rail {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* The signal trace: a hairline with a faint brand glow through the middle. */
+.c-pipeline__nodes {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-12);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* The trace: a hairline wire with a soft brand current drifting along it
+   (Engineering -> Marketing) — ambient throughput, not a racing dot. The moving
+   layer is soft glow bands; the static layer underneath is the wire itself. */
+.c-pipeline__nodes::before {
+  content: '';
+  position: absolute;
+  top: calc(0.45rem - 1px);
+  right: 0;
+  left: 0;
+  height: 2px;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(var(--color-primary-rgb), 0) 0,
+      rgba(var(--color-primary-rgb), 0.55) 10px,
+      rgba(var(--color-primary-rgb), 0) 20px
+    ),
+    linear-gradient(
+      90deg,
+      var(--color-hairline-strong),
+      rgba(var(--color-primary-rgb), 0.4),
+      var(--color-hairline-strong)
+    );
+  background-size:
+    20px 100%,
+    100% 100%;
+  animation: pipelineCurrentX 1.6s linear infinite;
+}
+
+@keyframes pipelineCurrentX {
+  to {
+    background-position:
+      20px 0,
+      0 0;
+  }
+}
+
+.c-pipeline__node-item {
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.c-pipeline__node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-8);
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-base);
+  background: transparent;
+  font-family: inherit;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+}
+
+.c-pipeline__node:focus-visible {
+  outline: var(--focus-outline);
+  outline-offset: 6px;
+}
+
+.c-pipeline__node-dot {
+  position: relative;
+  z-index: 1;
+  width: 0.9rem;
+  height: 0.9rem;
+  border: 2px solid var(--color-hairline-strong);
+  border-radius: 50%;
+  background: var(--color-background);
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.c-pipeline__node:hover .c-pipeline__node-dot,
+.c-pipeline__node:focus-visible .c-pipeline__node-dot {
+  border-color: var(--color-primary);
+}
+
+.c-pipeline__node.is-active .c-pipeline__node-dot {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  box-shadow: 0 0 0 4px rgba(var(--color-primary-rgb), 0.18);
+}
+
+.c-pipeline__node-index {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  transition: color 0.2s ease;
+}
+
+.c-pipeline__node.is-active .c-pipeline__node-index {
+  color: var(--color-primary);
+}
+
+.c-pipeline__node-icon {
   display: inline-flex;
   font-size: var(--font-size-icon-sm);
+  color: var(--color-text-secondary);
+  transition: color 0.2s ease;
+}
+
+.c-pipeline__node.is-active .c-pipeline__node-icon,
+.c-pipeline__node:hover .c-pipeline__node-icon {
   color: var(--color-electric-blue);
 }
 
-.c-highlight__title {
-  font-size: var(--text-card-title);
+.c-pipeline__node-title {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.25;
+  text-align: center;
+  color: var(--color-text);
+  transition: color 0.2s ease;
 }
 
-.c-highlight__description {
-  max-height: 0;
-  margin-top: 0;
-  overflow: hidden;
-  opacity: 0;
-  transition:
-    max-height 0.5s ease-out,
-    opacity 0.5s ease-out,
-    margin-top 0.5s ease-out;
+.c-pipeline__node.is-active .c-pipeline__node-title {
+  color: var(--color-text-strong);
 }
 
-.c-highlight.is-expanded {
-  cursor: default;
-  background-color: var(--color-overlay-weak);
+.c-pipeline__detail {
+  padding-top: var(--space-24);
+  border-top: 1px solid var(--color-hairline-strong);
 }
 
-.c-highlight.is-expanded .c-highlight__description {
-  max-height: 18rem;
-  margin-top: var(--space-12);
-  opacity: 1;
+.c-pipeline__detail-item {
+  animation: pipelineFade 0.3s ease both;
+}
+
+.c-pipeline__detail-item[hidden] {
+  display: none;
+}
+
+.c-pipeline__detail-item:focus-visible {
+  outline: var(--focus-outline);
+  outline-offset: 4px;
+}
+
+.c-pipeline__detail-text {
+  margin: 0;
+  max-width: 64ch;
+  font-size: var(--font-size-lg);
+  line-height: 1.7;
+  color: var(--color-text-secondary);
+}
+
+@keyframes pipelineFade {
+  from {
+    opacity: 0;
+    transform: translateY(0.4rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile: the pipeline stands up vertically — Engineering at the top, Marketing
+   at the bottom, nodes stacked along a vertical trace. */
+@media (max-width: 48rem) {
+  .c-pipeline__track {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-16);
+  }
+
+  .c-pipeline__terminus {
+    height: auto;
+    padding-left: calc(0.45rem + var(--space-16));
+  }
+
+  .c-pipeline__terminus--in::after,
+  .c-pipeline__terminus--out::before {
+    content: none;
+  }
+
+  .c-pipeline__nodes {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-20);
+  }
+
+  .c-pipeline__nodes::before {
+    top: 0;
+    right: auto;
+    bottom: 0;
+    left: calc(0.45rem - 1px);
+    width: 2px;
+    height: auto;
+    background:
+      repeating-linear-gradient(
+        180deg,
+        rgba(var(--color-primary-rgb), 0) 0,
+        rgba(var(--color-primary-rgb), 0.55) 10px,
+        rgba(var(--color-primary-rgb), 0) 20px
+      ),
+      linear-gradient(
+        180deg,
+        var(--color-hairline-strong),
+        rgba(var(--color-primary-rgb), 0.4),
+        var(--color-hairline-strong)
+      );
+    background-size:
+      100% 20px,
+      100% 100%;
+    animation: pipelineCurrentY 1.6s linear infinite;
+  }
+
+  .c-pipeline__node {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-16);
+  }
+
+  .c-pipeline__node-index {
+    display: none;
+  }
+
+  .c-pipeline__node-title {
+    text-align: left;
+  }
+}
+
+@keyframes pipelineCurrentY {
+  to {
+    background-position:
+      0 20px,
+      0 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c-pipeline__nodes::before {
+    animation: none;
+  }
+
+  .c-pipeline__detail-item {
+    animation: none;
+  }
 }

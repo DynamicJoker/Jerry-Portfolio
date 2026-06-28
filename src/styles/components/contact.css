@@ -43,9 +43,8 @@
 }
 
 .c-contact__item:hover {
-  background: var(--color-overlay-medium);
-  border-color: var(--color-electric-blue);
-  transform: translateX(0.3125rem);
+  border-color: var(--color-primary);
+  animation: btnSignalPulse 1.1s ease-out 1;
 }
 
 .c-contact__icon {

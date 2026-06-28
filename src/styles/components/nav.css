@@ -184,8 +184,13 @@ body[data-page='home'] .c-nav.is-brand-expanded .c-brand-logo__wordmark {
   display: none;
 }
 
-.c-nav__link:hover {
-  color: var(--color-text-strong);
+/* Hover/focus echoes the button "clickable" cue — accent + a single
+   signal-pulse ring. The underline glow stays reserved for the active link, so
+   the hover and selected states never read the same. */
+.c-nav__link:hover,
+.c-nav__link:focus-visible {
+  color: var(--color-accent);
+  animation: btnSignalPulse 1.1s ease-out 1;
 }
 
 .c-nav__toggle {

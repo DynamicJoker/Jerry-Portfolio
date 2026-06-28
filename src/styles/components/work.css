@@ -223,11 +223,10 @@
     transform var(--duration-normal) var(--ease-standard);
 }
 
-/* Echo the hero buttons: lift + a single signal-pulse ring on hover. */
+/* Echo the hero buttons: accent fill + a single signal-pulse ring on hover. */
 .c-featured__btn:hover {
   background: rgba(var(--color-primary-rgb), 0.12);
   border-color: var(--color-primary);
-  transform: translateY(-1px);
   animation: btnSignalPulse 1.1s ease-out 1;
 }
 
@@ -447,7 +446,8 @@
 }
 
 .c-archive__tab:hover {
-  border-color: var(--color-hairline-strong);
+  border-color: var(--color-primary);
+  animation: btnSignalPulse 1.1s ease-out 1;
 }
 
 .c-archive__tab.is-active {
@@ -502,11 +502,17 @@
     border-color var(--animation-speed) var(--animation-curve);
 }
 
-.c-archive__filter:hover,
 .c-archive__filter.is-active {
   background: var(--color-primary);
   color: var(--color-btn-primary-text);
   border-color: var(--color-primary);
+}
+
+/* Hover stays a tint + pulse so it never looks like the solid active state. */
+.c-archive__filter:hover:not(.is-active) {
+  border-color: var(--color-primary);
+  background: rgba(var(--color-primary-rgb), 0.12);
+  animation: btnSignalPulse 1.1s ease-out 1;
 }
 
 .c-archive__filter:focus-visible {

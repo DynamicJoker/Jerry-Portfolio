@@ -204,6 +204,7 @@
 .c-hero__status:focus-visible {
   border-color: var(--color-primary);
   color: var(--color-text);
+  animation: btnSignalPulse 1.1s ease-out 1;
 }
 
 .c-hero__status-dot {

@@ -213,27 +213,68 @@ siteContent.testimonials.forEach((testimonial, index) => {
       </div>
     </div>
     <div class="o-container">
-      <div class="c-about__bento">
-        <div class="c-about__statement">
-          <span class="c-about__statement-tag" aria-hidden="true"
+      <div class="c-pipeline" data-pipeline>
+        <p class="c-pipeline__caption">
+          <span class="c-pipeline__caption-tag" aria-hidden="true"
             >how_i_work</span
           >
-          <p class="c-about__statement-text">{siteContent.about.description}</p>
+          {siteContent.about.description}
+        </p>
+        <div class="c-pipeline__track">
+          <span class="c-pipeline__terminus c-pipeline__terminus--in"
+            >Engineering</span
+          >
+          <div class="c-pipeline__rail">
+            <ul class="c-pipeline__nodes" role="tablist" aria-label="What I do">
+              {
+                siteContent.about.highlights.map((highlight, i) => (
+                  <li class="c-pipeline__node-item" role="presentation">
+                    <button
+                      type="button"
+                      class:list={[
+                        'c-pipeline__node',
+                        { 'is-active': i === 0 },
+                      ]}
+                      role="tab"
+                      id={`pipe-tab-${i}`}
+                      aria-controls={`pipe-panel-${i}`}
+                      aria-selected={i === 0 ? 'true' : 'false'}
+                      tabindex={i === 0 ? 0 : -1}
+                      data-pipeline-node={i}
+                    >
+                      <span class="c-pipeline__node-dot" aria-hidden="true" />
+                      <span class="c-pipeline__node-index" aria-hidden="true">
+                        {String(i + 1).padStart(2, '0')}
+                      </span>
+                      <span class="c-pipeline__node-icon" aria-hidden="true">
+                        <Icon name={highlight.icon} />
+                      </span>
+                      <span class="c-pipeline__node-title">
+                        {highlight.title}
+                      </span>
+                    </button>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+          <span class="c-pipeline__terminus c-pipeline__terminus--out"
+            >Marketing</span
+          >
         </div>
-        <div class="c-about__highlights">
+        <div class="c-pipeline__detail">
           {
-            siteContent.about.highlights.map((highlight) => (
-              <div class="c-highlight" tabindex="0">
-                <span class="c-highlight__index" aria-hidden="true" />
-                <div class="c-highlight__header">
-                  <div class="c-highlight__icon" aria-hidden="true">
-                    <Icon name={highlight.icon} />
-                  </div>
-                  <h3 class="c-highlight__title">{highlight.title}</h3>
-                </div>
-                <div class="c-highlight__description">
-                  <p>{highlight.description}</p>
-                </div>
+            siteContent.about.highlights.map((highlight, i) => (
+              <div
+                class="c-pipeline__detail-item"
+                role="tabpanel"
+                id={`pipe-panel-${i}`}
+                aria-labelledby={`pipe-tab-${i}`}
+                tabindex="0"
+                hidden={i !== 0}
+                data-pipeline-panel={i}
+              >
+                <p class="c-pipeline__detail-text">{highlight.description}</p>
               </div>
             ))
           }

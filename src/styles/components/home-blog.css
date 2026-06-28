@@ -82,9 +82,8 @@
 }
 
 .c-home-blog__card:hover {
-  transform: translateY(-0.25rem);
-  border-color: rgba(var(--color-primary-rgb), 0.42);
-  box-shadow: var(--shadow-lg);
+  border-color: var(--color-primary);
+  animation: btnSignalPulse 1.1s ease-out 1;
 }
 
 .c-home-blog__card-meta {

@@ -15,7 +15,7 @@
 }
 
 .c-card:hover {
-  border-color: var(--color-hairline-strong);
+  border-color: var(--color-primary);
 }
 
 /* Skip link: visually hidden until keyboard focus lands on it */

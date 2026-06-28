@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
   updateYearsExperience();
   updateFooterYear();
   initializeLogoCarousel();
-  initializeExpandableHighlights();
+  initializePipeline();
 });
 
 function initializeContactInfo() {
@@ -1408,57 +1408,56 @@ function initializeLogoCarousel() {
   }, config.logoCarousel.interval);
 }
 
-function initializeExpandableHighlights() {
-  const container = document.querySelector('.c-about__highlights');
-  if (!container) return;
-  const items = container.querySelectorAll('.c-highlight');
+// Signal Pipeline (the About section): the capability nodes are an ARIA
+// tablist, each controlling a detail panel below. Selecting a node (click or
+// arrow/Home/End keys) activates its panel; roving tabindex keeps a single tab
+// stop, per the WAI-ARIA tabs pattern.
+function initializePipeline() {
+  const root = document.querySelector('[data-pipeline]');
+  if (!root) return;
+  const tabs = [...root.querySelectorAll('[data-pipeline-node]')];
+  const panels = [...root.querySelectorAll('[data-pipeline-panel]')];
+  if (!tabs.length || tabs.length !== panels.length) return;
 
-  items.forEach((item) => {
-    item.setAttribute('role', 'button');
-    item.setAttribute('aria-expanded', 'false');
-  });
-
-  const setExpanded = (item, isExpanded) => {
-    item.classList.toggle('is-expanded', isExpanded);
-    item.setAttribute('aria-expanded', String(isExpanded));
+  const activate = (index, { focus = true } = {}) => {
+    const i = (index + tabs.length) % tabs.length;
+    tabs.forEach((tab, n) => {
+      const on = n === i;
+      tab.classList.toggle('is-active', on);
+      tab.setAttribute('aria-selected', String(on));
+      tab.tabIndex = on ? 0 : -1;
+    });
+    panels.forEach((panel, n) => {
+      panel.hidden = n !== i;
+    });
+    if (focus) tabs[i].focus();
   };
 
-  const handleInteraction = (event) => {
-    const highlightItem = event.target.closest('.c-highlight');
-    if (!highlightItem) return;
-
-    if (event.type === 'keydown' && !['Enter', ' '].includes(event.key)) {
-      return;
-    }
-
-    event.preventDefault();
-
-    const currentlyExpanded = container.querySelector('.is-expanded');
-
-    if (currentlyExpanded && currentlyExpanded !== highlightItem) {
-      setExpanded(currentlyExpanded, false);
-    }
-
-    setExpanded(
-      highlightItem,
-      !highlightItem.classList.contains('is-expanded'),
-    );
-  };
-
-  container.addEventListener('click', handleInteraction);
-  container.addEventListener('keydown', handleInteraction);
-
-  // Clicking outside the component collapses any open item.
-  document.addEventListener('click', (event) => {
-    // The container's own listener handles inside clicks.
-    if (container.contains(event.target)) {
-      return;
-    }
-
-    const currentlyExpanded = container.querySelector('.is-expanded');
-    if (currentlyExpanded) {
-      setExpanded(currentlyExpanded, false);
-    }
+  tabs.forEach((tab, i) => {
+    tab.addEventListener('click', () => activate(i, { focus: false }));
+    tab.addEventListener('keydown', (event) => {
+      let next;
+      switch (event.key) {
+        case 'ArrowRight':
+        case 'ArrowDown':
+          next = i + 1;
+          break;
+        case 'ArrowLeft':
+        case 'ArrowUp':
+          next = i - 1;
+          break;
+        case 'Home':
+          next = 0;
+          break;
+        case 'End':
+          next = tabs.length - 1;
+          break;
+        default:
+          return;
+      }
+      event.preventDefault();
+      activate(next);
+    });
   });
 }
 
