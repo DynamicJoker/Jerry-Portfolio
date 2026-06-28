@@ -86,3 +86,9 @@
 .c-contact__content {
   transition: gap 0.4s ease-in-out;
 }
+
+@media (max-width: 48rem) {
+  .c-skills-grid {
+    grid-template-columns: 1fr;
+  }
+}

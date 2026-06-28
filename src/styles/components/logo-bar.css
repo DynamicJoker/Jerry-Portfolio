@@ -107,3 +107,19 @@
 .c-logo-bar__item:hover::after {
   opacity: 1;
 }
+
+@media (max-width: 48rem) {
+  .c-logo-bar__bar {
+    flex-direction: column;
+    gap: var(--space-32);
+  }
+
+  .c-logo-bar__label {
+    font-size: var(--font-size-base);
+  }
+
+  .c-logo-bar__set {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}

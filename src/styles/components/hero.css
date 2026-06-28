@@ -215,7 +215,7 @@
   margin: 0;
   padding-bottom: var(--hero-paint-pad);
   font-family: var(--font-family-display);
-  font-size: clamp(1.5rem, 1rem + 2.2vw, 2.35rem);
+  font-size: var(--text-hero-name);
   font-weight: var(--font-weight-semibold);
   line-height: 1;
   letter-spacing: var(--letter-spacing-tight);
@@ -278,7 +278,7 @@
   margin: 0;
   max-width: 18ch;
   font-family: var(--font-family-display);
-  font-size: clamp(2rem, 1.1rem + 4vw, 3.5rem);
+  font-size: var(--text-hero-headline);
   font-weight: var(--font-weight-semibold);
   line-height: 1.04;
   letter-spacing: var(--letter-spacing-tight);
@@ -441,7 +441,7 @@
 
 .c-hero__metric-value {
   font-family: var(--font-family-display);
-  font-size: clamp(1.4rem, 1rem + 1.6vw, 2rem);
+  font-size: var(--text-hero-metric);
   font-weight: var(--font-weight-bold);
   line-height: 1;
   color: var(--color-text-strong);
@@ -481,13 +481,19 @@
   }
 }
 
-@media (max-width: 40rem) {
+/* Below tablet, the two CTAs stack full-width (capped) instead of sitting side
+   by side. (Consolidated here from nav.css's old 48rem block, which previously
+   competed with a 40rem rule in this file.) */
+@media (max-width: 48rem) {
   .c-hero__buttons {
+    flex-direction: column;
+    align-items: center;
     width: 100%;
   }
 
   .c-hero__buttons .c-btn {
-    flex: 1 1 13rem;
+    width: 100%;
+    max-width: min(100%, 18.75rem);
   }
 }
 

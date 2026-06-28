@@ -122,3 +122,9 @@
   color: var(--color-text-secondary);
   line-height: 1.65;
 }
+
+@media (max-width: 48rem) {
+  .c-home-blog__feature {
+    grid-template-columns: 1fr;
+  }
+}

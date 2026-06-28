@@ -52,13 +52,13 @@
 
   /* Heading role tokens — one edit point per heading role. The hero tokens
      are mirrored in src/styles/critical-home.css; keep them byte-identical. */
-  --text-hero: clamp(2.65rem, 8vw, 6rem);
+  --text-hero-name: clamp(1.5rem, 1rem + 2.2vw, 2.35rem);
+  --text-hero-headline: clamp(2rem, 1.1rem + 4vw, 3.5rem);
+  --text-hero-metric: clamp(1.4rem, 1rem + 1.6vw, 2rem);
   --text-hero-weight: 460;
-  --text-hero-line-height: 0.98;
   /* Bottom padding (em) that keeps the gradient paint box tall enough to
      contain the display font's descenders. See .c-hero__name. */
   --hero-paint-pad: 0.2em;
-  --text-hero-sub: clamp(1.35rem, 4vw, 2.5rem);
   --text-section-title: clamp(1.9rem, 4vw, 2.75rem);
   --text-kicker: var(--font-size-sm);
   --text-kicker-tracking: 0.14em;

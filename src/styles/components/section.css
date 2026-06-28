@@ -190,29 +190,6 @@ section[id] {
     padding-block-end: var(--space-24);
   }
 
-  .c-hero__stats {
-    gap: var(--space-8) 0;
-  }
-
-  .c-highlight {
-    flex: 1 1 100%;
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .c-hero__stat {
-    padding: 0 var(--space-8);
-  }
-
-  .c-hero__stat-value {
-    font-size: 1.25rem;
-  }
-
-  .c-hero__stat-label {
-    font-size: var(--font-size-xs);
-    overflow-wrap: anywhere;
-  }
-
   .c-booking-cta__bar,
   .c-calendly-panel__inner {
     padding: var(--space-16);
@@ -244,8 +221,6 @@ section[id] {
   }
 
   .c-hero__name,
-  .c-hero__subtitle,
-  .c-hero__stat,
   .c-hero__buttons,
   .c-scroll-indicator,
   .c-loading-screen__dot,

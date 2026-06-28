@@ -135,3 +135,14 @@
   border-left: 3px solid var(--color-electric-blue);
   padding-left: var(--space-16);
 }
+
+/* Below tablet, the scroller shrinks and only the first column shows. */
+@media (max-width: 48rem) {
+  .c-testimonials-scroller {
+    height: clamp(24rem, 68dvh, 31.25rem);
+  }
+
+  .c-testimonials-scroller__column:nth-child(n + 2) {
+    display: none;
+  }
+}

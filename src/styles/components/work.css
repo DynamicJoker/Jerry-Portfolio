@@ -382,6 +382,10 @@
   .c-spotlight__body {
     padding: 0 var(--space-20) var(--space-20);
   }
+
+  .c-work-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Archive tier: full body of work (industry filter + category accordion) */

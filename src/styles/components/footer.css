@@ -31,3 +31,11 @@
 .c-footer__link:hover {
   color: var(--color-electric-blue);
 }
+
+@media (max-width: 48rem) {
+  .c-footer__content {
+    flex-direction: column;
+    gap: var(--space-16);
+    text-align: center;
+  }
+}

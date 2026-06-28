@@ -167,3 +167,34 @@
   width: 100%;
   height: 100%;
 }
+
+/* Below tablet, the CTA bar and scheduler panel header stack vertically. */
+@media (max-width: 48rem) {
+  .c-booking-cta__bar {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+
+  .c-booking-cta__message {
+    justify-content: center;
+  }
+
+  .c-booking-cta__button {
+    width: 100%;
+  }
+
+  .c-calendly-panel__header {
+    flex-direction: column;
+  }
+
+  .c-calendly-panel__inner {
+    padding: var(--space-20);
+  }
+
+  .c-calendly-panel__host {
+    min-width: 0;
+    height: clamp(22rem, 68dvh, 32rem);
+    min-height: min(24rem, 68dvh);
+  }
+}
