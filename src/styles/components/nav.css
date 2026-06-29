@@ -367,6 +367,16 @@ html.is-theme-transitioning *::after {
   transform: scale(0.6) rotate(-45deg);
 }
 
+/* While the viewport is actively resizing, suppress the mobile sheet's
+   transition. Crossing the hamburger breakpoint from a wider layout otherwise
+   animates the menu's opacity down from its always-visible desktop state to
+   the closed sheet's 0 — a brief flash of the open menu. JS toggles
+   `is-resizing` for the duration of a resize gesture (see initializeNavigation
+   in main.js and the SiteNav inline nav script). */
+.c-nav.is-resizing .c-nav__menu {
+  transition: none;
+}
+
 @media (max-width: 64rem) {
   .c-nav__actions {
     flex: 1 1 auto;

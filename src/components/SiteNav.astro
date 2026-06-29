@@ -272,6 +272,25 @@ const currentLabel = links.find((link) => link.id === current)?.label ?? 'Home';
       }
     });
 
+    // Flag the navbar while the viewport is actively resizing so the mobile
+    // sheet's transition is suppressed (see `.c-nav.is-resizing` in the nav
+    // styles). Without this, dragging across the hamburger breakpoint flashes
+    // the menu fading out from its always-visible desktop state.
+    if (navbar) {
+      let navResizeSettle;
+      window.addEventListener(
+        'resize',
+        () => {
+          navbar.classList.add('is-resizing');
+          window.clearTimeout(navResizeSettle);
+          navResizeSettle = window.setTimeout(() => {
+            navbar.classList.remove('is-resizing');
+          }, 150);
+        },
+        { passive: true },
+      );
+    }
+
     const updateScrolled = () =>
       navbar?.classList.toggle('is-scrolled', window.scrollY > 10);
     updateScrolled();
