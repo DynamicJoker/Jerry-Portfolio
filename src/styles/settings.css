@@ -17,12 +17,9 @@
   --color-accent-hover: #255a7d;
   --color-accent-rgb: 47, 110, 150;
   --color-secondary: rgba(26, 26, 46, 0.06);
-  --color-secondary-hover: rgba(26, 26, 46, 0.1);
-  --color-secondary-active: rgba(26, 26, 46, 0.14);
   --color-border-strong: rgba(26, 26, 46, 0.45);
   --color-btn-primary-text: #ffffff;
   --color-error: rgba(192, 21, 47, 1);
-  --color-focus-ring: rgba(var(--color-primary-rgb), 0.4);
   --color-focus-visible: var(--color-primary);
 
   /* Typography */
@@ -156,7 +153,9 @@
   --color-text-strong: #11111f;
 
   /* Theme-dependent surfaces, overlays, and effects. Light values live here;
-     dark twins live in BOTH dark blocks below (media + attribute). */
+     the dark twins live in the two dark blocks below (the @media no-JS
+     fallback and the [data-color-scheme] block), kept identical by
+     scripts/check-theme-sync.mjs. */
   --color-overlay-faint: rgba(26, 26, 46, 0.02);
   --color-overlay-weak: rgba(26, 26, 46, 0.04);
   --color-overlay-medium: rgba(26, 26, 46, 0.07);
@@ -215,12 +214,95 @@
 
   /* Icon sizes */
   --font-size-icon-sm: 1.5rem;
-  --font-size-icon-md: 1.75rem;
   --font-size-icon-lg: 2.5rem;
 
   /* Gantt chart layout split */
   --gantt-label-width: 30%;
   --gantt-bar-width: 70%;
+}
+
+/* Dark mode is applied two ways and the two blocks must stay byte-identical:
+   the @media block is the no-JS fallback (honours the OS setting when the
+   pre-paint script hasn't run), and the [data-color-scheme='dark'] block is
+   what that script toggles. scripts/check-theme-sync.mjs fails the build if a
+   token's value differs between them. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-color-scheme='light']) {
+    --color-background: var(--color-dark-primary);
+    --color-surface: var(--color-dark-secondary);
+    --color-primary: #57b9ff;
+    --color-primary-hover: #90d5ff;
+    --color-primary-active: #77b1d4;
+    --color-primary-rgb: 87, 185, 255;
+    --color-accent: #90d5ff;
+    --color-accent-hover: #b4e2ff;
+    --color-accent-rgb: 144, 213, 255;
+    --color-text: rgba(232, 232, 234, 1);
+    --color-text-secondary: rgba(154, 154, 165, 1);
+    --color-text-muted: rgba(174, 176, 186, 1);
+    --color-secondary: rgba(154, 154, 165, 0.12);
+    --color-border-strong: var(--color-hairline-strong);
+    --color-error: rgba(255, 84, 89, 1);
+    --color-focus-visible: var(--color-primary-hover);
+    --color-btn-primary-text: #0f1117;
+    --color-surface-raised: #232633;
+    --color-hairline: rgba(229, 231, 238, 0.08);
+    --color-hairline-strong: rgba(229, 231, 238, 0.16);
+    --color-text-strong: rgba(245, 245, 245, 1);
+    --color-overlay-faint: rgba(255, 255, 255, 0.02);
+    --color-overlay-weak: rgba(255, 255, 255, 0.04);
+    --color-overlay-medium: rgba(255, 255, 255, 0.08);
+    --color-overlay-strong: rgba(255, 255, 255, 0.1);
+    --color-chip-border: rgba(245, 245, 245, 0.24);
+    --color-dot-muted: rgba(255, 255, 255, 0.35);
+    --color-navbar-scrolled-bg: rgba(15, 17, 23, 0.92);
+    --shadow-navbar-scrolled: 0 8px 28px rgba(0, 0, 0, 0.32);
+    --shadow-sheet: 0 1rem 2rem rgba(0, 0, 0, 0.4);
+    --shadow-banner: 0 1px 0 rgba(0, 0, 0, 0.4);
+    --shadow-banner-expanded: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.32);
+    --color-control-bg-start: rgba(13, 15, 18, 0.76);
+    --color-control-bg-end: rgba(13, 15, 18, 0.6);
+    --color-control-border: rgba(245, 245, 245, 0.34);
+    --color-control-glyph: rgba(245, 245, 245, 0.86);
+    --color-tooltip-bg: rgba(26, 29, 41, 0.95);
+    --color-tooltip-bg-inline: rgba(26, 29, 41, 0.75);
+    --color-card-translucent: rgba(18, 22, 28, 0.78);
+    --color-embed-bg: rgba(10, 10, 10, 0.6);
+    --color-inset-bg: rgba(10, 10, 10, 0.28);
+    --color-btn-neutral: rgba(62, 68, 72, 0.98);
+    --color-btn-neutral-hover: rgba(72, 79, 84, 0.98);
+    --color-btn-neutral-active: rgba(54, 59, 63, 0.98);
+    --color-on-fill: #0f1117;
+    --shell-tint-violet: rgba(143, 92, 255, 0.12);
+    --loading-screen-bg: linear-gradient(135deg, #0f1117 0%, #1a1d29 100%);
+    --hero-vignette: radial-gradient(
+      ellipse at 50% 40%,
+      rgba(15, 17, 23, 0) 45%,
+      rgba(15, 17, 23, 0.6) 100%
+    );
+    --hero-bloom-blend: screen;
+    --hero-bloom-opacity: 0.5;
+    --hero-bloom-1: radial-gradient(
+      circle,
+      rgba(87, 185, 255, 0.7),
+      rgba(87, 185, 255, 0) 65%
+    );
+    --hero-bloom-2: radial-gradient(
+      circle,
+      rgba(144, 213, 255, 0.5),
+      rgba(144, 213, 255, 0) 65%
+    );
+    --hero-bloom-3: radial-gradient(
+      circle,
+      rgba(81, 120, 145, 0.65),
+      rgba(81, 120, 145, 0) 65%
+    );
+    --hero-name-rest: #fff;
+  }
+
+  :root:not([data-color-scheme='light']) select.c-form-control {
+    background-image: var(--select-caret-dark);
+  }
 }
 
 [data-color-scheme='dark'] {
@@ -238,11 +320,8 @@
   /* AA contrast: must stay >=4.5:1 on raised chip backgrounds (.c-tag) */
   --color-text-muted: rgba(174, 176, 186, 1);
   --color-secondary: rgba(154, 154, 165, 0.12);
-  --color-secondary-hover: rgba(154, 154, 165, 0.2);
-  --color-secondary-active: rgba(154, 154, 165, 0.26);
   --color-border-strong: var(--color-hairline-strong);
   --color-error: rgba(255, 84, 89, 1);
-  --color-focus-ring: rgba(var(--color-primary-rgb), 0.4);
   --color-focus-visible: var(--color-primary-hover);
   --color-btn-primary-text: #0f1117;
   --color-surface-raised: #232633;

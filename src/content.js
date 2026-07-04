@@ -55,7 +55,7 @@ export const siteContent = {
       url: 'https://calendly.com/jerryjames-cal/discover',
       expandedTitle: 'Choose a time for a discovery call',
       helperText:
-        'Pick a slot that works for you. The scheduler stays here so you can keep the portfolio in view.',
+        'Pick a slot that works for you. Everything happens right here — no redirects, no leaving the page.',
       loadingText: 'Loading available times...',
       closeLabel: 'Close scheduler',
       bookedText: 'You are booked. Thanks, I will see you on the call.',

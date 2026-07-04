@@ -130,9 +130,6 @@
 
 /* Spotlight tier: flagship campaigns (rich, screengrab + story) */
 
-/* Featured: rotating carousel of flagship spotlights. Only the active slide is
-   shown (others carry [hidden]); auto-rotation + a11y live region live in JS. */
-
 .c-featured {
   margin-bottom: var(--space-32);
 }
@@ -234,16 +231,6 @@
   outline: var(--focus-outline);
   outline-offset: 3px;
   box-shadow: 0 0 0 5px rgba(var(--color-primary-rgb), 0.18);
-}
-
-.c-featured__icon {
-  display: inline-flex;
-}
-
-/* The play/pause button swaps icons by toggling [hidden]; the inline-flex above
-   would otherwise beat the UA [hidden] rule and show both icons at once. */
-.c-featured__icon[hidden] {
-  display: none;
 }
 
 .c-featured__dots {
@@ -381,10 +368,6 @@
 
   .c-spotlight__body {
     padding: 0 var(--space-20) var(--space-20);
-  }
-
-  .c-work-grid {
-    grid-template-columns: 1fr;
   }
 }
 

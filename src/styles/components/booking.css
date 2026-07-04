@@ -140,12 +140,101 @@
   font-weight: var(--font-weight-medium);
 }
 
+/* Stage: loading indicator and the Calendly host occupy the same grid cell
+   (stacked, not stacked-and-hidden) so the swap between them is a crossfade
+   in place rather than a layout jump. */
+.c-calendly-panel__stage {
+  display: grid;
+}
+
+.c-calendly-panel__stage > * {
+  grid-area: 1 / 1;
+}
+
 .c-calendly-panel__loading {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: var(--space-10);
   min-height: 5rem;
-  color: var(--color-text-secondary);
+  border-radius: var(--radius-base);
+  background: var(--color-embed-bg);
+  opacity: 1;
+  transition: opacity var(--duration-normal) var(--ease-standard);
+}
+
+.c-calendly-panel.is-loaded .c-calendly-panel__loading {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Echoes the "Open to freelance" availability dot above it in the same
+   booking block (same signal-blue color, same ring technique) but pulses
+   noticeably faster — an ambient status dot and an "actively working"
+   loading dot need different paces to read correctly. 1.4s matches the
+   full-page loading screen's dot bounce (loading-screen.css). */
+.c-calendly-panel__loading-dot {
+  position: relative;
+  width: 0.5rem;
+  height: 0.5rem;
+  flex: 0 0 0.5rem;
+  border-radius: 50%;
+  background: var(--color-primary);
+  box-shadow: 0 0 8px rgba(var(--color-primary-rgb), 0.5);
+  animation: calendlyLoadingDotCore 1.4s ease-in-out infinite;
+}
+
+.c-calendly-panel__loading-dot::after {
+  content: '';
+  position: absolute;
+  inset: -0.375rem;
+  border-radius: inherit;
+  border: 1px solid rgba(var(--color-primary-rgb), 0.32);
+  animation: calendlyLoadingDotRing 1.4s ease-out infinite;
+}
+
+@keyframes calendlyLoadingDotCore {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.3);
+    opacity: 0.7;
+  }
+}
+
+@keyframes calendlyLoadingDotRing {
+  0% {
+    opacity: 0.6;
+    transform: scale(0.6);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.8);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c-calendly-panel__loading-dot,
+  .c-calendly-panel__loading-dot::after {
+    animation: none;
+  }
+}
+
+.c-calendly-panel__loading-label {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+}
+
+.c-calendly-panel__loading-label::before {
+  content: '// ';
+  color: var(--color-primary);
 }
 
 .c-calendly-panel__host {
@@ -156,7 +245,7 @@
   opacity: 0;
   border-radius: var(--radius-base);
   background: var(--color-embed-bg);
-  transition: opacity 0.35s ease;
+  transition: opacity var(--duration-normal) var(--ease-standard);
 }
 
 .c-calendly-panel.is-loaded .c-calendly-panel__host {

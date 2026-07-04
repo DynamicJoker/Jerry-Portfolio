@@ -2,10 +2,6 @@
 /* Above-the-fold rules that also exist in critical-home.css must be
    changed in both places. */
 
-.u-block {
-  display: block;
-}
-
 .u-hidden {
   display: none;
 }

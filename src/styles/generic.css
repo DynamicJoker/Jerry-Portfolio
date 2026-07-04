@@ -26,6 +26,21 @@ body {
   box-sizing: inherit;
 }
 
+/* Contain horizontal overflow site-wide. `clip` is used over `hidden` so it
+   doesn't create a scroll container that would break position: sticky; the
+   @supports fallback covers browsers without `clip`. */
+html,
+body {
+  overflow-x: clip;
+}
+
+@supports not (overflow-x: clip) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
+}
+
 /* --- TYPOGRAPHY --- */
 
 h1,

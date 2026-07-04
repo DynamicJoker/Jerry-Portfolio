@@ -857,10 +857,16 @@ siteContent.testimonials.forEach((testimonial, index) => {
             <div class="c-calendly-panel__booked" data-calendly-booked hidden>
               {profile.bookingCta.bookedText}
             </div>
-            <div class="c-calendly-panel__loading" data-calendly-loading>
-              {profile.bookingCta.loadingText}
+            <div class="c-calendly-panel__stage">
+              <div class="c-calendly-panel__loading" data-calendly-loading>
+                <span class="c-calendly-panel__loading-dot" aria-hidden="true"
+                ></span>
+                <span class="c-calendly-panel__loading-label">
+                  {profile.bookingCta.loadingText}
+                </span>
+              </div>
+              <div class="c-calendly-panel__host" data-calendly-container></div>
             </div>
-            <div class="c-calendly-panel__host" data-calendly-container></div>
           </div>
         </div>
       </div>

@@ -56,12 +56,15 @@ Personal portfolio + blog, deployed on Vercel at https://www.jerryjames.me.
   changes with `npm run build` then `npm run preview` (restart preview after
   each build).
 - `npm run build` gates on `prettier --check`, `eslint .`, then the
-  `check:critical` and `check:bemit` scripts before building — format with
-  `npm run format` and lint with `npm run lint` first. The pre-commit hook
-  enforces format + lint only; the `check:*` gates run on build/CI (run them
-  standalone with `npm run check:bemit` / `check:critical`). ESLint flat config
-  is `eslint.config.mjs` (browser globals for `src/`, node globals for
-  build-time code).
+  `check:critical`, `check:bemit`, and `check:theme` scripts before building —
+  format with `npm run format` and lint with `npm run lint` first. The
+  pre-commit hook enforces format + lint only; the `check:*` gates run on
+  build/CI (run them standalone with `npm run check:bemit` / `check:critical` /
+  `check:theme`). `check:theme` (`scripts/check-theme-sync.mjs`) asserts the two
+  dark-theme blocks in `settings.css` — the `@media (prefers-color-scheme: dark)`
+  no-JS fallback and the `[data-color-scheme='dark']` block — stay token-for-token
+  identical. ESLint flat config is `eslint.config.mjs` (browser globals for
+  `src/`, node globals for build-time code).
 - Do NOT commit or push automatically; the user commits manually.
 
 ## Gotchas

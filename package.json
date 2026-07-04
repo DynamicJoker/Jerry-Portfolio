@@ -5,11 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "node scripts/run-astro.mjs dev",
-    "build": "prettier --check . && eslint . && node scripts/check-critical-sync.mjs && node scripts/check-bemit.mjs && node scripts/run-astro.mjs build",
+    "build": "prettier --check . && eslint . && node scripts/check-critical-sync.mjs && node scripts/check-bemit.mjs && node scripts/check-theme-sync.mjs && node scripts/run-astro.mjs build",
     "preview": "node scripts/run-astro.mjs preview",
     "check:static": "node scripts/run-astro.mjs build",
     "check:critical": "node scripts/check-critical-sync.mjs",
     "check:bemit": "node scripts/check-bemit.mjs",
+    "check:theme": "node scripts/check-theme-sync.mjs",
     "check:seo": "node scripts/check-seo.mjs",
     "test": "node --test \"scripts/**/*.test.mjs\"",
     "format": "prettier --write .",

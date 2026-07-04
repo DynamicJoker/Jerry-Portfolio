@@ -2,22 +2,6 @@
 /* Above-the-fold rules that also exist in critical-home.css must be
    changed in both places. */
 
-/* --- CARD COMPONENTS --- */
-
-.c-card {
-  background: var(--color-surface-raised);
-  border: 1px solid var(--color-hairline);
-  border-radius: var(--radius-lg);
-  transition:
-    transform 0.25s ease,
-    border-color 0.25s ease,
-    box-shadow 0.25s ease;
-}
-
-.c-card:hover {
-  border-color: var(--color-primary);
-}
-
 /* Skip link: visually hidden until keyboard focus lands on it */
 
 .c-skip-link {

@@ -21,6 +21,12 @@ const config = {
   logoCarousel: {
     interval: 3000, // milliseconds
   },
+  calendly: {
+    // Safety net: if Calendly never posts a "ready" message (blocked, or the
+    // event name changes upstream), reveal the widget anyway rather than
+    // leaving our loading state stuck forever.
+    readyTimeoutMs: 6000,
+  },
   contactUI: {
     eyeOffSvg: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`,
     dummyPlaceholderText: '••••••••@••••••••.•••',
@@ -1155,12 +1161,21 @@ function initializeCalendlyBookingPanel() {
 
   let isOpen = false;
   let hasInitializedCalendly = false;
-  let iframeObserver = null;
+  let readyFallbackId = null;
   const openLabel =
     cta.buttonLabel ||
     trigger.getAttribute('aria-label') ||
     'Schedule a Discovery Call';
   const closeLabel = cta.closeLabel || 'Close scheduler';
+  // Events Calendly posts once the inline widget has actually painted a
+  // calendar (as opposed to the iframe element merely existing, which can
+  // still be showing Calendly's own blank/spinner state for a beat on a slow
+  // connection — exactly the "stuck with their default" moment our own
+  // themed loading indicator is meant to cover).
+  const CALENDLY_READY_EVENTS = new Set([
+    'calendly.event_type_viewed',
+    'calendly.profile_page_viewed',
+  ]);
 
   const updateTriggerState = (open) => {
     trigger.setAttribute('aria-expanded', String(open));
@@ -1169,15 +1184,13 @@ function initializeCalendlyBookingPanel() {
   };
 
   const setLoaded = (loaded) => {
+    window.clearTimeout(readyFallbackId);
+    readyFallbackId = null;
     panel.classList.toggle('is-loaded', loaded);
-    loading.hidden = loaded;
+    loading.setAttribute('aria-hidden', String(loaded));
   };
 
   const clearCalendlyEmbed = () => {
-    if (iframeObserver) {
-      iframeObserver.disconnect();
-      iframeObserver = null;
-    }
     container.innerHTML = '';
     setLoaded(false);
     hasInitializedCalendly = false;
@@ -1187,15 +1200,10 @@ function initializeCalendlyBookingPanel() {
     if (hasInitializedCalendly) return;
     hasInitializedCalendly = true;
     setLoaded(false);
-
-    iframeObserver = new MutationObserver(() => {
-      if (container.querySelector('iframe')) {
-        setLoaded(true);
-        iframeObserver.disconnect();
-        iframeObserver = null;
-      }
-    });
-    iframeObserver.observe(container, { childList: true, subtree: true });
+    readyFallbackId = window.setTimeout(
+      () => setLoaded(true),
+      config.calendly.readyTimeoutMs,
+    );
 
     try {
       const Calendly = await loadCalendlyScript();
@@ -1205,11 +1213,7 @@ function initializeCalendlyBookingPanel() {
       });
     } catch (error) {
       hasInitializedCalendly = false;
-      if (iframeObserver) {
-        iframeObserver.disconnect();
-        iframeObserver = null;
-      }
-      loading.hidden = false;
+      setLoaded(false);
       console.error('Calendly failed to load:', error);
     }
   };
@@ -1278,6 +1282,9 @@ function initializeCalendlyBookingPanel() {
   window.addEventListener('message', (event) => {
     if (event.origin !== 'https://calendly.com') return;
     if (!event.data?.event?.startsWith?.('calendly.')) return;
+    if (CALENDLY_READY_EVENTS.has(event.data.event)) {
+      setLoaded(true);
+    }
     if (event.data.event === 'calendly.event_scheduled') {
       bookedMessage.hidden = false;
       panel.classList.add('is-booked');

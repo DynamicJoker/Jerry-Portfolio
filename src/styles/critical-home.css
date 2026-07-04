@@ -13,7 +13,6 @@
   --color-accent-rgb: 47, 110, 150;
   --color-border-strong: rgba(26, 26, 46, 0.45);
   --color-btn-primary-text: #ffffff;
-  --color-focus-ring: rgba(var(--color-primary-rgb), 0.4);
   --color-focus-visible: var(--color-primary);
   --font-family-base:
     'Krub', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -133,7 +132,6 @@
     --color-accent-hover: #b4e2ff;
     --color-accent-rgb: 144, 213, 255;
     --color-border-strong: var(--color-hairline-strong);
-    --color-focus-ring: rgba(var(--color-primary-rgb), 0.4);
     --color-focus-visible: var(--color-primary-hover);
     --color-btn-primary-text: #0f1117;
     --color-surface-raised: #232633;
@@ -189,7 +187,6 @@
   /* AA contrast: must stay >=4.5:1 on raised chip backgrounds (.c-tag) */
   --color-text-muted: rgba(174, 176, 186, 1);
   --color-border-strong: var(--color-hairline-strong);
-  --color-focus-ring: rgba(var(--color-primary-rgb), 0.4);
   --color-focus-visible: var(--color-primary-hover);
   --color-btn-primary-text: #0f1117;
   --color-surface-raised: #232633;
