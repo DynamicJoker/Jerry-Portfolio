@@ -1,5 +1,5 @@
 import { getCollection } from 'astro:content';
-import { siteContent } from '../content.js';
+import { siteContent, skillKeywords } from '../content.js';
 
 function stripHtml(value = '') {
   return String(value).replace(/<[^>]+>/g, '');
@@ -7,7 +7,7 @@ function stripHtml(value = '') {
 
 export async function GET() {
   const profile = siteContent.profile;
-  const skills = siteContent.skills.flatMap((skill) => skill.tags).join(', ');
+  const skills = skillKeywords.join(', ');
   const services = siteContent.services.map((service) => `- ${service.title}: ${service.description}`).join('\n');
   const experience = siteContent.experience
     .slice()

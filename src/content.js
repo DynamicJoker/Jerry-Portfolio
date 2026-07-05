@@ -484,46 +484,79 @@ export const siteContent = {
   // Full body of work — ~225 pieces, generated in work-data.js from the map.
   workArchive,
 
-  // Skills data
-  skills: [
-    {
-      category: 'Technical Marketing',
-      tags: [
-        'Product Positioning',
-        'Go-to-Market Strategy',
-        'Competitive Analysis',
-        'Product Messaging',
-        'Core Benefit Analysis',
-        'Technical Narrative Development',
-        'Market Research',
+  // Skills & Expertise — rendered as a bento in HomeBody: a feature cell (the
+  // thesis, the Engineering->Marketing "distiller" graphic, and real
+  // aggregate stats) alongside three discipline cards and the tool stack.
+  // `feature.thesis` is a segment list so the emphasised words can be coloured
+  // to match the distiller's end labels. `slug` values are the mono
+  // `// category` labels. Keyword consumers (llms.txt, knowsAbout schema)
+  // flatten disciplines[].skills + tools.items — see skillKeywords below.
+  skills: {
+    feature: {
+      tag: 'what_i_do',
+      thesis: [
+        { text: 'I turn what ' },
+        { text: 'engineering', emphasis: true },
+        { text: ' builds into what the ' },
+        { text: 'market', emphasis: true },
+        { text: ' buys.' },
       ],
-    },
-    {
-      category: 'B2B Marketing',
-      tags: [
-        'Demand Generation',
-        'Account-Based Marketing',
-        'Lead Nurturing',
-        'Sales Enablement',
-        'B2B Content Strategy',
-        'Marketing Qualified Leads',
+      distiller: { inputLabel: 'Engineering', outputLabel: 'Marketing' },
+      // Aggregate stats are archive-derived: distinct campaigns (~59 raw
+      // `campaign` labels in workArchive, rounded down for near-dupes and
+      // generic buckets), distinct industries, and consulting tenure (2015-).
+      stats: [
+        { value: '50+', label: 'campaigns' },
+        { value: '4', label: 'industries' },
+        { value: '10+', label: 'years' },
       ],
+      cta: { label: 'See the work', href: '#portfolio' },
     },
-    {
-      category: 'B2C Marketing',
-      tags: [
-        'Consumer Behavior Analysis',
-        'Brand Storytelling',
-        'Social Media Marketing',
-        'Customer Journey Mapping',
-        'Conversion Optimization',
-        'Performance Marketing',
-      ],
-    },
-    {
-      category: 'Tools & Platforms',
-      type: 'pane', // renders as the full-width pane layout in HomeBody's skills grid
-      tags: [
+    disciplines: [
+      {
+        slug: 'technical_marketing',
+        name: 'Technical Marketing',
+        note: 'whitepapers · guides',
+        skills: [
+          'Product Positioning',
+          'Go-to-Market Strategy',
+          'Competitive Analysis',
+          'Product Messaging',
+          'Technical Narratives',
+          'Market Research',
+        ],
+      },
+      {
+        slug: 'b2b_marketing',
+        name: 'B2B Marketing',
+        note: 'case studies · landing pages',
+        skills: [
+          'Demand Generation',
+          'Account-Based Marketing',
+          'Lead Nurturing',
+          'Sales Enablement',
+          'B2B Content Strategy',
+          'Marketing Qualified Leads',
+        ],
+      },
+      {
+        slug: 'b2c_marketing',
+        name: 'B2C Marketing',
+        note: 'blogs · launches · reviews',
+        skills: [
+          'Consumer Behavior',
+          'Brand Storytelling',
+          'Social Media Marketing',
+          'Customer Journey Mapping',
+          'Conversion Optimization',
+          'Performance Marketing',
+        ],
+      },
+    ],
+    tools: {
+      slug: 'tools_&_platforms',
+      name: 'The Stack',
+      items: [
         'HubSpot',
         'Salesforce',
         'Google Analytics',
@@ -536,7 +569,7 @@ export const siteContent = {
         'Webflow',
       ],
     },
-  ],
+  },
 
   // Services data
   services: [
@@ -662,3 +695,10 @@ export const siteContent = {
     },
   },
 };
+
+// Flattened skill/tool keywords for SEO surfaces (llms.txt, knowsAbout schema).
+// Single source so the skills bento shape stays decoupled from those consumers.
+export const skillKeywords = [
+  ...siteContent.skills.disciplines.flatMap((discipline) => discipline.skills),
+  ...siteContent.skills.tools.items,
+];

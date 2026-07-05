@@ -7,6 +7,9 @@
   grid-template-columns: 1fr 1fr;
   gap: clamp(var(--space-32), 5vw, 3.75rem);
   align-items: start;
+  /* Smooth the gap jump when the layout reflows on resize (grid column
+     changes themselves can't be transitioned). */
+  transition: gap 0.4s ease-in-out;
 }
 
 .c-contact__info h3 {

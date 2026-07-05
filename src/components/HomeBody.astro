@@ -320,36 +320,181 @@ siteContent.testimonials.forEach((testimonial, index) => {
       </div>
     </div>
     <div class="o-container">
-      <div class="c-skills-grid" id="skills-grid">
-        {
-          siteContent.skills.map((category) => (
-            <div class="c-skill-category">
-              <h3 class="c-skill-category__title">{category.category}</h3>
-              {category.type === 'pane' ? (
-                <div
-                  class="c-skill-category__pane"
-                  tabindex="0"
-                  role="region"
-                  aria-label={`${category.category} skills`}
+      <div class="c-capabilities">
+        <div class="c-capability c-capability--feature">
+          <div class="c-capability__lead">
+            <span class="c-capability__tag"
+              >{siteContent.skills.feature.tag}</span
+            >
+            <p class="c-capability__thesis">
+              {
+                siteContent.skills.feature.thesis.map((segment) =>
+                  segment.emphasis ? <b>{segment.text}</b> : segment.text,
+                )
+              }
+            </p>
+            {
+              /* Distiller: blurred Engineering complexity is pulled into focus
+               and distilled to one clean Marketing output. Decorative; the
+               focus-pull animation (skills.css, .c-distiller__*) runs once the
+               section scrolls into view. These SVG coordinates are referenced
+               by that animation's keyframe offsets — keep them in sync. */
+            }
+            <div class="c-distiller" aria-hidden="true">
+              <svg
+                class="c-distiller__svg"
+                viewBox="0 0 320 60"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <g class="c-distiller__bars">
+                  <rect x="0" y="8" width="4" height="44" rx="1"></rect>
+                  <rect x="7" y="16" width="4" height="28" rx="1"></rect>
+                  <rect x="14" y="4" width="4" height="52" rx="1"></rect>
+                  <rect x="21" y="20" width="4" height="20" rx="1"></rect>
+                  <rect x="28" y="12" width="4" height="36" rx="1"></rect>
+                  <rect x="35" y="22" width="4" height="16" rx="1"></rect>
+                  <rect x="42" y="10" width="4" height="40" rx="1"></rect>
+                  <rect x="49" y="18" width="4" height="24" rx="1"></rect>
+                </g>
+                <rect
+                  class="c-distiller__scan"
+                  x="0"
+                  y="2"
+                  width="2.5"
+                  height="56"
+                  rx="1.25"></rect>
+                <path
+                  class="c-distiller__funnel"
+                  d="M56 30 C 110 30, 150 30, 200 30"
+                  stroke-width="1.5"></path>
+                <path
+                  class="c-distiller__funnel"
+                  d="M56 14 C 130 14, 150 30, 200 30"
+                  stroke-width="1.5"></path>
+                <path
+                  class="c-distiller__funnel"
+                  d="M56 46 C 130 46, 150 30, 200 30"
+                  stroke-width="1.5"></path>
+                <rect
+                  class="c-distiller__block"
+                  x="205"
+                  y="18"
+                  width="8"
+                  height="24"
+                  rx="2"></rect>
+                <path
+                  class="c-distiller__flow"
+                  d="M221 30 L300 30"
+                  stroke-width="2.5"></path>
+                <circle class="c-distiller__emit" cx="221" cy="30" r="3.5"
+                ></circle>
+                <circle class="c-distiller__node" cx="300" cy="30" r="4"
+                ></circle>
+                <circle class="c-distiller__ping" cx="300" cy="30" r="4"
+                ></circle>
+              </svg>
+              <div class="c-distiller__ends">
+                <span class="c-distiller__end c-distiller__end--in"
+                  >{siteContent.skills.feature.distiller.inputLabel}</span
                 >
-                  <div class="c-skill-category__tags">
-                    {category.tags.map((tagText) => (
-                      <span class="c-skill-category__tag">{tagText}</span>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <div class="c-skill-category__tags">
-                  <div>
-                    {category.tags.map((tagText) => (
-                      <span class="c-skill-category__tag">{tagText}</span>
-                    ))}
-                  </div>
-                </div>
-              )}
+                <span class="c-distiller__end c-distiller__end--out"
+                  >{siteContent.skills.feature.distiller.outputLabel}</span
+                >
+              </div>
             </div>
+          </div>
+          <div class="c-capability__meta">
+            <ul class="c-capability__stats">
+              {
+                siteContent.skills.feature.stats.map((stat) => (
+                  <li class="c-capability__stat">
+                    <span class="c-capability__stat-value">{stat.value}</span>
+                    <span class="c-capability__stat-label">{stat.label}</span>
+                  </li>
+                ))
+              }
+            </ul>
+            <a
+              class="c-capability__cta"
+              href={siteContent.skills.feature.cta.href}
+            >
+              {siteContent.skills.feature.cta.label}
+            </a>
+          </div>
+        </div>
+
+        {
+          /* Discipline + tool cards. On mobile these collapse into an
+             accordion (native <details>); on desktop CSS force-opens every
+             panel so the bento reads as static cards. First discipline opens
+             by default. */
+        }
+        {
+          siteContent.skills.disciplines.map((discipline, i) => (
+            <details
+              class="c-capability c-capability--collapsible"
+              open={i === 0}
+            >
+              <summary class="c-capability__summary">
+                <span class="c-capability__topline">
+                  <span class="c-capability__dot" aria-hidden="true" />
+                  <span class="c-capability__index">
+                    <b>{String(i + 1).padStart(2, '0')}</b>
+                    <span class="c-capability__slug"> · {discipline.slug}</span>
+                  </span>
+                </span>
+                <span class="c-capability__name">{discipline.name}</span>
+                <span class="c-capability__chev" aria-hidden="true" />
+              </summary>
+              <div class="c-capability__panel">
+                <p class="c-capability__skills">
+                  {discipline.skills.join(', ')}.
+                </p>
+                <div class="c-capability__foot">
+                  <span class="c-capability__note">{discipline.note}</span>
+                </div>
+              </div>
+            </details>
           ))
         }
+
+        <details
+          class="c-capability c-capability--tools c-capability--collapsible"
+        >
+          <summary class="c-capability__summary">
+            <span class="c-capability__topline">
+              <span class="c-capability__dot" aria-hidden="true"></span>
+              <span class="c-capability__index">
+                <b>
+                  {
+                    String(siteContent.skills.disciplines.length + 1).padStart(
+                      2,
+                      '0',
+                    )
+                  }
+                </b>
+                <span class="c-capability__slug">
+                  {' '}
+                  · {siteContent.skills.tools.slug}
+                </span>
+              </span>
+            </span>
+            <span class="c-capability__name">
+              {siteContent.skills.tools.name}
+            </span>
+            <span class="c-capability__chev" aria-hidden="true"></span>
+          </summary>
+          <div class="c-capability__panel">
+            <ul class="c-capability__chips">
+              {
+                siteContent.skills.tools.items.map((item) => (
+                  <li class="c-capability__chip">{item}</li>
+                ))
+              }
+            </ul>
+          </div>
+        </details>
       </div>
     </div>
   </section>
