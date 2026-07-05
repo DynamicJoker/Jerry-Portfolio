@@ -501,7 +501,7 @@ export const siteContent = {
         { text: 'market', emphasis: true },
         { text: ' buys.' },
       ],
-      distiller: { inputLabel: 'Engineering', outputLabel: 'Marketing' },
+      distiller: { inputLabel: 'Engineering', outputLabel: 'Campaigns' },
       // Aggregate stats are archive-derived: distinct campaigns (~59 raw
       // `campaign` labels in workArchive, rounded down for near-dupes and
       // generic buckets), distinct industries, and consulting tenure (2015-).

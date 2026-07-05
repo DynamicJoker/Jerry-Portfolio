@@ -274,7 +274,7 @@
   /* currentColor drives the grey(complex) -> brand(clear) shift; the rects
      inherit it. Static (pre-focus) state: blurred + muted. */
   color: var(--color-text-muted);
-  filter: blur(3.5px);
+  filter: blur(3px);
 }
 
 .c-distiller__bars rect {
@@ -287,37 +287,55 @@
   filter: drop-shadow(0 0 4px rgba(var(--color-primary-rgb), 0.7));
 }
 
-.c-distiller__funnel {
-  stroke: var(--color-hairline-strong);
-  stroke-dasharray: 2 5;
-  opacity: 0.3;
-}
-
-.c-distiller__block {
-  fill: var(--color-primary);
-  transform-box: fill-box;
-  transform-origin: center;
-  transform: scaleY(0.12);
-  opacity: 0.3;
-}
-
-.c-distiller__flow {
+/* Lead line: bars -> clarity node. */
+.c-distiller__lead {
   stroke: var(--color-primary);
+  stroke-dasharray: 90;
+  stroke-dashoffset: 90;
 }
 
-.c-distiller__emit {
-  fill: var(--color-primary);
+/* Clarity node: the distilled strategy — a pipeline-style dot with a glow halo
+   and an arrival ring (echoes the About pipeline's active node). */
+.c-distiller__halo {
+  fill: rgba(var(--color-primary-rgb), 0.16);
   opacity: 0;
 }
 
 .c-distiller__node {
   fill: var(--color-primary);
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
 }
 
-.c-distiller__ping {
+.c-distiller__ring {
   fill: none;
   stroke: var(--color-primary);
   opacity: 0;
+}
+
+/* Branch: clarity node -> campaign frame. */
+.c-distiller__branch {
+  stroke: var(--color-primary);
+  stroke-dasharray: 40;
+  stroke-dashoffset: 40;
+  opacity: 0;
+}
+
+/* Campaign: an outlined frame whose segments grow in left-to-right (the Gantt
+   bar motif), then the frame border warms to brand — the campaign "goes live". */
+.c-distiller__frame {
+  fill: none;
+  stroke: var(--color-hairline-strong);
+  opacity: 0;
+}
+
+.c-distiller__seg {
+  fill: var(--color-primary);
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: left center;
+  transform: scaleX(0);
 }
 
 .c-distiller__ends {
@@ -336,51 +354,79 @@
 }
 
 /* Animations start only when the section scrolls into view.
-   NOTE: the pixel offsets in the keyframes below (scan/emit translateX, ping r)
-   are tied to the SVG's viewBox geometry in HomeBody.astro's distiller markup —
-   scan sweeps the bars (x 0->~56), emit crosses the output wire (221->300 = 79).
-   If you change the SVG coordinates, re-tune these values to match. */
+   NOTE: the pixel/scale values in the keyframes below are tied to the SVG
+   geometry in HomeBody.astro's distiller markup — the scan sweeps the bars
+   (x 0->~56), the lead line runs bars->clarity node (56->132), and the four
+   campaign segments grow inside the frame (x 180->296). If you change the SVG
+   coordinates, re-tune these values to match. */
 .c-section.is-visible .c-distiller__bars {
-  animation: distillerFocus 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation: distillerFocus 4.4s var(--ease-standard) infinite;
 }
 
 .c-section.is-visible .c-distiller__scan {
-  animation: distillerSweep 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation: distillerSweep 4.4s var(--ease-standard) infinite;
 }
 
-.c-section.is-visible .c-distiller__funnel {
-  animation: distillerDash 4s linear infinite;
+.c-section.is-visible .c-distiller__lead {
+  animation: distillerDraw 4.4s var(--ease-standard) infinite;
 }
 
-.c-section.is-visible .c-distiller__block {
-  animation: distillerBuild 4s ease-out infinite;
+.c-section.is-visible .c-distiller__halo {
+  animation: distillerHalo 4.4s var(--ease-standard) infinite;
 }
 
-.c-section.is-visible .c-distiller__emit {
-  animation: distillerEmit 4s ease-in-out infinite;
+.c-section.is-visible .c-distiller__node {
+  animation: distillerNode 4.4s var(--ease-standard) infinite;
 }
 
-.c-section.is-visible .c-distiller__ping {
-  animation: distillerPing 4s ease-out infinite;
+.c-section.is-visible .c-distiller__ring {
+  animation: distillerRing 4.4s ease-out infinite;
+}
+
+.c-section.is-visible .c-distiller__branch {
+  animation: distillerBranch 4.4s var(--ease-standard) infinite;
+}
+
+.c-section.is-visible .c-distiller__frame {
+  animation: distillerFrame 4.4s var(--ease-standard) infinite;
+}
+
+.c-section.is-visible .c-distiller__seg {
+  animation: distillerSeg 4.4s var(--ease-standard) infinite;
+}
+
+/* Stagger the segments so the campaign assembles left-to-right. These must sit
+   after (and at equal specificity to) the shorthand above, which otherwise
+   resets animation-delay to 0. */
+.c-section.is-visible .c-distiller__seg--2 {
+  animation-delay: 0.17s;
+}
+
+.c-section.is-visible .c-distiller__seg--3 {
+  animation-delay: 0.34s;
+}
+
+.c-section.is-visible .c-distiller__seg--4 {
+  animation-delay: 0.51s;
 }
 
 @keyframes distillerFocus {
   0%,
-  12% {
-    filter: blur(3.5px);
+  7% {
+    filter: blur(3px);
     color: var(--color-text-muted);
   }
-  45% {
+  34% {
     filter: blur(0);
     color: var(--color-primary);
   }
-  80% {
+  90% {
     filter: blur(0);
     color: var(--color-primary);
   }
-  94%,
+  97%,
   100% {
-    filter: blur(3.5px);
+    filter: blur(3px);
     color: var(--color-text-muted);
   }
 }
@@ -393,90 +439,141 @@
   6% {
     opacity: 0.9;
   }
-  44% {
+  34% {
     transform: translateX(56px);
     opacity: 0.9;
   }
-  50%,
+  40%,
   100% {
     transform: translateX(56px);
     opacity: 0;
   }
 }
 
-@keyframes distillerDash {
+/* Lead + branch lines draw in via stroke-dashoffset. */
+@keyframes distillerDraw {
   0%,
-  30% {
-    opacity: 0;
+  36% {
+    stroke-dashoffset: 90;
+  }
+  50%,
+  100% {
     stroke-dashoffset: 0;
   }
-  40% {
+}
+
+@keyframes distillerBranch {
+  0%,
+  56% {
+    stroke-dashoffset: 40;
+    opacity: 0;
+  }
+  62% {
+    opacity: 0.4;
+  }
+  70% {
+    stroke-dashoffset: 0;
+    opacity: 0.4;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0.35;
+  }
+}
+
+/* Clarity node: halo fades in, dot pops, ring pings on arrival. */
+@keyframes distillerHalo {
+  0%,
+  46% {
+    opacity: 0;
+  }
+  56%,
+  100% {
     opacity: 1;
+  }
+}
+
+@keyframes distillerNode {
+  0%,
+  44% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  54% {
+    opacity: 1;
+    transform: scale(1);
   }
   60% {
-    opacity: 1;
-    stroke-dashoffset: -14;
+    transform: scale(1.28);
   }
-  70%,
+  66%,
   100% {
-    opacity: 0.35;
-    stroke-dashoffset: -14;
+    opacity: 1;
+    transform: scale(1);
   }
 }
 
-@keyframes distillerBuild {
+@keyframes distillerRing {
   0%,
-  45% {
-    transform: scaleY(0.12);
-    opacity: 0.3;
+  50% {
+    r: 4.5;
+    opacity: 0;
   }
+  57% {
+    r: 4.5;
+    opacity: 0.6;
+  }
+  68%,
+  100% {
+    r: 12;
+    opacity: 0;
+  }
+}
+
+/* Campaign: frame fades in, then its border warms to brand (goes "live"). */
+@keyframes distillerFrame {
+  0%,
   58% {
-    transform: scaleY(1);
+    opacity: 0;
+    stroke: var(--color-hairline-strong);
+    filter: none;
+  }
+  66% {
     opacity: 1;
+    stroke: var(--color-hairline-strong);
   }
-  68% {
-    transform: scaleY(1.12);
+  86% {
+    stroke: var(--color-hairline-strong);
+    filter: none;
   }
-  76%,
+  93% {
+    stroke: var(--color-primary);
+    filter: drop-shadow(0 0 3px rgba(var(--color-primary-rgb), 0.55));
+  }
   100% {
-    transform: scaleY(1);
     opacity: 1;
+    stroke: var(--color-primary);
+    filter: drop-shadow(0 0 3px rgba(var(--color-primary-rgb), 0.55));
   }
 }
 
-@keyframes distillerEmit {
+/* Segments grow left-to-right (the Gantt bar motif), staggered per segment. */
+@keyframes distillerSeg {
   0%,
-  62% {
-    transform: translateX(0);
+  66% {
+    transform: scaleX(0);
     opacity: 0;
   }
-  68% {
+  70% {
     opacity: 1;
   }
-  86% {
-    transform: translateX(79px);
+  82% {
+    transform: scaleX(1);
     opacity: 1;
   }
-  92%,
   100% {
-    transform: translateX(79px);
-    opacity: 0;
-  }
-}
-
-@keyframes distillerPing {
-  0%,
-  86% {
-    r: 4;
-    opacity: 0;
-  }
-  92% {
-    r: 4;
-    opacity: 0.7;
-  }
-  100% {
-    r: 14;
-    opacity: 0;
+    transform: scaleX(1);
+    opacity: 1;
   }
 }
 
@@ -597,23 +694,40 @@
 /* Reduced motion: skip the focus-pull entirely and show the resolved state —
    sharp brand-coloured detail distilled to a built output. */
 @media (prefers-reduced-motion: reduce) {
+  /* Resolved end state: sharp brand detail -> clarity node -> a fully
+     assembled, live campaign frame. No sweep/ring flourishes. */
   .c-distiller__bars {
     filter: none;
     color: var(--color-primary);
   }
 
-  .c-distiller__funnel {
-    opacity: 0.35;
+  .c-distiller__lead,
+  .c-distiller__branch {
+    stroke-dashoffset: 0;
+    opacity: 0.4;
   }
 
-  .c-distiller__block {
-    transform: scaleY(1);
+  .c-distiller__halo,
+  .c-distiller__node,
+  .c-distiller__frame {
+    opacity: 1;
+  }
+
+  .c-distiller__node {
+    transform: none;
+  }
+
+  .c-distiller__frame {
+    stroke: var(--color-primary);
+  }
+
+  .c-distiller__seg {
+    transform: scaleX(1);
     opacity: 1;
   }
 
   .c-distiller__scan,
-  .c-distiller__emit,
-  .c-distiller__ping {
+  .c-distiller__ring {
     display: none;
   }
 }

@@ -334,10 +334,11 @@ siteContent.testimonials.forEach((testimonial, index) => {
               }
             </p>
             {
-              /* Distiller: blurred Engineering complexity is pulled into focus
-               and distilled to one clean Marketing output. Decorative; the
-               focus-pull animation (skills.css, .c-distiller__*) runs once the
-               section scrolls into view. These SVG coordinates are referenced
+              /* Distiller: blurred Engineering complexity is pulled into focus,
+               distilled to one clear strategy (the clarity node), then assembled
+               segment-by-segment into a marketing campaign that goes live.
+               Decorative; the animation (skills.css, .c-distiller__*) runs once
+               the section scrolls into view. These SVG coordinates are referenced
                by that animation's keyframe offsets — keep them in sync. */
             }
             <div class="c-distiller" aria-hidden="true">
@@ -365,34 +366,55 @@ siteContent.testimonials.forEach((testimonial, index) => {
                   height="56"
                   rx="1.25"></rect>
                 <path
-                  class="c-distiller__funnel"
-                  d="M56 30 C 110 30, 150 30, 200 30"
-                  stroke-width="1.5"></path>
+                  class="c-distiller__lead"
+                  d="M56 30 L132 30"
+                  stroke-width="2.5"></path>
+                <circle class="c-distiller__halo" cx="138" cy="30" r="8"
+                ></circle>
+                <circle class="c-distiller__node" cx="138" cy="30" r="4.5"
+                ></circle>
+                <circle class="c-distiller__ring" cx="138" cy="30" r="4.5"
+                ></circle>
                 <path
-                  class="c-distiller__funnel"
-                  d="M56 14 C 130 14, 150 30, 200 30"
-                  stroke-width="1.5"></path>
-                <path
-                  class="c-distiller__funnel"
-                  d="M56 46 C 130 46, 150 30, 200 30"
+                  class="c-distiller__branch"
+                  d="M144 30 L176 30"
                   stroke-width="1.5"></path>
                 <rect
-                  class="c-distiller__block"
-                  x="205"
-                  y="18"
-                  width="8"
-                  height="24"
+                  class="c-distiller__frame"
+                  x="180"
+                  y="21"
+                  width="116"
+                  height="18"
+                  rx="4.5"
+                  stroke-width="1.4"></rect>
+                <rect
+                  class="c-distiller__seg"
+                  x="184"
+                  y="25"
+                  width="25"
+                  height="10"
                   rx="2"></rect>
-                <path
-                  class="c-distiller__flow"
-                  d="M221 30 L300 30"
-                  stroke-width="2.5"></path>
-                <circle class="c-distiller__emit" cx="221" cy="30" r="3.5"
-                ></circle>
-                <circle class="c-distiller__node" cx="300" cy="30" r="4"
-                ></circle>
-                <circle class="c-distiller__ping" cx="300" cy="30" r="4"
-                ></circle>
+                <rect
+                  class="c-distiller__seg c-distiller__seg--2"
+                  x="211"
+                  y="25"
+                  width="25"
+                  height="10"
+                  rx="2"></rect>
+                <rect
+                  class="c-distiller__seg c-distiller__seg--3"
+                  x="238"
+                  y="25"
+                  width="25"
+                  height="10"
+                  rx="2"></rect>
+                <rect
+                  class="c-distiller__seg c-distiller__seg--4"
+                  x="265"
+                  y="25"
+                  width="25"
+                  height="10"
+                  rx="2"></rect>
               </svg>
               <div class="c-distiller__ends">
                 <span class="c-distiller__end c-distiller__end--in"
