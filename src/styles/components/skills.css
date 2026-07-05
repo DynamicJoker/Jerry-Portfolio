@@ -2,9 +2,10 @@
 /* Below the fold (section 02, after hero/about/logos), so none of these rules
    are duplicated in critical-home.css. The section is a bento: a feature cell
    (thesis + distiller graphic + aggregate stats) alongside three discipline
-   cards and the tool stack. Cards follow the site's flat-panel language
-   (surface-raised, soft hairline, no shadow); hover lights a signal bar +
-   node-dot (the About pipeline motif) rather than lifting. */
+   cards and the tool stack. Cards are ghost panels — no fill, just a hairline
+   border on the section background — matching the flat, fill-less style of the
+   services cards and the About pipeline. Hover brightens the border to brand,
+   washes in a faint overlay, and lights the node-dot rather than lifting. */
 
 .c-capabilities {
   display: grid;
@@ -12,45 +13,23 @@
   gap: var(--space-24);
 }
 
-/* Flat panel — mirrors .c-testimonial / .c-lightbox__figure. */
+/* Ghost panel — no fill; defined by a hairline border over the section. */
 .c-capability {
   position: relative;
   display: flex;
   flex-direction: column;
   padding: clamp(1.2rem, 2.4vw, 1.75rem);
-  background: var(--color-surface-raised);
-  border: 1px solid var(--color-hairline);
+  border: 1px solid var(--color-hairline-strong);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  transition: border-color var(--animation-speed) var(--animation-curve);
-}
-
-/* Signal accent bar on the left edge (echoes the testimonial quote bar and the
-   pipeline current). Grows on hover instead of a box-shadow lift. */
-.c-capability::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 1.4rem;
-  bottom: 1.4rem;
-  width: 3px;
-  border-radius: 2px;
-  background: var(--color-primary);
-  opacity: 0;
-  transform: scaleY(0.4);
-  transform-origin: top;
   transition:
-    opacity var(--animation-speed) ease,
-    transform var(--animation-speed) ease;
+    border-color var(--animation-speed) var(--animation-curve),
+    background-color var(--animation-speed) ease;
 }
 
 .c-capability:hover {
-  border-color: rgba(var(--color-primary-rgb), 0.45);
-}
-
-.c-capability:hover::before {
-  opacity: 0.9;
-  transform: scaleY(1);
+  border-color: rgba(var(--color-primary-rgb), 0.55);
+  background-color: var(--color-overlay-weak);
 }
 
 .c-capability--feature {
@@ -165,13 +144,22 @@
   display: none;
 }
 
-/* Panel is always visible on desktop, regardless of [open] (author rule beats
-   the UA details-closed rule). It fills the card so the foot sits at the
-   bottom, matching the non-collapsible cards. */
+/* Panel is always visible on desktop, regardless of [open]. It fills the card
+   so the foot sits at the bottom, matching the non-collapsible cards. This
+   `display` override handles the legacy <details> model (Firefox/Safari/older
+   Chrome hide closed content with display:none). The mobile block re-hides it. */
 .c-capability--collapsible .c-capability__panel {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
+}
+
+/* The modern <details> model (Chrome's ::details-content pseudo) hides closed
+   content via content-visibility, which `display` can't override — reveal it
+   explicitly so desktop cards never collapse. Unknown-pseudo browsers drop just
+   this rule. The mobile block re-hides closed rows for this model too. */
+.c-capability--collapsible::details-content {
+  content-visibility: visible;
 }
 
 /* Chevron + mobile-only slug are hidden on desktop. */
@@ -524,11 +512,6 @@
     border-top: 1px solid var(--color-hairline-strong);
   }
 
-  /* No left signal-bar on rows. */
-  .c-capability--collapsible::before {
-    display: none;
-  }
-
   /* Summary becomes the tappable header row: dot + index, name, chevron. */
   .c-capability__summary {
     display: flex;
@@ -593,6 +576,11 @@
 
   .c-capability--collapsible:not([open]) .c-capability__panel {
     display: none;
+  }
+
+  /* Modern-model twin: re-collapse closed rows (base force-opens them). */
+  .c-capability--collapsible:not([open])::details-content {
+    content-visibility: hidden;
   }
 
   .c-capability--collapsible .c-capability__skills {
