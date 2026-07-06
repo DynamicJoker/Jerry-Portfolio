@@ -42,7 +42,10 @@
 }
 
 .c-testimonials-scroller:focus-within .c-testimonials-scroller__inner,
-.c-testimonials-scroller.is-paused .c-testimonials-scroller__inner {
+.c-testimonials-scroller.is-paused .c-testimonials-scroller__inner,
+/* JS-toggled while the section is scrolled out of view (see
+   watchViewportPresence in main.js) so the loop doesn't run offscreen. */
+.c-testimonials-scroller.is-offscreen .c-testimonials-scroller__inner {
   animation-play-state: paused;
 }
 

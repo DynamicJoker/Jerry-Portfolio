@@ -1,11 +1,8 @@
 import { siteContent } from './content.js';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-gsap.registerPlugin(ScrollTrigger);
 
 const config = {
-  loadingScreenDuration: 2000,
+  loadingScreenMinVisible: 400, // ms since navigation start
+  loadingScreenMaxWait: 1500, // ms; rAF-less fallback so it can't get stuck
   loadingScreenFadeOut: 500,
   notificationDuration: 5000,
   breakpoints: {
@@ -79,6 +76,11 @@ function getBreakpointPx(key) {
 
 let lastKnownScrollPosition = 0;
 let ticking = false;
+// Extra scroll consumers (e.g. the docked section headers) register here so
+// they run inside the single rAF-batched scroll handler below, instead of
+// each attaching its own raw scroll listener that can fire (and force
+// layout) several times per frame.
+const scrollFrameCallbacks = [];
 
 function handleScroll() {
   lastKnownScrollPosition = window.pageYOffset;
@@ -111,6 +113,7 @@ function updateUIOnScroll(scrollY) {
 
   updateActiveNavLink();
   updateNavGlow();
+  scrollFrameCallbacks.forEach((callback) => callback());
 }
 
 window.addEventListener('scroll', handleScroll, { passive: true });
@@ -118,13 +121,10 @@ window.addEventListener('scroll', handleScroll, { passive: true });
 window.addEventListener('scrollend', releaseNavLinkClickLock, {
   passive: true,
 });
-window.addEventListener('load', () => ScrollTrigger.refresh());
-
 // Recompute scroll-derived UI on resize. The active-nav-link underline is
 // positioned with pixel values from getBoundingClientRect() (see updateNavGlow),
 // so it must be re-measured when the layout reflows — otherwise it lags/mispositions.
 let resizeRaf = 0;
-let resizeSettle = 0;
 window.addEventListener(
   'resize',
   () => {
@@ -134,8 +134,6 @@ window.addEventListener(
         updateUIOnScroll(window.pageYOffset);
       });
     }
-    clearTimeout(resizeSettle);
-    resizeSettle = window.setTimeout(() => ScrollTrigger.refresh(), 200);
   },
   { passive: true },
 );
@@ -148,6 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initializeTestimonialPauseControl();
   enhanceGanttRows();
   initializeScrollAnimations();
+  initializeHeroAuroraPause();
   initializeDockedSectionHeaders();
   initializeBrandCollapse();
   initializeWorkLightbox();
@@ -237,12 +236,30 @@ function initializeContactInfo() {
 
 function initializeLoadingScreen() {
   const loadingScreen = document.getElementById('loading-screen');
-  setTimeout(() => {
+  if (!loadingScreen) return;
+
+  // The page is fully rendered beneath the overlay (static HTML + critical
+  // CSS), so hide it on the first frame painted after init instead of a fixed
+  // timer. The minimum is measured from navigation start: on slow devices the
+  // overlay has already been on screen longer than the minimum by the time we
+  // run, so it fades immediately.
+  const remaining = Math.max(
+    0,
+    config.loadingScreenMinVisible - performance.now(),
+  );
+  let hidden = false;
+  const hide = () => {
+    if (hidden) return;
+    hidden = true;
     loadingScreen.style.opacity = '0';
     loadingScreen.style.transition = `opacity ${config.loadingScreenFadeOut}ms ease`;
 
     setTimeout(() => loadingScreen.remove(), config.loadingScreenFadeOut);
-  }, config.loadingScreenDuration);
+  };
+  requestAnimationFrame(() => setTimeout(hide, remaining));
+  // rAF doesn't fire in background tabs (or stalled renderers), so back it
+  // up with a plain timer — the overlay must never be able to get stuck.
+  setTimeout(hide, config.loadingScreenMaxWait);
 }
 
 function initializeNavigation() {
@@ -448,15 +465,48 @@ function updateNavGlow() {
   }
 }
 
+// Fire once per element when its top edge crosses 85% of the viewport height
+// (or immediately if the page loads already scrolled past it, e.g. a deep
+// link — matching how a scroll-position check would behave).
+function revealOnEnterViewport(elements, onEnter) {
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting && entry.boundingClientRect.bottom >= 0)
+          return;
+        observer.unobserve(entry.target);
+        onEnter(entry.target);
+      });
+    },
+    { rootMargin: '0px 0px -15% 0px' },
+  );
+  elements.forEach((element) => observer.observe(element));
+}
+
 function initializeScrollAnimations() {
-  document.querySelectorAll('.c-section').forEach((section) => {
-    ScrollTrigger.create({
-      trigger: section,
-      start: 'top 85%',
-      once: true,
-      onEnter: () => section.classList.add('is-visible'),
-    });
+  revealOnEnterViewport(document.querySelectorAll('.c-section'), (section) =>
+    section.classList.add('is-visible'),
+  );
+}
+
+// Report whether an element is in the viewport, so long-lived animations
+// (marquees, drifts, carousels) can stop burning GPU/battery while their
+// section is scrolled out of view.
+function watchViewportPresence(element, onChange) {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => onChange(entry.isIntersecting));
   });
+  observer.observe(element);
+}
+
+// The hero aurora blobs drift on an infinite loop; pause them (CSS acts on
+// .is-offscreen) once the hero scrolls out of view.
+function initializeHeroAuroraPause() {
+  const aurora = document.querySelector('.c-hero__aurora');
+  if (!aurora || prefersReducedMotion) return;
+  watchViewportPresence(aurora, (isVisible) =>
+    aurora.classList.toggle('is-offscreen', !isVisible),
+  );
 }
 
 // Docked section headings: each .c-section__header is position:sticky (CSS). As
@@ -475,7 +525,9 @@ function initializeScrollAnimations() {
 // was still pinned and the bar vanished under a shrunken, floating title. Live
 // geometry can't fall out of sync.
 function initializeDockedSectionHeaders() {
-  const headers = gsap.utils.toArray('section.c-section .c-section__header');
+  const headers = [
+    ...document.querySelectorAll('section.c-section .c-section__header'),
+  ];
   if (!headers.length) return;
 
   // Reserve each header's natural height as a min-height so the compact swap
@@ -538,7 +590,7 @@ function initializeDockedSectionHeaders() {
 
   measureHeaders();
   update();
-  window.addEventListener('scroll', update, { passive: true });
+  scrollFrameCallbacks.push(update);
   window.addEventListener('load', remeasure);
   document.fonts?.ready.then(remeasure);
   let resizeId = 0;
@@ -559,12 +611,40 @@ function initializeBrandCollapse() {
   const heroName = document.querySelector('.c-hero__name');
   if (!navbar || !heroName) return;
 
-  ScrollTrigger.create({
-    trigger: heroName,
-    start: () => `bottom top+=${navbar.offsetHeight}`,
-    onEnter: () => navbar.classList.add('is-brand-expanded'),
-    onLeaveBack: () => navbar.classList.remove('is-brand-expanded'),
-  });
+  // Expanded once the hero name's bottom edge scrolls up past the navbar.
+  // The rootMargin trims the navbar's height off the top of the viewport so
+  // the observer fires exactly at that crossing (in both directions); the
+  // entry's own rect then tells us which side of the line we're on.
+  let observer = null;
+  const observe = () => {
+    observer?.disconnect();
+    const navbarHeight = navbar.offsetHeight;
+    observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          navbar.classList.toggle(
+            'is-brand-expanded',
+            entry.boundingClientRect.bottom <= navbarHeight,
+          );
+        });
+      },
+      { rootMargin: `-${navbarHeight}px 0px 0px 0px` },
+    );
+    observer.observe(heroName);
+  };
+
+  observe();
+  // The navbar's height (the dock line) can change across breakpoints, so
+  // rebuild the observer with fresh geometry once a resize settles.
+  let resizeId = 0;
+  window.addEventListener(
+    'resize',
+    () => {
+      window.clearTimeout(resizeId);
+      resizeId = window.setTimeout(observe, 200);
+    },
+    { passive: true },
+  );
 }
 
 function initializeWorkLightbox() {
@@ -1387,6 +1467,12 @@ function initializeInfiniteScroller() {
       });
   }
 
+  // Separate from the user-facing .is-paused toggle so scrolling away and
+  // back never overrides a pause the user chose.
+  watchViewportPresence(scroller, (isVisible) =>
+    scroller.classList.toggle('is-offscreen', !isVisible),
+  );
+
   scroller.dataset.scrollerEnhanced = 'true';
 }
 
@@ -1427,12 +1513,26 @@ function initializeLogoCarousel() {
   logos[currentIndex].classList.add('is-active');
   if (prefersReducedMotion) return;
 
-  setInterval(() => {
+  const advance = () => {
     logos.forEach((logo, index) =>
       logo.classList.toggle('is-active', index === currentIndex),
     );
     currentIndex = (currentIndex + 1) % logos.length;
-  }, config.logoCarousel.interval);
+  };
+
+  // Only rotate while the bar is actually on screen.
+  let intervalId = null;
+  watchViewportPresence(
+    logos[0].closest('.c-logo-bar') ?? logos[0],
+    (isVisible) => {
+      if (isVisible && intervalId === null) {
+        intervalId = setInterval(advance, config.logoCarousel.interval);
+      } else if (!isVisible && intervalId !== null) {
+        clearInterval(intervalId);
+        intervalId = null;
+      }
+    },
+  );
 }
 
 // Signal Pipeline (the About section): the capability nodes are an ARIA
@@ -1560,10 +1660,7 @@ function enhanceGanttRows() {
 }
 
 function revealGanttChartOnScroll(container) {
-  ScrollTrigger.create({
-    trigger: container,
-    start: 'top 85%',
-    once: true,
-    onEnter: () => container.classList.add('is-visible'),
-  });
+  revealOnEnterViewport([container], () =>
+    container.classList.add('is-visible'),
+  );
 }

@@ -58,12 +58,20 @@
   mask-image: radial-gradient(ellipse at 50% 42%, #000 28%, transparent 78%);
 }
 
-/* Aurora: soft, heavily blurred blue light blooms */
+/* Aurora: soft blue light blooms. The softness comes entirely from the
+   bloom gradients (they fade to transparent by 65%); a filter here would
+   force the GPU to re-blur the whole hero every frame the blobs drift,
+   which old integrated GPUs can't afford. */
 .c-hero__aurora {
   position: absolute;
   inset: 0;
   overflow: hidden;
-  filter: blur(60px);
+}
+
+/* JS-toggled while the hero is scrolled out of view (see
+   watchViewportPresence in main.js) so the drift doesn't run offscreen. */
+.c-hero__aurora.is-offscreen .c-hero__aurora-bloom {
+  animation-play-state: paused;
 }
 
 .c-hero__aurora-bloom {
