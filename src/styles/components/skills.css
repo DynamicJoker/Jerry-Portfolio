@@ -1,93 +1,733 @@
-/* Component: skills */
-/* Above-the-fold rules that also exist in critical-home.css must be
-   changed in both places. */
+/* Component: skills — "Capabilities" bento */
+/* Below the fold (section 02, after hero/about/logos), so none of these rules
+   are duplicated in critical-home.css. The section is a bento: a feature cell
+   (thesis + distiller graphic + aggregate stats) alongside three discipline
+   cards and the tool stack. Cards are ghost panels — no fill, just a hairline
+   border on the section background — matching the flat, fill-less style of the
+   services cards and the About pipeline. Hover brightens the border to brand,
+   washes in a faint overlay, and lights the node-dot rather than lifting. */
 
-/* Skills Section */
-
-.c-skills-grid {
+.c-capabilities {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18.75rem), 1fr));
-  gap: var(--space-32);
+  grid-template-columns: repeat(6, 1fr);
+  gap: var(--space-24);
 }
 
-.c-skill-category {
-  padding: var(--space-20) 0;
+/* Ghost panel — no fill; defined by a hairline border over the section. */
+.c-capability {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(1.2rem, 2.4vw, 1.75rem);
+  border: 1px solid var(--color-hairline-strong);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition:
+    border-color var(--animation-speed) var(--animation-curve),
+    background-color var(--animation-speed) ease;
+}
+
+.c-capability:hover {
+  border-color: rgba(var(--color-primary-rgb), 0.55);
+  background-color: var(--color-overlay-weak);
+}
+
+.c-capability--feature {
+  grid-column: span 3;
+  grid-row: span 2;
+  justify-content: space-between;
+  gap: 1.75rem;
+}
+
+.c-capability:not(.c-capability--feature) {
+  grid-column: span 3;
+}
+
+/* Card header: pipeline node-dot + mono index, echoing the About nodes. */
+.c-capability__topline {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  margin-bottom: var(--space-12);
+}
+
+.c-capability__dot {
+  flex: 0 0 auto;
+  width: 0.7rem;
+  height: 0.7rem;
+  border: 2px solid var(--color-hairline-strong);
+  border-radius: 50%;
+  background: var(--color-background);
+  transition:
+    border-color var(--animation-speed) ease,
+    background-color var(--animation-speed) ease,
+    box-shadow var(--animation-speed) ease;
+}
+
+.c-capability:hover .c-capability__dot {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  box-shadow: 0 0 0 4px rgba(var(--color-primary-rgb), 0.18);
+}
+
+.c-capability__index {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+}
+
+.c-capability__index b {
+  color: var(--color-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+.c-capability__name {
+  /* A <span> (it lives inside <summary>, where a heading would be invalid) —
+     display: block keeps the card layout and vertical margin. */
+  display: block;
+  margin: 0 0 var(--space-8);
+  font-size: var(--text-card-title);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-strong);
+}
+
+.c-capability__skills {
+  margin: 0 0 var(--space-16);
+  font-size: var(--font-size-sm);
+  line-height: 1.65;
+  color: var(--color-text-secondary);
+}
+
+.c-capability__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-8);
+  margin-top: auto;
+  padding-top: var(--space-12);
   border-top: 1px solid var(--color-hairline);
 }
 
-.c-skill-category__title {
-  font-size: var(--text-card-title);
-  margin-bottom: var(--space-20);
-  color: var(--color-electric-blue);
+.c-capability__note {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
 }
 
-.c-skill-category__tags .c-skill-category__tag {
+/* mono `// tag`, reused by the feature lead and (via --note) card feet. */
+.c-capability__tag {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+}
+
+.c-capability__tag::before {
+  content: '// ';
+  color: var(--color-primary);
+}
+
+/* Collapsible cards (disciplines + tools) are native <details>. On desktop the
+   accordion chrome is neutralised: the summary is a plain card header and the
+   panel is force-shown, so the bento reads as static cards. The mobile
+   accordion behaviour lives in the max-width block near the bottom. */
+.c-capability__summary {
+  /* display: block strips the default <summary> disclosure marker. */
   display: block;
-  padding: var(--space-8) 0 var(--space-8) var(--space-20);
-  font-size: var(--font-size-base);
+  cursor: default;
+  list-style: none;
+}
+
+.c-capability__summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Panel is always visible on desktop, regardless of [open]. It fills the card
+   so the foot sits at the bottom, matching the non-collapsible cards. This
+   `display` override handles the legacy <details> model (Firefox/Safari/older
+   Chrome hide closed content with display:none). The mobile block re-hides it. */
+.c-capability--collapsible .c-capability__panel {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+}
+
+/* The modern <details> model (Chrome's ::details-content pseudo) hides closed
+   content via content-visibility, which `display` can't override — reveal it
+   explicitly so desktop cards never collapse. Unknown-pseudo browsers drop just
+   this rule. The mobile block re-hides closed rows for this model too. */
+.c-capability--collapsible::details-content {
+  content-visibility: visible;
+}
+
+/* Chevron + mobile-only slug are hidden on desktop. */
+.c-capability__chev {
+  display: none;
+}
+
+/* Feature cell */
+.c-capability__thesis {
+  margin: var(--space-12) 0 var(--space-24);
+  font-family: var(--font-family-display);
+  font-size: clamp(1.35rem, 2.4vw, 1.8rem);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.28;
+  color: var(--color-text-strong);
+}
+
+.c-capability__thesis b {
+  color: var(--color-primary);
+  font-weight: var(--font-weight-semibold);
+}
+
+.c-capability__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(1.25rem, 3vw, 2.25rem);
+  margin: 0 0 var(--space-16);
+  padding: 0;
+  list-style: none;
+}
+
+.c-capability__stat-value {
+  display: block;
+  font-family: var(--font-family-display);
+  font-size: clamp(1.9rem, 4vw, 2.7rem);
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
+  color: var(--color-text-strong);
+}
+
+.c-capability__stat-label {
+  display: block;
+  margin-top: var(--space-6);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+}
+
+.c-capability__cta {
+  align-self: flex-start;
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.c-capability__cta::after {
+  content: ' \203A';
+  font-size: 1.1em;
+}
+
+.c-capability__cta:hover {
+  text-decoration: underline;
+}
+
+/* Tool stack chips */
+.c-capability__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.c-capability__chip {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
-  position: relative;
-  transition: color var(--animation-speed) var(--animation-curve);
-}
-
-.c-skill-category__tags .c-skill-category__tag::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 4px;
-  height: 60%;
-  background: var(--color-electric-blue);
-  opacity: 0.9;
-  border-radius: 2px;
+  border: 1px solid var(--color-chip-border);
+  border-radius: var(--radius-full);
+  padding: 0.22rem 0.7rem;
   transition:
-    opacity var(--animation-speed) var(--animation-curve),
-    height var(--animation-speed) var(--animation-curve);
+    border-color var(--animation-speed) ease,
+    color var(--animation-speed) ease;
 }
 
-.c-skill-category__tags .c-skill-category__tag:hover {
-  color: var(--color-electric-blue);
+.c-capability__chip:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
 }
 
-.c-skill-category__tags .c-skill-category__tag:hover::before {
-  opacity: 1;
-  height: 80%;
+/* -------------------------------------------------------------------------
+   Distiller graphic — blurred Engineering complexity is pulled into focus and
+   distilled to one clean Marketing output. The whole sequence is paced (4s
+   with a rest) and only runs once the section is in view (.is-visible), so it
+   reveals on scroll rather than churning perpetually.
+   ------------------------------------------------------------------------- */
+.c-distiller {
+  margin-top: var(--space-24);
 }
 
-.c-skill-category__pane {
-  max-height: clamp(14rem, 32dvh, 15.625rem);
-  overflow-y: auto;
-  padding-right: var(--space-10);
-  mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
+.c-distiller__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
 }
 
-.c-skill-category__pane::-webkit-scrollbar {
-  width: 5px;
+.c-distiller__bars {
+  /* currentColor drives the grey(complex) -> brand(clear) shift; the rects
+     inherit it. Static (pre-focus) state: blurred + muted. */
+  color: var(--color-text-muted);
+  filter: blur(3px);
 }
 
-.c-skill-category__pane::-webkit-scrollbar-track {
-  background: transparent;
+.c-distiller__bars rect {
+  fill: currentColor;
 }
 
-.c-skill-category__pane::-webkit-scrollbar-thumb {
-  background: var(--color-dot-muted);
-  border-radius: 10px;
-  transition: background 0.2s ease-in-out;
+.c-distiller__scan {
+  fill: var(--color-primary);
+  opacity: 0;
+  filter: drop-shadow(0 0 4px rgba(var(--color-primary-rgb), 0.7));
 }
 
-.c-skill-category__pane::-webkit-scrollbar-thumb:hover {
-  background: rgba(98, 108, 113, 0.7);
+/* Lead line: bars -> clarity node. */
+.c-distiller__lead {
+  stroke: var(--color-primary);
+  stroke-dasharray: 90;
+  stroke-dashoffset: 90;
 }
 
-.c-skills-grid,
-.c-services-grid,
-.c-contact__content {
-  transition: gap 0.4s ease-in-out;
+/* Clarity node: the distilled strategy — a pipeline-style dot with a glow halo
+   and an arrival ring (echoes the About pipeline's active node). */
+.c-distiller__halo {
+  fill: rgba(var(--color-primary-rgb), 0.16);
+  opacity: 0;
+}
+
+.c-distiller__node {
+  fill: var(--color-primary);
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.c-distiller__ring {
+  fill: none;
+  stroke: var(--color-primary);
+  opacity: 0;
+}
+
+/* Branch: clarity node -> campaign frame. */
+.c-distiller__branch {
+  stroke: var(--color-primary);
+  stroke-dasharray: 40;
+  stroke-dashoffset: 40;
+  opacity: 0;
+}
+
+/* Campaign: an outlined frame whose segments grow in left-to-right (the Gantt
+   bar motif), then the frame border warms to brand — the campaign "goes live". */
+.c-distiller__frame {
+  fill: none;
+  stroke: var(--color-hairline-strong);
+  opacity: 0;
+}
+
+.c-distiller__seg {
+  fill: var(--color-primary);
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: left center;
+  transform: scaleX(0);
+}
+
+.c-distiller__ends {
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--space-8);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.c-distiller__end--in {
+  color: var(--color-primary);
+}
+
+/* Animations start only when the section scrolls into view.
+   NOTE: the pixel/scale values in the keyframes below are tied to the SVG
+   geometry in HomeBody.astro's distiller markup — the scan sweeps the bars
+   (x 0->~56), the lead line runs bars->clarity node (56->132), and the four
+   campaign segments grow inside the frame (x 180->296). If you change the SVG
+   coordinates, re-tune these values to match. */
+.c-section.is-visible .c-distiller__bars {
+  animation: distillerFocus 4.4s var(--ease-standard) infinite;
+}
+
+.c-section.is-visible .c-distiller__scan {
+  animation: distillerSweep 4.4s var(--ease-standard) infinite;
+}
+
+.c-section.is-visible .c-distiller__lead {
+  animation: distillerDraw 4.4s var(--ease-standard) infinite;
+}
+
+.c-section.is-visible .c-distiller__halo {
+  animation: distillerHalo 4.4s var(--ease-standard) infinite;
+}
+
+.c-section.is-visible .c-distiller__node {
+  animation: distillerNode 4.4s var(--ease-standard) infinite;
+}
+
+.c-section.is-visible .c-distiller__ring {
+  animation: distillerRing 4.4s ease-out infinite;
+}
+
+.c-section.is-visible .c-distiller__branch {
+  animation: distillerBranch 4.4s var(--ease-standard) infinite;
+}
+
+.c-section.is-visible .c-distiller__frame {
+  animation: distillerFrame 4.4s var(--ease-standard) infinite;
+}
+
+.c-section.is-visible .c-distiller__seg {
+  animation: distillerSeg 4.4s var(--ease-standard) infinite;
+}
+
+/* Stagger the segments so the campaign assembles left-to-right. These must sit
+   after (and at equal specificity to) the shorthand above, which otherwise
+   resets animation-delay to 0. */
+.c-section.is-visible .c-distiller__seg--2 {
+  animation-delay: 0.17s;
+}
+
+.c-section.is-visible .c-distiller__seg--3 {
+  animation-delay: 0.34s;
+}
+
+.c-section.is-visible .c-distiller__seg--4 {
+  animation-delay: 0.51s;
+}
+
+@keyframes distillerFocus {
+  0%,
+  7% {
+    filter: blur(3px);
+    color: var(--color-text-muted);
+  }
+  34% {
+    filter: blur(0);
+    color: var(--color-primary);
+  }
+  90% {
+    filter: blur(0);
+    color: var(--color-primary);
+  }
+  97%,
+  100% {
+    filter: blur(3px);
+    color: var(--color-text-muted);
+  }
+}
+
+@keyframes distillerSweep {
+  0% {
+    transform: translateX(-6px);
+    opacity: 0;
+  }
+  6% {
+    opacity: 0.9;
+  }
+  34% {
+    transform: translateX(56px);
+    opacity: 0.9;
+  }
+  40%,
+  100% {
+    transform: translateX(56px);
+    opacity: 0;
+  }
+}
+
+/* Lead + branch lines draw in via stroke-dashoffset. */
+@keyframes distillerDraw {
+  0%,
+  36% {
+    stroke-dashoffset: 90;
+  }
+  50%,
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes distillerBranch {
+  0%,
+  56% {
+    stroke-dashoffset: 40;
+    opacity: 0;
+  }
+  62% {
+    opacity: 0.4;
+  }
+  70% {
+    stroke-dashoffset: 0;
+    opacity: 0.4;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0.35;
+  }
+}
+
+/* Clarity node: halo fades in, dot pops, ring pings on arrival. */
+@keyframes distillerHalo {
+  0%,
+  46% {
+    opacity: 0;
+  }
+  56%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes distillerNode {
+  0%,
+  44% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  54% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  60% {
+    transform: scale(1.28);
+  }
+  66%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes distillerRing {
+  0%,
+  50% {
+    r: 4.5;
+    opacity: 0;
+  }
+  57% {
+    r: 4.5;
+    opacity: 0.6;
+  }
+  68%,
+  100% {
+    r: 12;
+    opacity: 0;
+  }
+}
+
+/* Campaign: frame fades in, then its border warms to brand (goes "live"). */
+@keyframes distillerFrame {
+  0%,
+  58% {
+    opacity: 0;
+    stroke: var(--color-hairline-strong);
+    filter: none;
+  }
+  66% {
+    opacity: 1;
+    stroke: var(--color-hairline-strong);
+  }
+  86% {
+    stroke: var(--color-hairline-strong);
+    filter: none;
+  }
+  93% {
+    stroke: var(--color-primary);
+    filter: drop-shadow(0 0 3px rgba(var(--color-primary-rgb), 0.55));
+  }
+  100% {
+    opacity: 1;
+    stroke: var(--color-primary);
+    filter: drop-shadow(0 0 3px rgba(var(--color-primary-rgb), 0.55));
+  }
+}
+
+/* Segments grow left-to-right (the Gantt bar motif), staggered per segment. */
+@keyframes distillerSeg {
+  0%,
+  66% {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  70% {
+    opacity: 1;
+  }
+  82% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
 }
 
 @media (max-width: 48rem) {
-  .c-skills-grid {
+  /* Single column, and the grid gap goes to 0 so the collapsible cards read as
+     one continuous accordion list; the feature card is spaced off separately. */
+  .c-capabilities {
     grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .c-capability--feature,
+  .c-capability--collapsible {
+    grid-column: span 1;
+    grid-row: auto;
+  }
+
+  .c-capability--feature {
+    margin-bottom: var(--space-32);
+  }
+
+  /* Collapsible cards shed their card chrome and become accordion rows joined
+     by hairlines (top rule on the first row, bottom rule on each). */
+  .c-capability--collapsible {
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid var(--color-hairline);
+    border-radius: 0;
+  }
+
+  .c-capability--feature + .c-capability--collapsible {
+    border-top: 1px solid var(--color-hairline-strong);
+  }
+
+  /* Summary becomes the tappable header row: dot + index, name, chevron. */
+  .c-capability__summary {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+    padding: var(--space-16) var(--space-4);
+    cursor: pointer;
+  }
+
+  .c-capability__summary:focus-visible {
+    outline: var(--focus-outline);
+    outline-offset: -2px;
+  }
+
+  .c-capability--collapsible .c-capability__topline {
+    margin-bottom: 0;
+  }
+
+  /* The slug is redundant with the name in the header row, so hide it. */
+  .c-capability__slug {
+    display: none;
+  }
+
+  .c-capability--collapsible .c-capability__name {
+    flex: 1;
+    margin: 0;
+    font-size: var(--font-size-base);
+  }
+
+  .c-capability__chev {
+    display: block;
+    margin-left: auto;
+    color: var(--color-text-muted);
+    font-family: var(--font-family-mono);
+    transition:
+      transform var(--animation-speed) var(--animation-curve),
+      color var(--animation-speed) ease;
+  }
+
+  .c-capability__chev::before {
+    content: '\203A';
+    font-size: 1.2em;
+  }
+
+  .c-capability[open] .c-capability__chev {
+    transform: rotate(90deg);
+    color: var(--color-primary);
+  }
+
+  .c-capability[open] .c-capability__dot {
+    border-color: var(--color-primary);
+    background: var(--color-primary);
+    box-shadow: 0 0 0 4px rgba(var(--color-primary-rgb), 0.18);
+  }
+
+  /* Panel collapses when the row is closed; indents under the header when open. */
+  .c-capability--collapsible .c-capability__panel {
+    display: flex;
+    padding: 0 var(--space-4) var(--space-16)
+      calc(var(--space-16) + var(--space-8));
+  }
+
+  .c-capability--collapsible:not([open]) .c-capability__panel {
+    display: none;
+  }
+
+  /* Modern-model twin: re-collapse closed rows (base force-opens them). */
+  .c-capability--collapsible:not([open])::details-content {
+    content-visibility: hidden;
+  }
+
+  .c-capability--collapsible .c-capability__skills {
+    margin-bottom: var(--space-8);
+  }
+
+  .c-capability--collapsible .c-capability__foot {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+  }
+}
+
+/* Reduced motion: skip the focus-pull entirely and show the resolved state —
+   sharp brand-coloured detail distilled to a built output. */
+@media (prefers-reduced-motion: reduce) {
+  /* Resolved end state: sharp brand detail -> clarity node -> a fully
+     assembled, live campaign frame. No sweep/ring flourishes. */
+  .c-distiller__bars {
+    filter: none;
+    color: var(--color-primary);
+  }
+
+  .c-distiller__lead,
+  .c-distiller__branch {
+    stroke-dashoffset: 0;
+    opacity: 0.4;
+  }
+
+  .c-distiller__halo,
+  .c-distiller__node,
+  .c-distiller__frame {
+    opacity: 1;
+  }
+
+  .c-distiller__node {
+    transform: none;
+  }
+
+  .c-distiller__frame {
+    stroke: var(--color-primary);
+  }
+
+  .c-distiller__seg {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+
+  .c-distiller__scan,
+  .c-distiller__ring {
+    display: none;
   }
 }

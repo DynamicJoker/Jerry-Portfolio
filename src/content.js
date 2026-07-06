@@ -296,7 +296,7 @@ export const siteContent = {
       year: '2022',
       blurb:
         'Go-to-market for the MSI × Evangelion collaboration — building a limited-edition build narrative true to the fanbase, across launch press and a campaign landing.',
-      screenshot: '/images/work/eva.jpg',
+      screenshot: '/images/work/eva.webp',
       screenshotAlt: 'EVA × MSI Evangelion gaming PC campaign visual',
       items: [
         {
@@ -336,7 +336,7 @@ export const siteContent = {
       year: '2026',
       blurb:
         'Launch narrative for MSI’s flagship 4K 360Hz QD-OLED monitor — turning panel tech (Penta Tandem, Dark Armor) into a clear gamer-and-creator value story.',
-      screenshot: '/images/work/oled-banner.png',
+      screenshot: '/images/work/oled-banner.webp',
       screenshotAlt: 'MPG OLED 322URDX36 QD-OLED gaming monitor launch visual',
       items: [
         {
@@ -353,7 +353,7 @@ export const siteContent = {
       year: '2020',
       blurb:
         'A cloud / DevOps demand-gen program for Egen — a FinOps whitepaper and supporting webinars, blogs, and enterprise cloud case studies.',
-      screenshot: '/images/work/egen.png',
+      screenshot: '/images/work/egen.webp',
       screenshotAlt: 'Cover of the “10 Ways to Reduce Cloud Costs” whitepaper',
       items: [
         {
@@ -382,7 +382,7 @@ export const siteContent = {
       year: '2024',
       blurb:
         'Independent technical journalism for CGDirector — in-depth GPU/CPU reviews and evergreen explainers that built buyer trust and organic search authority.',
-      screenshot: '/images/work/cgdirector.png',
+      screenshot: '/images/work/cgdirector.webp',
       screenshotAlt: 'CGDirector hardware reviews and explainers visual',
       items: [
         {
@@ -411,7 +411,7 @@ export const siteContent = {
       year: '2019',
       blurb:
         'Top-of-funnel security education for RedLegg — explanatory guides on vulnerability management and threat intelligence aimed at enterprise security buyers.',
-      screenshot: '/images/work/redlegg.png',
+      screenshot: '/images/work/redlegg.webp',
       screenshotAlt: 'RedLegg cybersecurity content visual',
       items: [
         {
@@ -434,7 +434,7 @@ export const siteContent = {
       year: '2020',
       blurb:
         'Product marketing for LicenseSpring’s licensing platform — launch announcements, integration news, and conversion-focused website copy for a developer audience.',
-      screenshot: '/images/work/licensespring.png',
+      screenshot: '/images/work/licensespring.webp',
       screenshotAlt: 'LicenseSpring product and launch content visual',
       items: [
         {
@@ -463,7 +463,7 @@ export const siteContent = {
       year: '2023',
       blurb:
         'Relaunch messaging for the MSI Reward Program — turning a loyalty revamp into a clear member-value story across press and a program landing.',
-      screenshot: '/images/work/rewards.png',
+      screenshot: '/images/work/rewards.webp',
       screenshotAlt: 'MSI Reward Program loyalty campaign visual',
       items: [
         {
@@ -484,46 +484,79 @@ export const siteContent = {
   // Full body of work — ~225 pieces, generated in work-data.js from the map.
   workArchive,
 
-  // Skills data
-  skills: [
-    {
-      category: 'Technical Marketing',
-      tags: [
-        'Product Positioning',
-        'Go-to-Market Strategy',
-        'Competitive Analysis',
-        'Product Messaging',
-        'Core Benefit Analysis',
-        'Technical Narrative Development',
-        'Market Research',
+  // Skills & Expertise — rendered as a bento in HomeBody: a feature cell (the
+  // thesis, the Engineering->Marketing "distiller" graphic, and real
+  // aggregate stats) alongside three discipline cards and the tool stack.
+  // `feature.thesis` is a segment list so the emphasised words can be coloured
+  // to match the distiller's end labels. `slug` values are the mono
+  // `// category` labels. Keyword consumers (llms.txt, knowsAbout schema)
+  // flatten disciplines[].skills + tools.items — see skillKeywords below.
+  skills: {
+    feature: {
+      tag: 'what_i_do',
+      thesis: [
+        { text: 'I turn what ' },
+        { text: 'engineering', emphasis: true },
+        { text: ' builds into what the ' },
+        { text: 'market', emphasis: true },
+        { text: ' buys.' },
       ],
-    },
-    {
-      category: 'B2B Marketing',
-      tags: [
-        'Demand Generation',
-        'Account-Based Marketing',
-        'Lead Nurturing',
-        'Sales Enablement',
-        'B2B Content Strategy',
-        'Marketing Qualified Leads',
+      distiller: { inputLabel: 'Engineering', outputLabel: 'Campaigns' },
+      // Aggregate stats are archive-derived: distinct campaigns (~59 raw
+      // `campaign` labels in workArchive, rounded down for near-dupes and
+      // generic buckets), distinct industries, and consulting tenure (2015-).
+      stats: [
+        { value: '50+', label: 'campaigns' },
+        { value: '4', label: 'industries' },
+        { value: '10+', label: 'years' },
       ],
+      cta: { label: 'See the work', href: '#portfolio' },
     },
-    {
-      category: 'B2C Marketing',
-      tags: [
-        'Consumer Behavior Analysis',
-        'Brand Storytelling',
-        'Social Media Marketing',
-        'Customer Journey Mapping',
-        'Conversion Optimization',
-        'Performance Marketing',
-      ],
-    },
-    {
-      category: 'Tools & Platforms',
-      type: 'pane', // renders as the full-width pane layout in HomeBody's skills grid
-      tags: [
+    disciplines: [
+      {
+        slug: 'technical_marketing',
+        name: 'Technical Marketing',
+        note: 'whitepapers · guides',
+        skills: [
+          'Product Positioning',
+          'Go-to-Market Strategy',
+          'Competitive Analysis',
+          'Product Messaging',
+          'Technical Narratives',
+          'Market Research',
+        ],
+      },
+      {
+        slug: 'b2b_marketing',
+        name: 'B2B Marketing',
+        note: 'case studies · landing pages',
+        skills: [
+          'Demand Generation',
+          'Account-Based Marketing',
+          'Lead Nurturing',
+          'Sales Enablement',
+          'B2B Content Strategy',
+          'Marketing Qualified Leads',
+        ],
+      },
+      {
+        slug: 'b2c_marketing',
+        name: 'B2C Marketing',
+        note: 'blogs · launches · reviews',
+        skills: [
+          'Consumer Behavior',
+          'Brand Storytelling',
+          'Social Media Marketing',
+          'Customer Journey Mapping',
+          'Conversion Optimization',
+          'Performance Marketing',
+        ],
+      },
+    ],
+    tools: {
+      slug: 'tools_&_platforms',
+      name: 'The Stack',
+      items: [
         'HubSpot',
         'Salesforce',
         'Google Analytics',
@@ -536,7 +569,7 @@ export const siteContent = {
         'Webflow',
       ],
     },
-  ],
+  },
 
   // Services data
   services: [
@@ -662,3 +695,10 @@ export const siteContent = {
     },
   },
 };
+
+// Flattened skill/tool keywords for SEO surfaces (llms.txt, knowsAbout schema).
+// Single source so the skills bento shape stays decoupled from those consumers.
+export const skillKeywords = [
+  ...siteContent.skills.disciplines.flatMap((discipline) => discipline.skills),
+  ...siteContent.skills.tools.items,
+];

@@ -7,7 +7,7 @@ import bodyLatin600Url from '@fontsource/krub/files/krub-latin-600-normal.woff2?
 import displayFontUrl from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
 import globalStylesUrl from '../styles/global.css?url';
 import criticalHomeStyles from '../styles/critical-home.css?raw';
-import { siteContent } from '../content.js';
+import { siteContent, skillKeywords } from '../content.js';
 import BetaBanner from '../components/BetaBanner.astro';
 
 const profile = siteContent.profile;
@@ -41,7 +41,7 @@ const personJsonLd = {
     addressCountry: profile.location.country,
   },
   sameAs: profile.sameAs,
-  knowsAbout: siteContent.skills.flatMap((skill) => skill.tags),
+  knowsAbout: skillKeywords,
   description: profile.aiSummary,
 };
 

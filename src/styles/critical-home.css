@@ -705,12 +705,14 @@ html.is-theme-transitioning *::after {
   background: var(--hero-vignette);
 }
 
-/* Aurora: soft, heavily blurred blue light blooms */
+/* Aurora: soft blue light blooms. The softness comes entirely from the
+   bloom gradients (they fade to transparent by 65%); a filter here would
+   force the GPU to re-blur the whole hero every frame the blobs drift,
+   which old integrated GPUs can't afford. */
 .c-hero__aurora {
   position: absolute;
   inset: 0;
   overflow: hidden;
-  filter: blur(60px);
 }
 
 .c-hero__aurora-bloom {

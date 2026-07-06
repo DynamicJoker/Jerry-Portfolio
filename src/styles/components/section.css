@@ -172,10 +172,6 @@ section[id] {
   );
 }
 
-.c-section.is-visible .c-skill-category__tag {
-  transform: translateY(0) scale(1);
-}
-
 @media (max-width: 30rem) {
   .c-section {
     padding-block: var(--section-padding-mobile);

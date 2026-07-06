@@ -8,6 +8,9 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 21.875rem), 1fr));
   gap: var(--space-32);
+  /* Smooth the gap jump when the responsive column count changes on resize
+     (grid column changes themselves can't be transitioned). */
+  transition: gap 0.4s ease-in-out;
 }
 
 .c-service-card {

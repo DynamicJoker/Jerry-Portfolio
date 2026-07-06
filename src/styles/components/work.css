@@ -519,6 +519,11 @@
    an author `display` on the <li> would beat the UA [hidden] rule. */
 .c-archive__row {
   border-top: 1px solid var(--color-overlay-weak);
+  /* With ~250 rows in the list, let the browser skip layout/paint for rows
+     far offscreen. The intrinsic size approximates a collapsed row so the
+     scrollbar stays steady as rows render in. */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 4rem;
 }
 
 .c-archive__row[hidden] {
