@@ -257,14 +257,14 @@ export const siteContent = {
   // Display labels for the archive's asset-type sections. The internal keys in
   // work-data.js stay stable; edit only the values to restyle the section names.
   assetTypeLabels: {
-    'Product Launch': 'Liftoff',
-    'Case studies & Customer stories': 'Receipts',
-    Reviews: 'The Verdict',
-    'Guides & Explainers': 'Plainly Put',
-    'Landing pages & Web copy': 'Above the Fold',
-    'Blogs & Articles': 'Hot Takes',
-    'Press & PR': 'Stop the Press',
-    Other: 'B-Sides',
+    'Product Launch': 'Product Launches',
+    'Case studies & Customer stories': 'Case Studies',
+    Reviews: 'Reviews',
+    'Guides & Explainers': 'Guides & Explainers',
+    'Landing pages & Web copy': 'Landing Pages & Web Copy',
+    'Blogs & Articles': 'Blogs & Articles',
+    'Press & PR': 'Press & PR',
+    Other: 'Everything Else',
   },
   featuredCampaigns: [
     {
