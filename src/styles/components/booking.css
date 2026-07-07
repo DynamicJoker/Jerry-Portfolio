@@ -255,6 +255,11 @@
 .c-calendly-panel__host iframe {
   width: 100%;
   height: 100%;
+  /* Calendly ignores the URL color params on this account (custom theming is
+     plan-gated: the booking app resets to its default white theme when
+     custom_theme_allowed is false), so dark mode inverts the iframe's rendered
+     pixels instead; hue-rotate(180deg) keeps its blues reading as blue. */
+  filter: var(--calendly-embed-filter);
 }
 
 /* Below tablet, the CTA bar and scheduler panel header stack vertically. */

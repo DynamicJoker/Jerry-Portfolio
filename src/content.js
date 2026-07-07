@@ -59,6 +59,11 @@ export const siteContent = {
       loadingText: 'Loading available times...',
       closeLabel: 'Close scheduler',
       bookedText: 'You are booked. Thanks, I will see you on the call.',
+      // Calendly only honors these color params on plans with custom theming
+      // (custom_theme_allowed); until then the embed always renders its white
+      // default and dark mode is handled by --calendly-embed-filter (an
+      // invert filter in settings.css). If the plan is ever upgraded, remove
+      // that filter so these dark values apply directly.
       theme: {
         dark: {
           backgroundColor: '0F1117',

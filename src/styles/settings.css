@@ -175,6 +175,7 @@
   --color-tooltip-bg-inline: rgba(26, 26, 46, 0.05);
   --color-card-translucent: rgba(255, 255, 255, 0.85);
   --color-embed-bg: rgba(255, 255, 255, 0.6);
+  --calendly-embed-filter: none;
   --color-inset-bg: rgba(26, 26, 46, 0.04);
   --color-btn-neutral: #e7e7e4;
   --color-btn-neutral-hover: #dcdcd8;
@@ -268,6 +269,7 @@
     --color-tooltip-bg-inline: rgba(26, 29, 41, 0.75);
     --color-card-translucent: rgba(18, 22, 28, 0.78);
     --color-embed-bg: rgba(10, 10, 10, 0.6);
+    --calendly-embed-filter: invert(0.92) hue-rotate(180deg);
     --color-inset-bg: rgba(10, 10, 10, 0.28);
     --color-btn-neutral: rgba(62, 68, 72, 0.98);
     --color-btn-neutral-hover: rgba(72, 79, 84, 0.98);
@@ -347,6 +349,7 @@
   --color-tooltip-bg-inline: rgba(26, 29, 41, 0.75);
   --color-card-translucent: rgba(18, 22, 28, 0.78);
   --color-embed-bg: rgba(10, 10, 10, 0.6);
+  --calendly-embed-filter: invert(0.92) hue-rotate(180deg);
   --color-inset-bg: rgba(10, 10, 10, 0.28);
   --color-btn-neutral: rgba(62, 68, 72, 0.98);
   --color-btn-neutral-hover: rgba(72, 79, 84, 0.98);
