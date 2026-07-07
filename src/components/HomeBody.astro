@@ -532,18 +532,35 @@ siteContent.testimonials.forEach((testimonial, index) => {
       </div>
     </div>
     <div class="o-container">
-      <div class="c-services-grid" id="services-grid">
-        {
-          siteContent.services.map((service) => (
-            <div class="c-service-card">
-              <div class="c-service-card__icon" aria-hidden="true">
-                <Icon name={service.icon} />
-              </div>
-              <h3 class="c-service-card__title">{service.title}</h3>
-              <p class="c-service-card__description">{service.description}</p>
-            </div>
-          ))
-        }
+      <div class="c-engagements">
+        <span class="c-engagements__tag">{siteContent.services.tag}</span>
+        <p class="c-engagements__lede">{siteContent.services.lede}</p>
+        <ul class="c-engagements__list">
+          {
+            siteContent.services.engagements.map((engagement, i) => (
+              <li class="c-engagement">
+                <div class="c-engagement__main">
+                  <span class="c-engagement__index">
+                    <b>{String(i + 1).padStart(2, '0')}</b> · {engagement.slug}
+                  </span>
+                  <h3 class="c-engagement__name">{engagement.name}</h3>
+                  <p class="c-engagement__description">
+                    {engagement.description}
+                  </p>
+                </div>
+                <div class="c-engagement__rail">
+                  <span class="c-engagement__meta">{engagement.meta}</span>
+                  <a
+                    class="c-engagement__cta"
+                    href={siteContent.services.ctaHref}
+                  >
+                    {siteContent.services.ctaLabel}
+                  </a>
+                </div>
+              </li>
+            ))
+          }
+        </ul>
       </div>
     </div>
   </section>
