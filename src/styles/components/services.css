@@ -1,46 +1,221 @@
-/* Component: services */
-/* Above-the-fold rules that also exist in critical-home.css must be
-   changed in both places. */
+/* Component: services — engagement ledger */
+/* Below the fold, so no rules here are duplicated in critical-home.css.
+   The section is three hairline-separated "engagement" rows (project /
+   retainer / fractional — how to work with me), each ending in the booking
+   CTA that deep-links to the #schedule bar in the contact section. On hover
+   (or keyboard focus within the row) a brand line draws along the row's top
+   hairline and lands with a transient ring ping at the CTA rail — the
+   distiller's arrival ring at row scale. The effects are decorative; the CTA
+   link is the row's only interactive element. */
 
-/* Services Section */
-
-.c-services-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 21.875rem), 1fr));
-  gap: var(--space-32);
-  /* Smooth the gap jump when the responsive column count changes on resize
-     (grid column changes themselves can't be transitioned). */
-  transition: gap 0.4s ease-in-out;
+.c-engagements__tag {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
 }
 
-.c-service-card {
-  padding: var(--space-8) 0 var(--space-24) var(--space-24);
-  border-left: 2px solid var(--color-hairline);
-  text-align: left;
+.c-engagements__tag::before {
+  content: '// ';
+  color: var(--color-primary);
 }
 
-.c-service-card__icon {
-  display: flex;
-  justify-content: flex-start;
-  font-size: var(--font-size-icon-lg);
-  color: var(--color-electric-blue);
-  margin-bottom: var(--space-16);
-}
-
-.c-service-card__title {
-  font-size: var(--text-card-title);
-  margin-bottom: var(--space-16);
-  color: var(--color-electric-blue);
-}
-
-.c-service-card__description {
-  line-height: 1.6;
+.c-engagements__lede {
+  margin: var(--space-8) 0 var(--space-32);
+  max-width: 32rem;
+  font-size: var(--font-size-sm);
+  line-height: 1.65;
   color: var(--color-text-secondary);
 }
 
+.c-engagements__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.c-engagement {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-24);
+  padding: var(--space-24) var(--space-8);
+  border-top: 1px solid var(--color-hairline);
+  transition: background-color var(--animation-speed) ease;
+}
+
+.c-engagement:last-child {
+  border-bottom: 1px solid var(--color-hairline);
+}
+
+.c-engagement__index {
+  display: block;
+  margin-bottom: var(--space-8);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+}
+
+.c-engagement__index b {
+  color: var(--color-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+.c-engagement__name {
+  margin: 0 0 var(--space-6);
+  font-size: var(--text-card-title);
+  color: var(--color-text-strong);
+}
+
+.c-engagement__description {
+  margin: 0;
+  max-width: 34rem;
+  font-size: var(--font-size-sm);
+  line-height: 1.65;
+  color: var(--color-text-secondary);
+}
+
+.c-engagement__rail {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-12);
+  text-align: right;
+}
+
+.c-engagement__meta {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+}
+
+.c-engagement__cta {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  color: var(--color-primary);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color var(--animation-speed) ease;
+}
+
+.c-engagement__cta::after {
+  content: ' \203A';
+  font-size: 1.1em;
+}
+
+/* Hover/focus story (pointer devices only): wash + draw + ping + CTA warmth.
+   :focus-within mirrors it for keyboard users tabbing to the CTA. */
+@media (hover: hover) {
+  .c-engagement:hover,
+  .c-engagement:focus-within {
+    background-color: var(--color-overlay-weak);
+  }
+
+  /* Brand line drawing along the row's top hairline, stopping just short of
+     the right edge where the arrival ring lands. */
+  .c-engagement::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 0;
+    width: calc(100% - 0.75rem);
+    height: 1.5px;
+    background: rgba(var(--color-primary-rgb), 0.6);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.45s var(--animation-curve);
+  }
+
+  .c-engagement:hover::before,
+  .c-engagement:focus-within::before {
+    transform: scaleX(1);
+  }
+
+  /* Arrival ring: transient expanding ping where the line meets the CTA
+     rail (no resting state, so it never reads as a radio control). */
+  .c-engagement::after {
+    content: '';
+    position: absolute;
+    top: -0.3125rem;
+    left: calc(100% - 0.75rem);
+    width: 0.5625rem;
+    height: 0.5625rem;
+    border: 1.5px solid var(--color-primary);
+    border-radius: 50%;
+    opacity: 0;
+    transform: scale(0.4);
+    pointer-events: none;
+  }
+
+  .c-engagement:hover::after,
+  .c-engagement:focus-within::after {
+    animation: engagementPing 0.55s ease-out 0.4s 1 forwards;
+  }
+
+  /* CTA lights up once the line arrives (delay matches the draw). */
+  .c-engagement:hover .c-engagement__cta,
+  .c-engagement:focus-within .c-engagement__cta {
+    color: var(--color-primary-hover);
+    text-decoration: underline;
+    transition-delay: 0.4s;
+  }
+}
+
+.c-engagement__cta:hover {
+  text-decoration: underline;
+}
+
+@keyframes engagementPing {
+  0% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  35% {
+    opacity: 0.9;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.9);
+  }
+}
+
 @media (max-width: 48rem) {
-  .c-services-grid {
+  .c-engagement {
     grid-template-columns: 1fr;
+    gap: var(--space-12);
+  }
+
+  /* Rail folds under the description as a single meta/CTA line. */
+  .c-engagement__rail {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    text-align: left;
+  }
+
+  /* Comfortable touch target for the row's only link (WCAG 2.5.8). */
+  .c-engagement__cta {
+    padding-block: var(--space-8);
+  }
+}
+
+/* Reduced motion: no draw, no ping — hover just shows the settled line. */
+@media (prefers-reduced-motion: reduce) {
+  .c-engagement::before {
+    transition: none;
+  }
+
+  .c-engagement::after {
+    display: none;
+  }
+
+  .c-engagement:hover .c-engagement__cta,
+  .c-engagement:focus-within .c-engagement__cta {
+    transition-delay: 0s;
   }
 }
 

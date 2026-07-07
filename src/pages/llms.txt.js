@@ -8,7 +8,9 @@ function stripHtml(value = '') {
 export async function GET() {
   const profile = siteContent.profile;
   const skills = skillKeywords.join(', ');
-  const services = siteContent.services.map((service) => `- ${service.title}: ${service.description}`).join('\n');
+  const services = siteContent.services.engagements
+    .map((engagement) => `- ${engagement.name} (${engagement.meta}): ${engagement.description}`)
+    .join('\n');
   const experience = siteContent.experience
     .slice()
     .sort((a, b) => a.sortOrder - b.sortOrder)

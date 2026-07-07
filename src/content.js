@@ -257,14 +257,14 @@ export const siteContent = {
   // Display labels for the archive's asset-type sections. The internal keys in
   // work-data.js stay stable; edit only the values to restyle the section names.
   assetTypeLabels: {
-    'Product Launch': 'Liftoff',
-    'Case studies & Customer stories': 'Receipts',
-    Reviews: 'The Verdict',
-    'Guides & Explainers': 'Plainly Put',
-    'Landing pages & Web copy': 'Above the Fold',
-    'Blogs & Articles': 'Hot Takes',
-    'Press & PR': 'Stop the Press',
-    Other: 'B-Sides',
+    'Product Launch': 'Product Launches',
+    'Case studies & Customer stories': 'Case Studies',
+    Reviews: 'Reviews',
+    'Guides & Explainers': 'Guides & Explainers',
+    'Landing pages & Web copy': 'Landing Pages & Web Copy',
+    'Blogs & Articles': 'Blogs & Articles',
+    'Press & PR': 'Press & PR',
+    Other: 'Everything Else',
   },
   featuredCampaigns: [
     {
@@ -571,45 +571,37 @@ export const siteContent = {
     },
   },
 
-  // Services data
-  services: [
-    {
-      icon: 'pen',
-      title: 'Technical Content Creation',
-      description:
-        'White papers, case studies, technical documentation, and thought leadership content that simplifies complex topics.',
-    },
-    {
-      icon: 'target',
-      title: 'B2B Marketing Strategy',
-      description:
-        'Comprehensive B2B marketing strategies including demand generation, ABM, and lead nurturing campaigns.',
-    },
-    {
-      icon: 'megaphone',
-      title: 'B2C Campaign Development',
-      description:
-        'Consumer-focused marketing campaigns that drive engagement, awareness, and conversions across digital channels.',
-    },
-    {
-      icon: 'workflow',
-      title: 'Marketing Automation',
-      description:
-        'Implementation and optimization of marketing automation workflows to nurture leads and improve ROI.',
-    },
-    {
-      icon: 'layers',
-      title: 'Content Marketing',
-      description:
-        'Strategic content planning, creation, and distribution across multiple channels to build brand authority.',
-    },
-    {
-      icon: 'trending-up',
-      title: 'Performance Analytics',
-      description:
-        'Data analysis and reporting to measure campaign effectiveness and optimize marketing performance.',
-    },
-  ],
+  // Services data — engagement models ("how do you work with me"), rendered
+  // as ledger rows in HomeBody. ctaHref targets the booking bar in #contact.
+  services: {
+    tag: 'how_to_engage',
+    lede: 'Three ways to plug me into your team — pick the shape that fits the problem.',
+    ctaLabel: 'Book a discovery call',
+    ctaHref: '#schedule',
+    engagements: [
+      {
+        slug: 'project',
+        name: 'Project Engagements',
+        description:
+          'A scoped, fixed deliverable — whitepaper packages, case-study series, launch content, a full site copy overhaul. Defined gap, defined deadline.',
+        meta: 'scoped · fixed-deliverable',
+      },
+      {
+        slug: 'retainer',
+        name: 'Content & Strategy Retainer',
+        description:
+          'An ongoing monthly engine — content pipeline, editorial calendar, demand-gen support, and an analytics feedback loop that compounds.',
+        meta: 'monthly · ongoing',
+      },
+      {
+        slug: 'fractional',
+        name: 'Fractional Product Marketing',
+        description:
+          'Embedded part-time — positioning, go-to-market planning, sales enablement, and translating between your engineers and your market.',
+        meta: 'embedded · part-time',
+      },
+    ],
+  },
   testimonials: [
     {
       name: 'Alex Glawion',
