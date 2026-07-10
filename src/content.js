@@ -5,7 +5,7 @@ export const siteContent = {
     name: 'Jerry James',
     pageTitle: 'Jerry James - Technical Marketing Specialist',
     jobTitle: 'Technical Marketing Specialist',
-    canonicalUrl: 'https://www.jerryjames.me/',
+    canonicalUrl: 'https://jerryjames.me/',
     portraitImage: '/images/jerry-james-portrait.jpg',
     portraitAlt: 'Portrait of Jerry James',
     socialImage: '/images/seo/jerry-james-og.png',
@@ -363,7 +363,7 @@ export const siteContent = {
       items: [
         {
           type: 'whitepaper',
-          title: '10 Ways to Reduce Cloud Costs White Paper (PDF))',
+          title: '10 Ways to Reduce Cloud Costs White Paper (PDF)',
           access: 'live',
           url: 'http://web.archive.org/web/20240623080931/https://insights.egen.solutions/hubfs/white-papers/10%20Ways%20to%20Reduce%20Cloud%20Costs.pdf',
         },
@@ -486,7 +486,7 @@ export const siteContent = {
       ],
     },
   ],
-  // Full body of work — ~225 pieces, generated in work-data.js from the map.
+  // Full body of work — ~250 pieces, generated in work-data.js from the map.
   workArchive,
 
   // Skills & Expertise — rendered as a bento in HomeBody: a feature cell (the

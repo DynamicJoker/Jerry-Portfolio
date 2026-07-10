@@ -10,7 +10,7 @@ import { siteContent } from './src/content.js';
 // Single source of truth for the site origin lives in src/content.js.
 const siteUrl = siteContent.profile.canonicalUrl.replace(/\/$/, '');
 // Bump when the homepage content changes; blog lastmod comes from frontmatter.
-const homepageLastmod = '2026-05-17';
+const homepageLastmod = '2026-07-07';
 
 function getBlogSitemapMetadata() {
   const blogDir = path.resolve('./src/content/blog');

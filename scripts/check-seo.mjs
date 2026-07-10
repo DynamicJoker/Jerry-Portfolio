@@ -2,8 +2,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const distDir = path.resolve('dist');
-const canonicalOrigin = 'https://www.jerryjames.me';
-const bareOrigin = 'https://jerryjames.me';
+const canonicalOrigin = 'https://jerryjames.me';
+const wwwOrigin = 'https://www.jerryjames.me';
 const forbiddenPathPattern = /(?:cgi-sys|defaultwebpage\.cgi)/i;
 const requiredArtifacts = [
   'robots.txt',
@@ -69,8 +69,8 @@ function getCanonicalHref(html) {
 }
 
 function assertCanonicalHost(value, label) {
-  if (value?.includes(bareOrigin)) {
-    fail(`${label}: must use ${canonicalOrigin}, not ${bareOrigin}.`);
+  if (value?.includes(wwwOrigin)) {
+    fail(`${label}: must use ${canonicalOrigin}, not ${wwwOrigin}.`);
   }
   if (forbiddenPathPattern.test(value ?? '')) {
     fail(`${label}: must not reference cgi-sys/defaultwebpage URLs.`);
@@ -108,15 +108,17 @@ if (!fs.existsSync(distDir)) {
       fail(`${relative}: expected exactly one h1.`);
     if (countMatches(html, /<main\b/gi) !== 1)
       fail(`${relative}: expected exactly one main landmark.`);
-    if (
-      !/<meta\s+name=["']robots["']\s+content=["'][^"']*index[^"']*follow[^"']*max-image-preview:large[^"']*["']/i.test(
-        html,
-      )
-    ) {
+    // The 404 page is intentionally noindexed (BaseLayout's `noindex` prop);
+    // every indexable page must carry the full index policy.
+    const expectedRobotsPattern =
+      relative === '404.html'
+        ? /<meta\s+name=["']robots["']\s+content=["']noindex,\s*nofollow["']/i
+        : /<meta\s+name=["']robots["']\s+content=["'][^"']*index[^"']*follow[^"']*max-image-preview:large[^"']*["']/i;
+    if (!expectedRobotsPattern.test(html)) {
       fail(`${relative}: missing expected robots meta policy.`);
     }
     if (
-      !/<link\s+rel=["']alternate["'][^>]+type=["']application\/rss\+xml["'][^>]+href=["']https:\/\/www\.jerryjames\.me\/rss\.xml["']/i.test(
+      !/<link\s+rel=["']alternate["'][^>]+type=["']application\/rss\+xml["'][^>]+href=["']https:\/\/jerryjames\.me\/rss\.xml["']/i.test(
         html,
       )
     ) {

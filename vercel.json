@@ -7,10 +7,10 @@
       "has": [
         {
           "type": "host",
-          "value": "jerryjames.me"
+          "value": "www.jerryjames.me"
         }
       ],
-      "destination": "https://www.jerryjames.me/:path*",
+      "destination": "https://jerryjames.me/:path*",
       "statusCode": 308
     }
   ],

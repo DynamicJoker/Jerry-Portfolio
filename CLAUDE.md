@@ -1,6 +1,6 @@
 # Jerry James portfolio (Astro static site)
 
-Personal portfolio + blog, deployed on Vercel at https://www.jerryjames.me.
+Personal portfolio + blog, deployed on Vercel at https://jerryjames.me.
 
 ## Where things live (single sources of truth)
 
