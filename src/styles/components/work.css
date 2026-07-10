@@ -29,8 +29,12 @@
   transition: transform var(--animation-speed) var(--animation-curve);
 }
 
-.c-work-card__media:hover .c-work-card__img {
-  transform: scale(1.03);
+/* Pointer devices only: keeps the effect from sticking after taps on
+   touch screens. */
+@media (hover: hover) {
+  .c-work-card__media:hover .c-work-card__img {
+    transform: scale(1.03);
+  }
 }
 
 /* Lightbox: native <dialog> in the top layer. The dialog fills the viewport
@@ -221,10 +225,14 @@
 }
 
 /* Echo the hero buttons: accent fill + a single signal-pulse ring on hover. */
-.c-featured__btn:hover {
-  background: rgba(var(--color-primary-rgb), 0.12);
-  border-color: var(--color-primary);
-  animation: btnSignalPulse 1.1s ease-out 1;
+/* Pointer devices only: keeps the effect from sticking after taps on
+   touch screens. */
+@media (hover: hover) {
+  .c-featured__btn:hover {
+    background: rgba(var(--color-primary-rgb), 0.12);
+    border-color: var(--color-primary);
+    animation: btnSignalPulse 1.1s ease-out 1;
+  }
 }
 
 .c-featured__btn:focus-visible {
@@ -432,9 +440,13 @@
     border-color var(--animation-speed) var(--animation-curve);
 }
 
-.c-archive__tab:hover {
-  border-color: var(--color-primary);
-  animation: btnSignalPulse 1.1s ease-out 1;
+/* Pointer devices only: keeps the effect from sticking after taps on
+   touch screens. */
+@media (hover: hover) {
+  .c-archive__tab:hover {
+    border-color: var(--color-primary);
+    animation: btnSignalPulse 1.1s ease-out 1;
+  }
 }
 
 .c-archive__tab.is-active {
@@ -496,10 +508,14 @@
 }
 
 /* Hover stays a tint + pulse so it never looks like the solid active state. */
-.c-archive__filter:hover:not(.is-active) {
-  border-color: var(--color-primary);
-  background: rgba(var(--color-primary-rgb), 0.12);
-  animation: btnSignalPulse 1.1s ease-out 1;
+/* Pointer devices only: keeps the effect from sticking after taps on
+   touch screens. */
+@media (hover: hover) {
+  .c-archive__filter:hover:not(.is-active) {
+    border-color: var(--color-primary);
+    background: rgba(var(--color-primary-rgb), 0.12);
+    animation: btnSignalPulse 1.1s ease-out 1;
+  }
 }
 
 .c-archive__filter:focus-visible {
@@ -545,8 +561,12 @@ a.c-archive__row-link {
   transition: background-color var(--animation-speed) var(--animation-curve);
 }
 
-a.c-archive__row-link:hover {
-  background: var(--color-overlay-weak);
+/* Pointer devices only: keeps the effect from sticking after taps on
+   touch screens. */
+@media (hover: hover) {
+  a.c-archive__row-link:hover {
+    background: var(--color-overlay-weak);
+  }
 }
 
 .c-archive__row-link--static {
@@ -600,8 +620,12 @@ a.c-archive__row-link .c-archive__row-title {
   color: var(--color-primary);
 }
 
-a.c-archive__row-link:hover .c-archive__row-title {
-  color: var(--color-primary-hover);
+/* Pointer devices only: keeps the effect from sticking after taps on
+   touch screens. */
+@media (hover: hover) {
+  a.c-archive__row-link:hover .c-archive__row-title {
+    color: var(--color-primary-hover);
+  }
 }
 
 .c-archive__row-meta {

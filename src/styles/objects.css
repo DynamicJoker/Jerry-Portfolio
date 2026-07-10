@@ -10,25 +10,28 @@
   padding: 0 var(--space-16);
 }
 
-@media (min-width: 40rem) {
+/* Steps use the house .01 convention (see the max-width: Nrem /
+   min-width: N.01rem pairs in components) so a viewport at exactly a
+   breakpoint — e.g. iPad portrait at 48rem/768px — is mobile everywhere. */
+@media (min-width: 40.01rem) {
   .o-container {
     max-width: var(--container-sm);
   }
 }
 
-@media (min-width: 48rem) {
+@media (min-width: 48.01rem) {
   .o-container {
     max-width: var(--container-md);
   }
 }
 
-@media (min-width: 64rem) {
+@media (min-width: 64.01rem) {
   .o-container {
     max-width: var(--container-lg);
   }
 }
 
-@media (min-width: 80rem) {
+@media (min-width: 80.01rem) {
   .o-container {
     max-width: var(--container-xl);
   }

@@ -81,9 +81,13 @@
     box-shadow var(--animation-speed) var(--animation-curve);
 }
 
-.c-home-blog__card:hover {
-  border-color: var(--color-primary);
-  animation: btnSignalPulse 1.1s ease-out 1;
+/* Pointer devices only: keeps the effect from sticking after taps on
+   touch screens. */
+@media (hover: hover) {
+  .c-home-blog__card:hover {
+    border-color: var(--color-primary);
+    animation: btnSignalPulse 1.1s ease-out 1;
+  }
 }
 
 .c-home-blog__card-meta {

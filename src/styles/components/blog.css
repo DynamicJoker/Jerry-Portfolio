@@ -6,7 +6,9 @@
 
 .c-blog-shell,
 .c-article-shell {
+  /* svh pair matches the hero convention (mobile URL-bar viewports) */
   min-height: 100vh;
+  min-height: 100svh;
   background:
     radial-gradient(
       circle at 18% 12%,

@@ -6,6 +6,13 @@ export const siteContent = {
     pageTitle: 'Jerry James - Technical Marketing Specialist',
     jobTitle: 'Technical Marketing Specialist',
     canonicalUrl: 'https://jerryjames.me/',
+    // Pre-paint <meta name="theme-color"> hints (BaseLayout). Must match the
+    // --color-background token values in settings.css / critical-home.css;
+    // after first paint the SiteNav theme controller re-reads the live token.
+    themeColors: {
+      light: '#fafaf9',
+      dark: '#0f1117',
+    },
     portraitImage: '/images/jerry-james-portrait.jpg',
     portraitAlt: 'Portrait of Jerry James',
     socialImage: '/images/seo/jerry-james-og.png',

@@ -5,6 +5,9 @@
 
 :root {
   /* Colors */
+  /* The light/dark --color-background values also serve as the browser
+     theme-color: prepaint hints live in content.js profile.themeColors
+     (keep in step); after paint SiteNav re-reads the live token. */
   --color-background: #fafaf9;
   --color-surface: #ffffff;
   --color-text: #1a1a2e;
@@ -20,6 +23,15 @@
   --color-border-strong: rgba(26, 26, 46, 0.45);
   --color-btn-primary-text: #ffffff;
   --color-error: rgba(192, 21, 47, 1);
+  /* Status colors. Success drives the availability dot (+ glow/ring alphas;
+     mirrored in critical-home.css). The notification tokens are toast
+     backgrounds — keep >=4.5:1 against white text; they deliberately stay
+     the same in dark mode, so no dark-block overrides. */
+  --color-success: #22c55e;
+  --color-success-glow: rgba(34, 197, 94, 0.5);
+  --color-success-ring: rgba(34, 197, 94, 0.28);
+  --color-notification-success: rgba(15, 118, 110, 0.95);
+  --color-notification-error: rgba(192, 21, 47, 0.95);
   --color-focus-visible: var(--color-primary);
 
   /* Typography */
@@ -68,6 +80,15 @@
   --text-article-h2: clamp(1.65rem, 3vw, 2.25rem);
   --text-article-h3: clamp(1.32rem, 2vw, 1.65rem);
   --text-article-heading-line-height: 1.18;
+  /* MDX chart annotation roles (the hand-written c-article-chart and
+     c-stacked-bar markup in blog post bodies; consumed in article.css). */
+  --text-chart-caption: 0.92rem;
+  --text-chart-caption-strong: 1.02rem;
+  --text-chart-label: 0.82rem;
+  --text-chart-metric: clamp(1.65rem, 4vw, 2.45rem);
+  --text-chart-row: 0.9rem;
+  --text-chart-value: var(--font-size-base);
+  --text-chart-note: 0.88rem;
   --text-blog-feature: clamp(1.75rem, 4vw, 3rem);
   --text-blog-feature-line-height: 1.02;
   --text-blog-card: clamp(1.25rem, 2.4vw, 1.55rem);
@@ -111,6 +132,10 @@
   --container-lg: 64rem; /* 1024px */
   --container-xl: 80rem; /* 1280px */
   --breakpoint-md: 48rem; /* 768px */
+  /* Nav collapse point. Media queries can't read custom properties, so the
+     64rem literals in nav.css / critical-home.css must stay in step with
+     this token; JS (main.js, SiteNav.astro) reads it at runtime. */
+  --breakpoint-lg: 64rem; /* 1024px */
   --navbar-height: 4.375rem; /* 70px */
   --section-padding: 6.25rem; /* 100px */
   --section-padding-mobile: 3.75rem; /* 60px */
@@ -126,6 +151,16 @@
   --nav-menu-open-offset: var(--space-8);
   --viewport-inline-padding: clamp(var(--space-16), 5vw, var(--space-32));
   --section-header-gap: clamp(var(--space-32), 6vw, 3.75rem);
+
+  /* Page-level stacking order, lowest to highest (local stacking inside a
+     component keeps literal 0/1/2). Mirrored in critical-home.css. */
+  --z-section-header: 100;
+  --z-nav: 1000;
+  --z-nav-menu: 1001;
+  --z-beta-banner: 1002;
+  --z-loading-screen: 10000;
+  --z-notification: 10000;
+  --z-skip-link: 10010;
 
   /* Docked section headings: each heading shrinks on approach (main.js scrubs
      --dock-progress) and sticks below the navbar as a slim bar until the next

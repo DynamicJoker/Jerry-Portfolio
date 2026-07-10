@@ -79,7 +79,7 @@ body {
 .c-section .c-section__header {
   position: sticky;
   top: calc(var(--navbar-height) + var(--beta-banner-offset, 0rem));
-  z-index: 100;
+  z-index: var(--z-section-header);
 }
 
 /* Bar chrome lives on a pseudo so it can fade independently of the swap.

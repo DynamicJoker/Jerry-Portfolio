@@ -9,7 +9,7 @@
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 1000;
+  z-index: var(--z-nav);
   background-color: transparent;
   transition:
     background-color 0.4s var(--ease-standard),
@@ -101,7 +101,7 @@ body[data-page='home'] .c-nav.is-brand-expanded .c-brand-logo__wordmark {
 
 .c-nav__menu {
   position: relative;
-  z-index: 1001;
+  z-index: var(--z-nav-menu);
   display: block;
   min-width: 0;
 }
@@ -377,6 +377,8 @@ html.is-theme-transitioning *::after {
   transition: none;
 }
 
+/* 64rem = --breakpoint-lg (media queries can't read custom properties;
+   keep in step with settings.css). */
 @media (max-width: 64rem) {
   .c-nav__actions {
     flex: 1 1 auto;

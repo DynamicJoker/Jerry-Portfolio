@@ -211,7 +211,16 @@
     color 0.2s ease;
 }
 
-.c-hero__status:hover,
+/* Pointer devices only: keeps the effect from sticking after taps on
+   touch screens; the focus-visible twin below stays for keyboard users. */
+@media (hover: hover) {
+  .c-hero__status:hover {
+    border-color: var(--color-primary);
+    color: var(--color-text);
+    animation: btnSignalPulse 1.1s ease-out 1;
+  }
+}
+
 .c-hero__status:focus-visible {
   border-color: var(--color-primary);
   color: var(--color-text);

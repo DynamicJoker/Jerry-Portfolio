@@ -27,9 +27,13 @@
     background-color var(--animation-speed) ease;
 }
 
-.c-capability:hover {
-  border-color: rgba(var(--color-primary-rgb), 0.55);
-  background-color: var(--color-overlay-weak);
+/* Pointer devices only: keeps the effect from sticking after taps on
+   touch screens. */
+@media (hover: hover) {
+  .c-capability:hover {
+    border-color: rgba(var(--color-primary-rgb), 0.55);
+    background-color: var(--color-overlay-weak);
+  }
 }
 
 .c-capability--feature {
@@ -64,10 +68,14 @@
     box-shadow var(--animation-speed) ease;
 }
 
-.c-capability:hover .c-capability__dot {
-  border-color: var(--color-primary);
-  background: var(--color-primary);
-  box-shadow: 0 0 0 4px rgba(var(--color-primary-rgb), 0.18);
+/* Pointer devices only: keeps the effect from sticking after taps on
+   touch screens. */
+@media (hover: hover) {
+  .c-capability:hover .c-capability__dot {
+    border-color: var(--color-primary);
+    background: var(--color-primary);
+    box-shadow: 0 0 0 4px rgba(var(--color-primary-rgb), 0.18);
+  }
 }
 
 .c-capability__index {
@@ -248,9 +256,13 @@
     color var(--animation-speed) ease;
 }
 
-.c-capability__chip:hover {
-  border-color: var(--color-primary);
-  color: var(--color-primary);
+/* Pointer devices only: keeps the effect from sticking after taps on
+   touch screens. */
+@media (hover: hover) {
+  .c-capability__chip:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
 }
 
 /* -------------------------------------------------------------------------

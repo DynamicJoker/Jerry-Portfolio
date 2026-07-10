@@ -177,9 +177,15 @@ const currentLabel = links.find((link) => link.id === current)?.label ?? 'Home';
     };
     const apply = (scheme) => {
       root.dataset.colorScheme = scheme;
-      metas.forEach((meta) =>
-        meta.setAttribute('content', scheme === 'dark' ? '#0f1117' : '#fafaf9'),
-      );
+      /* theme-color follows the live --color-background token (resolved
+         against the scheme attribute set above); if the token is somehow
+         unavailable the media-scoped prepaint metas from BaseLayout stand. */
+      const background = getComputedStyle(root)
+        .getPropertyValue('--color-background')
+        .trim();
+      if (background) {
+        metas.forEach((meta) => meta.setAttribute('content', background));
+      }
       button?.setAttribute(
         'aria-label',
         scheme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme',
@@ -225,7 +231,14 @@ const currentLabel = links.find((link) => link.id === current)?.label ?? 'Home';
     if (!hamburger || !navMenu) return;
 
     const controls = [hamburger].filter(Boolean);
-    const navMenuQuery = window.matchMedia('(max-width: 64rem)');
+    // Nav collapse point comes from the --breakpoint-lg token (the global
+    // stylesheet is render-blocking on non-home pages, so it's resolvable
+    // here); the literal fallback covers a blocked stylesheet.
+    const navCollapse =
+      getComputedStyle(document.documentElement)
+        .getPropertyValue('--breakpoint-lg')
+        .trim() || '64rem';
+    const navMenuQuery = window.matchMedia(`(max-width: ${navCollapse})`);
 
     const setNavOpen = (isOpen) => {
       hamburger.classList.toggle('is-active', isOpen);

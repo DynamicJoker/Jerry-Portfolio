@@ -7,6 +7,7 @@ const config = {
   notificationDuration: 5000,
   breakpoints: {
     md: { cssVar: '--breakpoint-md', fallbackRem: 48 },
+    lg: { cssVar: '--breakpoint-lg', fallbackRem: 64 },
   },
   navbar: {
     scrollThreshold: 10, // px
@@ -268,7 +269,9 @@ function initializeNavigation() {
   navLinks = document.querySelectorAll('.c-nav__link');
   const navbar = document.getElementById('navbar');
   const controls = [hamburger].filter(Boolean);
-  const navMenuQuery = window.matchMedia('(max-width: 64rem)');
+  const navMenuQuery = window.matchMedia(
+    `(max-width: ${getBreakpointPx('lg')}px)`,
+  );
   const setNavOpen = (isOpen) => {
     if (!hamburger || !navMenu) return;
 

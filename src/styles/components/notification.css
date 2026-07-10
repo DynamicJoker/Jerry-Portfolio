@@ -15,7 +15,7 @@
   padding: var(--space-16) var(--space-20);
   border-radius: var(--radius-base);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  z-index: 10000;
+  z-index: var(--z-notification);
   transform: translateX(120%);
   /* Start further off-screen */
   transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
@@ -35,14 +35,15 @@
   transform: translateX(0);
 }
 
-/* AA contrast: backgrounds must stay >=4.5:1 against the white toast text */
+/* AA contrast: backgrounds must stay >=4.5:1 against the white toast text
+   (enforced at the token definitions in settings.css) */
 
 .c-notification--success {
-  background: rgba(15, 118, 110, 0.95);
+  background: var(--color-notification-success);
 }
 
 .c-notification--error {
-  background: rgba(185, 28, 28, 0.95);
+  background: var(--color-notification-error);
 }
 
 .c-notification__content {
