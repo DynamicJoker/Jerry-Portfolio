@@ -169,8 +169,11 @@ function initializeContactInfo() {
     const revealButton = document.createElement('button');
     revealButton.type = 'button';
     revealButton.className = 'c-contact__reveal-button';
-    revealButton.setAttribute('aria-label', 'Reveal email address');
-    revealButton.title = 'Reveal email address';
+    revealButton.setAttribute(
+      'aria-label',
+      siteContent.contactInfo.revealTitle,
+    );
+    revealButton.title = siteContent.contactInfo.revealTitle;
 
     const iconHTML = config.contactUI.eyeOffSvg;
 
@@ -1001,10 +1004,18 @@ function initializeWorkArchive() {
       tab.classList.toggle('is-empty', count === 0);
     });
     if (emptyEl) emptyEl.toggleAttribute('hidden', matched !== 0);
-    if (statusEl) statusEl.textContent = `${matched} of ${rows.length} pieces`;
+    if (statusEl)
+      statusEl.textContent = siteContent.archiveUi.countStatus
+        .replace('{shown}', String(matched))
+        .replace('{total}', String(rows.length));
     if (moreBtn) {
       moreBtn.hidden = matched <= LIMIT;
-      moreBtn.textContent = expanded ? 'Show fewer' : `Show all ${matched}`;
+      moreBtn.textContent = expanded
+        ? siteContent.archiveUi.showFewerLabel
+        : siteContent.archiveUi.showAllLabel.replace(
+            '{count}',
+            String(matched),
+          );
     }
   };
 
@@ -1073,7 +1084,7 @@ function initializeContactForm() {
         field.setAttribute('aria-invalid', 'true'),
       );
       missingFields[0][1].focus();
-      showNotification('Please fill in all required fields.', 'error');
+      showNotification(siteContent.contactForm.messages.missingFields, 'error');
       return;
     }
 
@@ -1081,7 +1092,7 @@ function initializeContactForm() {
     if (!emailPattern.test(formData.get('email'))) {
       fields.email?.setAttribute('aria-invalid', 'true');
       fields.email?.focus();
-      showNotification('Please enter a valid email address.', 'error');
+      showNotification(siteContent.contactForm.messages.invalidEmail, 'error');
       return;
     }
 
@@ -1099,20 +1110,20 @@ function initializeContactForm() {
       const data = await response.json();
 
       if (data.success) {
-        showNotification(
-          "Message sent successfully! I'll get back to you soon.",
-          'success',
-        );
+        showNotification(siteContent.contactForm.messages.success, 'success');
         form.reset();
         Object.values(fields).forEach((field) =>
           field?.removeAttribute('aria-invalid'),
         );
       } else {
-        showNotification('Something went wrong. Please try again.', 'error');
+        showNotification(
+          siteContent.contactForm.messages.submitFailed,
+          'error',
+        );
         console.error('Web3Forms Error:', data);
       }
     } catch (error) {
-      showNotification('Network error. Please try again later.', 'error');
+      showNotification(siteContent.contactForm.messages.network, 'error');
       console.error('Form submission error:', error);
     } finally {
       submitButton.textContent = originalText;

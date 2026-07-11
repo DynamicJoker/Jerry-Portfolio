@@ -5,10 +5,13 @@ Personal portfolio + blog, deployed on Vercel at https://jerryjames.me.
 ## Where things live (single sources of truth)
 
 - **All site content and config values** live in `src/content.js` (`siteContent`):
-  profile/SEO data, site URL, hero stats, about highlights, client logos,
-  skills, services, portfolio items (+ category labels for the filter buttons),
-  testimonials, experience, contact info, Web3Forms config, Calendly config.
-  Edit content there, not in component markup.
+  profile/SEO data, site URL, hero stats + CTAs, section kickers/titles
+  (`sections`), about highlights, client logos, skills, services, portfolio
+  items (+ category labels for the filter buttons), archive UI strings
+  (`archiveUi`, with `{count}`-style placeholders filled by JS), testimonials,
+  experience, blog section/index copy + empty states, beta banner copy,
+  contact panel/info, Web3Forms config incl. form labels + toast messages,
+  Calendly config. Edit content there, not in component markup.
 - `astro.config.mjs` derives the site URL from `siteContent.profile.canonicalUrl` —
   don't redefine it. Homepage sitemap `lastmod` is the `homepageLastmod` constant there.
 - Blog posts: `src/content/blog/*.mdx` (editable via Pages CMS, `.pages.yml`).
@@ -46,6 +49,9 @@ Personal portfolio + blog, deployed on Vercel at https://jerryjames.me.
   `src/styles/settings.css`; use them instead of raw values. Brand SVGs
   (`BrandLogo.astro`, 404 graphic, `public/brand/*`) intentionally hardcode the
   brand gradient hexes because standalone SVG files can't use CSS variables.
+  **Brand palette + typography reference: `docs/brand.md`** (fonts, light/dark
+  palettes, the brand gradient hexes, and token usage rules) — read it before
+  styling work; settings.css stays the live source of truth.
 - The MDX chart classes (`c-article-chart*`, `c-stacked-bar*`) are written by
   hand in blog post bodies — renaming them means editing published
   `src/content/blog/*.mdx` too.

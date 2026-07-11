@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { siteContent } from '../content.js';
 
 const posts = (await getCollection('blog'))
   .filter((post) => !post.data.draft)
@@ -12,23 +13,27 @@ const formatDate = (date) =>
     day: 'numeric',
     year: 'numeric',
   }).format(date);
+
+const section = siteContent.sections.blog;
+const { feature, readMoreLabel } = siteContent.blogSection;
+const blogEmpty = siteContent.blogEmpty;
 ---
 
 <section id="blog" class="c-section c-home-blog">
   <div class="c-section__header">
     <div class="o-container c-section__header-inner">
       <span class="c-section__kicker"
-        ><span class="c-section__kicker-label">Writing</span></span
+        ><span class="c-section__kicker-label">{section.kicker}</span></span
       >
-      <h2 class="c-section__title">Field Notes From the Content Lab</h2>
+      <h2 class="c-section__title">{section.title}</h2>
     </div>
   </div>
   <div class="o-container">
     <div class="c-home-blog__feature">
       <div class="c-home-blog__image">
         <img
-          src="/images/blog/blog-cover.svg"
-          alt="Abstract illustration of tangled technical lines passing through a lens and emerging as clean, ordered content with a rising trend line"
+          src={feature.image}
+          alt={feature.imageAlt}
           loading="lazy"
           decoding="async"
           width="1600"
@@ -36,15 +41,10 @@ const formatDate = (date) =>
         />
       </div>
       <div class="c-home-blog__copy">
-        <p class="c-blog-kicker">Blog</p>
-        <h3>
-          Useful thinking for technical marketers, founders, and product teams.
-        </h3>
-        <p>
-          Notes on turning complex technology into clearer positioning, sharper
-          content systems, and pages that help buyers understand what matters.
-        </p>
-        <a href="/blog/" class="c-btn c-btn--primary">View all posts</a>
+        <p class="c-blog-kicker">{feature.kicker}</p>
+        <h3>{feature.heading}</h3>
+        <p>{feature.text}</p>
+        <a href="/blog/" class="c-btn c-btn--primary">{feature.ctaLabel}</a>
       </div>
     </div>
 
@@ -64,15 +64,15 @@ const formatDate = (date) =>
               </h3>
               <p>{post.data.description}</p>
               <a href={`/blog/${post.id}/`} class="c-blog-read-link">
-                Read article
+                {readMoreLabel}
               </a>
             </article>
           ))}
         </div>
       ) : (
         <div class="c-blog-empty">
-          <h3>Articles are coming soon.</h3>
-          <p>Published posts will appear here automatically.</p>
+          <h3>{blogEmpty.title}</h3>
+          <p>{blogEmpty.homeText}</p>
         </div>
       )
     }

@@ -53,14 +53,9 @@ const formatDate = (date) =>
   <main id="main-content" class="c-blog-shell">
     <section class="c-blog-hero">
       <div class="o-container c-blog-hero__inner">
-        <p class="c-blog-kicker">Field Notes</p>
-        <h1 class="c-blog-hero__title">
-          Technical marketing, without the fog machine
-        </h1>
-        <p class="c-blog-hero__intro">
-          Practical notes on content systems, product storytelling, and turning
-          dense technical ideas into work that earns attention.
-        </p>
+        <p class="c-blog-kicker">{siteContent.blogIndex.kicker}</p>
+        <h1 class="c-blog-hero__title">{siteContent.blogIndex.title}</h1>
+        <p class="c-blog-hero__intro">{siteContent.blogIndex.intro}</p>
       </div>
     </section>
 
@@ -99,7 +94,7 @@ const formatDate = (date) =>
                     </h2>
                     <p>{post.data.description}</p>
                     <a href={`/blog/${post.id}/`} class="c-blog-read-link">
-                      Read article
+                      {siteContent.blogSection.readMoreLabel}
                     </a>
                   </div>
                 </article>
@@ -107,11 +102,8 @@ const formatDate = (date) =>
             </div>
           ) : (
             <div class="c-blog-empty">
-              <h2>Articles are coming soon.</h2>
-              <p>
-                Drafts can already be created in Pages CMS and will appear here
-                once published.
-              </p>
+              <h2>{siteContent.blogEmpty.title}</h2>
+              <p>{siteContent.blogEmpty.indexText}</p>
             </div>
           )
         }

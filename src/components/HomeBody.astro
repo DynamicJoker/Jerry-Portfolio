@@ -54,6 +54,8 @@ function getGanttDurationText(startDate, endDate) {
 // work. The archive is grouped category -> campaign -> rows; an industry filter
 // narrows it. Each row's `status` drives its badge + link via `workStatusMeta`.
 const featuredCampaigns = siteContent.featuredCampaigns;
+const sections = siteContent.sections;
+const archiveUi = siteContent.archiveUi;
 const workTypeMeta = siteContent.workTypeMeta;
 const workStatusMeta = siteContent.workStatusMeta;
 const workArchive = siteContent.workArchive;
@@ -146,12 +148,16 @@ siteContent.testimonials.forEach((testimonial, index) => {
         </p>
         <p class="c-hero__lede">{profile.heroLede}</p>
         <div class="c-hero__buttons">
-          <a href="#portfolio" class="c-btn c-btn--primary c-btn--lg"
-            >View Portfolio</a
-          >
-          <a href="#schedule" class="c-btn c-btn--outline c-btn--lg"
-            >Book a Discovery Call</a
-          >
+          {
+            profile.heroCtas.map((cta) => (
+              <a
+                href={cta.href}
+                class={`c-btn c-btn--${cta.variant} c-btn--lg`}
+              >
+                {cta.label}
+              </a>
+            ))
+          }
         </div>
         <ul class="c-hero__meta">
           <li class="c-hero__meta-item">
@@ -207,22 +213,23 @@ siteContent.testimonials.forEach((testimonial, index) => {
     <div class="c-section__header">
       <div class="o-container c-section__header-inner">
         <span class="c-section__kicker"
-          ><span class="c-section__kicker-label">About</span></span
+          ><span class="c-section__kicker-label">{sections.about.kicker}</span
+          ></span
         >
-        <h2 class="c-section__title">About Me</h2>
+        <h2 class="c-section__title">{sections.about.title}</h2>
       </div>
     </div>
     <div class="o-container">
       <div class="c-pipeline" data-pipeline>
         <p class="c-pipeline__caption">
           <span class="c-pipeline__caption-tag" aria-hidden="true"
-            >how_i_work</span
+            >{siteContent.about.tag}</span
           >
           {siteContent.about.description}
         </p>
         <div class="c-pipeline__track">
           <span class="c-pipeline__terminus c-pipeline__terminus--in"
-            >Engineering</span
+            >{siteContent.about.pipeline.inputLabel}</span
           >
           <div class="c-pipeline__rail">
             <ul class="c-pipeline__nodes" role="tablist" aria-label="What I do">
@@ -259,7 +266,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
             </ul>
           </div>
           <span class="c-pipeline__terminus c-pipeline__terminus--out"
-            >Marketing</span
+            >{siteContent.about.pipeline.outputLabel}</span
           >
         </div>
         <div class="c-pipeline__detail">
@@ -287,7 +294,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
   <section id="logos" class="c-logo-bar">
     <div class="c-logo-bar__wrapper">
       <div class="c-logo-bar__bar">
-        <div class="c-logo-bar__label">Experience With</div>
+        <div class="c-logo-bar__label">{siteContent.logoBar.label}</div>
         <div class="c-logo-bar__set">
           {
             siteContent.clientLogos.map((logo) => (
@@ -314,9 +321,10 @@ siteContent.testimonials.forEach((testimonial, index) => {
     <div class="c-section__header">
       <div class="o-container c-section__header-inner">
         <span class="c-section__kicker"
-          ><span class="c-section__kicker-label">Expertise</span></span
+          ><span class="c-section__kicker-label">{sections.skills.kicker}</span
+          ></span
         >
-        <h2 class="c-section__title">Skills & Expertise</h2>
+        <h2 class="c-section__title">{sections.skills.title}</h2>
       </div>
     </div>
     <div class="o-container">
@@ -526,9 +534,11 @@ siteContent.testimonials.forEach((testimonial, index) => {
     <div class="c-section__header">
       <div class="o-container c-section__header-inner">
         <span class="c-section__kicker"
-          ><span class="c-section__kicker-label">Services</span></span
+          ><span class="c-section__kicker-label"
+            >{sections.services.kicker}</span
+          ></span
         >
-        <h2 class="c-section__title">You Build It. I'll Bring the Party</h2>
+        <h2 class="c-section__title">{sections.services.title}</h2>
       </div>
     </div>
     <div class="o-container">
@@ -570,9 +580,11 @@ siteContent.testimonials.forEach((testimonial, index) => {
     <div class="c-section__header">
       <div class="o-container c-section__header-inner">
         <span class="c-section__kicker"
-          ><span class="c-section__kicker-label">Testimonials</span></span
+          ><span class="c-section__kicker-label"
+            >{sections.testimonials.kicker}</span
+          ></span
         >
-        <h2 class="c-section__title">I Didn't Even Have to Bribe Them</h2>
+        <h2 class="c-section__title">{sections.testimonials.title}</h2>
       </div>
     </div>
     <div class="o-container">
@@ -632,9 +644,11 @@ siteContent.testimonials.forEach((testimonial, index) => {
     <div class="c-section__header">
       <div class="o-container c-section__header-inner">
         <span class="c-section__kicker"
-          ><span class="c-section__kicker-label">Selected Work</span></span
+          ><span class="c-section__kicker-label"
+            >{sections.portfolio.kicker}</span
+          ></span
         >
-        <h2 class="c-section__title">Spoiler Alert: It Went Well</h2>
+        <h2 class="c-section__title">{sections.portfolio.title}</h2>
       </div>
     </div>
     <div class="o-container">
@@ -764,14 +778,19 @@ siteContent.testimonials.forEach((testimonial, index) => {
       <div class="c-archive" data-archive>
         <div class="c-archive__head">
           <div class="c-archive__heading-group">
-            <h3 class="c-archive__heading">Full body of work</h3>
+            <h3 class="c-archive__heading">{archiveUi.heading}</h3>
             <span
               class="c-archive__count"
               data-archive-status
               role="status"
               aria-live="polite"
             >
-              {workArchive.length} pieces
+              {
+                archiveUi.countInitial.replace(
+                  '{total}',
+                  String(workArchive.length),
+                )
+              }
             </span>
           </div>
         </div>
@@ -882,7 +901,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
             hidden></button>
         </div>
         <p class="c-archive__empty" data-archive-empty hidden>
-          No pieces match this filter.
+          {archiveUi.emptyMessage}
         </p>
       </div>
     </div>
@@ -911,9 +930,11 @@ siteContent.testimonials.forEach((testimonial, index) => {
     <div class="c-section__header">
       <div class="o-container c-section__header-inner">
         <span class="c-section__kicker"
-          ><span class="c-section__kicker-label">Experience</span></span
+          ><span class="c-section__kicker-label"
+            >{sections.experience.kicker}</span
+          ></span
         >
-        <h2 class="c-section__title">Experience</h2>
+        <h2 class="c-section__title">{sections.experience.title}</h2>
       </div>
     </div>
     <div class="o-container">
@@ -991,9 +1012,10 @@ siteContent.testimonials.forEach((testimonial, index) => {
     <div class="c-section__header">
       <div class="o-container c-section__header-inner">
         <span class="c-section__kicker"
-          ><span class="c-section__kicker-label">Contact</span></span
+          ><span class="c-section__kicker-label">{sections.contact.kicker}</span
+          ></span
         >
-        <h2 class="c-section__title">Let's Work Together</h2>
+        <h2 class="c-section__title">{sections.contact.title}</h2>
       </div>
     </div>
     <div class="o-container">
@@ -1056,11 +1078,8 @@ siteContent.testimonials.forEach((testimonial, index) => {
       </div>
       <div class="c-contact__content">
         <div class="c-contact__info">
-          <h3>Get In Touch</h3>
-          <p>
-            Ready to elevate your technical marketing? Let's discuss how I can
-            help drive growth for your B2B or B2C business.
-          </p>
+          <h3>{siteContent.contactPanel.title}</h3>
+          <p>{siteContent.contactPanel.text}</p>
           <div class="c-contact__details">
             <div class="c-contact__item">
               <div class="c-contact__icon" aria-hidden="true">
@@ -1128,7 +1147,9 @@ siteContent.testimonials.forEach((testimonial, index) => {
               value={siteContent.contactForm.subject}
             />
             <div class="c-form-group">
-              <label for="name" class="c-form-label">Name</label>
+              <label for="name" class="c-form-label">
+                {siteContent.contactForm.labels.name}
+              </label>
               <input
                 type="text"
                 id="name"
@@ -1138,7 +1159,9 @@ siteContent.testimonials.forEach((testimonial, index) => {
               />
             </div>
             <div class="c-form-group">
-              <label for="email" class="c-form-label">Email</label>
+              <label for="email" class="c-form-label">
+                {siteContent.contactForm.labels.email}
+              </label>
               <input
                 type="email"
                 id="email"
@@ -1148,7 +1171,9 @@ siteContent.testimonials.forEach((testimonial, index) => {
               />
             </div>
             <div class="c-form-group">
-              <label for="company" class="c-form-label">Company</label>
+              <label for="company" class="c-form-label">
+                {siteContent.contactForm.labels.company}
+              </label>
               <input
                 type="text"
                 id="company"
@@ -1157,7 +1182,9 @@ siteContent.testimonials.forEach((testimonial, index) => {
               />
             </div>
             <div class="c-form-group">
-              <label for="message" class="c-form-label">Message</label>
+              <label for="message" class="c-form-label">
+                {siteContent.contactForm.labels.message}
+              </label>
               <textarea
                 id="message"
                 name="message"
@@ -1170,7 +1197,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
             <input type="checkbox" name="botcheck" class="u-hidden" />
 
             <button type="submit" class="c-btn c-btn--primary c-btn--full-width"
-              >Send Message</button
+              >{siteContent.contactForm.submitLabel}</button
             >
           </form>
         </div>

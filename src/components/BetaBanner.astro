@@ -1,3 +1,9 @@
+---
+import { siteContent } from '../content.js';
+
+const banner = siteContent.betaBanner;
+---
+
 <div
   id="beta-banner"
   class="c-beta-banner is-expanded"
@@ -13,13 +19,11 @@
     data-beta-banner-control
   >
     <span class="c-beta-banner__strip" aria-hidden="true">
-      <span class="c-beta-banner__strip-label">Beta</span>
+      <span class="c-beta-banner__strip-label">{banner.stripLabel}</span>
     </span>
     <span class="c-beta-banner__content" id="beta-banner-message">
-      <span class="c-beta-banner__eyebrow">Beta site</span>
-      <span class="c-beta-banner__message"
-        >this website is still a work in progress.</span
-      >
+      <span class="c-beta-banner__eyebrow">{banner.eyebrow}</span>
+      <span class="c-beta-banner__message">{banner.message}</span>
     </span>
   </button>
 </div>

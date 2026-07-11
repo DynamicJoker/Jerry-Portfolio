@@ -56,6 +56,11 @@ export const siteContent = {
         label: 'Clients',
       },
     ],
+    // Hero buttons, in order. `variant` maps to the c-btn--<variant> class.
+    heroCtas: [
+      { label: 'View Portfolio', href: '#portfolio', variant: 'primary' },
+      { label: 'Book a Discovery Call', href: '#schedule', variant: 'outline' },
+    ],
     bookingCta: {
       text: 'Open to freelance & consulting engagements',
       buttonLabel: 'Schedule a Discovery Call',
@@ -87,8 +92,41 @@ export const siteContent = {
     },
   },
 
+  // Home page section chrome — kicker label + title per section, in page
+  // order. Kicker numbering ("01 /") is a CSS counter; write label text only.
+  sections: {
+    about: { kicker: 'About', title: 'About Me' },
+    skills: { kicker: 'Expertise', title: 'Skills & Expertise' },
+    services: {
+      kicker: 'Services',
+      title: "You Build It. I'll Bring the Party",
+    },
+    testimonials: {
+      kicker: 'Testimonials',
+      title: "I Didn't Even Have to Bribe Them",
+    },
+    portfolio: {
+      kicker: 'Selected Work',
+      title: 'Spoiler Alert: It Went Well',
+    },
+    experience: { kicker: 'Experience', title: 'Experience' },
+    blog: { kicker: 'Writing', title: 'Field Notes From the Content Lab' },
+    contact: { kicker: 'Contact', title: "Let's Work Together" },
+  },
+
+  // Site-wide beta banner (BetaBanner.astro; shown on every page).
+  betaBanner: {
+    stripLabel: 'Beta',
+    eyebrow: 'Beta site',
+    message: 'this website is still a work in progress.',
+  },
+
   // About section
   about: {
+    // Mono `// tag` label + the pipeline graphic's end labels (same pattern
+    // as skills.feature.tag / skills.feature.distiller).
+    tag: 'how_i_work',
+    pipeline: { inputLabel: 'Engineering', outputLabel: 'Marketing' },
     description:
       'I bridge your engineering and marketing teams – making sure that the cool stuff your engineering is building behind-the-scenes each day translates into marketing that focuses and targets real customer issues with data-driven narratives.',
     highlights: [
@@ -119,7 +157,8 @@ export const siteContent = {
     ],
   },
 
-  // Logo bar ("Experience With")
+  // Logo bar
+  logoBar: { label: 'Experience With' },
   clientLogos: [
     { src: '/logos/microsoft.svg', alt: 'Microsoft logo' },
     { src: '/logos/cgdirector.svg', alt: 'CGDirector logo' },
@@ -277,6 +316,16 @@ export const siteContent = {
     'Blogs & Articles': 'Blogs & Articles',
     'Press & PR': 'Press & PR',
     Other: 'Everything Else',
+  },
+  // Archive chrome (headings, count status, controls). `{count}`, `{shown}`
+  // and `{total}` are placeholders filled in by HomeBody / main.js.
+  archiveUi: {
+    heading: 'Full body of work',
+    emptyMessage: 'No pieces match this filter.',
+    showFewerLabel: 'Show fewer',
+    showAllLabel: 'Show all {count}',
+    countStatus: '{shown} of {total} pieces',
+    countInitial: '{total} pieces',
   },
   featuredCampaigns: [
     {
@@ -614,6 +663,38 @@ export const siteContent = {
       },
     ],
   },
+  // Home page blog section (HomeBlogSection.astro). Cards come from the blog
+  // collection; this is the surrounding editorial copy.
+  blogSection: {
+    feature: {
+      image: '/images/blog/blog-cover.svg',
+      imageAlt:
+        'Abstract illustration of tangled technical lines passing through a lens and emerging as clean, ordered content with a rising trend line',
+      kicker: 'Blog',
+      heading:
+        'Useful thinking for technical marketers, founders, and product teams.',
+      text: 'Notes on turning complex technology into clearer positioning, sharper content systems, and pages that help buyers understand what matters.',
+      ctaLabel: 'View all posts',
+    },
+    readMoreLabel: 'Read article',
+  },
+
+  // Blog index (/blog/) hero copy.
+  blogIndex: {
+    kicker: 'Field Notes',
+    title: 'Technical marketing, without the fog machine',
+    intro:
+      'Practical notes on content systems, product storytelling, and turning dense technical ideas into work that earns attention.',
+  },
+
+  // No-posts empty states. Shared title; each surface has its own body copy.
+  blogEmpty: {
+    title: 'Articles are coming soon.',
+    homeText: 'Published posts will appear here automatically.',
+    indexText:
+      'Drafts can already be created in Pages CMS and will appear here once published.',
+  },
+
   testimonials: [
     {
       name: 'Alex Glawion',
@@ -680,15 +761,37 @@ export const siteContent = {
     },
   ],
 
+  // Contact section intro panel (left of the form).
+  contactPanel: {
+    title: 'Get In Touch',
+    text: "Ready to elevate your technical marketing? Let's discuss how I can help drive growth for your B2B or B2C business.",
+  },
+
   // Contact form (Web3Forms; the access key is public by design)
   contactForm: {
     endpoint: 'https://api.web3forms.com/submit',
     accessKey: 'c813bf75-f553-4abb-9e16-b19a84e83537',
     subject: 'New Submission from Portfolio',
+    labels: {
+      name: 'Name',
+      email: 'Email',
+      company: 'Company',
+      message: 'Message',
+    },
+    submitLabel: 'Send Message',
+    // Toast copy for the submit flow (main.js showNotification).
+    messages: {
+      missingFields: 'Please fill in all required fields.',
+      invalidEmail: 'Please enter a valid email address.',
+      success: "Message sent successfully! I'll get back to you soon.",
+      submitFailed: 'Something went wrong. Please try again.',
+      network: 'Network error. Please try again later.',
+    },
   },
 
   // Contact Info
   contactInfo: {
+    revealTitle: 'Reveal email address',
     email: {
       user: 'contact',
       domain: 'jerryjames.me',
