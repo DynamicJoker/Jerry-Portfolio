@@ -12,6 +12,39 @@
       ],
       "destination": "https://jerryjames.me/:path*",
       "statusCode": 308
+    },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "jerryjamesme.vercel.app"
+        }
+      ],
+      "destination": "https://jerryjames.me/:path*",
+      "statusCode": 308
+    },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "jerryjamesme-dynamicjokers-projects.vercel.app"
+        }
+      ],
+      "destination": "https://jerryjames.me/:path*",
+      "statusCode": 308
+    },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "jerryjamesme-git-main-dynamicjokers-projects.vercel.app"
+        }
+      ],
+      "destination": "https://jerryjames.me/:path*",
+      "statusCode": 308
     }
   ],
   "headers": [
