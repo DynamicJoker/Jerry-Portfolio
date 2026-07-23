@@ -1,8 +1,11 @@
 /* Component: logo-bar */
-/* Above-the-fold rules that also exist in critical-home.css must be
-   changed in both places. */
+/* Not part of the above-the-fold critical set (no critical-home.css copy). */
 
-/* Logo Bar */
+/* "Experience with" credibility strip: a caption above a set of client logos.
+   Desktop = an even auto-fit grid that wraps into aligned rows as logos are
+   added; mobile = a horizontal scroll-snap strip so logos keep full size
+   instead of cramping. Logos sit in a muted, theme-aware monochrome state and
+   reveal their true brand art on hover/focus. */
 
 .c-logo-bar {
   padding: var(--space-32) 0;
@@ -17,109 +20,92 @@
 
 .c-logo-bar__bar {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  flex-wrap: nowrap;
-  gap: clamp(var(--space-20), 5vw, 2.5rem);
+  gap: var(--space-24);
   min-width: 0;
 }
 
 .c-logo-bar__label {
-  color: var(--color-text);
+  color: var(--color-text-secondary);
   font-weight: var(--font-weight-medium);
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-sm);
   text-transform: uppercase;
-  letter-spacing: 0;
-  flex-shrink: 0;
-  position: relative;
-  padding-bottom: var(--space-10);
+  letter-spacing: 0.16em;
+  text-align: center;
 }
 
-.c-logo-bar__label::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 70%;
-  height: 2px;
-  background: linear-gradient(
-    to right,
-    transparent 0%,
-    var(--color-electric-blue) 50%,
-    transparent 100%
-  );
-}
-
+/* Desktop: even auto-fit grid — aligned rows, tidy last row, scales to more
+   logos without orphaning. */
 .c-logo-bar__set {
-  display: flex;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
   align-items: center;
-  gap: clamp(var(--space-20), 5vw, 2.5rem);
-  min-width: 0;
+  justify-items: center;
+  gap: var(--space-32) var(--space-24);
+  width: 100%;
+  max-width: 44rem;
 }
 
 .c-logo-bar__item {
-  position: relative;
-}
-
-.c-logo-bar__item::after {
-  content: '';
-  position: absolute;
-  bottom: -15px;
-  left: 50%;
-  width: 80%;
-  height: 10px;
-  background: radial-gradient(
-    ellipse,
-    rgba(var(--color-primary-rgb), 0.4) 0%,
-    transparent 80%
-  );
-  filter: blur(5px);
-  transform: translateX(-50%) perspective(100px) rotateX(70deg);
-  opacity: 0;
-  transition: opacity 0.5s ease;
+  display: grid;
+  place-items: center;
 }
 
 .c-logo-bar__img {
-  height: clamp(2rem, 4vw, 2.5rem);
-  max-width: min(9.375rem, 32vw);
+  height: clamp(1.75rem, 3.5vw, 2.25rem);
+  max-width: min(9.375rem, 40vw);
   width: auto;
-  flex-shrink: 0;
-  opacity: 0.78;
-  filter: grayscale(1) brightness(0.9);
-  transform: scale(1);
+  color: var(--color-text);
+  opacity: 0.55;
+  filter: grayscale(1);
   transition:
-    opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
-    filter 0.5s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    filter 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.c-logo-bar__item.is-active .c-logo-bar__img,
-.c-logo-bar__item:hover .c-logo-bar__img {
+.c-logo-bar__item:hover .c-logo-bar__img,
+.c-logo-bar__item:focus-within .c-logo-bar__img {
   opacity: 1;
-  filter: grayscale(0) brightness(1)
-    drop-shadow(0 5px 15px rgba(var(--color-primary-rgb), 0.2));
-  transform: scale(1.1);
+  filter: none;
 }
 
-.c-logo-bar__item.is-active::after,
-.c-logo-bar__item:hover::after {
-  opacity: 1;
-}
-
+/* Mobile: single scroll-snapping row, swipe sideways. Edges fade so logos
+   don't hard-clip at the container bounds. */
 @media (max-width: 48rem) {
-  .c-logo-bar__bar {
-    flex-direction: column;
-    gap: var(--space-32);
-  }
-
-  .c-logo-bar__label {
-    font-size: var(--font-size-base);
-  }
-
   .c-logo-bar__set {
-    flex-wrap: wrap;
-    justify-content: center;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    max-width: none;
+    gap: var(--space-32);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: var(--space-8);
+    -webkit-mask-image: linear-gradient(
+      90deg,
+      transparent,
+      #000 8%,
+      #000 92%,
+      transparent
+    );
+    mask-image: linear-gradient(
+      90deg,
+      transparent,
+      #000 8%,
+      #000 92%,
+      transparent
+    );
+  }
+
+  .c-logo-bar__item {
+    flex: 0 0 auto;
+    scroll-snap-align: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c-logo-bar__img {
+    transition: none;
   }
 }

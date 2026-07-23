@@ -1193,7 +1193,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
                 required></textarea>
             </div>
 
-            <!-- Frictionless Spam Protection -->
+            <!-- Honeypot: Web3Forms rejects the submission if a bot checks this hidden field -->
             <input type="checkbox" name="botcheck" class="u-hidden" />
 
             <button type="submit" class="c-btn c-btn--primary c-btn--full-width"

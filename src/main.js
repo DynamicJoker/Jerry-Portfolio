@@ -16,9 +16,6 @@ const config = {
     scrollSpeedMin: 80, // seconds
     scrollSpeedMax: 120, // seconds
   },
-  logoCarousel: {
-    interval: 3000, // milliseconds
-  },
   calendly: {
     // Safety net: if Calendly never posts a "ready" message (blocked, or the
     // event name changes upstream), reveal the widget anyway rather than
@@ -157,7 +154,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initializeContactInfo();
   updateYearsExperience();
   updateFooterYear();
-  initializeLogoCarousel();
   initializePipeline();
 });
 
@@ -1157,7 +1153,8 @@ function showNotification(message, type = 'info') {
 
   document.body.appendChild(notification);
 
-  // Use requestAnimationFrame to ensure the transition is applied correctly
+  // Append first, flip the class a frame later so there's a hidden start state
+  // for the CSS enter transition to animate from (same frame = no transition).
   requestAnimationFrame(() => {
     notification.classList.add('is-visible');
   });
@@ -1518,35 +1515,6 @@ function initializeTestimonialPauseControl() {
   control.addEventListener('click', () => {
     setPaused(!scroller.classList.contains('is-paused'));
   });
-}
-
-function initializeLogoCarousel() {
-  const logos = document.querySelectorAll('.c-logo-bar__bar .c-logo-bar__item');
-  if (logos.length === 0) return;
-  let currentIndex = 0;
-  logos[currentIndex].classList.add('is-active');
-  if (prefersReducedMotion) return;
-
-  const advance = () => {
-    logos.forEach((logo, index) =>
-      logo.classList.toggle('is-active', index === currentIndex),
-    );
-    currentIndex = (currentIndex + 1) % logos.length;
-  };
-
-  // Only rotate while the bar is actually on screen.
-  let intervalId = null;
-  watchViewportPresence(
-    logos[0].closest('.c-logo-bar') ?? logos[0],
-    (isVisible) => {
-      if (isVisible && intervalId === null) {
-        intervalId = setInterval(advance, config.logoCarousel.interval);
-      } else if (!isVisible && intervalId !== null) {
-        clearInterval(intervalId);
-        intervalId = null;
-      }
-    },
-  );
 }
 
 // Signal Pipeline (the About section): the capability nodes are an ARIA

@@ -7,5 +7,5 @@
     <rect y="26" width="22" height="22" fill="#00a4ef"/>
     <rect x="26" y="26" width="22" height="22" fill="#ffb900"/>
   </g>
-  <text x="72" y="51" fill="#f5f5f5" font-family="Segoe UI, Arial, sans-serif" font-size="31" font-weight="600">Microsoft</text>
+  <text x="72" y="51" fill="currentColor" font-family="Segoe UI, Arial, sans-serif" font-size="31" font-weight="600">Microsoft</text>
 </svg>

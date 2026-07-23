@@ -2,5 +2,5 @@
   <title id="title">MSI</title>
   <rect width="300" height="80" fill="none"/>
   <text x="22" y="55" fill="#e30613" font-family="Arial Black, Arial, sans-serif" font-size="48" font-style="italic" font-weight="900">msi</text>
-  <text x="124" y="53" fill="#f5f5f5" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700" letter-spacing="2">MICRO-STAR</text>
+  <text x="124" y="53" fill="currentColor" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700" letter-spacing="2">MICRO-STAR</text>
 </svg>

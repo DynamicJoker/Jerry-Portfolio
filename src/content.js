@@ -121,7 +121,6 @@ export const siteContent = {
     message: 'this website is still a work in progress.',
   },
 
-  // About section
   about: {
     // Mono `// tag` label + the pipeline graphic's end labels (same pattern
     // as skills.feature.tag / skills.feature.distiller).
@@ -157,8 +156,7 @@ export const siteContent = {
     ],
   },
 
-  // Logo bar
-  logoBar: { label: 'Experience With' },
+  logoBar: { label: 'Experience with' },
   clientLogos: [
     { src: '/logos/microsoft.svg', alt: 'Microsoft logo' },
     { src: '/logos/cgdirector.svg', alt: 'CGDirector logo' },
@@ -166,7 +164,6 @@ export const siteContent = {
     { src: '/logos/licensespring.svg', alt: 'LicenseSpring logo' },
   ],
 
-  // Experience data
   experience: [
     {
       id: 'consulting',
@@ -789,7 +786,6 @@ export const siteContent = {
     },
   },
 
-  // Contact Info
   contactInfo: {
     revealTitle: 'Reveal email address',
     email: {
