@@ -1,0 +1,42 @@
+---
+// Client logos for the "Experience with" bar. Inlined (rather than <img
+// src=".svg">) because an externally-referenced SVG is an isolated document
+// that never sees the page's CSS: `currentColor` there resolves to black in
+// both themes, leaving the wordmarks invisible on the dark ground. Inline, the
+// wordmark follows --color-text while the brand marks keep their real colors.
+// logo-bar.css mutes the whole glyph to monochrome and reveals it on hover.
+const { name, label, class: className = '' } = Astro.props;
+
+const logos = {
+  microsoft: `<g transform="translate(10 16)">
+      <rect width="22" height="22" fill="#f25022"/>
+      <rect x="26" width="22" height="22" fill="#7fba00"/>
+      <rect y="26" width="22" height="22" fill="#00a4ef"/>
+      <rect x="26" y="26" width="22" height="22" fill="#ffb900"/>
+    </g>
+    <text x="72" y="51" fill="currentColor" font-family="Segoe UI, Arial, sans-serif" font-size="31" font-weight="600">Microsoft</text>`,
+  cgdirector: `<g transform="translate(10 19)">
+      <path d="M21 0 42 12v24L21 48 0 36V12Z" fill="#ff4e50"/>
+      <path d="M21 9 34 16.5v15L21 39 8 31.5v-15Z" fill="#7a1f20"/>
+    </g>
+    <text x="66" y="51" fill="currentColor" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="800" letter-spacing=".5">CGDirector</text>`,
+  msi: `<text x="22" y="55" fill="#e30613" font-family="Arial Black, Arial, sans-serif" font-size="48" font-style="italic" font-weight="900">msi</text>
+    <text x="124" y="53" fill="currentColor" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700" letter-spacing="2">MICRO-STAR</text>`,
+  licensespring: `<g transform="translate(12 18)" fill="none" stroke="#21c7a8" stroke-width="6" stroke-linecap="round">
+      <path d="M6 24c9-22 27-22 36 0"/>
+      <path d="M6 24c9 22 27 22 36 0"/>
+    </g>
+    <text x="68" y="50" fill="currentColor" font-family="Inter, Arial, sans-serif" font-size="29" font-weight="700">LicenseSpring</text>`,
+};
+
+const inner = logos[name] ?? '';
+---
+
+<svg
+  class={`c-logo-bar__img${className ? ` ${className}` : ''}`}
+  viewBox="0 0 300 80"
+  role="img"
+  aria-label={label}
+  focusable="false"
+  set:html={inner}
+/>

@@ -1,6 +1,7 @@
 ---
 import { siteContent } from '../content.js';
 import Icon from './Icon.astro';
+import LogoMark from './LogoMark.astro';
 import SiteFooter from './SiteFooter.astro';
 
 const profile = siteContent.profile;
@@ -299,15 +300,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
           {
             siteContent.clientLogos.map((logo) => (
               <div class="c-logo-bar__item">
-                <img
-                  src={logo.src}
-                  alt={logo.alt}
-                  class="c-logo-bar__img"
-                  loading="lazy"
-                  decoding="async"
-                  width="150"
-                  height="40"
-                />
+                <LogoMark name={logo.name} label={logo.alt} />
               </div>
             ))
           }

@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 80" role="img" aria-labelledby="title">
-  <title id="title">CGDirector</title>
-  <rect width="300" height="80" fill="none"/>
-  <g transform="translate(10 19)">
-    <path d="M21 0 42 12v24L21 48 0 36V12Z" fill="#ff4e50"/>
-    <path d="M21 9 34 16.5v15L21 39 8 31.5v-15Z" fill="#282828"/>
-  </g>
-  <text x="66" y="51" fill="currentColor" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="800" letter-spacing=".5">CGDirector</text>
-</svg>

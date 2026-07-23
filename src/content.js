@@ -157,11 +157,12 @@ export const siteContent = {
   },
 
   logoBar: { label: 'Experience with' },
+  // `name` selects the inlined mark in LogoMark.astro; `alt` is its accessible name.
   clientLogos: [
-    { src: '/logos/microsoft.svg', alt: 'Microsoft logo' },
-    { src: '/logos/cgdirector.svg', alt: 'CGDirector logo' },
-    { src: '/logos/msi.svg', alt: 'MSI logo' },
-    { src: '/logos/licensespring.svg', alt: 'LicenseSpring logo' },
+    { name: 'microsoft', alt: 'Microsoft logo' },
+    { name: 'cgdirector', alt: 'CGDirector logo' },
+    { name: 'msi', alt: 'MSI logo' },
+    { name: 'licensespring', alt: 'LicenseSpring logo' },
   ],
 
   experience: [
