@@ -13,7 +13,7 @@ export const siteContent = {
       light: '#fafaf9',
       dark: '#0f1117',
     },
-    portraitImage: '/images/jerry-james-portrait.jpg',
+    portraitImage: '/images/jerry-james-portrait.webp',
     portraitAlt: 'Portrait of Jerry James',
     socialImage: '/images/seo/jerry-james-og.png',
     socialImageAlt: 'Jerry James technical marketing portfolio preview',
