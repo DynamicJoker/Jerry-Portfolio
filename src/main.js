@@ -145,6 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
   enhanceGanttRows();
   initializeScrollAnimations();
   initializeHeroAuroraPause();
+  initializeDistillerPause();
   initializeDockedSectionHeaders();
   initializeBrandCollapse();
   initializeWorkLightbox();
@@ -508,6 +509,17 @@ function initializeHeroAuroraPause() {
   if (!aurora || prefersReducedMotion) return;
   watchViewportPresence(aurora, (isVisible) =>
     aurora.classList.toggle('is-offscreen', !isVisible),
+  );
+}
+
+// The skills distiller runs nine infinite SVG loops (stroke draws, radius
+// pings, a blur focus); pause them (CSS acts on .is-offscreen) once the skills
+// section scrolls out of view, same as the hero aurora above.
+function initializeDistillerPause() {
+  const distiller = document.querySelector('.c-distiller');
+  if (!distiller || prefersReducedMotion) return;
+  watchViewportPresence(distiller, (isVisible) =>
+    distiller.classList.toggle('is-offscreen', !isVisible),
   );
 }
 

@@ -422,6 +422,22 @@
   animation-delay: 0.51s;
 }
 
+/* JS-toggled while the skills section is scrolled out of view (see
+   watchViewportPresence in main.js) so the distiller's nine infinite loops
+   don't keep painting offscreen. Declared after the application rules above so
+   it wins the (equal-specificity) cascade tie. */
+.c-distiller.is-offscreen .c-distiller__bars,
+.c-distiller.is-offscreen .c-distiller__scan,
+.c-distiller.is-offscreen .c-distiller__lead,
+.c-distiller.is-offscreen .c-distiller__halo,
+.c-distiller.is-offscreen .c-distiller__node,
+.c-distiller.is-offscreen .c-distiller__ring,
+.c-distiller.is-offscreen .c-distiller__branch,
+.c-distiller.is-offscreen .c-distiller__frame,
+.c-distiller.is-offscreen .c-distiller__seg {
+  animation-play-state: paused;
+}
+
 @keyframes distillerFocus {
   0%,
   7% {
