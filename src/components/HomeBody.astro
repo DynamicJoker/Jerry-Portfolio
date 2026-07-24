@@ -663,7 +663,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
             featuredCampaigns.map((campaign, si) => {
               const alt = campaign.screenshotAlt ?? campaign.name;
               return (
-                <article
+                <div
                   class="c-spotlight c-featured__slide"
                   data-featured-slide
                   role="group"
@@ -722,7 +722,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
                       })}
                     </div>
                   </div>
-                </article>
+                </div>
               );
             })
           }
