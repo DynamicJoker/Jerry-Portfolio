@@ -20,6 +20,13 @@ Personal portfolio + blog, deployed on Vercel at https://jerryjames.me.
   (`.c-section__kicker` in `src/styles/components/section.css`) — write only
   the label text in markup.
 - Footer markup is `src/components/SiteFooter.astro` only (HomeBody includes it).
+- `vercel.json` holds all deploy-time HTTP config: apex/vanity-host redirects,
+  `Cache-Control` per asset dir (30d for `/images` + `/logos` + `/brand`, 1yr
+  `immutable` for content-hashed `/_astro`), and the security headers in the
+  global `/(.*)` block (HSTS, X-Frame-Options, COOP, X-Content-Type-Options,
+  Referrer-Policy, Permissions-Policy, and an **enforcing Content-Security-Policy**
+  — see the CSP gotcha below). None of these apply under `astro preview`; they
+  only take effect once deployed — verify live with `curl -sI https://jerryjames.me/`.
 
 ## CSS rules (important)
 
@@ -85,3 +92,32 @@ Personal portfolio + blog, deployed on Vercel at https://jerryjames.me.
   when changing nav behavior.
 - Experience entries use `period: 'MM/YYYY - MM/YYYY'` (or `- Present`); the
   Gantt chart in HomeBody parses that exact format.
+- **The enforcing CSP in `vercel.json` is hash-based and can silently break
+  scripts on deploy.** A static site can't use nonces, so `script-src` lists a
+  SHA-256 hash of each inline script. One of them — the deferred-stylesheet loader
+  in `BaseLayout.astro` — embeds the content-hashed CSS filename, so its hash
+  changes whenever the CSS changes. After ANY change to an inline script OR to
+  CSS, run `npm run build && node scripts/csp-hashes.mjs` and paste the printed
+  tokens into the `script-src` list before deploying, or those scripts get
+  blocked (blank theme flash, dead Calendly/form). Adding a new third-party origin
+  means extending the matching directive; the current allowlist covers Calendly
+  (`assets.calendly.com` script + `calendly.com` frame) and Web3Forms
+  (`api.web3forms.com`). `style-src` deliberately keeps `'unsafe-inline'` because
+  `main.js` sets inline styles (dock/nav-glow) and Calendly injects styles.
+  Astro's built-in `security.csp` is deliberately NOT used — it's enforce-only,
+  meta-tag based (ignores `frame-ancestors`), and force-hashes `style-src`, which
+  would break Calendly + the JS-set styles. HSTS `preload` is intentionally
+  omitted (near-irreversible commitment); add `; preload` + submit at
+  hstspreload.org only if that's wanted.
+  - `script-src` also contains `'unsafe-inline'` **on purpose** — modern browsers
+    ignore it whenever hashes are present (it's a graceful fallback for pre-CSP2
+    browsers, per Google's strict-CSP guidance). Do NOT remove it thinking it
+    weakens the policy; it doesn't.
+  - PageSpeed also suggests `'strict-dynamic'` and Trusted Types
+    (`require-trusted-types-for 'script'`). Both were evaluated and intentionally
+    NOT adopted: `strict-dynamic` ignores host allowlists and would require a
+    per-build hash of the bundled `/_astro/*.js` app script (whose hash changes
+    every build → whole-site JS breakage risk) for negligible gain on a static,
+    endpoint-free origin; Trusted Types would throw inside Calendly's third-party
+    `widget.js` and break the booking widget. Don't chase either without dropping
+    Calendly / adding build machinery.
