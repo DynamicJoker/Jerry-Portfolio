@@ -166,6 +166,37 @@ body {
   }
 }
 
+/* Reduced motion: main.js never writes --dock-progress, so the dock/undock
+   swap is a single-frame jump between the full and compact layouts. Dissolve
+   the header through the flip instead — an opacity-only fade is the accepted
+   non-motion substitute for the scrub. Two identical keyframes because a
+   fade must restart on every flip and the browser only restarts an animation
+   when the computed animation-name changes. !important lifts the fade over
+   the global reduced-motion kill switch at the end of this file, which would
+   otherwise flatten it to 0.01ms. */
+
+@media (prefers-reduced-motion: reduce) {
+  .c-section__header.is-docked {
+    animation: dockFadeIn 0.2s ease-out !important;
+  }
+
+  .c-section__header:not(.is-docked) {
+    animation: undockFadeIn 0.2s ease-out !important;
+  }
+}
+
+@keyframes dockFadeIn {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes undockFadeIn {
+  from {
+    opacity: 0;
+  }
+}
+
 section[id] {
   scroll-margin-top: calc(
     var(--navbar-height) + var(--beta-banner-offset, 0rem) + var(--space-24)
