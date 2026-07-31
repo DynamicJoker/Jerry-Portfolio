@@ -142,6 +142,11 @@
    user swipes/drags/arrows through them; the next card peeks in at the edge so
    the strip reads as "more this way". No auto-rotation, no hard slide swaps. */
 .c-featured__viewport {
+  /* The carousel JS scrolls to slide offsetLeft values, which are only
+     viewport-relative if the viewport is the slides' offsetParent — without
+     this, .c-section's position: relative captures them and every scroll
+     target is skewed by the centered container's inset. */
+  position: relative;
   display: flex;
   gap: var(--space-20);
   overflow-x: auto;
