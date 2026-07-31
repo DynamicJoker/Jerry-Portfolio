@@ -1,4 +1,5 @@
 import { defineConfig } from 'astro/config';
+import { unified } from '@astrojs/markdown-remark';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import browserslist from 'browserslist';
@@ -56,13 +57,23 @@ function openMdxLinksInNewTab() {
 
 export default defineConfig({
   site: siteUrl,
+  // Astro 7 defaults to JSX-style whitespace ('jsx'), which strips the spaces
+  // between adjacent inline elements (kickers, stat counts, service tags).
+  // `true` = v6 lossless HTML-aware compression — keep it.
+  compressHTML: true,
   devToolbar: {
     enabled: false,
   },
-  integrations: [
-    mdx({
+  // Astro 7 renders Markdown with its native pipeline; rehype plugins must go
+  // through markdown.processor (MDX inherits it). `rehypePlugins` on mdx({...})
+  // is deprecated AND silently ignored — links lose target/rel if moved back.
+  markdown: {
+    processor: unified({
       rehypePlugins: [openMdxLinksInNewTab],
     }),
+  },
+  integrations: [
+    mdx(),
     sitemap({
       filter: (page) => !page.includes('/drafts/'),
       serialize: (item) => {

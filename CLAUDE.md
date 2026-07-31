@@ -82,6 +82,13 @@ Personal portfolio + blog, deployed on Vercel at https://jerryjames.me.
 
 ## Gotchas
 
+- **Astro 7 config traps** (upgraded from v6 in 2026-07): `compressHTML: true`
+  in `astro.config.mjs` is load-bearing — v7's default JSX-style whitespace
+  strips the spaces between adjacent inline elements (kickers, stat counts,
+  service tags read as "50+campaigns"). And rehype/remark plugins must go
+  through `markdown.processor: unified({...})` (from `@astrojs/markdown-remark`);
+  `rehypePlugins` on `mdx({...})` is deprecated and **silently ignored** — the
+  blog's external-link `target="_blank"`/`noopener` plugin breaks if moved back.
 - The contact email in HomeBody markup is a decoy (`jerry@placeholder.com`);
   `src/main.js` swaps in a reveal button using `siteContent.contactInfo.email`
   (split user/domain for scrape resistance).
