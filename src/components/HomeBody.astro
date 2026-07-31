@@ -645,7 +645,9 @@ siteContent.testimonials.forEach((testimonial, index) => {
       </div>
     </div>
     <div class="o-container">
-      <!-- Featured: horizontal scroll-snap filmstrip of flagship spotlights -->
+      <!-- Featured: one flagship at a time as an editorial spread (image left,
+           story right). Only the active slide is in flow; the rest carry
+           [hidden] so the pre-stylesheet page height stays honest. -->
       <div
         class="c-featured"
         data-featured
@@ -653,19 +655,15 @@ siteContent.testimonials.forEach((testimonial, index) => {
         aria-roledescription="carousel"
         aria-label="Featured work"
       >
-        <div
-          class="c-featured__viewport"
-          data-featured-slides
-          tabindex="0"
-          aria-label="Featured work — scroll horizontally"
-        >
+        <div class="c-featured__stage" data-featured-stage>
           {
             featuredCampaigns.map((campaign, si) => {
               const alt = campaign.screenshotAlt ?? campaign.name;
               return (
-                <div
-                  class="c-spotlight c-featured__slide"
+                <article
+                  class="c-spotlight"
                   data-featured-slide
+                  hidden={si !== 0}
                   role="group"
                   aria-roledescription="slide"
                   aria-label={`${si + 1} of ${featuredCampaigns.length}: ${campaign.name}`}
@@ -683,7 +681,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
                       class="c-work-card__img"
                       src={campaign.screenshot}
                       alt={alt}
-                      loading="lazy"
+                      loading={si === 0 ? 'eager' : 'lazy'}
                       decoding="async"
                       draggable="false"
                       width="1200"
@@ -691,79 +689,75 @@ siteContent.testimonials.forEach((testimonial, index) => {
                     />
                   </button>
                   <div class="c-spotlight__body">
-                    <div class="c-spotlight__chips">
-                      <span class="c-tag c-tag--accent">
-                        {campaign.industry}
-                      </span>
-                      <span class="c-tag">{campaign.year}</span>
-                    </div>
+                    <p class="c-spotlight__meta">
+                      {campaign.industry} <span aria-hidden="true">·</span>{' '}
+                      <b>{campaign.year}</b>
+                    </p>
                     <h3 class="c-spotlight__title">{campaign.name}</h3>
                     <p class="c-spotlight__blurb">{campaign.blurb}</p>
-                    <div class="c-spotlight__links">
+                    <ul class="c-spotlight__links">
                       {campaign.items.map((item) => {
                         const meta = workTypeMeta[item.type] ?? {};
-                        return item.access === 'live' && item.url ? (
-                          <a
-                            class="c-spotlight__link"
-                            href={item.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            <Icon name={meta.icon} />
-                            <span>{item.title}</span>
-                            <Icon name="external-link" />
-                          </a>
-                        ) : (
-                          <span class="c-spotlight__link c-spotlight__link--gated">
-                            <Icon name="lock" />
-                            <span>{item.title}</span>
-                          </span>
+                        const isLive = item.access === 'live' && item.url;
+                        return (
+                          <li class="c-spotlight__deliverable">
+                            <span class="c-spotlight__status">
+                              {isLive ? meta.label : 'Gated'}
+                            </span>
+                            {isLive ? (
+                              <a
+                                class="c-spotlight__link"
+                                href={item.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                {item.title}
+                                <Icon name="external-link" />
+                              </a>
+                            ) : (
+                              <span class="c-spotlight__link c-spotlight__link--gated">
+                                {item.title}
+                              </span>
+                            )}
+                          </li>
                         );
                       })}
-                    </div>
+                    </ul>
                   </div>
-                </div>
+                </article>
               );
             })
           }
         </div>
         <div class="c-featured__controls">
-          <button
-            type="button"
-            class="c-featured__btn"
-            data-featured-prev
-            aria-label="Previous featured item"
-          >
-            <Icon name="chevron-left" />
-          </button>
-          <div class="c-featured__dots">
-            {
-              featuredCampaigns.map((campaign, di) => (
-                <button
-                  type="button"
-                  class:list={['c-featured__dot', { 'is-active': di === 0 }]}
-                  data-featured-dot
-                  aria-label={`Show ${campaign.name}`}
-                  aria-current={di === 0 ? 'true' : 'false'}
-                >
-                  <span class="c-featured__dot-mark" aria-hidden="true" />
-                </button>
-              ))
+          <p class="c-featured__counter" aria-hidden="true">
+            <b data-featured-current>01</b> / {
+              String(featuredCampaigns.length).padStart(2, '0')
             }
+          </p>
+          <div class="c-featured__nav">
+            <button
+              type="button"
+              class="c-featured__btn"
+              data-featured-prev
+              aria-label="Previous featured item"
+            >
+              <Icon name="chevron-left" />
+            </button>
+            <button
+              type="button"
+              class="c-featured__btn"
+              data-featured-next
+              aria-label="Next featured item"
+            >
+              <Icon name="chevron-right" />
+            </button>
           </div>
-          <button
-            type="button"
-            class="c-featured__btn"
-            data-featured-next
-            aria-label="Next featured item"
-          >
-            <Icon name="chevron-right" />
-          </button>
           <span
             class="u-sr-only"
             data-featured-status
             role="status"
-            aria-live="off"></span>
+            aria-live="polite"></span>
         </div>
       </div>
 

@@ -11,11 +11,18 @@ the tokens win; update this doc in the same change.
 | ----------------------- | ------------------------ | ----------------------- | --------------------------------------------------------------------------------------------------------- |
 | Body (all pages)        | **Krub**                 | `--font-family-base`    | Static weights 400 / 500 / 600, self-hosted via `@fontsource/krub`, preloaded on the home page.            |
 | Headings h1–h6, display | **Inter** (variable)     | `--font-family-display` | Single variable file (wght axis) via `@fontsource-variable/inter`. Enables the off-grid weights 460 / 550. |
-| Mono accents (kickers)  | **Berkeley Mono**        | `--font-family-mono`    | Local-only — not shipped; most visitors get the `ui-monospace` fallback chain. Don't rely on its metrics.  |
+| Mono accents (kickers)  | **JetBrains Mono** (variable) | `--font-family-mono` | Single variable file (wght axis) via `@fontsource-variable/jetbrains-mono`. Self-hosted + preloaded on the home page, same as the other two. |
 
 Key weights: `--font-weight-medium: 500`, `--font-weight-semibold: 550`
 (works because Inter is variable), `--font-weight-bold: 600`,
 `--text-hero-weight: 460`.
+
+All three faces are declared as hand-written `@font-face` blocks in
+`BaseLayout.astro` (not via the fontsource CSS entrypoints), so the family
+names there — `'Krub'`, `'Inter'`, `'JetBrains Mono'` — are what the tokens
+must reference. `--font-family-mono` is declared in **both** `settings.css`
+and `critical-home.css`: the hero eyebrow uses it above the fold, so the
+token has to exist before the deferred stylesheet lands.
 
 Type sizes are **fluid-first**: heading roles are `--text-<role>` tokens
 (hero, section-title, kicker, card/panel/timeline titles, article/blog

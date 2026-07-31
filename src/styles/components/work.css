@@ -138,76 +138,50 @@
   margin-bottom: var(--space-32);
 }
 
-/* Filmstrip: a horizontal scroll-snap rail. Slides sit side by side and the
-   user swipes/drags/arrows through them; the next card peeks in at the edge so
-   the strip reads as "more this way". No auto-rotation, no hard slide swaps. */
-.c-featured__viewport {
-  /* The carousel JS scrolls to slide offsetLeft values, which are only
-     viewport-relative if the viewport is the slides' offsetParent — without
-     this, .c-section's position: relative captures them and every scroll
-     target is skewed by the centered container's inset. */
+/* Stage: every flagship is in the DOM but only the active one is in flow (the
+   rest carry [hidden]), so the section height stays honest before the deferred
+   stylesheet lands and the docked-header geometry isn't corrupted. */
+.c-featured__stage {
   position: relative;
-  display: flex;
-  gap: var(--space-20);
-  overflow-x: auto;
-  /* Proximity (not mandatory) so wheel/drag free-scrolling can glance across
-     everything without the rail yanking to a snap point mid-gesture. */
-  scroll-snap-type: x proximity;
-  scroll-padding-inline: var(--space-1);
-  /* Keep horizontal flicks/wheel from triggering the browser back/forward swipe. */
-  overscroll-behavior-x: contain;
-  /* Pad so focus rings + drag overscroll aren't clipped by overflow. */
-  padding: var(--space-1) var(--space-1) var(--space-8);
-  /* Hide the native scrollbar; the dots + arrows are the affordance. */
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  cursor: grab;
 }
 
-/* Native image-drag and text selection both stutter a pointer drag — kill them. */
-.c-featured__viewport img {
-  -webkit-user-drag: none;
-  user-select: none;
-}
-
-.c-featured__viewport::-webkit-scrollbar {
-  display: none;
-}
-
-.c-featured__viewport:focus-visible {
-  outline: var(--focus-outline);
-  outline-offset: 4px;
-  border-radius: var(--radius-lg);
-}
-
-/* Each slide takes most of the rail, leaving a sliver of the next one. */
-.c-featured__slide {
-  flex: 0 0 88%;
-  scroll-snap-align: start;
-}
-
-/* While dragging or wheeling, drop snap so programmatic scrolls aren't yanked
-   back; we settle on the nearest slide once the gesture ends. */
-.c-featured.is-free .c-featured__viewport {
-  scroll-snap-type: none;
-}
-
-.c-featured.is-grabbing .c-featured__viewport {
-  cursor: grabbing;
-  user-select: none;
-}
-
-/* Don't fight a pointer-drag scroll on touch; the swipe is the gesture. */
-.c-featured.is-grabbing .c-featured__slide {
-  pointer-events: none;
-}
-
+/* Controls sit on a hairline footer: mono counter left, arrows right — the
+   ledger's rhythm rather than a row of dots. */
 .c-featured__controls {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  gap: var(--space-16);
+  margin-top: var(--space-24);
+  padding-top: var(--space-16);
+  border-top: 1px solid var(--color-hairline);
+}
+
+.c-featured__counter {
+  margin: 0;
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+}
+
+.c-featured__counter b {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-primary);
+}
+
+.c-featured__nav {
+  display: flex;
   gap: var(--space-8);
-  margin-top: var(--space-16);
+}
+
+/* The arrows are the only way through the spread now that the dots are gone,
+   so on touch they take the full target size. */
+@media (pointer: coarse) {
+  .c-featured__btn {
+    width: var(--nav-touch-target);
+    height: var(--nav-touch-target);
+  }
 }
 
 .c-featured__btn {
@@ -246,141 +220,171 @@
   box-shadow: 0 0 0 5px rgba(var(--color-primary-rgb), 0.18);
 }
 
-.c-featured__dots {
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-  margin: 0 var(--space-8);
-}
-
-.c-featured__dot {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.5rem;
-  height: 1.5rem;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  border-radius: var(--radius-full);
-  cursor: pointer;
-}
-
-.c-featured__dot-mark {
-  width: 0.6rem;
-  height: 0.6rem;
-  border-radius: 50%;
-  border: 1px solid var(--color-border-strong);
-  transition: background-color var(--animation-speed) var(--animation-curve);
-}
-
-.c-featured__dot.is-active .c-featured__dot-mark {
-  background: var(--color-primary);
-  border-color: var(--color-primary);
-}
-
-.c-featured__dot:focus-visible {
-  outline: var(--focus-outline);
-  outline-offset: 2px;
-}
-
+/* Editorial spread: no card chrome. The screengrab holds the left column and
+   the story the right, echoing .c-home-blog__feature so the two feature blocks
+   on the page share one shape. */
 .c-spotlight {
   display: grid;
-  grid-template-columns: minmax(0, 20rem) 1fr;
-  gap: var(--space-24);
-  align-items: stretch;
-  background: var(--color-surface-raised);
-  border: 1px solid var(--color-hairline);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
+  grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
+  gap: clamp(1.5rem, 4vw, 3rem);
+  align-items: center;
+}
+
+.c-spotlight[hidden] {
+  display: none;
+}
+
+/* Swap dissolve. Opacity-only, so the global reduced-motion kill switch
+   flattening it to an instant cut is the correct fallback, not a regression. */
+.c-spotlight.is-entering {
+  animation: spotlightFadeIn var(--duration-normal) var(--ease-standard);
+}
+
+@keyframes spotlightFadeIn {
+  from {
+    opacity: 0;
+  }
 }
 
 .c-spotlight__media {
-  border-bottom: 0;
-  height: 100%;
+  overflow: hidden;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-base);
+  background: var(--color-surface);
 }
 
 .c-spotlight__media .c-work-card__img {
-  height: 100%;
-  min-height: 12rem;
-  aspect-ratio: auto;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
 }
 
 .c-spotlight__body {
   display: flex;
   flex-direction: column;
-  gap: var(--space-12);
-  padding: var(--space-24) var(--space-24) var(--space-24) 0;
   min-width: 0;
 }
 
-.c-spotlight__chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-8);
+.c-spotlight__meta {
+  margin: 0;
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.c-spotlight__meta b {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-primary);
 }
 
 .c-spotlight__title {
-  font-size: var(--font-size-xl);
+  margin: var(--space-10) 0 0;
+  font-size: var(--text-panel-title);
   font-weight: var(--font-weight-semibold);
+  line-height: 1.25;
   color: var(--color-text-strong);
 }
 
 .c-spotlight__blurb {
-  line-height: 1.6;
-  color: var(--color-text);
-  max-width: 60ch;
+  margin: var(--space-12) 0 0;
+  max-width: 46ch;
+  line-height: 1.7;
+  color: var(--color-text-secondary);
 }
 
 .c-spotlight__links {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-8);
-  margin-top: auto;
+  margin: var(--space-20) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* One hairline row per deliverable: mono status rail + the title link. Same
+   vocabulary as the archive rows below and the engagement ledger. */
+.c-spotlight__deliverable {
+  position: relative;
+  display: grid;
+  grid-template-columns: 5.5rem minmax(0, 1fr);
+  gap: var(--space-12);
+  align-items: baseline;
+  padding: var(--space-10) 0;
+  border-top: 1px solid var(--color-hairline);
+}
+
+.c-spotlight__deliverable:last-child {
+  border-bottom: 1px solid var(--color-hairline);
+}
+
+.c-spotlight__status {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
 }
 
 .c-spotlight__link {
-  display: flex;
-  align-items: center;
+  display: inline-flex;
+  align-items: baseline;
   gap: var(--space-8);
+  min-width: 0;
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   color: var(--color-primary);
   text-decoration: none;
-}
-
-/* Let a long deliverable title wrap instead of overflowing the card. */
-.c-spotlight__link > span {
-  flex: 1;
-  min-width: 0;
   overflow-wrap: anywhere;
 }
 
-.c-spotlight__link:hover {
-  color: var(--color-primary-hover);
-  text-decoration: underline;
+/* The outbound arrow stays muted so the link text is the only blue element. */
+.c-spotlight__link svg {
+  flex: none;
+  color: var(--color-text-muted);
 }
 
 .c-spotlight__link--gated,
 .c-spotlight__link--gated:hover {
   color: var(--color-text-muted);
   cursor: default;
-  text-decoration: none;
 }
 
-/* Stack the spotlight below tablet so the body never gets cramped. */
+/* Hover/focus story, pointer devices only: the engagement ledger's brand line
+   drawing along the row's top hairline. :focus-within mirrors it for keyboard. */
+@media (hover: hover) {
+  .c-spotlight__deliverable::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 0;
+    width: 100%;
+    height: 1.5px;
+    background: rgba(var(--color-primary-rgb), 0.6);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.45s var(--animation-curve);
+  }
+
+  .c-spotlight__deliverable:hover::before,
+  .c-spotlight__deliverable:focus-within::before {
+    transform: scaleX(1);
+  }
+
+  .c-spotlight__deliverable:hover .c-spotlight__link,
+  .c-spotlight__deliverable:focus-within .c-spotlight__link {
+    color: var(--color-primary-hover);
+  }
+}
+
+/* Stack below tablet so neither column gets cramped. */
 @media (max-width: 48rem) {
   .c-spotlight {
     grid-template-columns: 1fr;
   }
 
-  .c-spotlight__media .c-work-card__img {
-    height: auto;
-    aspect-ratio: 16 / 10;
-  }
-
-  .c-spotlight__body {
-    padding: 0 var(--space-20) var(--space-20);
+  .c-spotlight__deliverable {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
   }
 }
 

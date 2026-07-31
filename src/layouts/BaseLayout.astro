@@ -5,6 +5,8 @@ import bodyLatin500Url from '@fontsource/krub/files/krub-latin-500-normal.woff2?
 import bodyLatin600Url from '@fontsource/krub/files/krub-latin-600-normal.woff2?url';
 // Inter variable (wght axis) is the display face for all headings (all pages).
 import displayFontUrl from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
+// JetBrains Mono variable is the mono accent face (kickers, meta, counters).
+import monoFontUrl from '@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2?url';
 import globalStylesUrl from '../styles/global.css?url';
 import criticalHomeStyles from '../styles/critical-home.css?raw';
 import { siteContent, skillKeywords } from '../content.js';
@@ -103,6 +105,7 @@ const bodyFontFaceCssHtml = `<style data-font-face="body">${bodyFontFaces
   )
   .join('')}</style>`;
 const displayFontFaceCssHtml = `<style data-font-face="display">@font-face{font-family:'Inter';font-style:normal;font-display:swap;font-weight:100 900;src:url(${JSON.stringify(displayFontUrl)}) format('woff2-variations');}</style>`;
+const monoFontFaceCssHtml = `<style data-font-face="mono">@font-face{font-family:'JetBrains Mono';font-style:normal;font-display:swap;font-weight:100 800;src:url(${JSON.stringify(monoFontUrl)}) format('woff2-variations');}</style>`;
 const criticalHomeCssHtml = `<style data-critical-css="home">${criticalHomeStyles.replace(/<\/style/gi, '<\\/style')}</style>`;
 const homePortraitImage = profile.portraitImage;
 const stylesheetHtml = isHome
@@ -235,6 +238,17 @@ const noScriptStylesheetHtml = isHome
       isHome && (
         <link
           rel="preload"
+          as="font"
+          href={monoFontUrl}
+          type="font/woff2"
+          crossorigin
+        />
+      )
+    }
+    {
+      isHome && (
+        <link
+          rel="preload"
           as="image"
           href={homePortraitImage}
           fetchpriority="high"
@@ -243,6 +257,7 @@ const noScriptStylesheetHtml = isHome
     }
     <Fragment set:html={bodyFontFaceCssHtml} />
     <Fragment set:html={displayFontFaceCssHtml} />
+    <Fragment set:html={monoFontFaceCssHtml} />
     <Fragment set:html={stylesheetHtml} />
     <Fragment set:html={noScriptStylesheetHtml} />
     <noscript>
