@@ -1161,7 +1161,17 @@ function showNotification(message, type = 'info') {
     'aria-live',
     type === 'error' ? 'assertive' : 'polite',
   );
-  notification.innerHTML = `<div class="c-notification__content"><span class="c-notification__message">${message}</span><button class="c-notification__close" aria-label="Close notification">&times;</button></div>`;
+  const content = document.createElement('div');
+  content.className = 'c-notification__content';
+  const messageEl = document.createElement('span');
+  messageEl.className = 'c-notification__message';
+  messageEl.textContent = message;
+  const closeButton = document.createElement('button');
+  closeButton.className = 'c-notification__close';
+  closeButton.setAttribute('aria-label', 'Close notification');
+  closeButton.textContent = '×';
+  content.append(messageEl, closeButton);
+  notification.appendChild(content);
 
   document.body.appendChild(notification);
 
