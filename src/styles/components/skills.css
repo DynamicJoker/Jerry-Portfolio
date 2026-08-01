@@ -13,26 +13,25 @@
   gap: var(--space-24);
 }
 
-/* Ghost panel — no fill; defined by a hairline border over the section. */
+/* Raised soft-UI panel (neumorphic): shares the ground color, depth from the
+   paired top-left shadow rather than a border. */
 .c-capability {
   position: relative;
   display: flex;
   flex-direction: column;
   padding: clamp(1.2rem, 2.4vw, 1.75rem);
-  border: 1px solid var(--color-hairline-strong);
-  border-radius: var(--radius-lg);
+  background: var(--neu-bg);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--neu-shadow-raised);
   overflow: hidden;
-  transition:
-    border-color var(--animation-speed) var(--animation-curve),
-    background-color var(--animation-speed) ease;
+  transition: transform var(--animation-speed) var(--animation-curve);
 }
 
 /* Pointer devices only: keeps the effect from sticking after taps on
-   touch screens. */
+   touch screens. A compositable lift (transform), never a shadow transition. */
 @media (hover: hover) {
   .c-capability:hover {
-    border-color: rgba(var(--color-primary-rgb), 0.55);
-    background-color: var(--color-overlay-weak);
+    transform: translateY(-2px);
   }
 }
 

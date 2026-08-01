@@ -49,10 +49,14 @@
   display: none;
 }
 
+/* Recessed timeline track (soft-UI inset well); the accent-filled bar draws
+   into it. Small inset recipe suits the thin track. */
 .c-gantt__bar-area {
   width: var(--gantt-bar-width);
   position: relative;
   border-radius: var(--radius-sm);
+  background: var(--neu-bg);
+  box-shadow: var(--neu-shadow-inset-sm);
   cursor: pointer;
   min-height: 1.75rem;
   min-width: 0;

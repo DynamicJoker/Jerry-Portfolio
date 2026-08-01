@@ -1105,7 +1105,8 @@ html.is-theme-transitioning *::after {
   max-width: 21rem;
   aspect-ratio: 1 / 1;
   overflow: hidden;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--neu-shadow-raised);
 }
 
 .c-hero__portrait-img {
@@ -1149,6 +1150,10 @@ html.is-theme-transitioning *::after {
   gap: var(--space-12);
   width: 100%;
   max-width: 21rem;
+  padding: var(--space-24);
+  background: var(--neu-bg);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--neu-shadow-raised);
 }
 
 .c-hero__proof-tag {

@@ -223,11 +223,16 @@
 /* Editorial spread: no card chrome. The screengrab holds the left column and
    the story the right, echoing .c-home-blog__feature so the two feature blocks
    on the page share one shape. */
+/* Raised soft-UI showcase panel for the one-at-a-time editorial feature. */
 .c-spotlight {
   display: grid;
   grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
   gap: clamp(1.5rem, 4vw, 3rem);
   align-items: center;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  background: var(--neu-bg);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--neu-shadow-raised);
 }
 
 .c-spotlight[hidden] {
@@ -246,11 +251,12 @@
   }
 }
 
+/* Screenshot recessed into the panel as an inset well. */
 .c-spotlight__media {
   overflow: hidden;
-  border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-base);
-  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  background: var(--neu-bg);
+  box-shadow: var(--neu-shadow-inset);
 }
 
 .c-spotlight__media .c-work-card__img {
@@ -533,10 +539,19 @@
   box-shadow: 0 0 0 5px rgba(var(--color-primary-rgb), 0.18);
 }
 
+/* The ~250-row ledger sits in ONE inset well rather than becoming 250 raised
+   cards: a single recessed trough keeps the soft-UI depth while paying for just
+   one shadow (the per-row content-visibility virtualization stays intact, and
+   the many-element paint cost the guidelines warn about is avoided). Rows stay
+   flat with their hairline separators. */
 .c-archive__list {
   list-style: none;
   display: flex;
   flex-direction: column;
+  padding: var(--space-8) var(--space-16);
+  background: var(--neu-bg);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--neu-shadow-inset);
 }
 
 /* The row <li> carries only the separator. The flex layout lives on the inner
