@@ -4,6 +4,9 @@ const config = {
   loadingScreenMinVisible: 400, // ms since navigation start
   loadingScreenMaxWait: 1500, // ms; rAF-less fallback so it can't get stuck
   loadingScreenFadeOut: 500,
+  // Minimum time the contact button stays in its "Sending…" pulse, so the
+  // processing beat is felt even when the network responds near-instantly.
+  contactSubmitMinVisible: 1500, // ms
   breakpoints: {
     md: { cssVar: '--breakpoint-md', fallbackRem: 48 },
     lg: { cssVar: '--breakpoint-lg', fallbackRem: 64 },
@@ -925,6 +928,7 @@ function initializeContactForm() {
     }
 
     setContactSubmitting(submitButton);
+    const startedAt = performance.now();
 
     try {
       // The endpoint comes from siteContent.contactForm via the form markup.
@@ -933,6 +937,10 @@ function initializeContactForm() {
         body: formData,
       });
       const data = await response.json();
+
+      // Hold the pulse for a beat so the "processing" state is perceptible even
+      // on a fast response (skipped for reduced-motion — no pulse to show).
+      await holdSubmittingFor(startedAt);
 
       if (data.success) {
         // Success is confirmed inline: the button morphs to "Sent ✓" and the
@@ -944,6 +952,7 @@ function initializeContactForm() {
         console.error('Web3Forms Error:', data);
       }
     } catch (error) {
+      await holdSubmittingFor(startedAt);
       revertContactSubmit(submitButton);
       setFormError(formError, messages.network);
       console.error('Form submission error:', error);
@@ -988,7 +997,17 @@ function announce(region, message) {
   }, 120);
 }
 
-// Button enters its in-flight state: label swap + the CSS sweep (is-submitting).
+// Wait out the remainder of the minimum in-flight window so the pulse is
+// visible for a full beat. No-op under reduced motion (there is no pulse).
+function holdSubmittingFor(startedAt) {
+  if (prefersReducedMotion) return Promise.resolve();
+  const remaining =
+    config.contactSubmitMinVisible - (performance.now() - startedAt);
+  if (remaining <= 0) return Promise.resolve();
+  return new Promise((resolve) => setTimeout(resolve, remaining));
+}
+
+// Button enters its in-flight state: label swap + the pulse (is-submitting).
 function setContactSubmitting(button) {
   button.classList.remove('is-sent');
   button.classList.add('is-submitting');
