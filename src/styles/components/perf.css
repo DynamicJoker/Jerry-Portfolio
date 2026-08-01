@@ -15,6 +15,21 @@
    mirrored in critical-home.css so returning lite-mode visitors never pay for
    it on first paint. Keep the two aurora blocks in step. */
 
+/* --- Neumorphism flatten: the soft-UI look is two LARGE-blur (14px) box-shadows
+   per element, and box-shadow is paint-bound — a page full of them repaints on
+   every scroll frame, exactly the CPU-raster cost lite mode exists to avoid.
+   Redefining the four composite recipes here collapses EVERY neu surface at once
+   (cards, panels, pills, inputs, wells) to a single ZERO-blur 1px ring — a crisp
+   hairline that costs almost nothing to paint while still bounding each surface.
+   Theme-aware via --color-hairline-strong. Mirrored in critical-home.css so
+   returning lite visitors don't pay for the blur on first paint. */
+[data-perf='lite'] {
+  --neu-shadow-raised: 0 0 0 1px var(--color-hairline-strong);
+  --neu-shadow-raised-sm: 0 0 0 1px var(--color-hairline-strong);
+  --neu-shadow-inset: inset 0 0 0 1px var(--color-hairline-strong);
+  --neu-shadow-inset-sm: inset 0 0 0 1px var(--color-hairline-strong);
+}
+
 /* --- Hero aurora: blend mode + three drifting, scaling blooms (the #1 cost).
    Drop the blend (forces full-hero CPU compositing every frame), freeze the
    drift, release the layer hint, and dial opacity back so the blooms still read

@@ -1,0 +1,47 @@
+/* Component: neu (neumorphism cross-cutting a11y fallbacks)
+   ------------------------------------------------------------------
+   The soft-UI depth is carried entirely by box-shadow. High-contrast
+   environments drop shadows outright, and low-vision users need the boundary
+   reinforced, so these media queries guarantee every interactive control keeps
+   a real, sufficiently contrasting edge when the shadow can't do it. The
+   data-perf="lite" shadow flatten lives in components/perf.css. */
+
+/* Windows High Contrast / forced-colors: the OS discards box-shadow entirely,
+   so a shadow-only boundary disappears and (critically) the raised↔inset toggle
+   that marks a selected pill is lost. Give the controls a real border
+   (currentColor maps to a system color here) and mark the selected pill with the
+   system Highlight so selection stays visible without depth. */
+@media (forced-colors: active) {
+  .c-archive__tab,
+  .c-archive__filter,
+  .c-featured__btn,
+  .c-lightbox__close,
+  .c-form-control {
+    border: 1px solid;
+  }
+
+  .c-archive__tab.is-active,
+  .c-archive__filter.is-active {
+    border: 2px solid Highlight;
+    color: Highlight;
+  }
+}
+
+/* prefers-contrast: more — the default resting boundary on a soft control is a
+   faint hairline plus the (sub-3:1) neutral border; promote it to a solid accent
+   border, which clears 3:1 in both themes, and thicken the selected pill. */
+@media (prefers-contrast: more) {
+  .c-archive__tab,
+  .c-archive__filter,
+  .c-featured__btn,
+  .c-lightbox__close,
+  .c-form-control,
+  .c-btn--outline {
+    border-color: var(--color-primary);
+  }
+
+  .c-archive__tab.is-active,
+  .c-archive__filter.is-active {
+    border-width: 2px;
+  }
+}

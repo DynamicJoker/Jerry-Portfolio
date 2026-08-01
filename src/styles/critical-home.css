@@ -852,6 +852,17 @@ html.is-theme-transitioning *::after {
   opacity: calc(var(--hero-bloom-opacity) * 0.55);
 }
 
+/* Neumorphism flatten (mirror of perf.css): collapse the dual large-blur soft-UI
+   shadows to a single zero-blur 1px ring so above-the-fold neu surfaces (hero
+   proof panel, stat tiles, buttons) don't cost blur paint on first paint for
+   returning lite visitors. Keep in step with the perf.css block. */
+[data-perf='lite'] {
+  --neu-shadow-raised: 0 0 0 1px var(--color-hairline-strong);
+  --neu-shadow-raised-sm: 0 0 0 1px var(--color-hairline-strong);
+  --neu-shadow-inset: inset 0 0 0 1px var(--color-hairline-strong);
+  --neu-shadow-inset-sm: inset 0 0 0 1px var(--color-hairline-strong);
+}
+
 .c-hero__name {
   /* Mirror of .c-hero__name in components/hero.css. The display font's
      descenders are kept inside the background-clip:text paint box with em
