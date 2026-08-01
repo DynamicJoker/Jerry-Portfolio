@@ -131,19 +131,89 @@ never a shadow-size transition on many elements at once.
 
 ---
 
-## 4. Component mapping
+## 4. Coverage — every page and component
 
-| Component (current)                        | Neumorphic treatment                                                                                             | Hybrid guardrail                                                                     |
-| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| Primary button (`.c-btn--primary`)         | Soft raised shadow **under a solid accent fill** (`--color-primary`); on `:active` → inset                       | Keep the accent fill — never a same-color primary. Text ≥ 4.5:1 on the fill.         |
-| Secondary button (`.c-btn`)                | Raised, monochrome; `:active` → inset                                                                            | Add a 1px `--color-hairline-strong` border for the ≥3:1 boundary.                    |
-| Filter pills / segmented (`#portfolio`)    | Raised at rest, **inset when `is-active`** — the ideal use of the two states                                     | Active state also gets accent text/underline, not shadow alone (color-blind users). |
-| Form inputs (`.c-contact-form__*`)         | **Inset** (you type "into" a recess)                                                                             | Keep a 1px border + the existing focus ring; inset shadow is not enough contrast.    |
-| Cards / panels (services, blog, about)     | Raised container                                                                                                 | Decorative — safe to go fully soft.                                                  |
-| Stat tiles (hero proof)                    | Raised tiles on the ground                                                                                       | Decorative — safe.                                                                   |
-| Nav bar (`.c-nav`)                         | A raised floating bar **or** stay flat; the docked/scrolled shadow already exists                                | Keep it legible against content scrolling under it; don't lose the current elevation.|
-| Toggles / theme switch                     | Track = inset, knob = raised — neumorphism's best-looking control                                                | Provide an on/off text or icon cue, not just position.                               |
-| Availability dot / small status            | Leave flat; too small for the effect                                                                             | —                                                                                    |
+This is the full surface area. Treatment legend:
+
+- **Raised** — soft convex container (decorative; safe to go fully soft).
+- **Inset** — recessed well / input / selected state.
+- **Hybrid control** — soft shadow **plus** a border and/or accent fill and a
+  real focus ring (anything a user operates; see §5).
+- **Flat** — no neumorphism (too small, or type-only).
+- **N/A — third-party** — can't touch the internals; style only the wrapper.
+- **N/A — SVG/animated** — its own visual language; `box-shadow` doesn't apply
+  to inner SVG shapes. Optionally frame it in a raised card.
+
+### 4.1 Routes
+
+| Route                     | File(s)               | Notes                                                                    |
+| ------------------------- | --------------------- | ------------------------------------------------------------------------ |
+| Home `/`                  | `pages/index.astro` + `HomeBody.astro` | The bulk of the work — see §4.3.                       |
+| Blog index `/blog`        | `pages/blog/index.astro`, `blog.css`   | Hero + post cards — see §4.4.                          |
+| Blog post `/blog/[slug]`  | `pages/blog/[slug].astro`, `article.css` | Prose + hand-authored MDX charts — see §4.4.         |
+| 404                       | `pages/404.astro`, `not-found.css`     | SVG graphic stays; only actions/container change — §4.4.|
+| `llms.txt` `robots.txt` `rss.xml` | `pages/*.js`  | No UI. **N/A.**                                                          |
+
+### 4.2 Global chrome (every page)
+
+| Component            | File                 | Treatment            | Notes / guardrail                                                                                             |
+| -------------------- | -------------------- | -------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Nav bar `.c-nav`     | `nav.css`            | Hybrid raised / flat | Raised floating bar **or** flat; keep the existing scrolled elevation. **Above the fold → mirror in `critical-home.css`.** |
+| Mobile nav sheet     | `nav.css`            | Raised panel         | The slide-out sheet as a raised surface; keep `--shadow-sheet` legible over content.                          |
+| Active nav marker    | `nav.css`            | Flat + accent        | Keep the accent underline/marker; don't rely on an inset alone for "current page".                            |
+| Beta banner `.c-beta-banner` | `beta-banner.css` | Raised strip     | Subtle raised top strip (it already carries a shadow); expand/collapse control = small raised→inset. **Above the fold → mirror in critical.** Drop the `backdrop-filter` blur → flat fill (perf, §6). |
+| Footer `.c-footer`   | `footer.css`         | Flat / inset well    | Keep flat, or sit the footer in one large inset "trough" to close the page. Links stay flat with hover.       |
+| Loading screen `.c-loading-screen` | `loading-screen.css` | **Flat** | Leave the pulse dots flat — neumorphic shadows at first paint add cost at the worst moment. Already lite-gated. |
+| Section kickers/headers `.c-section*` | `section.css` | **Flat** | Type + CSS-counter only; no surface. The `01 / About` counters and reveal animation stay as-is.               |
+
+### 4.3 Home sections (`HomeBody.astro`)
+
+| Section                       | File               | Treatment            | Notes / guardrail                                                                                                     |
+| ----------------------------- | ------------------ | -------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| Hero `.c-hero`                | `hero.css`         | Flat ground + float  | Flat soft ground; gradient name kept; proof panel floats (raised or inset). Aurora decision in §7. **Mirror in critical.** |
+| Hero proof stat tiles         | `hero.css`         | Raised               | Decorative — safe. **Above the fold → mirror in critical.**                                                          |
+| Availability dot `.c-availability-dot` | `common.css` | **Flat**          | Too small for the effect; keep the glow/pulse (lite-gated).                                                          |
+| Logo bar `.c-logo-bar`        | `logo-bar.css`     | Inset well **or** flat | House the mono `currentColor` logos in one recessed trough, **or** leave flat. Don't bury low-contrast logos in shadow. |
+| About / pipeline `.c-pipeline`| `about.css`        | Raised nodes + flat  | Node dots/cards raised; connector line + animated "current" flow kept (decorative, already lite-gated).              |
+| Skills — capability cards `.c-capability` | `skills.css` | Raised / hybrid | Cards raised; collapsible ones (`--collapsible`) go **inset when expanded**; the chip/CTA controls are hybrid.       |
+| Skills — distiller `.c-distiller` | `skills.css`   | **N/A — SVG/animated** | An animated SVG (9 loops); box-shadow can't sculpt its inner shapes. Leave its language; optionally frame in a raised card. Already lite-gated. |
+| Work — featured spread        | `work.css`         | Raised panel         | The one-at-a-time editorial feature = a large raised showcase panel.                                                 |
+| Work — archive filters `.c-archive__filter` | `work.css` | Hybrid pills   | Raised → **inset when active**, plus accent text (same rule as the portfolio filters in the mockup).                 |
+| Work — archive item cards     | `work.css`         | Raised               | ~251-item grid — keep the shadow **small/soft** and **flatten under lite** (this is a many-element grid, §6).        |
+| Work — count/empty/pagination | `work.css`         | Flat                 | Type + simple controls; pagination buttons are hybrid if present.                                                    |
+| Services `.c-service*`        | `services.css`     | Raised rows          | The 3 engagement rows as raised panels; any tags/CTAs hybrid.                                                        |
+| Testimonials `.c-testimonial` | `testimonials.css` | Raised cards        | **Highest perf risk:** many raised cards inside an infinite marquee → soft/small shadow only + **must flatten under lite** (§6). Pause control = raised→inset. |
+| Experience gantt `.c-gantt`   | `gantt.css`        | Inset track + bars   | Timeline track inset; bars raised or accent-filled; tooltip = raised card + border (drop the `backdrop-filter` blur, §6). |
+| Home blog teasers `.c-home-blog` / home-blog cards | `home-blog.css` | Raised    | Standard raised cards.                                                                                               |
+| Contact form `.c-contact-form__*` | `contact.css` | Inset inputs        | Inputs inset + border + focus ring; submit = primary (accent fill); keep the success/pulse feedback states.         |
+| Booking — CTA bar `.c-booking-cta` | `booking.css` | Hybrid raised→inset | The "book a call" control bar.                                                                                       |
+| Booking — Calendly panel `.c-calendly-panel` | `booking.css`, `section.css` | **N/A — third-party** | Style only the surrounding panel (raised frame / inset well) + loading dots. **Cannot** neumorph inside the iframe; the dark-mode invert filter stays. |
+
+### 4.4 Blog & 404
+
+| Component                         | File           | Treatment            | Notes / guardrail                                                                                              |
+| --------------------------------- | -------------- | -------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Blog index hero + post cards      | `blog.css`     | Raised cards         | Post cards raised; hero flat + type.                                                                          |
+| Article shell `.c-article-shell`  | `blog.css`, `beta-banner.css` | Flat        | The reading column stays flat — prose is not a neumorphic surface.                                            |
+| Article prose (p / h / li)        | `article.css`  | **Flat**             | Body text on the flat ground. Do **not** put shadows behind paragraphs.                                       |
+| Blockquotes / callouts            | `article.css`  | Inset well           | A recessed quote reads well and is safe (non-interactive).                                                    |
+| Code blocks                       | `article.css`  | Inset well           | Recessed code panel; keep syntax contrast.                                                                    |
+| Cover image `.c-article__cover`   | `article.css`  | Raised frame         | Soft raised frame around the image.                                                                           |
+| MDX charts `.c-article-chart*`, `.c-stacked-bar*` | `article.css` | Raised card + inset bars | Container raised; bar tracks inset, fills flat/accent. **Content-coupled:** these classes are hand-written in published `.mdx` — restyle via CSS only, **do not rename** (would require editing posts, per CLAUDE.md). |
+| Back link / CTA `.c-article__back`, `.c-article__cta` | `article.css` | Hybrid buttons | Same button rules as §4.2.                                                                                    |
+| 404 graphic                       | `not-found.css`| **N/A — SVG**        | Hardcoded-gradient SVG stays; its `nf-*` loops are already lite-gated.                                         |
+| 404 actions `.c-not-found__actions` | `not-found.css` | Hybrid buttons     | Same button rules.                                                                                            |
+
+### 4.5 Special cases to plan around
+
+- **Third-party (wrapper only):** Calendly iframe.
+- **SVG / hand-drawn (own language):** skills distiller, 404 graphic, brand
+  logo/wordmark — `box-shadow` doesn't sculpt inner SVG shapes.
+- **Perf-critical (small/soft shadow + must flatten under `data-perf='lite'`):**
+  testimonials marquee, work archive grid, pipeline flow, gantt (§6).
+- **Above-the-fold (mirror in `critical-home.css`):** nav, beta banner, hero,
+  first stat tiles.
+- **Content-coupled (restyle only, never rename):** the MDX chart classes.
 
 ---
 
