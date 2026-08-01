@@ -21,3 +21,6 @@ dist/
 .github/copilot-instructions.md
 CLAUDE.local.md
 AGENTS.local.md
+
+# Local-only design notes (kept out of the repo intentionally)
+docs/neumorphism-guidelines.md

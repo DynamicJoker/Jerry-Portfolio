@@ -32,20 +32,22 @@
   margin: 0;
   padding: 0;
   list-style: none;
+  display: grid;
+  gap: var(--space-16);
 }
 
+/* Raised soft-UI engagement panel (3 rows only, so per-panel shadows are
+   cheap). The hover line-draw + arrival-ping story is preserved. */
 .c-engagement {
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: var(--space-24);
-  padding: var(--space-24) var(--space-8);
-  border-top: 1px solid var(--color-hairline);
+  padding: var(--space-24);
+  background: var(--neu-bg);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--neu-shadow-raised);
   transition: background-color var(--animation-speed) ease;
-}
-
-.c-engagement:last-child {
-  border-bottom: 1px solid var(--color-hairline);
 }
 
 .c-engagement__index {
@@ -119,9 +121,9 @@
   .c-engagement::before {
     content: '';
     position: absolute;
-    top: -1px;
-    left: 0;
-    width: calc(100% - 0.75rem);
+    top: 0.75rem;
+    left: var(--radius-xl);
+    width: calc(100% - var(--radius-xl) - 0.75rem);
     height: 1.5px;
     background: rgba(var(--color-primary-rgb), 0.6);
     transform: scaleX(0);
@@ -139,7 +141,7 @@
   .c-engagement::after {
     content: '';
     position: absolute;
-    top: -0.3125rem;
+    top: 0.47rem;
     left: calc(100% - 0.75rem);
     width: 0.5625rem;
     height: 0.5625rem;

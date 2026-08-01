@@ -357,8 +357,9 @@
   background: var(--color-hairline-strong);
 }
 
-/* Proof: a frameless, treated portrait over a career-metrics readout — no card
-   surface, so it reads as part of the canvas rather than a floating widget. */
+/* Proof: a treated portrait over a career-metrics readout. Both sit on raised
+   neumorphic surfaces (soft UI) so they read as the hero's floating soft
+   objects above the drifting aurora ground. Mirrored in critical-home.css. */
 .c-hero__panel {
   position: relative;
   display: grid;
@@ -373,7 +374,8 @@
   max-width: 21rem;
   aspect-ratio: 1 / 1;
   overflow: hidden;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--neu-shadow-raised);
 }
 
 .c-hero__portrait-img {
@@ -420,6 +422,10 @@
   gap: var(--space-12);
   width: 100%;
   max-width: 21rem;
+  padding: var(--space-24);
+  background: var(--neu-bg);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--neu-shadow-raised);
 }
 
 .c-hero__proof-tag {

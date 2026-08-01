@@ -4,17 +4,15 @@
 
 /* Contact Section */
 
+/* Raised soft-UI container for the whole booking widget (bar + expanding
+   Calendly panel). The button inside carries the raised→inset toggle. */
 .c-booking-cta {
   width: 100%;
   margin-bottom: var(--space-32);
   scroll-margin-top: calc(var(--navbar-height) + var(--space-24));
-  background: linear-gradient(
-    135deg,
-    rgba(var(--color-accent-rgb), 0.06) 0%,
-    rgba(var(--color-accent-rgb), 0.02) 100%
-  );
-  border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-lg);
+  background: var(--neu-bg);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--neu-shadow-raised);
   overflow: hidden;
 }
 

@@ -33,10 +33,11 @@
   text-transform: none;
 }
 
+/* Raised soft-UI frame around the cover image. */
 .c-article__cover {
   aspect-ratio: 16 / 9;
-  border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-base);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--neu-shadow-raised);
   margin-bottom: 2.5rem;
 }
 
@@ -78,11 +79,14 @@
   margin-top: 0.45rem;
 }
 
+/* Recessed quote (inset well), brand accent bar kept for identity. */
 .c-article__content blockquote {
   margin-inline: 0;
   padding: 1rem 1.25rem;
   border-left: 3px solid var(--color-electric-blue);
-  background: rgba(var(--color-primary-rgb), 0.08);
+  border-radius: var(--radius-lg);
+  background: var(--neu-bg);
+  box-shadow: var(--neu-shadow-inset);
   color: var(--color-text);
 }
 
@@ -96,9 +100,13 @@
   padding: 0.15rem 0.35rem;
 }
 
+/* Code block recessed into an inset well (inline <code> stays a flat pill). */
 .c-article__content pre {
   overflow-x: auto;
   padding: 1rem;
+  border-radius: var(--radius-lg);
+  background: var(--neu-bg);
+  box-shadow: var(--neu-shadow-inset);
 }
 
 .c-article__content pre code {
@@ -119,20 +127,16 @@
   padding: 0.7rem;
 }
 
+/* Raised soft-UI chart card. (Class names are content-coupled to published
+   .mdx — restyle only, never rename.) */
 .c-article-chart {
   --chart-fill-start: var(--color-electric-blue);
   --chart-fill-end: var(--color-accent-teal);
   --chart-fill-accent: var(--color-accent-teal);
   padding: clamp(1rem, 2.5vw, 1.15rem);
-  border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-base);
-  background:
-    linear-gradient(
-      135deg,
-      rgba(var(--color-primary-rgb), 0.1),
-      rgba(var(--color-primary-rgb), 0.05)
-    ),
-    var(--color-overlay-weak);
+  border-radius: var(--radius-xl);
+  background: var(--neu-bg);
+  box-shadow: var(--neu-shadow-raised);
 }
 
 .c-article-chart figcaption {
@@ -236,12 +240,14 @@
   line-height: 1.45;
 }
 
+/* Bar track recessed into an inset well; the segments (fills) stay accent. */
 .c-stacked-bar {
   display: flex;
   min-block-size: 3.6rem;
   overflow: hidden;
   border-radius: var(--radius-base);
-  background: var(--color-overlay-medium);
+  background: var(--neu-bg);
+  box-shadow: var(--neu-shadow-inset-sm);
 }
 
 .c-stacked-bar__segment {
@@ -289,6 +295,7 @@
   background: var(--chart-fill-accent);
 }
 
+/* Raised soft-UI CTA banner (holds the primary button). */
 .c-article__cta {
   display: flex;
   gap: 1rem;
@@ -296,9 +303,9 @@
   justify-content: space-between;
   margin-top: 3rem;
   padding: 1.25rem;
-  border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-base);
-  background: rgba(var(--color-primary-rgb), 0.08);
+  border-radius: var(--radius-xl);
+  background: var(--neu-bg);
+  box-shadow: var(--neu-shadow-raised);
   min-width: 0;
 }
 
