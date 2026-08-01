@@ -30,24 +30,24 @@
   gap: var(--space-20);
 }
 
+/* Raised soft-UI info cards. */
 .c-contact__item {
   display: flex;
   align-items: center;
   gap: var(--space-16);
   padding: var(--space-16);
-  background: var(--color-surface-raised);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--color-hairline);
-  transition:
-    background-color var(--animation-speed) var(--animation-curve),
-    border-color var(--animation-speed) var(--animation-curve),
-    transform var(--animation-speed) var(--animation-curve);
+  background: var(--neu-bg);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--neu-shadow-raised);
+  transition: transform var(--animation-speed) var(--animation-curve);
   min-width: 0;
 }
 
-.c-contact__item:hover {
-  border-color: var(--color-primary);
-  animation: btnSignalPulse 1.1s ease-out 1;
+/* Pointer devices only: keeps the lift from sticking after taps. */
+@media (hover: hover) {
+  .c-contact__item:hover {
+    transform: translateY(-2px);
+  }
 }
 
 .c-contact__icon {
@@ -86,15 +86,18 @@
   border-color: var(--color-focus-visible);
 }
 
+/* Raised soft-UI card holding the recessed (inset) fields. */
 .c-contact__form-container {
-  background: var(--color-surface-raised);
+  background: var(--neu-bg);
   padding: var(--space-32);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--neu-shadow-raised);
 }
 
+/* Match the base inset field's ground so the well recesses honestly into the
+   raised container (the inset shadow itself comes from the base rule). */
 .c-contact-form .c-form-control {
-  background: var(--color-overlay-strong);
+  background: var(--neu-bg);
   border: 1px solid var(--color-border-strong);
   color: var(--color-text);
 }
@@ -105,9 +108,12 @@
   }
 }
 
+/* Field stays recessed while focused; the primary ring layers on top. */
 .c-contact-form .c-form-control:focus {
   border-color: var(--color-electric-blue);
-  box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.1);
+  box-shadow:
+    var(--neu-shadow-inset),
+    0 0 0 3px rgba(var(--color-primary-rgb), 0.1);
 }
 
 /* The contact form's own border rule above matches the base [aria-invalid]

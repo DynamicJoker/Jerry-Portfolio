@@ -1,5 +1,7 @@
 /* Component: forms */
 
+/* Fields are inset wells (soft UI): recessed into the surface, with a real
+   border kept for the ≥3:1 boundary and the focus ring preserved below. */
 .c-form-control {
   display: block;
   width: 100%;
@@ -10,9 +12,10 @@
   font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--color-text);
-  background-color: var(--color-surface);
+  background-color: var(--neu-bg);
   border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-base);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--neu-shadow-inset);
   transition:
     border-color var(--duration-fast) var(--ease-standard),
     box-shadow var(--duration-fast) var(--ease-standard);
@@ -74,6 +77,7 @@ select.c-form-control {
   margin-bottom: var(--space-16);
   padding: var(--space-10) var(--space-12);
   border-left: 3px solid var(--color-error);
-  border-radius: var(--radius-base);
-  background: var(--color-overlay-strong);
+  border-radius: var(--radius-lg);
+  background: var(--neu-bg);
+  box-shadow: var(--neu-shadow-inset);
 }
