@@ -1,0 +1,108 @@
+/* Component: performance fallback ("lite" mode)
+   ------------------------------------------------------------------
+   Applied when the frame-rate probe in BaseLayout.astro finds a device that
+   cannot composite our GPU-dependent effects smoothly — hardware acceleration
+   turned off, or an old machine with no dedicated GPU. The probe sets
+   `data-perf="lite"` on <html> (persisted per session), and these rules strip
+   the effects that are cheap on a GPU but murderous on the CPU raster path:
+   blend modes, blur filters, and continuously-running (`infinite`) loops.
+
+   What stays: one-shot entrance animations (fadeInUp etc.) and hover
+   transitions — they run once / on demand and cost little. What goes: anything
+   that repaints or re-composites every frame forever.
+
+   The single most expensive item, the hero aurora's `mix-blend-mode`, is also
+   mirrored in critical-home.css so returning lite-mode visitors never pay for
+   it on first paint. Keep the two aurora blocks in step. */
+
+/* --- Hero aurora: blend mode + three drifting, scaling blooms (the #1 cost).
+   Drop the blend (forces full-hero CPU compositing every frame), freeze the
+   drift, release the layer hint, and dial opacity back so the blooms still read
+   as a soft glow without the blend to integrate them. */
+[data-perf='lite'] .c-hero__aurora-bloom {
+  mix-blend-mode: normal;
+  animation: none;
+  will-change: auto;
+  opacity: calc(var(--hero-bloom-opacity) * 0.55);
+}
+
+/* --- Testimonials marquee: freeze the infinite transform loop (it otherwise
+   re-rasterizes a masked, layer-promoted column every frame while on screen). */
+[data-perf='lite'] .c-testimonials-scroller__inner {
+  animation: none;
+  will-change: auto;
+}
+
+/* --- Infinite box-shadow / background-position pulses. Animating box-shadow
+   can't be composited, so each frame is a full repaint. */
+[data-perf='lite'] .c-availability-dot::after,
+[data-perf='lite'] .c-contact-form__submit.is-submitting:disabled,
+[data-perf='lite'] .c-pipeline__nodes::before,
+[data-perf='lite'] .c-nav__link.is-active::before,
+[data-perf='lite'] .c-not-found__halo,
+[data-perf='lite'] .c-not-found__orbit-fragments,
+[data-perf='lite'] .c-not-found__blip {
+  animation: none;
+}
+
+/* --- Blur filters (per-pixel gaussian is among the most expensive CPU raster
+   ops; backdrop-filter also re-samples everything behind the element). */
+[data-perf='lite'] .c-gantt__tooltip {
+  backdrop-filter: none;
+}
+
+[data-perf='lite'] .c-gantt__bar.is-present::after {
+  filter: none;
+}
+
+/* --- Skills distiller: nine infinite loops, one of which animates a blur.
+   Freeze to the resolved end state. These declarations mirror the
+   `@media (prefers-reduced-motion: reduce)` block in components/skills.css —
+   keep them in step. The `.c-section.is-visible` prefix is needed only to
+   out-specify the rules that apply the animations. */
+[data-perf='lite'] .c-section.is-visible .c-distiller__bars,
+[data-perf='lite'] .c-section.is-visible .c-distiller__scan,
+[data-perf='lite'] .c-section.is-visible .c-distiller__lead,
+[data-perf='lite'] .c-section.is-visible .c-distiller__halo,
+[data-perf='lite'] .c-section.is-visible .c-distiller__node,
+[data-perf='lite'] .c-section.is-visible .c-distiller__ring,
+[data-perf='lite'] .c-section.is-visible .c-distiller__branch,
+[data-perf='lite'] .c-section.is-visible .c-distiller__frame,
+[data-perf='lite'] .c-section.is-visible .c-distiller__seg {
+  animation: none;
+}
+
+[data-perf='lite'] .c-distiller__bars {
+  filter: none;
+  color: var(--color-primary);
+}
+
+[data-perf='lite'] .c-distiller__lead,
+[data-perf='lite'] .c-distiller__branch {
+  stroke-dashoffset: 0;
+  opacity: 0.4;
+}
+
+[data-perf='lite'] .c-distiller__halo,
+[data-perf='lite'] .c-distiller__node,
+[data-perf='lite'] .c-distiller__frame {
+  opacity: 1;
+}
+
+[data-perf='lite'] .c-distiller__node {
+  transform: none;
+}
+
+[data-perf='lite'] .c-distiller__frame {
+  stroke: var(--color-primary);
+}
+
+[data-perf='lite'] .c-distiller__seg {
+  transform: scaleX(1);
+  opacity: 1;
+}
+
+[data-perf='lite'] .c-distiller__scan,
+[data-perf='lite'] .c-distiller__ring {
+  display: none;
+}

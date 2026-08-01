@@ -805,6 +805,16 @@ html.is-theme-transitioning *::after {
   }
 }
 
+/* Lite mode (full set in components/perf.css): the aurora's blend mode is the
+   single biggest first-paint compositing cost on GPU-less devices, so mirror
+   its fallback here too. Keep in step with the perf.css block. */
+[data-perf='lite'] .c-hero__aurora-bloom {
+  mix-blend-mode: normal;
+  animation: none;
+  will-change: auto;
+  opacity: calc(var(--hero-bloom-opacity) * 0.55);
+}
+
 .c-hero__name {
   /* Mirror of .c-hero__name in components/hero.css. The display font's
      descenders are kept inside the background-clip:text paint box with em

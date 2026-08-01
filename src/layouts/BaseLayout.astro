@@ -160,6 +160,61 @@ const noScriptStylesheetHtml = isHome
         document.documentElement.dataset.colorScheme = scheme;
       })();
     </script>
+    <!-- Performance tier: some visual effects (the hero aurora's blend mode,
+         backdrop blurs, several infinite loops) are cheap on a GPU but very
+         expensive on the CPU raster path, so they stutter when hardware
+         acceleration is off or on old GPU-less machines. Sample the frame rate
+         once the page settles; if it can't hold a smooth rate we flip to a
+         "lite" theme (see components/perf.css) that drops those effects. The
+         decision is cached per session so it applies before paint on later
+         navigations instead of re-probing each page. -->
+    <script is:inline>
+      (() => {
+        const root = document.documentElement;
+        let saved = null;
+        try {
+          saved = sessionStorage.getItem('perf-mode');
+        } catch {
+          /* storage blocked */
+        }
+        if (saved === 'lite' || saved === 'full') {
+          root.dataset.perf = saved;
+          return;
+        }
+        if (!('requestAnimationFrame' in window)) return;
+        const decide = () => {
+          let frames = 0;
+          let start = null;
+          const sampleMs = 700;
+          const tick = (now) => {
+            if (start === null) start = now;
+            frames++;
+            const elapsed = now - start;
+            if (elapsed < sampleMs) {
+              requestAnimationFrame(tick);
+              return;
+            }
+            const fps = (frames * 1000) / elapsed;
+            const mode = fps < 50 ? 'lite' : 'full';
+            root.dataset.perf = mode;
+            try {
+              sessionStorage.setItem('perf-mode', mode);
+            } catch {
+              /* storage blocked */
+            }
+          };
+          requestAnimationFrame(tick);
+        };
+        // Wait until after load + a short settle so initial load jank doesn't
+        // trigger a false demotion on otherwise-capable machines.
+        const schedule = () => setTimeout(decide, 300);
+        if (document.readyState === 'complete') {
+          schedule();
+        } else {
+          window.addEventListener('load', schedule, { once: true });
+        }
+      })();
+    </script>
     <meta
       name="theme-color"
       media="(prefers-color-scheme: light)"
