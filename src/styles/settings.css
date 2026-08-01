@@ -24,14 +24,13 @@
   --color-btn-primary-text: #ffffff;
   --color-error: rgba(192, 21, 47, 1);
   /* Status colors. Success drives the availability dot (+ glow/ring alphas;
-     mirrored in critical-home.css). The notification tokens are toast
-     backgrounds — keep >=4.5:1 against white text; they deliberately stay
-     the same in dark mode, so no dark-block overrides. */
+     mirrored in critical-home.css). --color-notification-success also backs the
+     contact form's "Sent" confirmation button — keep it >=4.5:1 against white
+     text; it deliberately stays the same in dark mode, so no dark-block override. */
   --color-success: #22c55e;
   --color-success-glow: rgba(34, 197, 94, 0.5);
   --color-success-ring: rgba(34, 197, 94, 0.28);
   --color-notification-success: rgba(15, 118, 110, 0.95);
-  --color-notification-error: rgba(192, 21, 47, 0.95);
   --color-focus-visible: var(--color-primary);
 
   /* Typography */

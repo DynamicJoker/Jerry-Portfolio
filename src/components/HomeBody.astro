@@ -1122,6 +1122,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
             id="contact-form"
             action={siteContent.contactForm.endpoint}
             method="POST"
+            novalidate
           >
             <input
               type="hidden"
@@ -1143,7 +1144,9 @@ siteContent.testimonials.forEach((testimonial, index) => {
                 name="name"
                 class="c-form-control"
                 required
+                aria-describedby="name-error"
               />
+              <p class="c-form-error" id="name-error" data-form-error></p>
             </div>
             <div class="c-form-group">
               <label for="email" class="c-form-label">
@@ -1155,7 +1158,9 @@ siteContent.testimonials.forEach((testimonial, index) => {
                 name="email"
                 class="c-form-control"
                 required
+                aria-describedby="email-error"
               />
+              <p class="c-form-error" id="email-error" data-form-error></p>
             </div>
             <div class="c-form-group">
               <label for="company" class="c-form-label">
@@ -1177,13 +1182,26 @@ siteContent.testimonials.forEach((testimonial, index) => {
                 name="message"
                 rows="5"
                 class="c-form-control"
-                required></textarea>
+                required
+                aria-describedby="message-error"></textarea>
+              <p class="c-form-error" id="message-error" data-form-error></p>
             </div>
 
             <!-- Honeypot: Web3Forms rejects the submission if a bot checks this hidden field -->
             <input type="checkbox" name="botcheck" class="u-hidden" />
 
-            <button type="submit" class="c-btn c-btn--primary c-btn--full-width"
+            <p
+              class="c-form-error c-form-error--summary"
+              id="form-error"
+              data-form-error
+              role="alert"
+            >
+            </p>
+            <!-- Screen-reader-only summary of validation errors on submit -->
+            <p class="u-sr-only" id="form-status" role="status"></p>
+            <button
+              type="submit"
+              class="c-btn c-btn--primary c-btn--full-width c-contact-form__submit"
               >{siteContent.contactForm.submitLabel}</button
             >
           </form>

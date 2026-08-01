@@ -4,7 +4,6 @@ const config = {
   loadingScreenMinVisible: 400, // ms since navigation start
   loadingScreenMaxWait: 1500, // ms; rAF-less fallback so it can't get stuck
   loadingScreenFadeOut: 500,
-  notificationDuration: 5000,
   breakpoints: {
     md: { cssVar: '--breakpoint-md', fallbackRem: 48 },
     lg: { cssVar: '--breakpoint-lg', fallbackRem: 64 },
@@ -25,6 +24,7 @@ const config = {
   contactUI: {
     eyeOffSvg: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`,
     dummyPlaceholderText: '••••••••@••••••••.•••',
+    checkSvg: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="c-contact-form__check"><polyline points="20 6 9 17 4 12"></polyline></svg>`,
   },
 };
 const prefersReducedMotion = window.matchMedia(
@@ -869,44 +869,62 @@ function initializeWorkArchive() {
 function initializeContactForm() {
   const form = document.getElementById('contact-form');
   if (!form) return;
+
+  const fields = {
+    name: form.elements.name,
+    email: form.elements.email,
+    message: form.elements.message,
+  };
+  const formError = document.getElementById('form-error');
+  const formStatus = document.getElementById('form-status');
+  const controls = [...form.querySelectorAll('.c-form-control')];
+  const submitButton = form.querySelector('button[type="submit"]');
+  const labels = siteContent.contactForm.labels;
+
+  // Clear a field's error the moment the visitor starts correcting it.
+  Object.values(fields).forEach((field) =>
+    field?.addEventListener('input', () => clearFieldError(field)),
+  );
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    clearFormError(formError);
+    Object.values(fields).forEach((field) => clearFieldError(field));
+
     const formData = new FormData(form);
-    const fields = {
-      name: form.elements.name,
-      email: form.elements.email,
-      message: form.elements.message,
-    };
+    const messages = siteContent.contactForm.messages;
+    let firstInvalid = null;
+    const invalid = new Set();
 
-    Object.values(fields).forEach((field) =>
-      field?.removeAttribute('aria-invalid'),
-    );
+    Object.entries(fields).forEach(([name, field]) => {
+      if (field?.required && !String(formData.get(name) || '').trim()) {
+        setFieldError(field, messages.required[name]);
+        firstInvalid = firstInvalid || field;
+        invalid.add(name);
+      }
+    });
 
-    const missingFields = Object.entries(fields).filter(
-      ([name, field]) =>
-        !String(formData.get(name) || '').trim() && field?.required,
-    );
-    if (missingFields.length > 0) {
-      missingFields.forEach(([, field]) =>
-        field.setAttribute('aria-invalid', 'true'),
-      );
-      missingFields[0][1].focus();
-      showNotification(siteContent.contactForm.messages.missingFields, 'error');
-      return;
-    }
-
+    // Only validate the email format when it isn't already flagged as empty.
+    const emailValue = String(formData.get('email') || '').trim();
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(formData.get('email'))) {
-      fields.email?.setAttribute('aria-invalid', 'true');
-      fields.email?.focus();
-      showNotification(siteContent.contactForm.messages.invalidEmail, 'error');
+    if (emailValue && !emailPattern.test(emailValue)) {
+      setFieldError(fields.email, messages.invalidEmail);
+      firstInvalid = firstInvalid || fields.email;
+      invalid.add('email');
+    }
+
+    if (firstInvalid) {
+      // Focus reads the first field's own error; the live region gives screen
+      // readers the full picture in one go (field labels, in DOM order).
+      const affected = Object.keys(fields)
+        .filter((name) => invalid.has(name))
+        .map((name) => labels[name]);
+      announce(formStatus, `${messages.summaryLead} ${affected.join(', ')}`);
+      firstInvalid.focus();
       return;
     }
 
-    const submitButton = form.querySelector('button[type="submit"]');
-    const originalText = submitButton.textContent;
-    submitButton.textContent = 'Sending...';
-    submitButton.disabled = true;
+    setContactSubmitting(submitButton);
 
     try {
       // The endpoint comes from siteContent.contactForm via the form markup.
@@ -917,26 +935,104 @@ function initializeContactForm() {
       const data = await response.json();
 
       if (data.success) {
-        showNotification(siteContent.contactForm.messages.success, 'success');
-        form.reset();
-        Object.values(fields).forEach((field) =>
-          field?.removeAttribute('aria-invalid'),
-        );
+        // Success is confirmed inline: the button morphs to "Sent ✓" and the
+        // form greys out until the visitor clicks back in.
+        markContactFormSubmitted(form, submitButton, controls);
       } else {
-        showNotification(
-          siteContent.contactForm.messages.submitFailed,
-          'error',
-        );
+        revertContactSubmit(submitButton);
+        setFormError(formError, messages.submitFailed);
         console.error('Web3Forms Error:', data);
       }
     } catch (error) {
-      showNotification(siteContent.contactForm.messages.network, 'error');
+      revertContactSubmit(submitButton);
+      setFormError(formError, messages.network);
       console.error('Form submission error:', error);
-    } finally {
-      submitButton.textContent = originalText;
-      submitButton.disabled = false;
     }
   });
+}
+
+// Field-level inline errors: flag the control and fill its adjacent message
+// slot (id="<field-id>-error", linked via aria-describedby in the markup).
+function setFieldError(field, message) {
+  if (!field) return;
+  field.setAttribute('aria-invalid', 'true');
+  const errorEl = document.getElementById(`${field.id}-error`);
+  if (errorEl) errorEl.textContent = message;
+}
+
+function clearFieldError(field) {
+  if (!field) return;
+  field.removeAttribute('aria-invalid');
+  const errorEl = document.getElementById(`${field.id}-error`);
+  if (errorEl) errorEl.textContent = '';
+}
+
+// Form-level summary error (submit/network failures) shown above the button.
+function setFormError(el, message) {
+  if (el) el.textContent = message;
+}
+
+function clearFormError(el) {
+  if (el) el.textContent = '';
+}
+
+// Announce a message in a live region. Clears first, then sets after a short
+// real-time gap so an identical repeated message (e.g. resubmitting without
+// fixing anything) still registers as a change and is re-announced. A timer
+// (not rAF) is used so it fires reliably even in a backgrounded/throttled tab.
+function announce(region, message) {
+  if (!region) return;
+  region.textContent = '';
+  setTimeout(() => {
+    region.textContent = message;
+  }, 120);
+}
+
+// Button enters its in-flight state: label swap + the CSS sweep (is-submitting).
+function setContactSubmitting(button) {
+  button.classList.remove('is-sent');
+  button.classList.add('is-submitting');
+  button.disabled = true;
+  button.textContent = siteContent.contactForm.sendingLabel;
+}
+
+// Roll the button back to its resting state (used on error and on re-engage).
+function revertContactSubmit(button) {
+  button.classList.remove('is-submitting', 'is-sent');
+  button.disabled = false;
+  button.textContent = siteContent.contactForm.submitLabel;
+}
+
+// Success visual: button becomes "Sent ✓", the form is cleared and deactivated
+// (dimmed + fields disabled). A single pointerdown anywhere in the form wakes it
+// back up so the visitor can send another message.
+function markContactFormSubmitted(form, button, controls) {
+  button.classList.remove('is-submitting');
+  button.classList.add('is-sent');
+  button.disabled = true;
+  button.innerHTML = `${config.contactUI.checkSvg}<span>${siteContent.contactForm.sentLabel}</span>`;
+
+  form.classList.add('is-submitted');
+  form.reset();
+  controls.forEach((control) => {
+    control.disabled = true;
+    control.removeAttribute('aria-invalid');
+  });
+
+  form.addEventListener(
+    'pointerdown',
+    () => resetContactForm(form, button, controls),
+    { once: true },
+  );
+}
+
+function resetContactForm(form, button, controls) {
+  form.classList.remove('is-submitted');
+  controls.forEach((control) => {
+    control.disabled = false;
+  });
+  revertContactSubmit(button);
+  controls[0]?.focus();
 }
 
 function updateYearsExperience() {
@@ -948,51 +1044,6 @@ function updateYearsExperience() {
 function updateFooterYear() {
   const el = document.getElementById('footer-year');
   if (el) el.textContent = new Date().getFullYear();
-}
-
-function showNotification(message, type = 'info') {
-  document.querySelectorAll('.c-notification').forEach((n) => n.remove());
-
-  const notification = document.createElement('div');
-  notification.className = `c-notification c-notification--${type}`;
-  notification.setAttribute('role', type === 'error' ? 'alert' : 'status');
-  notification.setAttribute(
-    'aria-live',
-    type === 'error' ? 'assertive' : 'polite',
-  );
-  const content = document.createElement('div');
-  content.className = 'c-notification__content';
-  const messageEl = document.createElement('span');
-  messageEl.className = 'c-notification__message';
-  messageEl.textContent = message;
-  const closeButton = document.createElement('button');
-  closeButton.className = 'c-notification__close';
-  closeButton.setAttribute('aria-label', 'Close notification');
-  closeButton.textContent = '×';
-  content.append(messageEl, closeButton);
-  notification.appendChild(content);
-
-  document.body.appendChild(notification);
-
-  // Append first, flip the class a frame later so there's a hidden start state
-  // for the CSS enter transition to animate from (same frame = no transition).
-  requestAnimationFrame(() => {
-    notification.classList.add('is-visible');
-  });
-
-  const close = () => {
-    notification.classList.remove('is-visible');
-    notification.addEventListener(
-      'transitionend',
-      () => notification.remove(),
-      { once: true },
-    );
-  };
-
-  notification
-    .querySelector('.c-notification__close')
-    .addEventListener('click', close);
-  setTimeout(close, config.notificationDuration);
 }
 
 function buildCalendlyUrl(cta) {

@@ -777,13 +777,25 @@ export const siteContent = {
       message: 'Message',
     },
     submitLabel: 'Send Message',
-    // Toast copy for the submit flow (main.js showNotification).
+    // In-flight + success labels for the submit button (main.js swaps these on
+    // the button itself; success confirmation lives on the button, not a toast).
+    sendingLabel: 'Sending…',
+    sentLabel: 'Sent',
+    // Error copy shown inline (main.js). `required` is keyed by field name and
+    // renders under the field; `submitFailed`/`network` render as a summary
+    // above the button. Success is confirmed by the button morph, not copy.
     messages: {
-      missingFields: 'Please fill in all required fields.',
+      required: {
+        name: 'Please enter your name.',
+        email: 'Please enter your email address.',
+        message: 'Please enter a message.',
+      },
       invalidEmail: 'Please enter a valid email address.',
-      success: "Message sent successfully! I'll get back to you soon.",
       submitFailed: 'Something went wrong. Please try again.',
-      network: 'Network error. Please try again later.',
+      network: 'Network error. Please check your connection and try again.',
+      // Announced once to screen readers on a failed submit (main.js), followed
+      // by the list of affected field labels. Not shown visually.
+      summaryLead: 'Please correct the following before sending:',
     },
   },
 

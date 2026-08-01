@@ -109,3 +109,94 @@
   border-color: var(--color-electric-blue);
   box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.1);
 }
+
+/* The contact form's own border rule above matches the base [aria-invalid]
+   rule on specificity, so scope the invalid border here to keep it red. */
+.c-contact-form .c-form-control[aria-invalid='true'] {
+  border-color: var(--color-error);
+}
+
+/* --- Submit flow: in-flight sweep, success morph, form deactivation --- */
+
+.c-contact-form__submit {
+  gap: var(--space-8);
+}
+
+/* A2: an indeterminate light sweep runs across the button while the request is
+   in flight. c-btn--primary already sets position:relative + overflow:hidden,
+   so the pseudo-element is clipped to the button. Keep it fully opaque (the
+   generic :disabled rule would otherwise dim it to 0.5). */
+.c-contact-form__submit.is-submitting:disabled {
+  opacity: 1;
+  cursor: progress;
+}
+
+.c-contact-form__submit.is-submitting::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.35),
+    transparent
+  );
+  transform: translateX(-100%);
+  animation: contactSubmitSweep 1.1s linear infinite;
+}
+
+@keyframes contactSubmitSweep {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* Success: the button holds a "Sent ✓" confirmation. Uses the same success
+   teal as the toast (AA-safe against white text) with the green ring as accent. */
+.c-contact-form__submit.is-sent,
+.c-contact-form__submit.is-sent:disabled {
+  opacity: 1;
+  cursor: default;
+  background: var(--color-notification-success);
+  color: #fff;
+  box-shadow: 0 0 0 3px var(--color-success-ring);
+}
+
+.c-contact-form__check {
+  flex-shrink: 0;
+}
+
+.c-contact-form__check polyline {
+  stroke-dasharray: 24;
+  stroke-dashoffset: 24;
+  animation: contactCheckDraw 0.4s var(--ease-standard) 0.08s forwards;
+}
+
+@keyframes contactCheckDraw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* On success the fields grey out and stop taking input until the visitor clicks
+   back into the form (main.js re-enables them). Transition on the base rule so
+   both the fade-out and the wake-up fade-in animate. */
+.c-contact-form .c-form-group {
+  transition: opacity 0.4s ease;
+}
+
+.c-contact-form.is-submitted .c-form-group {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c-contact-form__submit.is-submitting::after {
+    animation: none;
+  }
+
+  .c-contact-form__check polyline {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}

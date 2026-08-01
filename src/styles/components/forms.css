@@ -53,3 +53,27 @@ select.c-form-control {
 .c-form-group {
   margin-bottom: var(--space-16);
 }
+
+/* Inline validation messages. Filled by main.js; the slot collapses to nothing
+   while empty so it never adds spacing under a valid field. */
+.c-form-error {
+  margin-top: var(--space-8);
+  color: var(--color-error);
+  font-size: var(--font-size-sm);
+  line-height: 1.4;
+}
+
+.c-form-error:empty {
+  display: none;
+}
+
+/* Summary variant for submit/network failures: a soft inline banner above the
+   button that matches the input surface with a red accent edge. */
+.c-form-error--summary {
+  margin-top: 0;
+  margin-bottom: var(--space-16);
+  padding: var(--space-10) var(--space-12);
+  border-left: 3px solid var(--color-error);
+  border-radius: var(--radius-base);
+  background: var(--color-overlay-strong);
+}
