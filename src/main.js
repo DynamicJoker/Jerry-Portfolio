@@ -1010,7 +1010,7 @@ function markContactFormSubmitted(form, button, controls) {
   button.classList.remove('is-submitting');
   button.classList.add('is-sent');
   button.disabled = true;
-  button.innerHTML = `${config.contactUI.checkSvg}<span>${siteContent.contactForm.sentLabel}</span>`;
+  button.innerHTML = `${config.contactUI.checkSvg}<span class="c-contact-form__sent-label">${siteContent.contactForm.sentLabel}</span>`;
 
   form.classList.add('is-submitted');
   form.reset();
