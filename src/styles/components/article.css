@@ -295,6 +295,7 @@
   background: var(--chart-fill-accent);
 }
 
+/* Raised soft-UI CTA banner (holds the primary button). */
 .c-article__cta {
   display: flex;
   gap: 1rem;
@@ -302,9 +303,9 @@
   justify-content: space-between;
   margin-top: 3rem;
   padding: 1.25rem;
-  border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-base);
-  background: rgba(var(--color-primary-rgb), 0.08);
+  border-radius: var(--radius-xl);
+  background: var(--neu-bg);
+  box-shadow: var(--neu-shadow-raised);
   min-width: 0;
 }
 

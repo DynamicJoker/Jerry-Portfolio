@@ -1279,6 +1279,7 @@ html.is-theme-transitioning *::after {
   overflow: hidden;
   border: 2px solid transparent;
   font-weight: var(--font-weight-semibold);
+  box-shadow: var(--neu-shadow-raised);
   transition:
     background 0.3s cubic-bezier(0.4, 0, 0.2, 1),
     border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
@@ -1294,7 +1295,7 @@ html.is-theme-transitioning *::after {
 
 .c-btn--outline {
   border-color: var(--color-primary);
-  background: transparent;
+  background: var(--neu-bg);
   color: var(--color-text);
 }
 

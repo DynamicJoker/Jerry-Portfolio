@@ -116,15 +116,22 @@
   height: 2.25rem;
   font-size: 1.25rem;
   color: var(--color-text);
-  background: var(--color-surface-raised);
-  border: 1px solid var(--color-hairline-strong);
+  background: var(--neu-bg);
+  border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-full);
+  box-shadow: var(--neu-shadow-raised-sm);
   cursor: pointer;
-  transition: background-color var(--animation-speed) var(--animation-curve);
+  transition:
+    background-color var(--animation-speed) var(--animation-curve),
+    box-shadow var(--animation-speed) var(--animation-curve);
 }
 
 .c-lightbox__close:hover {
   background: var(--color-overlay-strong);
+}
+
+.c-lightbox__close:active {
+  box-shadow: var(--neu-shadow-inset-sm);
 }
 
 .c-lightbox__close:focus-visible {
@@ -184,6 +191,8 @@
   }
 }
 
+/* Raised round nav button; presses in (inset) on :active. Border kept for the
+   ≥3:1 boundary. */
 .c-featured__btn {
   display: inline-flex;
   align-items: center;
@@ -192,9 +201,10 @@
   height: 2.25rem;
   font-size: 1.1rem;
   color: var(--color-text);
-  background: transparent;
+  background: var(--neu-bg);
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-full);
+  box-shadow: var(--neu-shadow-raised-sm);
   cursor: pointer;
   transition:
     background-color var(--duration-normal) var(--ease-standard),
@@ -203,15 +213,19 @@
     transform var(--duration-normal) var(--ease-standard);
 }
 
-/* Echo the hero buttons: accent fill + a single signal-pulse ring on hover. */
+/* Echo the hero buttons: tint + a single signal-pulse ring on hover. */
 /* Pointer devices only: keeps the effect from sticking after taps on
    touch screens. */
 @media (hover: hover) {
   .c-featured__btn:hover {
     background: rgba(var(--color-primary-rgb), 0.12);
     border-color: var(--color-primary);
-    animation: btnSignalPulse 1.1s ease-out 1;
+    animation: btnNeuPulse 1.1s ease-out 1;
   }
+}
+
+.c-featured__btn:active {
+  box-shadow: var(--neu-shadow-inset-sm);
 }
 
 .c-featured__btn:focus-visible {
@@ -435,6 +449,9 @@
   margin-bottom: var(--space-12);
 }
 
+/* Hybrid pill: raised at rest, recessed (inset) when active — plus accent text
+   + accent border + heavier weight, so selection never rides on depth alone.
+   The border keeps a visible ≥3:1 boundary (WCAG 1.4.11) even without shadow. */
 .c-archive__tab {
   display: inline-flex;
   align-items: center;
@@ -445,9 +462,10 @@
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   color: var(--color-text);
-  background: var(--color-surface-raised);
-  border: 1px solid var(--color-hairline);
+  background: var(--neu-bg);
+  border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-full);
+  box-shadow: var(--neu-shadow-raised-sm);
   cursor: pointer;
   transition:
     background-color var(--animation-speed) var(--animation-curve),
@@ -456,18 +474,20 @@
 }
 
 /* Pointer devices only: keeps the effect from sticking after taps on
-   touch screens. */
+   touch screens. Active pills are excluded so hover can't un-recess them. */
 @media (hover: hover) {
-  .c-archive__tab:hover {
+  .c-archive__tab:hover:not(.is-active) {
     border-color: var(--color-primary);
-    animation: btnSignalPulse 1.1s ease-out 1;
+    animation: btnNeuPulse 1.1s ease-out 1;
   }
 }
 
 .c-archive__tab.is-active {
-  background: var(--color-primary);
-  color: var(--color-btn-primary-text);
+  background: var(--neu-bg);
+  color: var(--color-primary);
   border-color: var(--color-primary);
+  font-weight: var(--font-weight-semibold);
+  box-shadow: var(--neu-shadow-inset-sm);
 }
 
 .c-archive__tab.is-empty {
@@ -489,8 +509,8 @@
 }
 
 .c-archive__tab.is-active .c-archive__tab-count {
-  background: rgba(0, 0, 0, 0.18);
-  color: inherit;
+  background: rgba(var(--color-primary-rgb), 0.15);
+  color: var(--color-primary);
 }
 
 .c-archive__filters {
@@ -500,15 +520,17 @@
   margin-bottom: var(--space-16);
 }
 
+/* Hybrid pill (same rules as the tabs): raised → inset when active + accent. */
 .c-archive__filter {
   padding: var(--space-6) var(--space-16);
   min-height: var(--nav-touch-target);
   font-family: inherit;
   font-size: var(--font-size-sm);
   color: var(--color-text);
-  background: transparent;
+  background: var(--neu-bg);
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-full);
+  box-shadow: var(--neu-shadow-raised-sm);
   cursor: pointer;
   transition:
     background-color var(--animation-speed) var(--animation-curve),
@@ -517,19 +539,21 @@
 }
 
 .c-archive__filter.is-active {
-  background: var(--color-primary);
-  color: var(--color-btn-primary-text);
+  background: var(--neu-bg);
+  color: var(--color-primary);
   border-color: var(--color-primary);
+  font-weight: var(--font-weight-semibold);
+  box-shadow: var(--neu-shadow-inset-sm);
 }
 
-/* Hover stays a tint + pulse so it never looks like the solid active state. */
+/* Hover stays a tint + pulse so it never looks like the recessed active state. */
 /* Pointer devices only: keeps the effect from sticking after taps on
    touch screens. */
 @media (hover: hover) {
   .c-archive__filter:hover:not(.is-active) {
     border-color: var(--color-primary);
     background: rgba(var(--color-primary-rgb), 0.12);
-    animation: btnSignalPulse 1.1s ease-out 1;
+    animation: btnNeuPulse 1.1s ease-out 1;
   }
 }
 
