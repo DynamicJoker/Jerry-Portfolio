@@ -573,13 +573,10 @@ body[data-page='home'] .c-nav.is-brand-expanded .c-brand-logo__wordmark {
   margin-left: 0;
   padding: 0 var(--space-12);
   gap: var(--space-10);
-  border: 1px solid var(--color-control-border);
+  border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-base);
-  background: linear-gradient(
-    180deg,
-    var(--color-control-bg-start),
-    var(--color-control-bg-end)
-  );
+  background: var(--neu-bg);
+  box-shadow: var(--neu-shadow-raised-sm);
   color: var(--color-text);
   font: inherit;
   cursor: pointer;
@@ -683,15 +680,15 @@ html.is-theme-transitioning *::after {
   min-height: var(--nav-touch-target);
   margin-left: var(--space-8);
   padding: 0;
-  background: transparent;
-  border: 0;
+  background: var(--neu-bg);
+  border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-base);
+  box-shadow: var(--neu-shadow-raised-sm);
   cursor: pointer;
 }
 
-.c-theme-toggle:hover {
-  animation: btnSignalPulse 1.1s ease-out 1;
-}
+/* Hover pulse (btnNeuPulse) is defined in the deferred sheet only — not a
+   first-paint concern, so it's intentionally omitted from critical. */
 
 .c-theme-toggle:focus-visible {
   outline: var(--focus-outline);
@@ -1524,10 +1521,10 @@ body.has-beta-banner .c-nav {
     display: grid;
     padding: var(--space-10);
     gap: var(--space-4);
-    border: 1px solid var(--color-hairline-strong);
-    border-radius: var(--radius-base);
-    background: var(--color-surface-raised);
-    box-shadow: var(--shadow-sheet);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-xl);
+    background: var(--neu-bg);
+    box-shadow: var(--neu-shadow-raised), var(--shadow-sheet);
   }
 
   .c-nav__rail::after {
