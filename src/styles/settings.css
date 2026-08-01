@@ -121,7 +121,8 @@
   --shadow-lg:
     0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
 
-  /* Neumorphism (soft UI) — see docs/neumorphism-guidelines.md. Additive:
+  /* Neumorphism (soft UI) — as-built notes in docs/neumorphism-guidelines.md
+     (local-only, untracked). Additive:
      applied only on components converted during the phased rollout;
      --color-surface is intentionally left untouched. --neu-bg must equal the
      ground so a raised element shares its surface color, and depth comes only

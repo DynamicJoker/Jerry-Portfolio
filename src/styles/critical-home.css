@@ -62,7 +62,8 @@
   --radius-xl: 1rem;
   --radius-full: 999rem;
   /* Neumorphism tokens — mirror of settings.css (above-the-fold hero panel +
-     stat tiles use these; see docs/neumorphism-guidelines.md). Values must
+     stat tiles use these; as-built notes in docs/neumorphism-guidelines.md,
+     local-only/untracked). Values must
      match settings.css exactly (check:critical). */
   --neu-bg: #fafaf9;
   --neu-shadow-dark: #e2e1db;
