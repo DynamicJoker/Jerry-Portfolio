@@ -240,7 +240,15 @@
   --color-overlay-strong: rgba(26, 26, 46, 0.1);
   --color-chip-border: rgba(26, 26, 46, 0.24);
   --color-dot-muted: rgba(26, 26, 46, 0.35);
-  --color-navbar-scrolled-bg: rgba(240, 238, 234, 0.92);
+  /* Opaque on purpose. This backs two stacked bars — .c-nav.is-scrolled and
+     the docked .c-section__header::before — and neither has a backdrop-filter,
+     so any alpha below 1 just lets the section copy scrolling underneath read
+     straight through the chrome (worst on mobile, where both bars stack).
+     Frosted glass was evaluated and rejected: at a usable alpha the blur only
+     smears the ghost, and it costs a backdrop pass on a page that already
+     flattens its soft-UI shadows for performance. Don't reintroduce alpha here
+     without also adding the blur — and re-check mobile if you do. */
+  --color-navbar-scrolled-bg: #f0eeea;
   --shadow-navbar-scrolled: 0 8px 28px rgba(26, 26, 46, 0.1);
   --shadow-sheet: 0 1rem 2rem rgba(26, 26, 46, 0.16);
   --shadow-banner: 0 1px 0 rgba(26, 26, 46, 0.08);
@@ -341,7 +349,7 @@
     --color-overlay-strong: rgba(255, 255, 255, 0.1);
     --color-chip-border: rgba(245, 245, 245, 0.24);
     --color-dot-muted: rgba(255, 255, 255, 0.35);
-    --color-navbar-scrolled-bg: rgba(26, 29, 41, 0.92);
+    --color-navbar-scrolled-bg: #1a1d29;
     --shadow-navbar-scrolled: 0 8px 28px rgba(0, 0, 0, 0.32);
     --shadow-sheet: 0 1rem 2rem rgba(0, 0, 0, 0.4);
     --shadow-banner: 0 1px 0 rgba(0, 0, 0, 0.4);
@@ -429,7 +437,7 @@
   --color-overlay-strong: rgba(255, 255, 255, 0.1);
   --color-chip-border: rgba(245, 245, 245, 0.24);
   --color-dot-muted: rgba(255, 255, 255, 0.35);
-  --color-navbar-scrolled-bg: rgba(26, 29, 41, 0.92);
+  --color-navbar-scrolled-bg: #1a1d29;
   --shadow-navbar-scrolled: 0 8px 28px rgba(0, 0, 0, 0.32);
   --shadow-sheet: 0 1rem 2rem rgba(0, 0, 0, 0.4);
   --shadow-banner: 0 1px 0 rgba(0, 0, 0, 0.4);
