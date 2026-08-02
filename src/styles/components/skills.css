@@ -2,10 +2,9 @@
 /* Below the fold (section 02, after hero/about/logos), so none of these rules
    are duplicated in critical-home.css. The section is a bento: a feature cell
    (thesis + distiller graphic + aggregate stats) alongside three discipline
-   cards and the tool stack. Cards are ghost panels — no fill, just a hairline
-   border on the section background — matching the flat, fill-less style of the
-   services cards and the About pipeline. Hover brightens the border to brand,
-   washes in a faint overlay, and lights the node-dot rather than lifting. */
+   cards and the tool stack. Every card is the same raised soft-UI panel —
+   depth means "card container" here, never state — with a compositable
+   translateY lift and a brand-lit node-dot on hover. */
 
 .c-capabilities {
   display: grid;
@@ -154,13 +153,13 @@
 /* Panel is always visible on desktop, regardless of [open]. It fills the card
    so the foot sits at the bottom, matching the non-collapsible cards. This
    `display` override handles the legacy <details> model (Firefox/Safari/older
-   Chrome hide closed content with display:none). The mobile block re-hides it. */
-/* Expanded collapsible recesses (raised→inset) — the signature soft-UI toggle.
-   State is also carried by the revealed panel + chevron, never depth alone. */
-.c-capability--collapsible[open] {
-  box-shadow: var(--neu-shadow-inset);
-}
+   Chrome hide closed content with display:none). The mobile block re-hides it.
 
+   Depth stays uniformly raised in every state: on desktop all cards are
+   equally static (panels force-shown), so an [open]-keyed inset would press
+   one arbitrary card with no state to signal; on mobile the accordion sheds
+   card chrome entirely and carries open/closed via the chevron + dot. Inset
+   is reserved site-wide for wells and pressed controls — don't re-add it here. */
 .c-capability--collapsible .c-capability__panel {
   display: flex;
   flex: 1 1 auto;
@@ -628,11 +627,10 @@
     margin-bottom: var(--space-32);
   }
 
-  /* Collapsible cards shed their card chrome (incl. the neumorphic shadow, in
-     both resting and [open] states) and become accordion rows joined by
-     hairlines (top rule on the first row, bottom rule on each). */
-  .c-capability--collapsible,
-  .c-capability--collapsible[open] {
+  /* Collapsible cards shed their card chrome (incl. the neumorphic shadow)
+     and become accordion rows joined by hairlines (top rule on the first row,
+     bottom rule on each); open/closed is carried by the chevron + dot. */
+  .c-capability--collapsible {
     padding: 0;
     background: transparent;
     border: 0;
