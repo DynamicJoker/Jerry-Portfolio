@@ -65,7 +65,7 @@
      are mirrored in src/styles/critical-home.css; keep them byte-identical. */
   --text-hero-name: clamp(1.5rem, 1rem + 2.2vw, 2.35rem);
   --text-hero-headline: clamp(2rem, 1.1rem + 4vw, 3.5rem);
-  --text-hero-metric: clamp(1.4rem, 1rem + 1.6vw, 2rem);
+  --text-hero-metric: clamp(1.4rem, 1rem + 1.6vw, 1.75rem);
   --text-hero-weight: 460;
   /* Bottom padding (em) that keeps the gradient paint box tall enough to
      contain the display font's descenders. See .c-hero__name. */
@@ -271,29 +271,6 @@
   --color-on-fill: #ffffff;
   --shell-tint-violet: rgba(143, 92, 255, 0.08);
   --loading-screen-bg: linear-gradient(135deg, #f0eeea 0%, #e3f1fb 100%);
-  --hero-vignette: radial-gradient(
-    ellipse at 50% 40%,
-    rgba(240, 238, 234, 0) 45%,
-    rgba(81, 120, 145, 0.16) 100%
-  );
-  /* screen blend washes out on light backgrounds; multiply reads as a tint */
-  --hero-bloom-blend: multiply;
-  --hero-bloom-opacity: 0.45;
-  --hero-bloom-1: radial-gradient(
-    circle,
-    rgba(87, 185, 255, 0.55),
-    rgba(87, 185, 255, 0) 65%
-  );
-  --hero-bloom-2: radial-gradient(
-    circle,
-    rgba(144, 213, 255, 0.5),
-    rgba(144, 213, 255, 0) 65%
-  );
-  --hero-bloom-3: radial-gradient(
-    circle,
-    rgba(81, 120, 145, 0.45),
-    rgba(81, 120, 145, 0) 65%
-  );
   --hero-name-rest: #1a1a2e;
   /* Legacy accent names now alias the indigo primary so existing usages flip automatically */
   --color-electric-blue: var(--color-primary);
@@ -370,28 +347,6 @@
     --color-on-fill: #0f1117;
     --shell-tint-violet: rgba(143, 92, 255, 0.12);
     --loading-screen-bg: linear-gradient(135deg, #1a1d29 0%, #232633 100%);
-    --hero-vignette: radial-gradient(
-      ellipse at 50% 40%,
-      rgba(26, 29, 41, 0) 45%,
-      rgba(26, 29, 41, 0.6) 100%
-    );
-    --hero-bloom-blend: screen;
-    --hero-bloom-opacity: 0.5;
-    --hero-bloom-1: radial-gradient(
-      circle,
-      rgba(87, 185, 255, 0.7),
-      rgba(87, 185, 255, 0) 65%
-    );
-    --hero-bloom-2: radial-gradient(
-      circle,
-      rgba(144, 213, 255, 0.5),
-      rgba(144, 213, 255, 0) 65%
-    );
-    --hero-bloom-3: radial-gradient(
-      circle,
-      rgba(81, 120, 145, 0.65),
-      rgba(81, 120, 145, 0) 65%
-    );
     --hero-name-rest: #fff;
   }
 
@@ -458,28 +413,6 @@
   --color-on-fill: #0f1117;
   --shell-tint-violet: rgba(143, 92, 255, 0.12);
   --loading-screen-bg: linear-gradient(135deg, #1a1d29 0%, #232633 100%);
-  --hero-vignette: radial-gradient(
-    ellipse at 50% 40%,
-    rgba(26, 29, 41, 0) 45%,
-    rgba(26, 29, 41, 0.6) 100%
-  );
-  --hero-bloom-blend: screen;
-  --hero-bloom-opacity: 0.5;
-  --hero-bloom-1: radial-gradient(
-    circle,
-    rgba(87, 185, 255, 0.7),
-    rgba(87, 185, 255, 0) 65%
-  );
-  --hero-bloom-2: radial-gradient(
-    circle,
-    rgba(144, 213, 255, 0.5),
-    rgba(144, 213, 255, 0) 65%
-  );
-  --hero-bloom-3: radial-gradient(
-    circle,
-    rgba(81, 120, 145, 0.65),
-    rgba(81, 120, 145, 0) 65%
-  );
   --hero-name-rest: #fff;
 }
 

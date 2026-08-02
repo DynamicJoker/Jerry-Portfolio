@@ -11,9 +11,9 @@
    transitions — they run once / on demand and cost little. What goes: anything
    that repaints or re-composites every frame forever.
 
-   The single most expensive item, the hero aurora's `mix-blend-mode`, is also
-   mirrored in critical-home.css so returning lite-mode visitors never pay for
-   it on first paint. Keep the two aurora blocks in step. */
+   The neumorphism flatten below is also mirrored in critical-home.css so
+   returning lite-mode visitors never pay for the blur on first paint. Keep the
+   two blocks in step. */
 
 /* --- Neumorphism flatten: the soft-UI look is two LARGE-blur (14px) box-shadows
    per element, and box-shadow is paint-bound — a page full of them repaints on
@@ -28,17 +28,6 @@
   --neu-shadow-raised-sm: 0 0 0 1px var(--color-hairline-strong);
   --neu-shadow-inset: inset 0 0 0 1px var(--color-hairline-strong);
   --neu-shadow-inset-sm: inset 0 0 0 1px var(--color-hairline-strong);
-}
-
-/* --- Hero aurora: blend mode + three drifting, scaling blooms (the #1 cost).
-   Drop the blend (forces full-hero CPU compositing every frame), freeze the
-   drift, release the layer hint, and dial opacity back so the blooms still read
-   as a soft glow without the blend to integrate them. */
-[data-perf='lite'] .c-hero__aurora-bloom {
-  mix-blend-mode: normal;
-  animation: none;
-  will-change: auto;
-  opacity: calc(var(--hero-bloom-opacity) * 0.55);
 }
 
 /* --- Testimonials marquee: freeze the infinite transform loop (it otherwise

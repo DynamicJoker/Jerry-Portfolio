@@ -47,7 +47,7 @@
   /* Hero heading role tokens — must mirror the heading role tokens in settings.css. */
   --text-hero-name: clamp(1.5rem, 1rem + 2.2vw, 2.35rem);
   --text-hero-headline: clamp(2rem, 1.1rem + 4vw, 3.5rem);
-  --text-hero-metric: clamp(1.4rem, 1rem + 1.6vw, 2rem);
+  --text-hero-metric: clamp(1.4rem, 1rem + 1.6vw, 1.75rem);
   --text-hero-weight: 460;
   --hero-paint-pad: 0.2em;
   --space-4: 0.25rem;
@@ -136,29 +136,6 @@
   --shadow-banner: 0 1px 0 rgba(26, 26, 46, 0.08);
   --shadow-banner-expanded: 0 0.5rem 1.5rem rgba(26, 26, 46, 0.12);
   --loading-screen-bg: linear-gradient(135deg, #f0eeea 0%, #e3f1fb 100%);
-  --hero-vignette: radial-gradient(
-    ellipse at 50% 40%,
-    rgba(240, 238, 234, 0) 45%,
-    rgba(81, 120, 145, 0.16) 100%
-  );
-  /* screen blend washes out on light backgrounds; multiply reads as a tint */
-  --hero-bloom-blend: multiply;
-  --hero-bloom-opacity: 0.45;
-  --hero-bloom-1: radial-gradient(
-    circle,
-    rgba(87, 185, 255, 0.55),
-    rgba(87, 185, 255, 0) 65%
-  );
-  --hero-bloom-2: radial-gradient(
-    circle,
-    rgba(144, 213, 255, 0.5),
-    rgba(144, 213, 255, 0) 65%
-  );
-  --hero-bloom-3: radial-gradient(
-    circle,
-    rgba(81, 120, 145, 0.45),
-    rgba(81, 120, 145, 0) 65%
-  );
   --hero-name-rest: #1a1a2e;
   /* Legacy accent names now alias the indigo primary so existing usages flip automatically */
   --color-electric-blue: var(--color-primary);
@@ -203,28 +180,6 @@
     --shadow-banner: 0 1px 0 rgba(0, 0, 0, 0.4);
     --shadow-banner-expanded: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.32);
     --loading-screen-bg: linear-gradient(135deg, #1a1d29 0%, #232633 100%);
-    --hero-vignette: radial-gradient(
-      ellipse at 50% 40%,
-      rgba(26, 29, 41, 0) 45%,
-      rgba(26, 29, 41, 0.6) 100%
-    );
-    --hero-bloom-blend: screen;
-    --hero-bloom-opacity: 0.5;
-    --hero-bloom-1: radial-gradient(
-      circle,
-      rgba(87, 185, 255, 0.7),
-      rgba(87, 185, 255, 0) 65%
-    );
-    --hero-bloom-2: radial-gradient(
-      circle,
-      rgba(144, 213, 255, 0.5),
-      rgba(144, 213, 255, 0) 65%
-    );
-    --hero-bloom-3: radial-gradient(
-      circle,
-      rgba(81, 120, 145, 0.65),
-      rgba(81, 120, 145, 0) 65%
-    );
     --hero-name-rest: #fff;
   }
 }
@@ -261,28 +216,6 @@
   --shadow-banner: 0 1px 0 rgba(0, 0, 0, 0.4);
   --shadow-banner-expanded: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.32);
   --loading-screen-bg: linear-gradient(135deg, #1a1d29 0%, #232633 100%);
-  --hero-vignette: radial-gradient(
-    ellipse at 50% 40%,
-    rgba(26, 29, 41, 0) 45%,
-    rgba(26, 29, 41, 0.6) 100%
-  );
-  --hero-bloom-blend: screen;
-  --hero-bloom-opacity: 0.5;
-  --hero-bloom-1: radial-gradient(
-    circle,
-    rgba(87, 185, 255, 0.7),
-    rgba(87, 185, 255, 0) 65%
-  );
-  --hero-bloom-2: radial-gradient(
-    circle,
-    rgba(144, 213, 255, 0.5),
-    rgba(144, 213, 255, 0) 65%
-  );
-  --hero-bloom-3: radial-gradient(
-    circle,
-    rgba(81, 120, 145, 0.65),
-    rgba(81, 120, 145, 0) 65%
-  );
   --hero-name-rest: #fff;
 }
 
@@ -754,105 +687,6 @@ html.is-theme-transitioning *::after {
   pointer-events: none;
 }
 
-/* Vignette keeps the edges calm and focuses attention on the portrait */
-.c-hero__background::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--hero-vignette);
-}
-
-/* Aurora: soft blue light blooms. The softness comes entirely from the
-   bloom gradients (they fade to transparent by 65%); a filter here would
-   force the GPU to re-blur the whole hero every frame the blobs drift,
-   which old integrated GPUs can't afford. */
-.c-hero__aurora {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-}
-
-.c-hero__aurora-bloom {
-  position: absolute;
-  display: block;
-  border-radius: 50%;
-  opacity: var(--hero-bloom-opacity);
-  mix-blend-mode: var(--hero-bloom-blend);
-  will-change: transform;
-}
-
-/* vmax keeps blooms proportional on portrait screens; the rem cap stops
-   them from blowing out on ultrawide monitors */
-.c-hero__aurora-bloom--1 {
-  top: 6%;
-  left: 30%;
-  width: min(46vmax, 56rem);
-  height: min(46vmax, 56rem);
-  background: var(--hero-bloom-1);
-  animation: heroAuroraDrift1 22s ease-in-out infinite alternate;
-}
-
-.c-hero__aurora-bloom--2 {
-  top: 26%;
-  left: 50%;
-  width: min(40vmax, 48rem);
-  height: min(40vmax, 48rem);
-  background: var(--hero-bloom-2);
-  animation: heroAuroraDrift2 28s ease-in-out infinite alternate;
-}
-
-.c-hero__aurora-bloom--3 {
-  top: 18%;
-  left: 8%;
-  width: min(34vmax, 41rem);
-  height: min(34vmax, 41rem);
-  background: var(--hero-bloom-3);
-  animation: heroAuroraDrift3 26s ease-in-out infinite alternate;
-}
-
-@keyframes heroAuroraDrift1 {
-  from {
-    transform: translate(0, 0) scale(1);
-  }
-  to {
-    transform: translate(6%, 8%) scale(1.12);
-  }
-}
-
-@keyframes heroAuroraDrift2 {
-  from {
-    transform: translate(0, 0) scale(1.05);
-  }
-  to {
-    transform: translate(-7%, -4%) scale(0.95);
-  }
-}
-
-@keyframes heroAuroraDrift3 {
-  from {
-    transform: translate(0, 0) scale(1);
-  }
-  to {
-    transform: translate(5%, -6%) scale(1.1);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .c-hero__aurora-bloom {
-    animation: none;
-  }
-}
-
-/* Lite mode (full set in components/perf.css): the aurora's blend mode is the
-   single biggest first-paint compositing cost on GPU-less devices, so mirror
-   its fallback here too. Keep in step with the perf.css block. */
-[data-perf='lite'] .c-hero__aurora-bloom {
-  mix-blend-mode: normal;
-  animation: none;
-  will-change: auto;
-  opacity: calc(var(--hero-bloom-opacity) * 0.55);
-}
-
 /* Neumorphism flatten (mirror of perf.css): collapse the dual large-blur soft-UI
    shadows to a single zero-blur 1px ring so above-the-fold neu surfaces (hero
    proof panel, stat tiles, buttons) don't cost blur paint on first paint for
@@ -1183,9 +1017,11 @@ html.is-theme-transitioning *::after {
   color: var(--color-primary);
 }
 
+/* Content-sized columns, not equal thirds — see components/hero.css. */
 .c-hero__metrics {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, auto);
+  justify-content: space-between;
   gap: var(--space-12);
   margin: 0;
   padding-top: var(--space-16);
@@ -1196,7 +1032,6 @@ html.is-theme-transitioning *::after {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
-  min-width: 0;
   text-align: left;
 }
 

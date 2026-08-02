@@ -147,7 +147,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initializeTestimonialPauseControl();
   enhanceGanttRows();
   initializeScrollAnimations();
-  initializeHeroAuroraPause();
   initializeDistillerPause();
   initializeDockedSectionHeaders();
   initializeBrandCollapse();
@@ -505,19 +504,9 @@ function watchViewportPresence(element, onChange) {
   observer.observe(element);
 }
 
-// The hero aurora blobs drift on an infinite loop; pause them (CSS acts on
-// .is-offscreen) once the hero scrolls out of view.
-function initializeHeroAuroraPause() {
-  const aurora = document.querySelector('.c-hero__aurora');
-  if (!aurora || prefersReducedMotion) return;
-  watchViewportPresence(aurora, (isVisible) =>
-    aurora.classList.toggle('is-offscreen', !isVisible),
-  );
-}
-
 // The skills distiller runs nine infinite SVG loops (stroke draws, radius
 // pings, a blur focus); pause them (CSS acts on .is-offscreen) once the skills
-// section scrolls out of view, same as the hero aurora above.
+// section scrolls out of view.
 function initializeDistillerPause() {
   const distiller = document.querySelector('.c-distiller');
   if (!distiller || prefersReducedMotion) return;

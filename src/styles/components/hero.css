@@ -4,7 +4,15 @@
 
 /* Hero Section — engineered split: a left "lead" column (eyebrow, name,
    value-prop headline, CTAs, mono meta) and a right "proof panel" (portrait +
-   career metrics) over a faint technical grid + drifting aurora glow. */
+   career metrics) over a faint technical grid.
+
+   The ground here is deliberately FLAT --color-background, with no aurora and
+   no vignette. Soft UI reads depth from a surface sharing its ground exactly;
+   the old drifting blooms lit the hero background unevenly, so the proof panel
+   and portrait sat on a lighter, shifting field and read as pasted-on cards
+   rather than extrusions. Don't reintroduce a gradient wash behind neumorphic
+   surfaces — the grid stays because masked hairlines don't move the ground
+   colour. */
 
 .c-hero {
   position: relative;
@@ -33,14 +41,6 @@
   pointer-events: none;
 }
 
-/* Vignette keeps the edges calm and focuses attention on the content */
-.c-hero__background::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--hero-vignette);
-}
-
 /* Technical grid: faint hairline graph paper, masked to fade toward the edges
    so it reads as engineered texture, not a table. */
 .c-hero__grid {
@@ -56,85 +56,6 @@
     transparent 78%
   );
   mask-image: radial-gradient(ellipse at 50% 42%, #000 28%, transparent 78%);
-}
-
-/* Aurora: soft blue light blooms. The softness comes entirely from the
-   bloom gradients (they fade to transparent by 65%); a filter here would
-   force the GPU to re-blur the whole hero every frame the blobs drift,
-   which old integrated GPUs can't afford. */
-.c-hero__aurora {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-}
-
-/* JS-toggled while the hero is scrolled out of view (see
-   watchViewportPresence in main.js) so the drift doesn't run offscreen. */
-.c-hero__aurora.is-offscreen .c-hero__aurora-bloom {
-  animation-play-state: paused;
-}
-
-.c-hero__aurora-bloom {
-  position: absolute;
-  display: block;
-  border-radius: 50%;
-  opacity: var(--hero-bloom-opacity);
-  mix-blend-mode: var(--hero-bloom-blend);
-  will-change: transform;
-}
-
-.c-hero__aurora-bloom--1 {
-  top: 6%;
-  left: 30%;
-  width: min(46vmax, 56rem);
-  height: min(46vmax, 56rem);
-  background: var(--hero-bloom-1);
-  animation: heroAuroraDrift1 22s ease-in-out infinite alternate;
-}
-
-.c-hero__aurora-bloom--2 {
-  top: 26%;
-  left: 50%;
-  width: min(40vmax, 48rem);
-  height: min(40vmax, 48rem);
-  background: var(--hero-bloom-2);
-  animation: heroAuroraDrift2 28s ease-in-out infinite alternate;
-}
-
-.c-hero__aurora-bloom--3 {
-  top: 18%;
-  left: 8%;
-  width: min(34vmax, 41rem);
-  height: min(34vmax, 41rem);
-  background: var(--hero-bloom-3);
-  animation: heroAuroraDrift3 26s ease-in-out infinite alternate;
-}
-
-@keyframes heroAuroraDrift1 {
-  from {
-    transform: translate(0, 0) scale(1);
-  }
-  to {
-    transform: translate(6%, 8%) scale(1.12);
-  }
-}
-
-@keyframes heroAuroraDrift2 {
-  from {
-    transform: translate(0, 0) scale(1.05);
-  }
-  to {
-    transform: translate(-7%, -4%) scale(0.95);
-  }
-}
-
-@keyframes heroAuroraDrift3 {
-  from {
-    transform: translate(0, 0) scale(1);
-  }
-  to {
-    transform: translate(5%, -6%) scale(1.1);
-  }
 }
 
 /* Layout: single column by default, two columns (lead + proof panel) once
@@ -359,7 +280,7 @@
 
 /* Proof: a treated portrait over a career-metrics readout. Both sit on raised
    neumorphic surfaces (soft UI) so they read as the hero's floating soft
-   objects above the drifting aurora ground. Mirrored in critical-home.css. */
+   objects on the flat hero ground. Mirrored in critical-home.css. */
 .c-hero__panel {
   position: relative;
   display: grid;
@@ -443,20 +364,26 @@
   color: var(--color-primary);
 }
 
+/* Content-sized columns, NOT repeat(3, 1fr): the values have very different
+   widths ("1,000+" is nearly twice "50+"), and equal thirds forced the widest
+   value past its track so it collided with its neighbour. Sizing each column to
+   its content and spreading the slack keeps them apart at every width. */
 .c-hero__metrics {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, auto);
+  justify-content: space-between;
   gap: var(--space-12);
   margin: 0;
   padding-top: var(--space-16);
   border-top: 1px solid var(--color-hairline-strong);
 }
 
+/* No min-width: 0 here — that override defeats the grid's automatic
+   min-content floor, which is the thing keeping a value inside its track. */
 .c-hero__metric {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
-  min-width: 0;
   text-align: left;
 }
 
@@ -601,7 +528,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .c-hero__aurora-bloom,
   .c-hero__eyebrow,
   .c-hero__name,
   .c-hero__headline,
