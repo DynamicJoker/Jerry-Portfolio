@@ -1,13 +1,16 @@
 /* Homepage first-paint CSS. Keep this small and limited to above-the-fold UI. */
 :root {
-  --color-background: #fafaf9;
+  --color-background: #f0eeea;
   --color-surface: #ffffff;
   --color-text: #1a1a2e;
   --color-text-secondary: #555562;
-  --color-primary: #517891;
+  /* Slightly darker than the brand gradient's slate anchor (#517891): on the
+     mid-tone ground that anchor lands at 4.08:1, under AA for the kickers and
+     inline links that use it as text. This clears 4.5:1 with margin. */
+  --color-primary: #4a6d84;
   --color-primary-hover: #426074;
   --color-primary-active: #36505f;
-  --color-primary-rgb: 81, 120, 145;
+  --color-primary-rgb: 74, 109, 132;
   --color-accent: #2f6e96;
   --color-accent-hover: #255a7d;
   --color-accent-rgb: 47, 110, 150;
@@ -65,8 +68,8 @@
      stat tiles use these; as-built notes in docs/neumorphism-guidelines.md,
      local-only/untracked). Values must
      match settings.css exactly (check:critical). */
-  --neu-bg: #fafaf9;
-  --neu-shadow-dark: #e2e1db;
+  --neu-bg: #f0eeea;
+  --neu-shadow-dark: #dad8d3;
   --neu-shadow-light: #ffffff;
   --neu-distance: 0.375rem;
   --neu-blur: 0.875rem;
@@ -132,10 +135,10 @@
   --shadow-sheet: 0 1rem 2rem rgba(26, 26, 46, 0.16);
   --shadow-banner: 0 1px 0 rgba(26, 26, 46, 0.08);
   --shadow-banner-expanded: 0 0.5rem 1.5rem rgba(26, 26, 46, 0.12);
-  --loading-screen-bg: linear-gradient(135deg, #fafaf9 0%, #e3f1fb 100%);
+  --loading-screen-bg: linear-gradient(135deg, #f0eeea 0%, #e3f1fb 100%);
   --hero-vignette: radial-gradient(
     ellipse at 50% 40%,
-    rgba(250, 250, 249, 0) 45%,
+    rgba(240, 238, 234, 0) 45%,
     rgba(81, 120, 145, 0.16) 100%
   );
   /* screen blend washes out on light backgrounds; multiply reads as a tint */
@@ -170,7 +173,7 @@
 /* No-JS fallback: mirrors the [data-color-scheme='dark'] block below. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-color-scheme='light']) {
-    --color-background: var(--color-dark-primary);
+    --color-background: var(--color-dark-secondary);
     --color-surface: var(--color-dark-secondary);
     --color-text: rgba(232, 232, 234, 1);
     --color-text-secondary: rgba(154, 154, 165, 1);
@@ -199,11 +202,11 @@
     --shadow-sheet: 0 1rem 2rem rgba(0, 0, 0, 0.4);
     --shadow-banner: 0 1px 0 rgba(0, 0, 0, 0.4);
     --shadow-banner-expanded: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.32);
-    --loading-screen-bg: linear-gradient(135deg, #0f1117 0%, #1a1d29 100%);
+    --loading-screen-bg: linear-gradient(135deg, #1a1d29 0%, #232633 100%);
     --hero-vignette: radial-gradient(
       ellipse at 50% 40%,
-      rgba(15, 17, 23, 0) 45%,
-      rgba(15, 17, 23, 0.6) 100%
+      rgba(26, 29, 41, 0) 45%,
+      rgba(26, 29, 41, 0.6) 100%
     );
     --hero-bloom-blend: screen;
     --hero-bloom-opacity: 0.5;
@@ -227,7 +230,7 @@
 }
 
 [data-color-scheme='dark'] {
-  --color-background: var(--color-dark-primary);
+  --color-background: var(--color-dark-secondary);
   --color-surface: var(--color-dark-secondary);
   --color-primary: #57b9ff;
   --color-primary-hover: #90d5ff;
@@ -257,11 +260,11 @@
   --shadow-sheet: 0 1rem 2rem rgba(0, 0, 0, 0.4);
   --shadow-banner: 0 1px 0 rgba(0, 0, 0, 0.4);
   --shadow-banner-expanded: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.32);
-  --loading-screen-bg: linear-gradient(135deg, #0f1117 0%, #1a1d29 100%);
+  --loading-screen-bg: linear-gradient(135deg, #1a1d29 0%, #232633 100%);
   --hero-vignette: radial-gradient(
     ellipse at 50% 40%,
-    rgba(15, 17, 23, 0) 45%,
-    rgba(15, 17, 23, 0.6) 100%
+    rgba(26, 29, 41, 0) 45%,
+    rgba(26, 29, 41, 0.6) 100%
   );
   --hero-bloom-blend: screen;
   --hero-bloom-opacity: 0.5;

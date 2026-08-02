@@ -10,8 +10,8 @@ export const siteContent = {
     // --color-background token values in settings.css / critical-home.css;
     // after first paint the SiteNav theme controller re-reads the live token.
     themeColors: {
-      light: '#fafaf9',
-      dark: '#0f1117',
+      light: '#f0eeea',
+      dark: '#1a1d29',
     },
     portraitImage: '/images/jerry-james-portrait.webp',
     portraitAlt: 'Portrait of Jerry James',

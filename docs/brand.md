@@ -42,12 +42,12 @@ Semantic tokens; components must never hardcode colors. Light values live in
 
 | Token                    | Light                  | Dark                      |
 | ------------------------ | ---------------------- | ------------------------- |
-| `--color-background`     | `#fafaf9`              | `#0f1117`                 |
+| `--color-background`     | `#f0eeea`              | `#1a1d29`                 |
 | `--color-surface`        | `#ffffff`              | `#1a1d29`                 |
 | `--color-surface-raised` | `#ffffff`              | `#232633`                 |
 | `--color-text`           | `#1a1a2e`              | `rgba(232, 232, 234, 1)`  |
 | `--color-text-secondary` | `#555562`              | `rgba(154, 154, 165, 1)`  |
-| `--color-primary`        | `#517891` (slate blue) | `#57b9ff` (signal blue)   |
+| `--color-primary`        | `#4a6d84` (slate blue) | `#57b9ff` (signal blue)   |
 | `--color-primary-hover`  | `#426074`              | `#90d5ff`                 |
 | `--color-accent`         | `#2f6e96`              | `#90d5ff`                 |
 | `--color-error`          | `rgba(192, 21, 47, 1)` | `rgba(255, 84, 89, 1)`    |
@@ -57,10 +57,17 @@ dot, with `-glow`/`-ring` alpha derivatives) and the toast backgrounds
 `--color-notification-success` / `--color-notification-error` (keep ≥4.5:1
 against white text).
 
-The background pair (`#fafaf9` / `#0f1117`) doubles as the browser
+The background pair (`#f0eeea` / `#1a1d29`) doubles as the browser
 `theme-color`: pre-paint hints come from `profile.themeColors` in
 `src/content.js`; after paint the SiteNav controller re-reads the live
 token. Keep all three in step.
+
+Both backgrounds are deliberately **mid-tone, not near-white / near-black**:
+they double as the neumorphic ground (`--neu-bg` equals `--color-background`
+in each theme), and a raised surface only reads as an extrusion when it
+shares the page color and has headroom for both tints — a white highlight
+above and a darker tint below. Retuning either background means retuning
+that theme's `--neu-shadow-dark` / `--neu-shadow-light` with it.
 
 ## Brand gradient ("signal blues")
 
@@ -74,11 +81,15 @@ CLAUDE.md). Same hexes in `BrandLogo.astro`, `public/brand/*`, and
 | `#D6EFFF` | Ice highlight (gradient start)                       |
 | `#90D5FF` | Light signal blue (also dark-mode accent)            |
 | `#57B9FF` | Signal blue (gradient core; dark-mode primary)       |
-| `#517891` | Slate anchor (gradient end; light-mode primary)      |
+| `#517891` | Slate anchor (gradient end)                          |
 | `#07090c` | Icon plate background (`jj-signal-icon.svg` only)    |
 
-The gradient intentionally spans both themes' primaries, which is why the
-brand marks work unchanged in light and dark.
+The gradient spans both themes' blues, which is why the brand marks work
+unchanged in light and dark. Note the slate anchor is no longer identical to
+the light-mode `--color-primary` (`#4a6d84`): the token was darkened a step so
+it clears AA as text on the mid-tone ground, while the gradient keeps the
+original `#517891` — the marks sit on their own plate, not on body text, so
+they were never the constraint. Don't "resync" the two.
 
 ## Rules of thumb
 
