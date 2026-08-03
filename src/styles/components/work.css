@@ -234,10 +234,11 @@
   box-shadow: 0 0 0 5px rgba(var(--color-primary-rgb), 0.18);
 }
 
-/* Editorial spread: no card chrome. The screengrab holds the left column and
-   the story the right, echoing .c-home-blog__feature so the two feature blocks
-   on the page share one shape. */
-/* Raised soft-UI showcase panel for the one-at-a-time editorial feature. */
+/* Editorial spread: the screengrab holds the left column and the story the
+   right, echoing .c-home-blog__feature so the two feature blocks on the page
+   share one shape. */
+/* Inset soft-UI showcase well for the one-at-a-time editorial feature —
+   content recesses; the controls (arrows, pills) below stay extruded. */
 .c-spotlight {
   display: grid;
   grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
@@ -246,7 +247,7 @@
   padding: clamp(1.25rem, 3vw, 2rem);
   background: var(--neu-bg);
   border-radius: var(--radius-xl);
-  box-shadow: var(--neu-shadow-raised);
+  box-shadow: var(--neu-shadow-inset);
 }
 
 .c-spotlight[hidden] {
@@ -265,12 +266,13 @@
   }
 }
 
-/* Screenshot recessed into the panel as an inset well. */
+/* Screenshot recessed a step further into the already-inset panel (the -sm
+   recipe keeps the inner recess visually subordinate to the panel's). */
 .c-spotlight__media {
   overflow: hidden;
   border-radius: var(--radius-lg);
   background: var(--neu-bg);
-  box-shadow: var(--neu-shadow-inset);
+  box-shadow: var(--neu-shadow-inset-sm);
 }
 
 .c-spotlight__media .c-work-card__img {

@@ -73,14 +73,14 @@
   gap: 1.5rem;
 }
 
-/* Raised soft-UI post card. */
+/* Inset soft-UI post card — carved into the ground like the home teasers. */
 .c-blog-card {
   display: grid;
   min-width: 0;
   overflow: hidden;
   border-radius: var(--radius-xl);
   background: var(--neu-bg);
-  box-shadow: var(--neu-shadow-raised);
+  box-shadow: var(--neu-shadow-inset);
 }
 
 .c-blog-card__media {

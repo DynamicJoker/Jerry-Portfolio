@@ -28,6 +28,8 @@
   --neu-shadow-raised-sm: 0 0 0 1px var(--color-hairline-strong);
   --neu-shadow-inset: inset 0 0 0 1px var(--color-hairline-strong);
   --neu-shadow-inset-sm: inset 0 0 0 1px var(--color-hairline-strong);
+  /* The borderless deep-well fields keep their only boundary here too. */
+  --neu-shadow-well: inset 0 0 0 1px var(--color-hairline-strong);
 }
 
 /* --- Testimonials marquee: freeze the infinite transform loop (it otherwise

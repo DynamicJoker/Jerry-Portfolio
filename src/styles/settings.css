@@ -126,9 +126,9 @@
      from the paired shadows (top-left light source): a darker tint below-right,
      a lighter tint above-left. The composite --neu-shadow-* recipes reference
      the theme-dependent tints, so they resolve per-theme at use time and live
-     only here — do NOT copy them into the dark blocks (only the three tint/bg
+     only here — do NOT copy them into the dark blocks (only the four tint/bg
      values below differ per theme). Above-the-fold users mirror in
-     critical-home.css (check:critical); the three theme tokens also live in
+     critical-home.css (check:critical); the theme tokens also live in
      both dark blocks (check:theme).
 
      The ground is a mid-tone, NOT near-white: the highlight tint is pure white,
@@ -163,6 +163,20 @@
       var(--neu-shadow-dark),
     inset calc(var(--neu-distance-sm) * -1) calc(var(--neu-distance-sm) * -1)
       var(--neu-blur-sm) var(--neu-shadow-light);
+  /* Deep well (form fields): a single dark inner shadow from the top-left —
+     deliberately no light counterpart, so the field reads as a distinctly
+     deeper recess than the paired --neu-shadow-inset surfaces around it.
+     Borderless by design; the shadow's own rim is the field boundary.
+
+     Tint tuning is theme-asymmetric on purpose. The dark ground (#1a1d29)
+     sits close enough to black that even a pure-black tint tops out around
+     1.25:1 against it, capping the well at ~1.06x its own inset shadow;
+     light has far more headroom, so an equally "deep-looking" hex there
+     lands far heavier. Both tints are therefore tuned to the same STEP over
+     their theme's --neu-shadow-dark (~1.06-1.09x), not to the same hex
+     distance — retune by that ratio, not by eye, or light drifts harsh. */
+  --neu-well-dark: #d2cfc8; /* ground darkened ~13% (warm) */
+  --neu-shadow-well: inset 0.125rem 0.3125rem 0.625rem var(--neu-well-dark);
 
   /* Animation */
   --duration-fast: 150ms;
@@ -317,6 +331,7 @@
     --neu-bg: #1a1d29;
     --neu-shadow-dark: #0c0e15;
     --neu-shadow-light: #262a3b;
+    --neu-well-dark: #04050a;
     --color-hairline: rgba(229, 231, 238, 0.08);
     --color-hairline-strong: rgba(229, 231, 238, 0.16);
     --color-text-strong: rgba(245, 245, 245, 1);
@@ -383,6 +398,7 @@
   --neu-bg: #1a1d29;
   --neu-shadow-dark: #0c0e15;
   --neu-shadow-light: #262a3b;
+  --neu-well-dark: #04050a;
   --color-hairline: rgba(229, 231, 238, 0.08);
   --color-hairline-strong: rgba(229, 231, 238, 0.16);
   --color-text-strong: rgba(245, 245, 245, 1);

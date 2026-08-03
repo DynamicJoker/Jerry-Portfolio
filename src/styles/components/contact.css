@@ -30,7 +30,8 @@
   gap: var(--space-20);
 }
 
-/* Raised soft-UI info cards. */
+/* Inset soft-UI info wells. No hover lift — recessed cards sit still; the
+   reveal-button/link hovers inside carry the feedback. */
 .c-contact__item {
   display: flex;
   align-items: center;
@@ -38,16 +39,8 @@
   padding: var(--space-16);
   background: var(--neu-bg);
   border-radius: var(--radius-xl);
-  box-shadow: var(--neu-shadow-raised);
-  transition: transform var(--animation-speed) var(--animation-curve);
+  box-shadow: var(--neu-shadow-inset);
   min-width: 0;
-}
-
-/* Pointer devices only: keeps the lift from sticking after taps. */
-@media (hover: hover) {
-  .c-contact__item:hover {
-    transform: translateY(-2px);
-  }
 }
 
 .c-contact__icon {
@@ -86,19 +79,20 @@
   border-color: var(--color-focus-visible);
 }
 
-/* Raised soft-UI card holding the recessed (inset) fields. */
+/* Inset soft-UI tray holding the deep-well fields: the tray recesses one
+   step, the borderless fields recess a distinctly deeper second step
+   (--neu-shadow-well), and the raised submit button is the only extrusion. */
 .c-contact__form-container {
   background: var(--neu-bg);
   padding: var(--space-32);
   border-radius: var(--radius-xl);
-  box-shadow: var(--neu-shadow-raised);
+  box-shadow: var(--neu-shadow-inset);
 }
 
-/* Match the base inset field's ground so the well recesses honestly into the
-   raised container (the inset shadow itself comes from the base rule). */
+/* Match the base deep-well field's ground so the well recesses honestly into
+   the inset tray (the well shadow itself comes from the base rule). */
 .c-contact-form .c-form-control {
   background: var(--neu-bg);
-  border: 1px solid var(--color-border-strong);
   color: var(--color-text);
 }
 
@@ -108,18 +102,11 @@
   }
 }
 
-/* Field stays recessed while focused; the primary ring layers on top. */
+/* Field stays a deep well while focused; the primary ring layers on top. */
 .c-contact-form .c-form-control:focus {
-  border-color: var(--color-electric-blue);
   box-shadow:
-    var(--neu-shadow-inset),
+    var(--neu-shadow-well),
     0 0 0 3px rgba(var(--color-primary-rgb), 0.1);
-}
-
-/* The contact form's own border rule above matches the base [aria-invalid]
-   rule on specificity, so scope the invalid border here to keep it red. */
-.c-contact-form .c-form-control[aria-invalid='true'] {
-  border-color: var(--color-error);
 }
 
 /* --- Submit flow: in-flight pulse, success morph, form deactivation --- */

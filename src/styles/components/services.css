@@ -36,7 +36,7 @@
   gap: var(--space-16);
 }
 
-/* Raised soft-UI engagement panel (3 rows only, so per-panel shadows are
+/* Inset soft-UI engagement well (3 rows only, so per-panel shadows are
    cheap). The hover line-draw + arrival-ping story is preserved. */
 .c-engagement {
   position: relative;
@@ -46,7 +46,7 @@
   padding: var(--space-24);
   background: var(--neu-bg);
   border-radius: var(--radius-xl);
-  box-shadow: var(--neu-shadow-raised);
+  box-shadow: var(--neu-shadow-inset);
   transition: background-color var(--animation-speed) ease;
 }
 

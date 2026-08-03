@@ -952,7 +952,7 @@ html.is-theme-transitioning *::after {
   aspect-ratio: 1 / 1;
   overflow: hidden;
   border-radius: var(--radius-xl);
-  box-shadow: var(--neu-shadow-raised);
+  box-shadow: var(--neu-shadow-inset);
 }
 
 .c-hero__portrait-img {
@@ -999,7 +999,7 @@ html.is-theme-transitioning *::after {
   padding: var(--space-24);
   background: var(--neu-bg);
   border-radius: var(--radius-xl);
-  box-shadow: var(--neu-shadow-raised);
+  box-shadow: var(--neu-shadow-inset);
 }
 
 .c-hero__proof-tag {

@@ -278,9 +278,9 @@
   background: var(--color-hairline-strong);
 }
 
-/* Proof: a treated portrait over a career-metrics readout. Both sit on raised
-   neumorphic surfaces (soft UI) so they read as the hero's floating soft
-   objects on the flat hero ground. Mirrored in critical-home.css. */
+/* Proof: a treated portrait over a career-metrics readout. Both are inset
+   neumorphic wells (soft UI) carved into the hero ground — content recesses,
+   only interactive controls extrude. Mirrored in critical-home.css. */
 .c-hero__panel {
   position: relative;
   display: grid;
@@ -296,7 +296,7 @@
   aspect-ratio: 1 / 1;
   overflow: hidden;
   border-radius: var(--radius-xl);
-  box-shadow: var(--neu-shadow-raised);
+  box-shadow: var(--neu-shadow-inset);
 }
 
 .c-hero__portrait-img {
@@ -346,7 +346,7 @@
   padding: var(--space-24);
   background: var(--neu-bg);
   border-radius: var(--radius-xl);
-  box-shadow: var(--neu-shadow-raised);
+  box-shadow: var(--neu-shadow-inset);
 }
 
 .c-hero__proof-tag {

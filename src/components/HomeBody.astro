@@ -1129,8 +1129,14 @@ siteContent.testimonials.forEach((testimonial, index) => {
               name="subject"
               value={siteContent.contactForm.subject}
             />
+            {
+              /* Labels are sr-only: the deep-well pills carry their own name
+                 via placeholder (the soft-UI form look), while screen readers
+                 keep the real <label> association. Placeholder and label share
+                 one string in siteContent.contactForm.labels. */
+            }
             <div class="c-form-group">
-              <label for="name" class="c-form-label">
+              <label for="name" class="u-sr-only">
                 {siteContent.contactForm.labels.name}
               </label>
               <input
@@ -1138,13 +1144,14 @@ siteContent.testimonials.forEach((testimonial, index) => {
                 id="name"
                 name="name"
                 class="c-form-control"
+                placeholder={siteContent.contactForm.labels.name}
                 required
                 aria-describedby="name-error"
               />
               <p class="c-form-error" id="name-error" data-form-error></p>
             </div>
             <div class="c-form-group">
-              <label for="email" class="c-form-label">
+              <label for="email" class="u-sr-only">
                 {siteContent.contactForm.labels.email}
               </label>
               <input
@@ -1152,13 +1159,14 @@ siteContent.testimonials.forEach((testimonial, index) => {
                 id="email"
                 name="email"
                 class="c-form-control"
+                placeholder={siteContent.contactForm.labels.email}
                 required
                 aria-describedby="email-error"
               />
               <p class="c-form-error" id="email-error" data-form-error></p>
             </div>
             <div class="c-form-group">
-              <label for="company" class="c-form-label">
+              <label for="company" class="u-sr-only">
                 {siteContent.contactForm.labels.company}
               </label>
               <input
@@ -1166,10 +1174,11 @@ siteContent.testimonials.forEach((testimonial, index) => {
                 id="company"
                 name="company"
                 class="c-form-control"
+                placeholder={siteContent.contactForm.labels.company}
               />
             </div>
             <div class="c-form-group">
-              <label for="message" class="c-form-label">
+              <label for="message" class="u-sr-only">
                 {siteContent.contactForm.labels.message}
               </label>
               <textarea
@@ -1177,6 +1186,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
                 name="message"
                 rows="5"
                 class="c-form-control"
+                placeholder={siteContent.contactForm.labels.message}
                 required
                 aria-describedby="message-error"></textarea>
               <p class="c-form-error" id="message-error" data-form-error></p>

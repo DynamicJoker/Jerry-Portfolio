@@ -2,9 +2,10 @@
 /* Below the fold (section 02, after hero/about/logos), so none of these rules
    are duplicated in critical-home.css. The section is a bento: a feature cell
    (thesis + distiller graphic + aggregate stats) alongside three discipline
-   cards and the tool stack. Every card is the same raised soft-UI panel —
-   depth means "card container" here, never state — with a compositable
-   translateY lift and a brand-lit node-dot on hover. */
+   cards and the tool stack. Every card is the same inset soft-UI well —
+   content is carved into the ground, interactive controls extrude — and depth
+   means "card container" here, never state. Hover feedback is the brand-lit
+   node-dot and accent tints, never a lift (a recessed well can't float). */
 
 .c-capabilities {
   display: grid;
@@ -12,8 +13,9 @@
   gap: var(--space-24);
 }
 
-/* Raised soft-UI panel (neumorphic): shares the ground color, depth from the
-   paired top-left shadow rather than a border. */
+/* Inset soft-UI well (neumorphic): shares the ground color, depth from the
+   paired inner top-left shadow rather than a border. No hover lift — the
+   card's hover feedback is the node-dot/accent rules below. */
 .c-capability {
   position: relative;
   display: flex;
@@ -21,17 +23,8 @@
   padding: clamp(1.2rem, 2.4vw, 1.75rem);
   background: var(--neu-bg);
   border-radius: var(--radius-xl);
-  box-shadow: var(--neu-shadow-raised);
+  box-shadow: var(--neu-shadow-inset);
   overflow: hidden;
-  transition: transform var(--animation-speed) var(--animation-curve);
-}
-
-/* Pointer devices only: keeps the effect from sticking after taps on
-   touch screens. A compositable lift (transform), never a shadow transition. */
-@media (hover: hover) {
-  .c-capability:hover {
-    transform: translateY(-2px);
-  }
 }
 
 .c-capability--feature {
@@ -155,11 +148,10 @@
    `display` override handles the legacy <details> model (Firefox/Safari/older
    Chrome hide closed content with display:none). The mobile block re-hides it.
 
-   Depth stays uniformly raised in every state: on desktop all cards are
-   equally static (panels force-shown), so an [open]-keyed inset would press
+   Depth stays uniform in every state: on desktop all cards are equally
+   static (panels force-shown), so an [open]-keyed depth change would mark
    one arbitrary card with no state to signal; on mobile the accordion sheds
-   card chrome entirely and carries open/closed via the chevron + dot. Inset
-   is reserved site-wide for wells and pressed controls — don't re-add it here. */
+   card chrome entirely and carries open/closed via the chevron + dot. */
 .c-capability--collapsible .c-capability__panel {
   display: flex;
   flex: 1 1 auto;

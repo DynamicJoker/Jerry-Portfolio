@@ -770,10 +770,13 @@ export const siteContent = {
     endpoint: 'https://api.web3forms.com/submit',
     accessKey: 'c813bf75-f553-4abb-9e16-b19a84e83537',
     subject: 'New Submission from Portfolio',
+    // Each label renders twice: as the field's sr-only <label> and as its
+    // visible in-well placeholder (the deep-well fields have no visible
+    // label chrome).
     labels: {
       name: 'Name',
       email: 'Email',
-      company: 'Company',
+      company: 'Company (optional)',
       message: 'Message',
     },
     submitLabel: 'Send Message',

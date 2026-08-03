@@ -20,12 +20,13 @@
   margin-bottom: clamp(1.75rem, 4vw, 3rem);
 }
 
+/* Feature image recessed into the ground as an inset well. */
 .c-home-blog__image {
   overflow: hidden;
   aspect-ratio: 16 / 9;
   border-radius: var(--radius-xl);
   background: var(--neu-bg);
-  box-shadow: var(--neu-shadow-raised);
+  box-shadow: var(--neu-shadow-inset);
 }
 
 .c-home-blog__image img {
@@ -64,7 +65,8 @@
   gap: 1rem;
 }
 
-/* Raised soft-UI teaser card. */
+/* Inset soft-UI teaser well. No hover lift — a recessed card sits still;
+   the link-color hovers inside carry the feedback. */
 .c-home-blog__card {
   display: grid;
   min-width: 0;
@@ -74,16 +76,7 @@
   padding: clamp(1.1rem, 2vw, 1.4rem);
   border-radius: var(--radius-xl);
   background: var(--neu-bg);
-  box-shadow: var(--neu-shadow-raised);
-  transition: transform var(--animation-speed) var(--animation-curve);
-}
-
-/* Pointer devices only: keeps the effect from sticking after taps on
-   touch screens. Compositable lift, not a shadow transition. */
-@media (hover: hover) {
-  .c-home-blog__card:hover {
-    transform: translateY(-3px);
-  }
+  box-shadow: var(--neu-shadow-inset);
 }
 
 .c-home-blog__card-meta {

@@ -1,11 +1,16 @@
 /* Component: forms */
 
-/* Fields are inset wells (soft UI): recessed into the surface, with a real
-   border kept for the ≥3:1 boundary and the focus ring preserved below. */
+/* Fields are borderless deep-well pills (soft UI): a single dark inner
+   shadow (--neu-shadow-well) recesses them a full step below the inset form
+   tray, and the shadow's own rim is the resting boundary — no border, it
+   fights the carved look. The a11y boundary duty moves to the states that
+   need it: the focus outline and red invalid outline below stay real
+   outlines, and lite mode flattens the well to a 1px hairline (perf.css). */
 .c-form-control {
   display: block;
   width: 100%;
-  padding: var(--space-10) var(--space-12);
+  /* Pill corners need the wider horizontal inset so text clears the curve. */
+  padding: var(--space-10) var(--space-20);
   min-height: var(--nav-touch-target);
   /* Native inputs/selects don't inherit the page font */
   font-family: inherit;
@@ -13,44 +18,51 @@
   line-height: 1.5;
   color: var(--color-text);
   background-color: var(--neu-bg);
-  border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--neu-shadow-inset);
-  transition:
-    border-color var(--duration-fast) var(--ease-standard),
-    box-shadow var(--duration-fast) var(--ease-standard);
+  border: none;
+  border-radius: var(--radius-full);
+  box-shadow: var(--neu-shadow-well);
+  transition: box-shadow var(--duration-fast) var(--ease-standard);
 }
 
+/* The multi-line message box keeps a soft rectangle: a full pill would curve
+   the first and last lines of text into the corners. User-dragging the box
+   is disabled — it broke the two-column contact layout, and the native drag
+   handle sits badly on a rounded, borderless well. The box stays at its
+   `rows` height and scrolls internally once the message outgrows it, so
+   nothing is unreachable. */
 textarea.c-form-control {
   font-family: var(--font-family-base);
   font-size: var(--font-size-base);
+  border-radius: var(--radius-xl);
+  resize: none;
+  overflow-y: auto;
 }
 
 select.c-form-control {
   appearance: none;
   background-image: var(--select-caret-light);
   background-repeat: no-repeat;
-  background-position: right var(--space-12) center;
+  /* Pulled in from the edge so the caret clears the pill's corner curve. */
+  background-position: right var(--space-16) center;
   background-size: 16px;
   padding-right: var(--space-32);
 }
 
 .c-form-control:focus {
-  border-color: var(--color-primary);
   outline: var(--focus-outline);
   outline-offset: 3px;
 }
 
 .c-form-control[aria-invalid='true'] {
-  border-color: var(--color-error);
   outline: 2px solid var(--color-error);
 }
 
-.c-form-label {
-  display: block;
-  margin-bottom: var(--space-8);
-  font-weight: var(--font-weight-medium);
-  font-size: var(--font-size-sm);
+/* The visible field name IS the placeholder (labels are sr-only in the
+   markup): muted so it reads as a hint inside the well, with opacity pinned
+   to 1 because Firefox otherwise dims placeholder text a second time. */
+.c-form-control::placeholder {
+  color: var(--color-text-muted);
+  opacity: 1;
 }
 
 .c-form-group {

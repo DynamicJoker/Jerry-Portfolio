@@ -33,11 +33,11 @@
   text-transform: none;
 }
 
-/* Raised soft-UI frame around the cover image. */
+/* Cover image recessed into the ground as an inset well. */
 .c-article__cover {
   aspect-ratio: 16 / 9;
   border-radius: var(--radius-xl);
-  box-shadow: var(--neu-shadow-raised);
+  box-shadow: var(--neu-shadow-inset);
   margin-bottom: 2.5rem;
 }
 
@@ -127,7 +127,7 @@
   padding: 0.7rem;
 }
 
-/* Raised soft-UI chart card. (Class names are content-coupled to published
+/* Inset soft-UI chart well. (Class names are content-coupled to published
    .mdx — restyle only, never rename.) */
 .c-article-chart {
   --chart-fill-start: var(--color-electric-blue);
@@ -136,7 +136,7 @@
   padding: clamp(1rem, 2.5vw, 1.15rem);
   border-radius: var(--radius-xl);
   background: var(--neu-bg);
-  box-shadow: var(--neu-shadow-raised);
+  box-shadow: var(--neu-shadow-inset);
 }
 
 .c-article-chart figcaption {
@@ -295,7 +295,8 @@
   background: var(--chart-fill-accent);
 }
 
-/* Raised soft-UI CTA banner (holds the primary button). */
+/* Inset CTA tray — the recessed banner makes the raised primary button
+   inside it the only extruded element, which is the point. */
 .c-article__cta {
   display: flex;
   gap: 1rem;
@@ -305,7 +306,7 @@
   padding: 1.25rem;
   border-radius: var(--radius-xl);
   background: var(--neu-bg);
-  box-shadow: var(--neu-shadow-raised);
+  box-shadow: var(--neu-shadow-inset);
   min-width: 0;
 }
 
