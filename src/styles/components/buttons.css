@@ -215,6 +215,22 @@
   }
 }
 
+/* Small-control variant: same ring, carrying the -sm resting raise instead, so
+   controls that rest at --neu-shadow-raised-sm (the theme toggle) don't swell
+   to the full raise for the duration of the pulse. */
+@keyframes btnNeuPulseSm {
+  0% {
+    box-shadow:
+      var(--neu-shadow-raised-sm),
+      0 0 0 0 rgba(var(--color-primary-rgb), 0.3);
+  }
+  100% {
+    box-shadow:
+      var(--neu-shadow-raised-sm),
+      0 0 0 0.875rem rgba(var(--color-primary-rgb), 0);
+  }
+}
+
 .c-btn--primary:not(.is-close-state):hover,
 .c-btn--outline:hover {
   animation: btnNeuPulse 1.1s ease-out 1;

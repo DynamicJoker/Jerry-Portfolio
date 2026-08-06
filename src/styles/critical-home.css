@@ -604,9 +604,9 @@ html.is-theme-transitioning *::after {
     fill 0.45s ease-in-out !important;
 }
 
-/* Theme toggle: borderless icon button; hovering fires the same one-shot
-   btnSignalPulse the primary buttons use. The icon previews the theme it
-   switches TO: sun while in dark mode, moon while in light mode. */
+/* Theme toggle: borderless physical key — no border, the raised shadow pair
+   alone is the boundary. The icon previews the theme it switches TO: sun
+   while in dark mode, moon while in light mode. */
 .c-theme-toggle {
   position: relative;
   display: inline-flex;
@@ -618,13 +618,25 @@ html.is-theme-transitioning *::after {
   margin-left: var(--space-8);
   padding: 0;
   background: var(--neu-bg);
-  border: 1px solid var(--color-border-strong);
+  border: none;
   border-radius: var(--radius-base);
   box-shadow: var(--neu-shadow-raised-sm);
   cursor: pointer;
+  transition:
+    box-shadow 0.22s var(--ease-standard),
+    transform 0.22s var(--ease-standard);
 }
 
-/* Hover pulse (btnNeuPulse) is defined in the deferred sheet only — not a
+/* Pressed: raised→inset plus a hair of travel, so the key works even on a
+   click that lands before the deferred sheet arrives. */
+.c-theme-toggle:active {
+  animation: none;
+  box-shadow: var(--neu-shadow-inset-sm);
+  transform: translateY(1px) scale(0.95);
+  transition-duration: 0.08s;
+}
+
+/* Hover pulse (btnNeuPulseSm) is defined in the deferred sheet only — not a
    first-paint concern, so it's intentionally omitted from critical. */
 
 .c-theme-toggle:focus-visible {

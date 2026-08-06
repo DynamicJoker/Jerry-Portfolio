@@ -322,9 +322,12 @@ html.is-theme-transitioning *::after {
     fill 0.45s ease-in-out !important;
 }
 
-/* Theme toggle: borderless icon button; hovering fires the same one-shot
-   btnSignalPulse the primary buttons use. The icon previews the theme it
-   switches TO: sun while in dark mode, moon while in light mode. */
+/* Theme toggle: borderless physical key. Deliberately has NO border — the
+   raised shadow pair alone is the boundary, so it reads as a cap moulded out
+   of the ground rather than an outlined chip (a hairline border reads as a
+   bright rim against the dark ground and fights the extrusion). Hovering
+   fires a one-shot pulse; the icon previews the theme it switches TO: sun
+   while in dark mode, moon while in light mode. */
 
 .c-theme-toggle {
   position: relative;
@@ -337,19 +340,33 @@ html.is-theme-transitioning *::after {
   margin-left: var(--space-8);
   padding: 0;
   background: var(--neu-bg);
-  border: 1px solid var(--color-border-strong);
+  border: none;
   border-radius: var(--radius-base);
   box-shadow: var(--neu-shadow-raised-sm);
   cursor: pointer;
+  transition:
+    box-shadow 0.22s var(--ease-standard),
+    transform 0.22s var(--ease-standard);
 }
 
-/* btnNeuPulse (not btnSignalPulse) so the resting raise survives the pulse. */
+/* btnNeuPulseSm (not btnSignalPulse) so the resting raise survives the pulse —
+   and the small variant, so the key doesn't inflate to the large raise on
+   hover and undercut the press that follows. */
 .c-theme-toggle:hover {
-  animation: btnNeuPulse 1.1s ease-out 1;
+  animation: btnNeuPulseSm 1.1s ease-out 1;
 }
 
+/* Pressed: the key travels into the ground (raised→inset) and shrinks a hair,
+   fast on the way down and eased on the way back out. `animation: none` is
+   load-bearing — the hover pulse animates box-shadow, and a running animation
+   outranks this rule's declaration, so without it a click inside the pulse's
+   1.1s window would never show the inset. Dropping the animation also means
+   release re-triggers the pulse, which doubles as the click's confirmation. */
 .c-theme-toggle:active {
+  animation: none;
   box-shadow: var(--neu-shadow-inset-sm);
+  transform: translateY(1px) scale(0.95);
+  transition-duration: 0.08s;
 }
 
 .c-theme-toggle:focus-visible {
