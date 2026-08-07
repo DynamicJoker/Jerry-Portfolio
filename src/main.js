@@ -11,9 +11,6 @@ const config = {
     md: { cssVar: '--breakpoint-md', fallbackRem: 48 },
     lg: { cssVar: '--breakpoint-lg', fallbackRem: 64 },
   },
-  navbar: {
-    scrollThreshold: 10, // px
-  },
   testimonials: {
     scrollSpeedMin: 80, // seconds
     scrollSpeedMax: 120, // seconds
@@ -75,7 +72,6 @@ function getBreakpointPx(key) {
   return cssLengthToPx(value, breakpoint.fallbackRem);
 }
 
-let lastKnownScrollPosition = 0;
 let ticking = false;
 // Extra scroll consumers (e.g. the docked section headers) register here so
 // they run inside the single rAF-batched scroll handler below, instead of
@@ -84,14 +80,12 @@ let ticking = false;
 const scrollFrameCallbacks = [];
 
 function handleScroll() {
-  lastKnownScrollPosition = window.pageYOffset;
-
   if (!ticking) {
     let didUpdate = false;
     const update = () => {
       if (didUpdate) return;
       didUpdate = true;
-      updateUIOnScroll(lastKnownScrollPosition);
+      updateUIOnScroll();
       ticking = false;
     };
 
@@ -102,18 +96,8 @@ function handleScroll() {
 }
 
 // All visual updates triggered by scroll happen here
-function updateUIOnScroll(scrollY) {
-  const navbar = document.getElementById('navbar');
-
-  if (navbar) {
-    navbar.classList.toggle(
-      'is-scrolled',
-      scrollY > config.navbar.scrollThreshold,
-    );
-  }
-
+function updateUIOnScroll() {
   updateActiveNavLink();
-  updateNavGlow();
   scrollFrameCallbacks.forEach((callback) => callback());
 }
 
@@ -122,9 +106,9 @@ window.addEventListener('scroll', handleScroll, { passive: true });
 window.addEventListener('scrollend', releaseNavLinkClickLock, {
   passive: true,
 });
-// Recompute scroll-derived UI on resize. The active-nav-link underline is
-// positioned with pixel values from getBoundingClientRect() (see updateNavGlow),
-// so it must be re-measured when the layout reflows — otherwise it lags/mispositions.
+// Recompute scroll-derived UI on resize: a reflow moves the section offsets the
+// scroll-spy compares against, and the docked headers (registered in
+// scrollFrameCallbacks) read live geometry every frame.
 let resizeRaf = 0;
 window.addEventListener(
   'resize',
@@ -132,7 +116,7 @@ window.addEventListener(
     if (!resizeRaf) {
       resizeRaf = window.requestAnimationFrame(() => {
         resizeRaf = 0;
-        updateUIOnScroll(window.pageYOffset);
+        updateUIOnScroll();
       });
     }
   },
@@ -349,10 +333,9 @@ function initializeNavigation() {
       link.classList.add('is-active');
       link.setAttribute('aria-current', 'location');
       updateCurrentSectionLabel(link);
-      updateNavGlow();
 
       // Lock the active link to this one until the smooth-scroll settles so the
-      // scroll-spy can't drag the underline through intermediate sections. The
+      // scroll-spy can't drag the latch through intermediate sections. The
       // real release is the `scrollend` listener; this timeout is only a safety
       // net for browsers without `scrollend`, so it must outlast any smooth
       // scroll (a full-page jump measured ~1.5s) to avoid releasing mid-scroll.
@@ -366,12 +349,7 @@ function initializeNavigation() {
     });
   });
   if (navbar) {
-    navbar.classList.toggle(
-      'is-scrolled',
-      window.pageYOffset > config.navbar.scrollThreshold,
-    );
     updateActiveNavLink();
-    updateNavGlow();
   }
 }
 
@@ -449,25 +427,6 @@ function updateActiveNavLink() {
   });
 
   updateCurrentSectionLabel(activeLink);
-}
-
-function updateNavGlow() {
-  const navMenu = document.getElementById('nav-menu');
-  const activeLink = Array.from(navLinks).find((link) =>
-    link.classList.contains('is-active'),
-  );
-  if (activeLink && navMenu) {
-    const menuRect = navMenu.getBoundingClientRect();
-    const activeRect = activeLink.getBoundingClientRect();
-    navMenu.style.setProperty(
-      '--glow-left',
-      `${activeRect.left - menuRect.left}px`,
-    );
-    navMenu.style.setProperty('--glow-width', `${activeRect.width}px`);
-    navMenu.style.setProperty('--glow-opacity', '1');
-  } else if (navMenu) {
-    navMenu.style.setProperty('--glow-opacity', '0');
-  }
 }
 
 // Fire once per element when its top edge crosses 85% of the viewport height

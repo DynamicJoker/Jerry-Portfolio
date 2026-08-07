@@ -59,6 +59,19 @@
   min-width: 8rem;
 }
 
+/* Toggle button: it stays DOWN while paused. The base .c-btn--outline press is
+   transient, but this control has an on/off state (aria-pressed), and the
+   site's soft-UI language spends inset on "engaged" — so the paused button
+   rests recessed and presses to the deeper well from there. Imported after
+   buttons.css, so this out-orders the equal-specificity .c-btn--outline:active. */
+.c-testimonials-controls__pause-button[aria-pressed='true'] {
+  box-shadow: var(--neu-shadow-inset);
+}
+
+.c-testimonials-controls__pause-button[aria-pressed='true']:active {
+  box-shadow: var(--neu-shadow-pressed);
+}
+
 .c-testimonials-controls__pause-button .c-testimonials-controls__label--resume {
   display: none;
 }

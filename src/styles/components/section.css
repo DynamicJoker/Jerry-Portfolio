@@ -286,12 +286,6 @@ section[id] {
     opacity: 0;
   }
 
-  .c-nav.is-scrolled::before,
-  .c-nav__menu::before {
-    animation: none !important;
-    opacity: 0;
-  }
-
   .c-nav__link.is-active::before {
     animation: none !important;
   }

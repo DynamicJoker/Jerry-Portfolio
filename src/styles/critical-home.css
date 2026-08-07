@@ -95,6 +95,19 @@
       var(--neu-shadow-dark),
     inset calc(var(--neu-distance-sm) * -1) calc(var(--neu-distance-sm) * -1)
       var(--neu-blur-sm) var(--neu-shadow-light);
+  /* Deep well. Above the fold because the theme switch's engaged half rests in
+     it, so the tint is mirrored here and in both dark blocks below. */
+  --neu-well-dark: #d2cfc8;
+  --neu-shadow-well: inset 0.125rem 0.3125rem 0.625rem var(--neu-well-dark);
+  /* Physical-press motion tokens (see settings.css for the full rationale).
+     Theme-independent, so they need no counterpart in the dark blocks below.
+     The stateful-press token (--neu-shadow-pressed) is deliberately absent:
+     pressing an already-selected control is not a first-paint concern, so
+     that variant lives in the deferred sheet only. */
+  --neu-press-transform: translateY(1px);
+  --neu-press-key-transform: translateY(1px) scale(0.95);
+  --neu-press-duration: 0.08s;
+  --neu-release-duration: 0.22s;
   --duration-fast: 150ms;
   --duration-normal: 250ms;
   --ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
@@ -102,11 +115,13 @@
      (main.js) resolves it before the deferred stylesheet lands. Media
      queries can't read it; the 64rem literals below must stay in step. */
   --breakpoint-lg: 64rem;
-  --navbar-height: 4.375rem;
+  /* Floating-island nav: --navbar-height stays the reserved band (viewport top
+     to the island's bottom), so everything that offsets against it is
+     unchanged. See settings.css for the full rationale. */
+  --nav-inset: 0.75rem;
+  --nav-island-height: 3.625rem;
+  --navbar-height: calc(var(--nav-inset) + var(--nav-island-height));
   --nav-touch-target: 2.75rem;
-  --nav-toggle-max-width: 13rem;
-  --nav-toggle-mobile-max-width: 12.5rem;
-  --nav-toggle-fluid-width: 44vw;
   --nav-sheet-max-block-size: 29rem;
   --nav-sheet-viewport-gap: 1rem;
   --nav-link-font-size: clamp(0.875rem, 0.9vw, 0.9375rem);
@@ -169,6 +184,7 @@
     --neu-bg: #1a1d29;
     --neu-shadow-dark: #0c0e15;
     --neu-shadow-light: #262a3b;
+    --neu-well-dark: #04050a;
     --color-hairline: rgba(229, 231, 238, 0.08);
     --color-hairline-strong: rgba(229, 231, 238, 0.16);
     --color-text-strong: rgba(245, 245, 245, 1);
@@ -205,6 +221,7 @@
   --neu-bg: #1a1d29;
   --neu-shadow-dark: #0c0e15;
   --neu-shadow-light: #262a3b;
+  --neu-well-dark: #04050a;
   --color-hairline: rgba(229, 231, 238, 0.08);
   --color-hairline-strong: rgba(229, 231, 238, 0.16);
   --color-text-strong: rgba(245, 245, 245, 1);
@@ -350,28 +367,37 @@ a {
   animation-delay: -0.16s;
 }
 
+/* .c-nav is only the fixed positioning frame and paints nothing; the island
+   below carries all the chrome. */
 .c-nav {
   position: fixed;
   top: 0;
   left: 0;
   z-index: var(--z-nav);
   width: 100%;
-  background-color: transparent;
-  transition:
-    background-color 0.4s var(--ease-standard),
-    box-shadow 0.4s var(--ease-standard);
+  pointer-events: none;
 }
 
+/* The island: detached, raised, inset from the viewport edges so all four
+   edges catch the light. */
 .c-nav__container {
+  pointer-events: auto;
   position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  box-sizing: border-box;
+  width: calc(100% - var(--nav-inset) * 2);
   max-width: 75rem;
-  height: var(--navbar-height);
+  height: var(--nav-island-height);
   min-width: 0;
-  margin: 0 auto;
-  padding: 0 var(--space-16);
+  margin: var(--nav-inset) auto 0;
+  padding: 0 var(--space-10) 0 var(--space-20);
+  background: var(--neu-bg);
+  border: 1px solid transparent;
+  border-radius: var(--radius-full);
+  box-shadow: var(--neu-shadow-raised);
 }
 
 .c-nav__brand {
@@ -451,35 +477,6 @@ body[data-page='home'] .c-nav.is-brand-expanded .c-brand-logo__wordmark {
   min-width: 0;
 }
 
-.c-nav__rail::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  bottom: 0.25rem;
-  left: 0;
-  height: 1px;
-  border-radius: var(--radius-full);
-  background: var(--color-hairline);
-  opacity: 0.68;
-  pointer-events: none;
-}
-
-.c-nav__menu::after {
-  content: '';
-  position: absolute;
-  left: var(--glow-left, 0);
-  bottom: 0.1875rem;
-  width: var(--glow-width, 0);
-  height: 2px;
-  border-radius: var(--radius-full);
-  background: var(--color-accent);
-  opacity: var(--glow-opacity, 0);
-  transition:
-    left 0.24s var(--ease-standard),
-    width 0.24s var(--ease-standard),
-    opacity 0.2s ease-out;
-}
-
 .c-nav__link {
   position: relative;
   display: flex;
@@ -487,46 +484,69 @@ body[data-page='home'] .c-nav.is-brand-expanded .c-brand-logo__wordmark {
   justify-content: center;
   min-height: var(--nav-touch-target);
   padding: var(--space-10) var(--nav-link-inline-padding);
-  border-radius: var(--radius-sm);
+  /* Pill, concentric inside the pill island (58px pill − 7px clearance = 22px
+     = half the link's 44px height). The mobile sheet overrides back to
+     --radius-sm for its own --radius-xl container. */
+  border-radius: var(--radius-full);
   color: var(--color-text);
   font-size: var(--nav-link-font-size);
   font-weight: var(--font-weight-medium);
   line-height: 1.2;
   text-decoration: none;
   white-space: nowrap;
-  transition: color var(--animation-speed) var(--animation-curve);
+  transition:
+    color var(--animation-speed) var(--animation-curve),
+    box-shadow var(--neu-release-duration) var(--ease-standard),
+    transform var(--neu-release-duration) var(--ease-standard);
 }
 
+/* Latched: the current section's link rests held down in the ground. */
 .c-nav__link.is-active {
   color: var(--color-accent);
+  box-shadow: var(--neu-shadow-inset-sm);
 }
 
+/* Press: flat links sink on tap; the latched one goes to the deeper well
+   (that variant needs --neu-shadow-pressed, so it is deferred-sheet only). */
+.c-nav__link:active {
+  animation: none;
+  box-shadow: var(--neu-shadow-inset-sm);
+  transform: var(--neu-press-transform);
+  transition-duration: var(--neu-press-duration);
+}
+
+/* Round icon-only key, flat at rest like the nav links — nothing inside the
+   island extrudes. The section label is u-sr-only in the markup and only feeds
+   the aria-label. */
 .c-nav__toggle {
   display: none;
   align-items: center;
   justify-content: center;
   min-width: 0;
+  width: var(--nav-touch-target);
   min-height: var(--nav-touch-target);
   margin-left: 0;
-  padding: 0 var(--space-12);
-  gap: var(--space-10);
-  border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-base);
-  background: var(--neu-bg);
-  box-shadow: var(--neu-shadow-raised-sm);
+  padding: 0;
+  gap: 0;
+  border: 1px solid transparent;
+  border-radius: var(--radius-full);
+  background: transparent;
   color: var(--color-text);
   font: inherit;
   cursor: pointer;
+  transition:
+    background-color 0.2s ease-out,
+    color 0.2s ease-out,
+    box-shadow var(--neu-release-duration) var(--ease-standard),
+    transform var(--neu-release-duration) var(--ease-standard);
 }
 
-.c-nav__toggle-label {
-  min-width: 0;
-  overflow: hidden;
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  line-height: 1;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+/* Ordinary press while closed. The open-state press uses the deeper well and
+   lives in the deferred sheet (it needs --neu-shadow-pressed). */
+.c-nav__toggle:active {
+  box-shadow: var(--neu-shadow-inset-sm);
+  transform: var(--neu-press-transform);
+  transition-duration: var(--neu-press-duration);
 }
 
 .c-nav__toggle-icon {
@@ -604,40 +624,57 @@ html.is-theme-transitioning *::after {
     fill 0.45s ease-in-out !important;
 }
 
-/* Theme toggle: borderless physical key — no border, the raised shadow pair
-   alone is the boundary. The icon previews the theme it switches TO: sun
-   while in dark mode, moon while in light mode. */
+/* Theme toggle: two-position tray switch. The body is a shallow trough; the
+   half matching the CURRENT scheme drops to the deep well, the other stands
+   proud. Pill-round to sit concentrically in the pill island. */
 .c-theme-toggle {
   position: relative;
   display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  align-items: stretch;
   flex: 0 0 auto;
-  width: var(--nav-touch-target);
+  gap: 0.1875rem;
+  width: 5rem;
   min-height: var(--nav-touch-target);
   margin-left: var(--space-8);
-  padding: 0;
+  padding: 0.1875rem;
   background: var(--neu-bg);
-  border: none;
-  border-radius: var(--radius-base);
-  box-shadow: var(--neu-shadow-raised-sm);
-  cursor: pointer;
-  transition:
-    box-shadow 0.22s var(--ease-standard),
-    transform 0.22s var(--ease-standard);
-}
-
-/* Pressed: raised→inset plus a hair of travel, so the key works even on a
-   click that lands before the deferred sheet arrives. */
-.c-theme-toggle:active {
-  animation: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-full);
   box-shadow: var(--neu-shadow-inset-sm);
-  transform: translateY(1px) scale(0.95);
-  transition-duration: 0.08s;
+  cursor: pointer;
 }
 
-/* Hover pulse (btnNeuPulseSm) is defined in the deferred sheet only — not a
-   first-paint concern, so it's intentionally omitted from critical. */
+/* Idle half lies flat in the trough — nothing inside the island extrudes. */
+.c-theme-toggle__half {
+  display: inline-flex;
+  flex: 1 1 50%;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  background: none;
+  box-shadow: none;
+  opacity: 0.45;
+  transition:
+    box-shadow var(--neu-release-duration) var(--ease-standard),
+    transform var(--neu-release-duration) var(--ease-standard),
+    opacity var(--neu-release-duration) var(--ease-standard);
+}
+
+/* Engaged half recesses to the deep well. */
+.c-theme-toggle__half--sun {
+  box-shadow: var(--neu-shadow-well);
+  opacity: 1;
+}
+
+[data-color-scheme='dark'] .c-theme-toggle__half--sun {
+  box-shadow: none;
+  opacity: 0.45;
+}
+
+[data-color-scheme='dark'] .c-theme-toggle__half--moon {
+  box-shadow: var(--neu-shadow-well);
+  opacity: 1;
+}
 
 .c-theme-toggle:focus-visible {
   outline: var(--focus-outline);
@@ -645,31 +682,8 @@ html.is-theme-transitioning *::after {
 }
 
 .c-theme-toggle__icon {
-  width: 1.375rem;
-  height: 1.375rem;
-}
-
-.c-theme-toggle__sun,
-.c-theme-toggle__moon {
-  transform-origin: center;
-  transition:
-    opacity 0.25s ease-out,
-    transform 0.35s var(--animation-curve);
-}
-
-.c-theme-toggle__sun {
-  opacity: 0;
-  transform: scale(0.6) rotate(-45deg);
-}
-
-[data-color-scheme='dark'] .c-theme-toggle__sun {
-  opacity: 1;
-  transform: scale(1) rotate(0deg);
-}
-
-[data-color-scheme='dark'] .c-theme-toggle__moon {
-  opacity: 0;
-  transform: scale(0.6) rotate(45deg);
+  width: 1.125rem;
+  height: 1.125rem;
 }
 
 .c-hero {
@@ -1153,9 +1167,26 @@ html.is-theme-transitioning *::after {
 }
 
 .c-btn--outline {
-  border-color: var(--color-primary);
   background: var(--neu-bg);
   color: var(--color-text);
+}
+
+/* Press. Primary settles toward the surface (ground-colored inset tints read
+   as dirt over an accent fill); outline recesses. `animation: none` guards
+   against the deferred sheet's hover pulse masking the depth change. */
+.c-btn--primary:active {
+  animation: none;
+  background: var(--color-primary-active);
+  box-shadow: var(--neu-shadow-raised-sm);
+  transform: var(--neu-press-transform);
+  transition-duration: var(--neu-press-duration);
+}
+
+.c-btn--outline:active {
+  animation: none;
+  box-shadow: var(--neu-shadow-inset);
+  transform: var(--neu-press-transform);
+  transition-duration: var(--neu-press-duration);
 }
 
 .c-scroll-indicator {
@@ -1327,14 +1358,13 @@ body.has-beta-banner .c-nav {
 
   .c-nav__toggle {
     display: inline-flex;
-    max-width: min(var(--nav-toggle-max-width), var(--nav-toggle-fluid-width));
   }
 
   .c-nav__menu {
     position: fixed;
     top: var(--navbar-height);
-    right: var(--space-16);
-    left: var(--space-16);
+    right: var(--nav-inset);
+    left: var(--nav-inset);
     width: auto;
     max-height: min(
       var(--nav-sheet-max-block-size),
@@ -1364,28 +1394,29 @@ body.has-beta-banner .c-nav {
     transition-delay: 0s;
   }
 
-  .c-nav__menu::after {
-    display: none;
-  }
-
   .c-nav__rail {
     display: grid;
     padding: var(--space-10);
     gap: var(--space-4);
-    border: 1px solid var(--color-border-strong);
+    border: 1px solid transparent;
     border-radius: var(--radius-xl);
     background: var(--neu-bg);
     box-shadow: var(--neu-shadow-raised), var(--shadow-sheet);
   }
 
-  .c-nav__rail::after {
-    display: none;
-  }
-
+  /* Back to the small radius: the sheet is a --radius-xl surface with
+     --space-10 padding, so ~6px is this context's concentric answer. */
   .c-nav__link {
     justify-content: flex-start;
     padding: var(--space-10) var(--space-16) var(--space-10) var(--space-20);
+    border-radius: var(--radius-sm);
     font-size: var(--font-size-base);
+  }
+
+  /* The sheet has its own active language (accent marker + wash), so the
+     desktop latch is dropped here. */
+  .c-nav__link.is-active {
+    box-shadow: none;
   }
 
   body:has(.c-beta-banner) .c-nav__menu,
@@ -1435,13 +1466,6 @@ body.has-beta-banner .c-nav {
     left: var(--space-12);
   }
 
-  .c-nav__toggle {
-    max-width: min(
-      var(--nav-toggle-mobile-max-width),
-      var(--nav-toggle-fluid-width)
-    );
-  }
-
   .c-beta-banner__content {
     flex-direction: column;
     padding: var(--space-10) var(--space-16);
@@ -1480,6 +1504,12 @@ body.has-beta-banner .c-nav {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+  }
+
+  /* Press travel off, raised→inset flip kept (mirrors components/neu.css). */
+  :root {
+    --neu-press-transform: none;
+    --neu-press-key-transform: none;
   }
 
   .c-hero__name,
@@ -1569,4 +1599,20 @@ body.has-beta-banner .c-nav {
   100% {
     box-shadow: 0 0 0 0.875rem rgba(var(--color-primary-rgb), 0);
   }
+}
+
+/* Utilities last, so they win — mirrors src/styles/utilities.css.
+   .u-sr-only is above the fold: the nav hamburger's section label uses it, and
+   without it here the label paints visibly inside the 44px round key until the
+   deferred stylesheet lands. */
+.u-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }

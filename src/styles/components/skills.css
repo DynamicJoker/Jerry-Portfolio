@@ -219,6 +219,13 @@
   font-size: var(--font-size-sm);
   color: var(--color-primary);
   text-decoration: none;
+  transition: transform var(--neu-release-duration) var(--ease-standard);
+}
+
+/* Press: travel only — an inline text CTA has no surface to recess. */
+.c-capability__cta:active {
+  transform: var(--neu-press-transform);
+  transition-duration: var(--neu-press-duration);
 }
 
 .c-capability__cta::after {
@@ -642,6 +649,14 @@
     gap: var(--space-8);
     padding: var(--space-16) var(--space-4);
     cursor: pointer;
+    transition: transform var(--neu-release-duration) var(--ease-standard);
+  }
+
+  /* Press: travel only. The row is a full-width accordion header sitting
+     between hairline separators; a well would fight those rules. */
+  .c-capability__summary:active {
+    transform: var(--neu-press-transform);
+    transition-duration: var(--neu-press-duration);
   }
 
   .c-capability__summary:focus-visible {

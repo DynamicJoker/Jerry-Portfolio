@@ -87,6 +87,14 @@
   display: block;
   aspect-ratio: 16 / 9;
   background: var(--neu-bg);
+  transition: transform var(--neu-release-duration) var(--ease-standard);
+}
+
+/* Press: travel only. The card around it is an inset well, so there is no
+   extrusion to push in; the dip is what answers the tap. */
+.c-blog-card__media:active {
+  transform: var(--neu-press-transform);
+  transition-duration: var(--neu-press-duration);
 }
 
 .c-blog-card__media img,
@@ -125,6 +133,18 @@
   text-decoration: none;
 }
 
+/* Press: travel only, matching the other standalone navigation links. */
+.c-article__back {
+  display: inline-flex;
+  align-items: center;
+  transition: transform var(--neu-release-duration) var(--ease-standard);
+}
+
+.c-article__back:active {
+  transform: var(--neu-press-transform);
+  transition-duration: var(--neu-press-duration);
+}
+
 .c-blog-card h2 a:hover,
 .c-blog-read-link:hover,
 .c-article__back:hover {
@@ -138,10 +158,21 @@
   line-height: 1.65;
 }
 
+/* Shared by the blog index cards and the home page's blog section. */
 .c-blog-read-link {
+  display: inline-flex;
+  align-items: center;
   width: fit-content;
   color: var(--color-electric-blue);
   font-weight: var(--font-weight-semibold);
+  transition: transform var(--neu-release-duration) var(--ease-standard);
+}
+
+/* Press: travel only. inline-flex because transform does not apply to inline
+   boxes — `width: fit-content` alone does not blockify an <a>. */
+.c-blog-read-link:active {
+  transform: var(--neu-press-transform);
+  transition-duration: var(--neu-press-duration);
 }
 
 /* Empty state recessed into an inset well (soft UI). */

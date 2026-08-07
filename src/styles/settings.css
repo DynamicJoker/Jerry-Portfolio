@@ -178,6 +178,29 @@
   --neu-well-dark: #d2cfc8; /* ground darkened ~13% (warm) */
   --neu-shadow-well: inset 0.125rem 0.3125rem 0.625rem var(--neu-well-dark);
 
+  /* Physical press. An extruded control travels INTO the ground on :active —
+     raised→inset plus a hair of movement, fast on the way down and eased on
+     the way back out, so it reads as a key being depressed rather than a
+     hover state changing. The shadow half stays per-component (the -sm and
+     full recipes suit different control sizes); only the motion and timing
+     live here, so every key on the site presses alike.
+
+     Two transforms, because scale doesn't generalise: on a small square key
+     shrinking is what sells the press, but the same 5% on a 200px button
+     slides its edges inward far enough to read as a resize. Wide controls
+     therefore travel only.
+
+     --neu-shadow-pressed exists for the STATEFUL controls (filter pills,
+     asset tabs, the nav hamburger) whose *selected* state already spends
+     --neu-shadow-inset-sm. A press that also landed on inset-sm would be
+     invisible on an already-selected control and identical to selecting an
+     unselected one, so those press to the deeper well instead. */
+  --neu-press-transform: translateY(1px);
+  --neu-press-key-transform: translateY(1px) scale(0.95);
+  --neu-press-duration: 0.08s;
+  --neu-release-duration: 0.22s;
+  --neu-shadow-pressed: var(--neu-shadow-well);
+
   /* Animation */
   --duration-fast: 150ms;
   --duration-normal: 250ms;
@@ -193,13 +216,21 @@
      64rem literals in nav.css / critical-home.css must stay in step with
      this token; JS (main.js, SiteNav.astro) reads it at runtime. */
   --breakpoint-lg: 64rem; /* 1024px */
-  --navbar-height: 4.375rem; /* 70px */
+  /* The nav is a floating island: a detached, raised slab inset from the
+     viewport edges. --navbar-height stays the RESERVED BAND (viewport top to
+     the island's bottom edge) and keeps its old 4.375rem value, because a
+     dozen rules offset against it — hero/blog/article padding, the beta
+     banner, booking scroll-margin, the mobile sheet's top, and the docked
+     section headers. Splitting the band into gap + island means none of them
+     had to change. Retune by moving --nav-inset and --nav-island-height in
+     opposite directions so the sum holds at 4.375rem; if the sum has to grow,
+     every consumer of --navbar-height inherits it automatically. */
+  --nav-inset: 0.75rem; /* 12px — gap from the viewport edges */
+  --nav-island-height: 3.625rem; /* 58px — the island itself */
+  --navbar-height: calc(var(--nav-inset) + var(--nav-island-height)); /* 70px */
   --section-padding: 6.25rem; /* 100px */
   --section-padding-mobile: 3.75rem; /* 60px */
   --nav-touch-target: 2.75rem;
-  --nav-toggle-max-width: 13rem;
-  --nav-toggle-mobile-max-width: 12.5rem;
-  --nav-toggle-fluid-width: 44vw;
   --nav-sheet-max-block-size: 29rem;
   --nav-sheet-viewport-gap: 1rem;
   --nav-link-font-size: clamp(0.875rem, 0.9vw, 0.9375rem);
@@ -254,16 +285,15 @@
   --color-overlay-strong: rgba(26, 26, 46, 0.1);
   --color-chip-border: rgba(26, 26, 46, 0.24);
   --color-dot-muted: rgba(26, 26, 46, 0.35);
-  /* Opaque on purpose. This backs two stacked bars — .c-nav.is-scrolled and
-     the docked .c-section__header::before — and neither has a backdrop-filter,
-     so any alpha below 1 just lets the section copy scrolling underneath read
-     straight through the chrome (worst on mobile, where both bars stack).
-     Frosted glass was evaluated and rejected: at a usable alpha the blur only
-     smears the ghost, and it costs a backdrop pass on a page that already
-     flattens its soft-UI shadows for performance. Don't reintroduce alpha here
-     without also adding the blur — and re-check mobile if you do. */
+  /* Opaque on purpose. This backs the docked .c-section__header::before, which
+     has no backdrop-filter, so any alpha below 1 just lets the section copy
+     scrolling underneath read straight through the chrome. Frosted glass was
+     evaluated and rejected: at a usable alpha the blur only smears the ghost,
+     and it costs a backdrop pass on a page that already flattens its soft-UI
+     shadows for performance. Don't reintroduce alpha here without also adding
+     the blur — and re-check mobile if you do. (It used to back the scrolled
+     navbar too; the nav is now a floating island that carries its own ground.) */
   --color-navbar-scrolled-bg: #f0eeea;
-  --shadow-navbar-scrolled: 0 8px 28px rgba(26, 26, 46, 0.1);
   --shadow-sheet: 0 1rem 2rem rgba(26, 26, 46, 0.16);
   --shadow-banner: 0 1px 0 rgba(26, 26, 46, 0.08);
   --shadow-banner-expanded: 0 0.5rem 1.5rem rgba(26, 26, 46, 0.12);
@@ -342,7 +372,6 @@
     --color-chip-border: rgba(245, 245, 245, 0.24);
     --color-dot-muted: rgba(255, 255, 255, 0.35);
     --color-navbar-scrolled-bg: #1a1d29;
-    --shadow-navbar-scrolled: 0 8px 28px rgba(0, 0, 0, 0.32);
     --shadow-sheet: 0 1rem 2rem rgba(0, 0, 0, 0.4);
     --shadow-banner: 0 1px 0 rgba(0, 0, 0, 0.4);
     --shadow-banner-expanded: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.32);
@@ -409,7 +438,6 @@
   --color-chip-border: rgba(245, 245, 245, 0.24);
   --color-dot-muted: rgba(255, 255, 255, 0.35);
   --color-navbar-scrolled-bg: #1a1d29;
-  --shadow-navbar-scrolled: 0 8px 28px rgba(0, 0, 0, 0.32);
   --shadow-sheet: 0 1rem 2rem rgba(0, 0, 0, 0.4);
   --shadow-banner: 0 1px 0 rgba(0, 0, 0, 0.4);
   --shadow-banner-expanded: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.32);
@@ -436,15 +464,10 @@
   background-image: var(--select-caret-dark);
 }
 
-[data-color-scheme='dark'] .c-theme-toggle__sun {
-  opacity: 1;
-  transform: scale(1) rotate(0deg);
-}
-
-[data-color-scheme='dark'] .c-theme-toggle__moon {
-  opacity: 0;
-  transform: scale(0.6) rotate(45deg);
-}
+/* The theme toggle's per-scheme state used to live here as an opacity/rotate
+   cross-fade between the sun and moon groups. It is now a two-position tray
+   switch whose state is carried by DEPTH on .c-theme-toggle__half, so those
+   rules moved to components/nav.css alongside the rest of the switch. */
 
 /* Beta Banner */
 

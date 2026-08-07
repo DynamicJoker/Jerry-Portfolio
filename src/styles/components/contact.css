@@ -67,10 +67,21 @@
   color: inherit;
   font: inherit;
   cursor: pointer;
+  transition:
+    color var(--animation-speed) var(--animation-curve),
+    box-shadow var(--neu-release-duration) var(--ease-standard),
+    transform var(--neu-release-duration) var(--ease-standard);
 }
 
 .c-contact__reveal-button:hover {
   color: var(--color-electric-blue);
+}
+
+/* Press-only, like the nav links: transparent at rest, sinks on tap. */
+.c-contact__reveal-button:active {
+  box-shadow: var(--neu-shadow-inset-sm);
+  transform: var(--neu-press-transform);
+  transition-duration: var(--neu-press-duration);
 }
 
 .c-contact__reveal-button:focus-visible {

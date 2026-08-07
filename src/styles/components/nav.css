@@ -4,35 +4,44 @@
 
 /* Navigation */
 
+/* .c-nav is now only the fixed positioning frame — it paints nothing. All the
+   chrome moved to .c-nav__container, which is the island. There is no
+   is-scrolled state any more: the island is a physical object that is simply
+   always there, so the old transparent→opaque swap (and the JS that drove it)
+   is gone. */
 .c-nav {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   z-index: var(--z-nav);
-  background-color: transparent;
-  transition:
-    background-color 0.4s var(--ease-standard),
-    box-shadow 0.4s var(--ease-standard);
+  pointer-events: none;
 }
 
-.c-nav.is-scrolled {
-  background-color: var(--color-navbar-scrolled-bg);
-  border-bottom: 1px solid var(--color-hairline);
-  box-shadow: var(--shadow-navbar-scrolled);
-}
-
+/* The island: a detached, raised slab inset from the viewport edges. Detaching
+   is the whole point — a full-bleed bar has only a bottom edge, so its
+   "raise" can only ever be a drop shadow. With all four edges free, the
+   top-left highlight has somewhere to land and the extrusion actually reads.
+   The border is 1px transparent so components/neu.css can colour it in for
+   high-contrast users, who get no box-shadow at all. */
 .c-nav__container {
-  max-width: 75rem;
-  margin: 0 auto;
-  padding: 0 var(--space-16);
+  pointer-events: auto;
+  position: relative;
+  z-index: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: var(--navbar-height);
+  box-sizing: border-box;
+  width: calc(100% - var(--nav-inset) * 2);
+  max-width: 75rem;
+  height: var(--nav-island-height);
+  margin: var(--nav-inset) auto 0;
+  padding: 0 var(--space-10) 0 var(--space-20);
   min-width: 0;
-  position: relative;
-  z-index: 1;
+  background: var(--neu-bg);
+  border: 1px solid transparent;
+  border-radius: var(--radius-full);
+  box-shadow: var(--neu-shadow-raised);
 }
 
 .c-nav__brand {
@@ -106,52 +115,15 @@ body[data-page='home'] .c-nav.is-brand-expanded .c-brand-logo__wordmark {
   min-width: 0;
 }
 
-.c-nav__menu::before {
-  /* Glass "gleam" sweep removed — read as a generated effect. */
-  display: none;
-}
-
+/* Plain flex row on desktop. It becomes the sheet surface on mobile (see the
+   64rem block). The rail hairline and the JS-positioned accent underline that
+   used to live here are both gone — depth carries the active state now. */
 .c-nav__rail {
   position: relative;
   display: flex;
   align-items: center;
   gap: var(--space-4);
   min-width: 0;
-  padding: 0;
-  background: transparent;
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
-  backdrop-filter: none;
-}
-
-.c-nav__rail::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  bottom: 0.25rem;
-  left: 0;
-  height: 1px;
-  border-radius: var(--radius-full);
-  background: var(--color-hairline);
-  opacity: 0.68;
-  pointer-events: none;
-}
-
-.c-nav__menu::after {
-  content: '';
-  position: absolute;
-  left: var(--glow-left, 0);
-  bottom: 0.1875rem;
-  width: var(--glow-width, 0);
-  height: 2px;
-  border-radius: var(--radius-full);
-  background: var(--color-accent);
-  opacity: var(--glow-opacity, 0);
-  transition:
-    left 0.24s var(--ease-standard),
-    width 0.24s var(--ease-standard),
-    opacity 0.2s ease-out;
 }
 
 .c-nav__link {
@@ -165,8 +137,16 @@ body[data-page='home'] .c-nav.is-brand-expanded .c-brand-logo__wordmark {
   align-items: center;
   justify-content: center;
   padding: var(--space-10) var(--nav-link-inline-padding);
-  border-radius: var(--radius-sm);
-  transition: color var(--animation-speed) var(--animation-curve);
+  /* Pill, to sit concentrically inside the pill island: 44px tall with 7px
+     clearance in a 58px pill wants a 22px radius = half its height. The mobile
+     sheet overrides this back to --radius-sm, because there the container is a
+     --radius-xl surface with --space-10 padding, and 16 − 10 ≈ 6px is the
+     concentric answer for THAT context. Same rule, different parent. */
+  border-radius: var(--radius-full);
+  transition:
+    color var(--animation-speed) var(--animation-curve),
+    box-shadow var(--neu-release-duration) var(--ease-standard),
+    transform var(--neu-release-duration) var(--ease-standard);
   position: relative;
   white-space: nowrap;
 }
@@ -176,8 +156,13 @@ body[data-page='home'] .c-nav.is-brand-expanded .c-brand-logo__wordmark {
   display: none;
 }
 
+/* Latched: the current section's link rests held down in the ground. This
+   replaces the accent bar that used to slide between links — which only ever
+   ran on the home page, so blog and 404 had no active state at all. Colour
+   carries it alongside depth, so selection never rides on shadow alone. */
 .c-nav__link.is-active {
   color: var(--color-accent);
+  box-shadow: var(--neu-shadow-inset-sm);
 }
 
 .c-nav__link.is-active::before {
@@ -193,50 +178,81 @@ body[data-page='home'] .c-nav.is-brand-expanded .c-brand-logo__wordmark {
   animation: btnSignalPulse 1.1s ease-out 1;
 }
 
+/* Press-only physical treatment: the links stay flat text at rest (a row of
+   resting pills would fight the sliding accent underline and the rail
+   hairline), but a tap sinks the link's own box into the ground so it answers
+   under the finger. `animation: none` is required — the hover pulse above
+   animates box-shadow, and a running animation outranks this declaration, so
+   without it a click inside the pulse's 1.1s window shows no recess at all. */
+.c-nav__link:active {
+  animation: none;
+  box-shadow: var(--neu-shadow-inset-sm);
+  transform: var(--neu-press-transform);
+  transition-duration: var(--neu-press-duration);
+}
+
+/* Already latched, so it presses to the deeper well — same two-tier rule the
+   archive pills and the hamburger follow. */
+.c-nav__link.is-active:active {
+  box-shadow: var(--neu-shadow-pressed);
+}
+
+/* Round icon-only key, flat at rest — the same behaviour as .c-nav__link above:
+   nothing extrudes inside the island, depth only ever appears going IN. The
+   island is the one raised object; its contents are carved into it or sit
+   flush. The section label it used to show is still in the DOM as u-sr-only
+   (the aria-label is built from it), but the visible readout is gone, which is
+   the cost of the round shape. */
 .c-nav__toggle {
   display: none;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  gap: var(--space-10);
+  gap: 0;
   min-width: 0;
+  width: var(--nav-touch-target);
   min-height: var(--nav-touch-target);
   margin-left: 0;
-  padding: 0 var(--space-12);
-  background: var(--neu-bg);
-  border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-base);
-  box-shadow: var(--neu-shadow-raised-sm);
+  padding: 0;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-full);
   color: var(--color-text);
   font: inherit;
   transition:
     background-color 0.2s ease-out,
-    border-color 0.2s ease-out,
-    box-shadow 0.2s ease-out,
-    color 0.2s ease-out;
+    color 0.2s ease-out,
+    box-shadow var(--neu-release-duration) var(--ease-standard),
+    transform var(--neu-release-duration) var(--ease-standard);
 }
 
+/* Accent is carried by the glyph alone — no rim, nothing to raise. */
 .c-nav__toggle:hover {
-  border-color: rgba(var(--color-accent-rgb), 0.5);
   color: var(--color-accent);
 }
 
-/* Menu open: the pill presses in (raised→inset), keeping the accent cue. */
+/* Menu open: latched into the ground, exactly like an active nav link. */
 .c-nav__toggle.is-active {
-  border-color: rgba(var(--color-accent-rgb), 0.5);
   color: var(--color-accent);
   box-shadow: var(--neu-shadow-inset-sm);
 }
 
-.c-nav__toggle-label {
-  min-width: 0;
-  overflow: hidden;
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  line-height: 1;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+/* Pressed while closed: flat → inset. */
+.c-nav__toggle:active {
+  box-shadow: var(--neu-shadow-inset-sm);
+  transform: var(--neu-press-transform);
+  transition-duration: var(--neu-press-duration);
 }
+
+/* Pressed while OPEN: the key already rests at inset, so an inset press would
+   be invisible. It travels to the deeper well instead — the same distinction
+   the archive pills make between "selected" and "being pressed". */
+.c-nav__toggle.is-active:active {
+  box-shadow: var(--neu-shadow-pressed);
+}
+
+/* The label carries no visual styling any more — it is u-sr-only in the markup
+   and exists only to feed the "currently <section>" aria-label. */
 
 .c-nav__toggle-icon {
   position: relative;
@@ -322,51 +338,84 @@ html.is-theme-transitioning *::after {
     fill 0.45s ease-in-out !important;
 }
 
-/* Theme toggle: borderless physical key. Deliberately has NO border — the
-   raised shadow pair alone is the boundary, so it reads as a cap moulded out
-   of the ground rather than an outlined chip (a hairline border reads as a
-   bright rim against the dark ground and fights the extrusion). Hovering
-   fires a one-shot pulse; the icon previews the theme it switches TO: sun
-   while in dark mode, moon while in light mode. */
+/* Theme toggle: a two-position tray switch, not a button. The body is a
+   shallow trough and both halves sit in it as keys; the half matching the
+   CURRENT scheme drops into the deep well while the other stands proud.
+
+   That inverts what this control used to say. It previewed the theme it would
+   switch TO (sun while dark, moon while light); it now reports the theme you
+   are IN, which is what a switch does — hence role="switch" + aria-checked in
+   SiteNav.astro rather than a plain button.
+
+   Fully round because it lives inside the pill island: 44px-tall contents with
+   7px clearance inside a 58px pill want a 22px radius, exactly half their
+   height. Concentric, not decorative. The border stays 1px transparent so the
+   high-contrast fallbacks in components/neu.css have a style to colour in. */
 
 .c-theme-toggle {
   position: relative;
   display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  align-items: stretch;
   flex: 0 0 auto;
-  width: var(--nav-touch-target);
+  gap: 0.1875rem;
+  width: 5rem;
   min-height: var(--nav-touch-target);
   margin-left: var(--space-8);
-  padding: 0;
+  padding: 0.1875rem;
   background: var(--neu-bg);
-  border: none;
-  border-radius: var(--radius-base);
-  box-shadow: var(--neu-shadow-raised-sm);
-  cursor: pointer;
-  transition:
-    box-shadow 0.22s var(--ease-standard),
-    transform 0.22s var(--ease-standard);
-}
-
-/* btnNeuPulseSm (not btnSignalPulse) so the resting raise survives the pulse —
-   and the small variant, so the key doesn't inflate to the large raise on
-   hover and undercut the press that follows. */
-.c-theme-toggle:hover {
-  animation: btnNeuPulseSm 1.1s ease-out 1;
-}
-
-/* Pressed: the key travels into the ground (raised→inset) and shrinks a hair,
-   fast on the way down and eased on the way back out. `animation: none` is
-   load-bearing — the hover pulse animates box-shadow, and a running animation
-   outranks this rule's declaration, so without it a click inside the pulse's
-   1.1s window would never show the inset. Dropping the animation also means
-   release re-triggers the pulse, which doubles as the click's confirmation. */
-.c-theme-toggle:active {
-  animation: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-full);
   box-shadow: var(--neu-shadow-inset-sm);
-  transform: translateY(1px) scale(0.95);
-  transition-duration: 0.08s;
+  cursor: pointer;
+}
+
+/* Deliberately no hover pulse. btnNeuPulse* animates box-shadow toward a
+   RAISED value, which on a trough would turn the recess inside out mid-hover.
+   The keys carry the feedback instead. */
+
+.c-theme-toggle__half {
+  display: inline-flex;
+  flex: 1 1 50%;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  transition:
+    box-shadow var(--neu-release-duration) var(--ease-standard),
+    transform var(--neu-release-duration) var(--ease-standard),
+    opacity var(--neu-release-duration) var(--ease-standard);
+}
+
+/* Idle half: lies FLAT in the trough, dimmed so value backs up depth. It used
+   to stand proud, which made it the only thing still extruding inside the
+   island once the links and menu button went flat. Nothing in here extrudes
+   now — the island is the one raised object and depth only ever goes inward. */
+.c-theme-toggle__half {
+  background: none;
+  box-shadow: none;
+  opacity: 0.45;
+}
+
+/* Engaged half: recessed to the deep well — the site's settled meaning for
+   "on" (archive pills, the nav latch and the booking close state all read
+   this way). Light engages the sun; the dark-scheme rules below swap it. */
+.c-theme-toggle__half--sun {
+  box-shadow: var(--neu-shadow-well);
+  opacity: 1;
+}
+
+[data-color-scheme='dark'] .c-theme-toggle__half--sun {
+  box-shadow: none;
+  opacity: 0.45;
+}
+
+[data-color-scheme='dark'] .c-theme-toggle__half--moon {
+  box-shadow: var(--neu-shadow-well);
+  opacity: 1;
+}
+
+.c-theme-toggle:active .c-theme-toggle__half {
+  transform: var(--neu-press-transform);
+  transition-duration: var(--neu-press-duration);
 }
 
 .c-theme-toggle:focus-visible {
@@ -375,21 +424,8 @@ html.is-theme-transitioning *::after {
 }
 
 .c-theme-toggle__icon {
-  width: 1.375rem;
-  height: 1.375rem;
-}
-
-.c-theme-toggle__sun,
-.c-theme-toggle__moon {
-  transform-origin: center;
-  transition:
-    opacity 0.25s ease-out,
-    transform 0.35s var(--animation-curve);
-}
-
-.c-theme-toggle__sun {
-  opacity: 0;
-  transform: scale(0.6) rotate(-45deg);
+  width: 1.125rem;
+  height: 1.125rem;
 }
 
 /* While the viewport is actively resizing, suppress the mobile sheet's
@@ -413,12 +449,6 @@ html.is-theme-transitioning *::after {
 
   .c-nav__toggle {
     display: inline-flex;
-    max-width: min(var(--nav-toggle-max-width), var(--nav-toggle-fluid-width));
-  }
-
-  .c-nav.is-scrolled::before {
-    animation: none;
-    opacity: 0;
   }
 
   .c-nav__toggle.is-active .c-nav__toggle-icon span:nth-child(1) {
@@ -439,8 +469,8 @@ html.is-theme-transitioning *::after {
   .c-nav__menu {
     position: fixed;
     top: var(--navbar-height);
-    right: var(--space-16);
-    left: var(--space-16);
+    right: var(--nav-inset);
+    left: var(--nav-inset);
     width: auto;
     max-height: min(
       var(--nav-sheet-max-block-size),
@@ -470,34 +500,28 @@ html.is-theme-transitioning *::after {
     transition-delay: 0s;
   }
 
-  .c-nav__menu::after {
-    display: none;
-  }
-
-  .c-nav__menu::before {
-    display: none;
-  }
-
   /* Raised soft-UI sheet. The neu shadow gives the soft edge; --shadow-sheet is
-     kept layered on top so it stays legible floating over page content. */
+     kept layered on top so it stays legible floating over page content.
+     Borderless (1px transparent) to match the island above it — neu.css
+     colours it in for high-contrast users. */
   .c-nav__rail {
     display: grid;
     gap: var(--space-4);
     padding: var(--space-10);
     background: var(--neu-bg);
-    border: 1px solid var(--color-border-strong);
+    border: 1px solid transparent;
     border-radius: var(--radius-xl);
     box-shadow: var(--neu-shadow-raised), var(--shadow-sheet);
   }
 
-  .c-nav__rail::after {
-    display: none;
-  }
-
+  /* Back to the small radius here: the sheet is a --radius-xl surface with
+     --space-10 padding, so 16 − 10 ≈ 6px is this context's concentric answer.
+     The desktop pill would read as a stadium on a full-width row. */
   .c-nav__link {
     justify-content: flex-start;
     font-size: var(--font-size-base);
     padding: var(--space-10) var(--space-16) var(--space-10) var(--space-20);
+    border-radius: var(--radius-sm);
     transition:
       color var(--animation-speed) var(--animation-curve),
       background-color var(--animation-speed) var(--animation-curve);
@@ -528,16 +552,20 @@ html.is-theme-transitioning *::after {
     animation: navMarkerGlassPulse 4.8s ease-in-out infinite;
   }
 
+  /* The sheet has its own active language — accent marker + wash. Drop the
+     desktop latch: inside an already-raised sheet, a third signal per row
+     (well + marker + wash) is noise. */
   .c-nav__link.is-active {
     background: var(--color-overlay-weak);
+    box-shadow: none;
+  }
+
+  .c-nav__link.is-active:active {
+    box-shadow: none;
   }
 
   .c-nav__link:hover {
     background: var(--color-overlay-weak);
-  }
-
-  .c-nav:has(.c-nav__menu.is-active) {
-    background-color: var(--color-background) !important;
   }
 
   /* The docked heading bar is redundant nav chrome while the sheet is open,
@@ -590,12 +618,5 @@ html.is-theme-transitioning *::after {
   .c-nav__menu {
     right: var(--space-12);
     left: var(--space-12);
-  }
-
-  .c-nav__toggle {
-    max-width: min(
-      var(--nav-toggle-mobile-max-width),
-      var(--nav-toggle-fluid-width)
-    );
   }
 }

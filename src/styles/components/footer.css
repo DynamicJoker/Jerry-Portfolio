@@ -21,15 +21,34 @@
   color: var(--color-text-secondary);
 }
 
+/* Press-only, matching the nav links: flat at rest, the box sinks on tap.
+   inline-flex because transform does not apply to inline boxes. The padding
+   gives the inset well room to render around the text, and the equal negative
+   inline margin cancels it so the link's text stays optically where it was
+   against the container edge. */
 .c-footer__link {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-4) var(--space-8);
+  margin-inline: calc(var(--space-8) * -1);
+  border-radius: var(--radius-sm);
   color: var(--color-electric-blue);
   text-decoration: none;
   font-weight: var(--font-weight-medium);
-  transition: color var(--animation-speed) var(--animation-curve);
+  transition:
+    color var(--animation-speed) var(--animation-curve),
+    box-shadow var(--neu-release-duration) var(--ease-standard),
+    transform var(--neu-release-duration) var(--ease-standard);
 }
 
 .c-footer__link:hover {
   color: var(--color-electric-blue);
+}
+
+.c-footer__link:active {
+  box-shadow: var(--neu-shadow-inset-sm);
+  transform: var(--neu-press-transform);
+  transition-duration: var(--neu-press-duration);
 }
 
 @media (max-width: 48rem) {

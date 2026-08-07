@@ -16,7 +16,13 @@
   .c-archive__filter,
   .c-featured__btn,
   .c-lightbox__close,
-  .c-form-control {
+  .c-form-control,
+  .c-theme-toggle,
+  .c-nav__toggle,
+  .c-btn--primary,
+  .c-btn--outline,
+  .c-nav__container,
+  .c-nav__rail {
     border: 1px solid;
   }
 
@@ -25,23 +31,73 @@
     border: 2px solid Highlight;
     color: Highlight;
   }
+
+  /* The press is carried entirely by box-shadow, which forced-colors drops.
+     Leave the transform as the only pressed cue rather than nothing. */
+  .c-nav__toggle.is-active {
+    border: 2px solid Highlight;
+    color: Highlight;
+  }
+
+  /* The theme switch's whole state is depth, which is gone here. Give both
+     halves an edge and mark the engaged one with the system Highlight, or the
+     switch reads as two identical icons with no indication of which is on. */
+  .c-theme-toggle__half {
+    border: 1px solid;
+  }
+
+  .c-theme-toggle__half--sun,
+  [data-color-scheme='dark'] .c-theme-toggle__half--moon {
+    border: 2px solid Highlight;
+    color: Highlight;
+  }
+
+  [data-color-scheme='dark'] .c-theme-toggle__half--sun {
+    border: 1px solid;
+    color: CanvasText;
+  }
 }
 
-/* prefers-contrast: more — the default resting boundary on a soft control is a
-   faint hairline plus the (sub-3:1) neutral border; promote it to a solid accent
-   border, which clears 3:1 in both themes, and thicken the selected pill. */
+/* prefers-reduced-motion — the raised→inset flip is a state change rather than
+   motion, so it stays (removing it would leave the press with no feedback at
+   all); the travel and scale are motion and go. Neutralising the two tokens
+   here collapses the transform on every pressed control at once, so individual
+   components never need their own reduced-motion block for the press.
+   Imported last, so this beats the :root values in settings.css. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --neu-press-transform: none;
+    --neu-press-key-transform: none;
+  }
+}
+
+/* prefers-contrast: more — the resting boundary on a soft control is now the
+   shadow pair alone (the controls carry a 1px TRANSPARENT border so these
+   overrides still have a border-style to colour in; measured, the old neutral
+   hairline was only 1.44:1 light / 1.56:1 dark, so it was never the 3:1 its
+   comments claimed). Promote it to a solid accent border, which does clear 3:1
+   in both themes (4.75:1 light, 7.82:1 dark), and thicken the selected pill.
+
+   Every control listed here MUST declare a border-style in its base rule —
+   `border-color` on a `border: none` element is a silent no-op. */
 @media (prefers-contrast: more) {
   .c-archive__tab,
   .c-archive__filter,
   .c-featured__btn,
   .c-lightbox__close,
   .c-form-control,
-  .c-btn--outline {
+  .c-btn--outline,
+  .c-btn--primary,
+  .c-theme-toggle,
+  .c-nav__toggle,
+  .c-nav__container,
+  .c-nav__rail {
     border-color: var(--color-primary);
   }
 
   .c-archive__tab.is-active,
-  .c-archive__filter.is-active {
+  .c-archive__filter.is-active,
+  .c-nav__toggle.is-active {
     border-width: 2px;
   }
 }

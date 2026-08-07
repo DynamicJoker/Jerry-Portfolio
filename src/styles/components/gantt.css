@@ -60,6 +60,15 @@
   cursor: pointer;
   min-height: 1.75rem;
   min-width: 0;
+  transition: box-shadow var(--neu-release-duration) var(--ease-standard);
+}
+
+/* This role="button" track already rests recessed, so it presses to the deeper
+   well rather than to inset — the same distinction the archive pills draw.
+   No travel: the bar is measured against the row's date columns, and shifting
+   it 1px would read as the timeline slipping out of alignment. */
+.c-gantt__bar-area:active {
+  box-shadow: var(--neu-shadow-pressed);
 }
 
 .c-gantt__bar {

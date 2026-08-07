@@ -140,6 +140,16 @@
   font-family: inherit;
   cursor: pointer;
   color: var(--color-text-secondary);
+  transition: transform var(--neu-release-duration) var(--ease-standard);
+}
+
+/* Press: travel only, deliberately no inset well. These tabs sit ON the
+   pipeline rail (.c-pipeline__nodes::before) with a transparent background —
+   a recess drawn around a diagram node would read as a box appearing behind
+   the rail rather than as depth. The 1px dip is enough to answer the tap. */
+.c-pipeline__node:active {
+  transform: var(--neu-press-transform);
+  transition-duration: var(--neu-press-duration);
 }
 
 .c-pipeline__node:focus-visible {
