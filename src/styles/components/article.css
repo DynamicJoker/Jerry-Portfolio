@@ -130,9 +130,13 @@
 /* Inset soft-UI chart well. (Class names are content-coupled to published
    .mdx — restyle only, never rename.) */
 .c-article-chart {
-  --chart-fill-start: var(--color-electric-blue);
-  --chart-fill-end: var(--color-accent-teal);
-  --chart-fill-accent: var(--color-accent-teal);
+  /* Series 1 is the default fill, series 2 the --accent modifier. Both come
+     from settings.css and are asserted distinct by `npm run check:charts`.
+     The old --chart-fill-start/-end pair described a gradient whose two stops
+     had already collapsed to the same colour, so it painted flat; solid fills
+     say what actually renders. */
+  --chart-fill: var(--chart-series-1);
+  --chart-fill-accent: var(--chart-series-2);
   padding: clamp(1rem, 2.5vw, 1.15rem);
   border-radius: var(--radius-xl);
   background: var(--neu-bg);
@@ -200,11 +204,7 @@
   inline-size: var(--bar-size);
   block-size: 100%;
   border-radius: inherit;
-  background: linear-gradient(
-    90deg,
-    var(--chart-fill-start),
-    var(--chart-fill-end)
-  );
+  background: var(--chart-fill);
   content: '';
 }
 
@@ -257,11 +257,7 @@
   min-inline-size: 0;
   color: var(--color-on-fill);
   font-weight: var(--font-weight-bold);
-  background: linear-gradient(
-    90deg,
-    var(--chart-fill-start),
-    var(--chart-fill-end)
-  );
+  background: var(--chart-fill);
 }
 
 .c-stacked-bar__segment--accent {
@@ -284,11 +280,13 @@
   align-items: center;
 }
 
+/* Routed through the series token, not --color-electric-blue directly: the
+   swatch has to track whatever the segment it labels is actually painted. */
 .c-article-chart__legend-swatch {
   width: 0.7rem;
   height: 0.7rem;
   border-radius: 2px;
-  background: var(--color-electric-blue);
+  background: var(--chart-fill);
 }
 
 .c-article-chart__legend-swatch--accent {

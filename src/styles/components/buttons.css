@@ -60,7 +60,7 @@
 .c-btn--lg {
   padding: var(--space-10) var(--space-20);
   font-size: var(--font-size-lg);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-full);
 }
 
 .c-btn--full-width {
@@ -77,13 +77,13 @@
   isolation: isolate;
   background: var(--color-accent);
   color: var(--color-btn-primary-text);
-  box-shadow: var(--neu-shadow-raised);
+  box-shadow: none;
   transition:
-    background 0.3s var(--ease-standard),
+    background var(--animation-speed) var(--ease-standard),
     color 0.45s var(--ease-standard),
     border-color 0.45s var(--ease-standard),
-    box-shadow 0.45s var(--ease-standard),
-    transform 0.35s var(--ease-standard);
+    box-shadow var(--neu-release-duration) var(--ease-standard),
+    transform var(--neu-release-duration) var(--ease-standard);
 }
 
 .c-btn.c-booking-cta__button:not(.is-close-state):hover {
@@ -154,23 +154,30 @@
    now told apart by fill (primary) vs ground (outline) plus the raise; the
    high-contrast fallback restores a real accent border.
 
-   The signature raised↔inset press lands on the ground-colored outline button;
-   the saturated primary settles to the small raise instead (the inset tints are
-   ground-colored and read as dirt over an accent fill). */
+   FLAT at rest, pressing inward — the same rule the navbar follows, and the
+   reason it changed: these carried --neu-shadow-raised, byte-identical to the
+   nav island's shadow, so every CTA was matching the weight of the entire
+   floating navbar. Nothing on the page now extrudes except the island itself.
+
+   Both variants press exactly like a nav link: inset + 1px travel, 0.08s down
+   and 0.22s eased back, on --ease-standard. The primary can finally take that
+   same press because --neu-shadow-inset-fill tints from the surface rather than
+   the ground (see settings.css) — previously it had to settle instead. */
 
 .c-btn--primary,
 .c-btn--outline {
   border: 2px solid transparent;
+  border-radius: var(--radius-full);
   font-weight: var(--font-weight-semibold);
   position: relative;
   overflow: hidden;
-  box-shadow: var(--neu-shadow-raised);
+  box-shadow: none;
   transition:
-    background 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background var(--animation-speed) var(--ease-standard),
+    border-color var(--animation-speed) var(--ease-standard),
+    color var(--animation-speed) var(--ease-standard),
+    box-shadow var(--neu-release-duration) var(--ease-standard),
+    transform var(--neu-release-duration) var(--ease-standard);
 }
 
 .c-btn--primary {
@@ -183,32 +190,39 @@
   color: var(--color-btn-primary-text);
 }
 
-/* Pressed: settles toward the surface rather than recessing. `animation: none`
-   is required on both variants — btnNeuPulse below animates box-shadow, and a
-   running animation outranks these declarations, so without it a click landing
-   inside the pulse's 1.1s window would show no depth change at all. */
+/* Pressed: recesses into its own fill. `animation: none` is required on both
+   variants — the hover pulse animates box-shadow, and a running animation
+   outranks these declarations, so without it a click landing inside the
+   pulse's 1.1s window would show no depth change at all. */
 .c-btn--primary:active {
   animation: none;
   background: var(--color-primary-active);
-  box-shadow: var(--neu-shadow-raised-sm);
+  box-shadow: var(--neu-shadow-inset-fill);
   transform: var(--neu-press-transform);
   transition-duration: var(--neu-press-duration);
 }
 
+/* Secondary is a GHOST button now, not an outline one. Flat with no border, its
+   boundary is a tint that cannot reach WCAG 1.4.11's 3:1 at any usable alpha
+   (measured: 1.13:1 at 10%, still only 1.84:1 light / 2.64:1 at 45%, by which
+   point it reads as a solid fill). It is identified by its label instead —
+   which is what a ghost button is. `prefers-contrast: more` in components/
+   neu.css restores a real accent border for anyone who needs the edge. */
 .c-btn--outline {
-  background: var(--neu-bg);
+  background: rgba(var(--color-primary-rgb), 0.1);
   color: var(--color-text);
 }
 
 .c-btn--outline:hover {
-  background: rgba(var(--color-primary-rgb), 0.12);
+  background: rgba(var(--color-primary-rgb), 0.18);
   color: var(--color-text);
 }
 
-/* Pressed: the ground-colored outline recesses (signature soft-UI toggle). */
+/* Ground-coloured, so it takes the ordinary ground-tinted inset — identical to
+   a nav link's press. */
 .c-btn--outline:active {
   animation: none;
-  box-shadow: var(--neu-shadow-inset);
+  box-shadow: var(--neu-shadow-inset-sm);
   transform: var(--neu-press-transform);
   transition-duration: var(--neu-press-duration);
 }
@@ -246,9 +260,12 @@
    trough-bodied switch now — a pulse animating box-shadow toward a RAISED
    value would turn its recess inside out — so the keyframe went with it. */
 
+/* btnSignalPulse, not btnNeuPulse: the neu variant carries --neu-shadow-raised
+   through the ring, which would swell a now-flat button up to the island's
+   weight for 1.1s on every hover. The plain ring leaves the button flat. */
 .c-btn--primary:not(.is-close-state):hover,
 .c-btn--outline:hover {
-  animation: btnNeuPulse 1.1s ease-out 1;
+  animation: btnSignalPulse 1.1s ease-out 1;
 }
 
 @media (prefers-reduced-motion: reduce) {

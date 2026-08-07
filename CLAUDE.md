@@ -61,7 +61,14 @@ Personal portfolio + blog, deployed on Vercel at https://jerryjames.me.
   styling work; settings.css stays the live source of truth.
 - The MDX chart classes (`c-article-chart*`, `c-stacked-bar*`) are written by
   hand in blog post bodies — renaming them means editing published
-  `src/content/blog/*.mdx` too.
+  `src/content/blog/*.mdx` too. Chart fills come from `--chart-series-1` /
+  `--chart-series-2` (settings.css); **never point a chart at
+  `--color-electric-blue` or `--color-accent-teal`** — both are legacy aliases
+  of `--color-primary`, so a two-colour chart built on them renders as one flat
+  fill with nothing failing. `npm run check:charts` (build-gated) resolves the
+  series through their `var()` chains per theme and fails if any two converge,
+  and also rejects any `c-article-chart*`/`c-stacked-bar*` class used in MDX
+  that the stylesheet doesn't define (catches typo'd modifiers in new posts).
 
 ## Workflows
 
@@ -69,11 +76,12 @@ Personal portfolio + blog, deployed on Vercel at https://jerryjames.me.
   changes with `npm run build` then `npm run preview` (restart preview after
   each build).
 - `npm run build` gates on `prettier --check`, `eslint .`, then the
-  `check:critical`, `check:bemit`, and `check:theme` scripts before building —
+  `check:critical`, `check:bemit`, `check:theme`, and `check:charts` scripts
+  before building —
   format with `npm run format` and lint with `npm run lint` first. The
   pre-commit hook enforces format + lint only; the `check:*` gates run on
   build/CI (run them standalone with `npm run check:bemit` / `check:critical` /
-  `check:theme`). `check:theme` (`scripts/check-theme-sync.mjs`) asserts the two
+  `check:theme` / `check:charts`). `check:theme` (`scripts/check-theme-sync.mjs`) asserts the two
   dark-theme blocks in `settings.css` — the `@media (prefers-color-scheme: dark)`
   no-JS fallback and the `[data-color-scheme='dark']` block — stay token-for-token
   identical. ESLint flat config is `eslint.config.mjs` (browser globals for

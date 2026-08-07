@@ -201,6 +201,20 @@
   --neu-release-duration: 0.22s;
   --neu-shadow-pressed: var(--neu-shadow-well);
 
+  /* Inset for SATURATED surfaces. The recipes above tint from the ground
+     (--neu-shadow-dark/-light), which is correct on a ground-coloured control
+     and wrong on a filled one — painted inside an accent fill those warm greys
+     read as grime, which is why the primary button used to settle instead of
+     recessing. Building the same geometry from black/white alphas instead makes
+     the tint relative to whatever surface it lands on, so a filled button can
+     take the identical press as everything else. Alpha-based, therefore
+     theme-independent: no counterpart belongs in the dark blocks. */
+  --neu-shadow-inset-fill:
+    inset var(--neu-distance-sm) var(--neu-distance-sm) var(--neu-blur-sm)
+      rgba(0, 0, 0, 0.3),
+    inset calc(var(--neu-distance-sm) * -1) calc(var(--neu-distance-sm) * -1)
+      var(--neu-blur-sm) rgba(255, 255, 255, 0.14);
+
   /* Animation */
   --duration-fast: 150ms;
   --duration-normal: 250ms;
@@ -313,6 +327,18 @@
   --color-btn-neutral-hover: #d2d0cc;
   --color-btn-neutral-active: #c8c6c2;
   --color-on-fill: #ffffff;
+  /* Two-series chart palette (blog MDX charts). These MUST resolve to
+     different colours. They previously ran through --color-electric-blue and
+     --color-accent-teal, which the rebrand aliased to --color-primary — both
+     of them — so every two-colour chart silently collapsed to one flat fill.
+     `npm run check:charts` now fails the build if the series ever converge
+     again. Series 2 is theme-explicit because --color-primary and
+     --color-accent sit at nearly identical luminance in light mode (4.75:1 vs
+     4.78:1 against the ground), so they cannot serve as a two-series pair.
+     Both series must keep --color-on-fill legible: white in light, near-black
+     in dark, hence series 2 goes darker in light and paler in dark. */
+  --chart-series-1: var(--color-primary);
+  --chart-series-2: #1d3140;
   --shell-tint-violet: rgba(143, 92, 255, 0.08);
   --loading-screen-bg: linear-gradient(135deg, #f0eeea 0%, #e3f1fb 100%);
   --hero-name-rest: #1a1a2e;
@@ -389,6 +415,7 @@
     --color-btn-neutral-hover: rgba(72, 79, 84, 0.98);
     --color-btn-neutral-active: rgba(54, 59, 63, 0.98);
     --color-on-fill: #0f1117;
+    --chart-series-2: #cbe9ff;
     --shell-tint-violet: rgba(143, 92, 255, 0.12);
     --loading-screen-bg: linear-gradient(135deg, #1a1d29 0%, #232633 100%);
     --hero-name-rest: #fff;
@@ -455,6 +482,7 @@
   --color-btn-neutral-hover: rgba(72, 79, 84, 0.98);
   --color-btn-neutral-active: rgba(54, 59, 63, 0.98);
   --color-on-fill: #0f1117;
+  --chart-series-2: #cbe9ff;
   --shell-tint-violet: rgba(143, 92, 255, 0.12);
   --loading-screen-bg: linear-gradient(135deg, #1a1d29 0%, #232633 100%);
   --hero-name-rest: #fff;

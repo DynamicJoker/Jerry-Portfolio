@@ -108,6 +108,14 @@
   --neu-press-key-transform: translateY(1px) scale(0.95);
   --neu-press-duration: 0.08s;
   --neu-release-duration: 0.22s;
+  /* Inset for saturated surfaces (the primary button's press). Alpha-based so
+     the tint is relative to whatever fill it lands on — theme-independent, so
+     no counterpart belongs in the dark blocks. See settings.css. */
+  --neu-shadow-inset-fill:
+    inset var(--neu-distance-sm) var(--neu-distance-sm) var(--neu-blur-sm)
+      rgba(0, 0, 0, 0.3),
+    inset calc(var(--neu-distance-sm) * -1) calc(var(--neu-distance-sm) * -1)
+      var(--neu-blur-sm) rgba(255, 255, 255, 0.14);
   --duration-fast: 150ms;
   --duration-normal: 250ms;
   --ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
@@ -1142,23 +1150,26 @@ html.is-theme-transitioning *::after {
 
 .c-btn--lg {
   padding: var(--space-10) var(--space-20);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-full);
   font-size: var(--font-size-lg);
 }
 
+/* Flat at rest — nothing on the page extrudes except the nav island. Both
+   variants press inward like a nav link. */
 .c-btn--primary,
 .c-btn--outline {
   position: relative;
   overflow: hidden;
   border: 2px solid transparent;
+  border-radius: var(--radius-full);
   font-weight: var(--font-weight-semibold);
-  box-shadow: var(--neu-shadow-raised);
+  box-shadow: none;
   transition:
-    background 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background var(--animation-speed) var(--ease-standard),
+    border-color var(--animation-speed) var(--ease-standard),
+    color var(--animation-speed) var(--ease-standard),
+    box-shadow var(--neu-release-duration) var(--ease-standard),
+    transform var(--neu-release-duration) var(--ease-standard);
 }
 
 .c-btn--primary {
@@ -1166,25 +1177,27 @@ html.is-theme-transitioning *::after {
   color: var(--color-btn-primary-text);
 }
 
+/* Ghost, not outline: flat and borderless, identified by its label. */
 .c-btn--outline {
-  background: var(--neu-bg);
+  background: rgba(var(--color-primary-rgb), 0.1);
   color: var(--color-text);
 }
 
-/* Press. Primary settles toward the surface (ground-colored inset tints read
-   as dirt over an accent fill); outline recesses. `animation: none` guards
-   against the deferred sheet's hover pulse masking the depth change. */
+/* Press. Primary recesses into its own fill (--neu-shadow-inset-fill tints
+   from the surface, not the ground); the ground-coloured ghost takes the
+   ordinary inset. `animation: none` guards against the deferred sheet's hover
+   pulse masking the depth change. */
 .c-btn--primary:active {
   animation: none;
   background: var(--color-primary-active);
-  box-shadow: var(--neu-shadow-raised-sm);
+  box-shadow: var(--neu-shadow-inset-fill);
   transform: var(--neu-press-transform);
   transition-duration: var(--neu-press-duration);
 }
 
 .c-btn--outline:active {
   animation: none;
-  box-shadow: var(--neu-shadow-inset);
+  box-shadow: var(--neu-shadow-inset-sm);
   transform: var(--neu-press-transform);
   transition-duration: var(--neu-press-duration);
 }
