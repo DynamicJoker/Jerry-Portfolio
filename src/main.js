@@ -475,11 +475,12 @@ function initializeDistillerPause() {
 }
 
 // Docked section headings: each .c-section__header is position:sticky (CSS). As
-// a header nears the dock line we scrub --dock-progress (CSS scales the title
-// toward its compact size); once it reaches the line .is-docked swaps in the
-// slim bar layout. The header's natural height is pinned as an inline
-// min-height so the swap never reflows the content below — see "Docked section
-// headings" in src/styles/components/section.css.
+// a header nears the dock line we scrub --dock-progress (CSS fades the full
+// heading out); once it reaches the line .is-docked swaps in the compact
+// centred tab, which animates in from behind the navbar island. The header's
+// natural height is pinned as an inline min-height so the swap never reflows
+// the content below — see "Docked section headings" in
+// src/styles/components/section.css.
 //
 // Both the docked state and the scrub are derived from each header's *live*
 // position relative to the dock line on every scroll — never from cached scroll
@@ -495,29 +496,17 @@ function initializeDockedSectionHeaders() {
   ];
   if (!headers.length) return;
 
-  // Reserve each header's natural height as a min-height so the compact swap
-  // never reflows the content below, and measure the compact/full title ratio
-  // (--dock-scale-end) the scrub scales toward. Re-run whenever layout can
-  // change (load, fonts settling, resize).
+  // Reserve each header's natural height as a min-height so the swap to the
+  // compact tab never reflows the content below. Re-run whenever layout can
+  // change (load, fonts settling, resize). Nothing else is measured: the tab
+  // is a cross-fade, not a morph, so there is no scale ratio to derive — see
+  // "Docked section headings" in src/styles/components/section.css.
   const measureHeaders = () => {
     headers.forEach((header) => {
-      const title = header.querySelector('.c-section__title');
       const wasDocked = header.classList.contains('is-docked');
       header.classList.remove('is-docked');
       header.style.removeProperty('min-height');
-      const naturalHeight = header.offsetHeight;
-      let scaleEnd = 0.45;
-      if (title) {
-        const fullSize = Number.parseFloat(getComputedStyle(title).fontSize);
-        header.classList.add('is-docked');
-        const compactSize = Number.parseFloat(getComputedStyle(title).fontSize);
-        header.classList.remove('is-docked');
-        if (fullSize > 0 && compactSize > 0) {
-          scaleEnd = compactSize / fullSize;
-        }
-      }
-      header.style.minHeight = `${naturalHeight}px`;
-      header.style.setProperty('--dock-scale-end', scaleEnd.toFixed(4));
+      header.style.minHeight = `${header.offsetHeight}px`;
       if (wasDocked) header.classList.add('is-docked');
     });
   };

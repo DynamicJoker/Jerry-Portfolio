@@ -70,53 +70,61 @@ body {
 }
 
 /* Docked section headings. The header is a full-bleed direct child of
-   .c-section with its own inner .o-container, so the bar background can span
-   edge to edge while the text stays aligned with the content column.
-   main.js reserves the header's natural height as an inline min-height, so
-   the compact swap never reflows the content below (transform/opacity only
-   during the scrub). */
+   .c-section with its own inner .o-container; main.js reserves the header's
+   natural height as an inline min-height so the swap to the compact tab never
+   reflows the content below.
+
+   The docked form is a small centred tab tucked under the navbar island,
+   NOT a full-bleed bar: the navbar is a detached, fully-rounded slab inset
+   from the viewport edges, and an edge-to-edge square bar underneath it read
+   as a different physical language. Sizing the tab to its own text and
+   centring it on the island keeps one vocabulary.
+
+   Handoff (see the reduced-motion block for the no-scrub path): the full
+   heading fades out over the approach and the tab animates in at the dock
+   line. Both sides sit at ~0 opacity when the layout actually swaps, so the
+   swap itself is never visible — which is why this needs no morph. A morph
+   was ruled out deliberately: a centred target is ~600px of lateral travel at
+   desktop widths inside a 7.5rem scrub, it varies per section with the title's
+   width, and the tab's chrome would have to animate `width`, which can't be
+   composited. */
 
 .c-section .c-section__header {
   position: sticky;
-  top: calc(var(--navbar-height) + var(--beta-banner-offset, 0rem));
+  top: calc(
+    var(--navbar-height) + var(--beta-banner-offset, 0rem) - var(--dock-tuck)
+  );
   z-index: var(--z-section-header);
 }
 
-/* Bar chrome lives on a pseudo so it can fade independently of the swap.
-   z-index: -1 keeps it under the text row (a positioned pseudo otherwise
-   paints over in-flow content); it can't escape the header's own stacking
-   context, so it still covers content scrolling beneath the bar. */
-
-.c-section__header::before {
-  content: '';
-  position: absolute;
-  inset: 0 0 auto;
-  z-index: -1;
-  height: var(--dock-bar-height);
-  background: var(--color-navbar-scrolled-bg);
-  border-bottom: 1px solid var(--color-hairline);
-  opacity: 0;
-  transition: opacity var(--duration-fast) var(--ease-standard);
-  pointer-events: none;
-}
-
-.c-section__header.is-docked::before {
-  opacity: 1;
-}
-
 /* The reserved (mostly empty) header box must not block clicks on content
-   scrolling beneath it; only the compact row stays interactive. */
+   scrolling beneath it. The tab stays non-interactive too — it is a label,
+   not a control, and it would otherwise sit over the middle of the page
+   swallowing taps on whatever scrolls behind it. */
 
 .c-section__header.is-docked {
   pointer-events: none;
 }
 
+/* The tab: shrink-to-fit and centred. `width: fit-content` collapses the
+   inner to its text; the `margin: 0 auto` it already carries from
+   .o-container then centres it. Square top corners + rounded bottom so it
+   reads as pulled out from under the island rather than as a second pill. */
+
 .c-section__header.is-docked .c-section__header-inner {
-  pointer-events: auto;
   display: flex;
   align-items: center;
-  gap: var(--space-12);
+  gap: var(--space-10);
+  width: fit-content;
+  /* Never wider than the island it hangs from, and never past the viewport. */
+  max-width: min(100% - var(--space-32), 34rem);
   height: var(--dock-bar-height);
+  padding-block: 0;
+  padding-inline: var(--space-20);
+  background: var(--neu-bg);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  box-shadow: var(--neu-shadow-tab);
+  animation: dockTabIn var(--duration-normal) var(--ease-standard);
 }
 
 .c-section__header.is-docked .c-section__kicker {
@@ -124,10 +132,12 @@ body {
   flex-shrink: 0;
 }
 
-/* Hide only the label word; the counter number and accent dash render on the
-   kicker's pseudo-elements and survive into the compact bar. */
+/* Hide the label word and the accent dash; only the counter number survives
+   into the tab. The dash is the widest element in the row and compactness is
+   the whole point of the tab. */
 
-.c-section__header.is-docked .c-section__kicker-label {
+.c-section__header.is-docked .c-section__kicker-label,
+.c-section__header.is-docked .c-section__kicker::after {
   display: none;
 }
 
@@ -138,31 +148,43 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  transform: none;
 }
 
-/* Scrub layer: as the header approaches the dock line, the title scales
-   toward its compact size and glides toward its slot in the bar row while
-   the kicker label fades out. --dock-scale-end (compact/full font ratio) is
-   measured by main.js; --dock-progress stays 0 for reduced-motion users. */
+/* Approach: the full heading dissolves as it nears the dock line. The 1.15
+   multiplier lands it at zero slightly BEFORE the line, so there is a beat of
+   nothing rather than the heading and the tab reading as duplicates of each
+   other. --dock-progress stays 0 for reduced-motion users, which leaves the
+   heading fully opaque until the flip — see the reduced-motion block. */
 
-.c-section__header:not(.is-docked) .c-section__title {
-  transform-origin: left top;
-  transform: translate(
-      calc(var(--dock-progress, 0) * var(--dock-prefix-width)),
-      calc(var(--dock-progress, 0) * -1 * var(--dock-title-rise))
-    )
-    scale(calc(1 - (1 - var(--dock-scale-end, 0.45)) * var(--dock-progress, 0)));
+.c-section__header:not(.is-docked) .c-section__header-inner {
+  opacity: calc(1 - var(--dock-progress, 0) * 1.15);
 }
 
-.c-section__header:not(.is-docked) .c-section__kicker-label {
-  opacity: calc(1 - var(--dock-progress, 0) * 1.4);
+@keyframes dockTabIn {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
 }
 
 @media (max-width: 48rem) {
   :root {
-    --dock-bar-height: 2.5rem;
+    --dock-bar-height: 2rem;
     --dock-scrub-range: 5rem;
+  }
+
+  /* Tighter tab on small screens: the island is shorter, the scrub is 5rem
+     instead of 7.5rem, and the title has to survive down to ~320px wide. The
+     ellipsis on .c-section__title does the truncating. */
+  .c-section__header.is-docked .c-section__header-inner {
+    gap: var(--space-8);
+    max-width: calc(100% - var(--space-24));
+    padding-inline: var(--space-12);
+    border-radius: 0 0 var(--radius-base) var(--radius-base);
+  }
+
+  .c-section__header.is-docked .c-section__kicker {
+    font-size: var(--font-size-xs);
   }
 }
 
@@ -182,6 +204,13 @@ body {
 
   .c-section__header:not(.is-docked) {
     animation: undockFadeIn 0.2s ease-out !important;
+  }
+
+  /* The tab's own slide-in is redundant once the whole header dissolves
+     through the flip, and its translate is exactly the motion this query
+     exists to remove. */
+  .c-section__header.is-docked .c-section__header-inner {
+    animation: none !important;
   }
 }
 

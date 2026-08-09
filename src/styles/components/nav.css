@@ -172,20 +172,21 @@ body[data-page='home'] .c-nav.is-brand-expanded .c-brand-logo__wordmark {
 /* Hover/focus echoes the button "clickable" cue — accent + a single
    signal-pulse ring. The underline glow stays reserved for the active link, so
    the hover and selected states never read the same. */
+/* Colour only — the signal-pulse ring was removed site-wide (see the note in
+   buttons.css). A ring radiating off a flat text link was the weakest case
+   for it anyway: nothing inside the island extrudes, so there was no surface
+   for the light to come off. Keyboard users still get the global
+   :focus-visible outline from utilities.css on top of this. */
 .c-nav__link:hover,
 .c-nav__link:focus-visible {
   color: var(--color-accent);
-  animation: btnSignalPulse 1.1s ease-out 1;
 }
 
 /* Press-only physical treatment: the links stay flat text at rest (a row of
    resting pills would fight the sliding accent underline and the rail
    hairline), but a tap sinks the link's own box into the ground so it answers
-   under the finger. `animation: none` is required — the hover pulse above
-   animates box-shadow, and a running animation outranks this declaration, so
-   without it a click inside the pulse's 1.1s window shows no recess at all. */
+   under the finger. */
 .c-nav__link:active {
-  animation: none;
   box-shadow: var(--neu-shadow-inset-sm);
   transform: var(--neu-press-transform);
   transition-duration: var(--neu-press-duration);
@@ -369,9 +370,11 @@ html.is-theme-transitioning *::after {
   cursor: pointer;
 }
 
-/* Deliberately no hover pulse. btnNeuPulse* animates box-shadow toward a
-   RAISED value, which on a trough would turn the recess inside out mid-hover.
-   The keys carry the feedback instead. */
+/* Deliberately no hover pulse — and now nothing on the site has one, so this
+   trough is no longer the exception it once was. (It was excluded originally
+   because the pulse animated box-shadow toward a RAISED value, which on a
+   recess would have turned it inside out mid-hover.) The keys carry the
+   feedback instead. */
 
 .c-theme-toggle__half {
   display: inline-flex;

@@ -30,6 +30,10 @@
   --neu-shadow-inset-sm: inset 0 0 0 1px var(--color-hairline-strong);
   /* The borderless deep-well fields keep their only boundary here too. */
   --neu-shadow-well: inset 0 0 0 1px var(--color-hairline-strong);
+  /* Docked section tab: same flatten. Not mirrored in critical-home.css —
+     section headers are all below the fold, so the tab never paints on first
+     paint and doesn't belong in the critical bundle. */
+  --neu-shadow-tab: 0 0 0 1px var(--color-hairline-strong);
 }
 
 /* --- Testimonials marquee: freeze the infinite transform loop (it otherwise

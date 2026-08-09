@@ -163,6 +163,15 @@
       var(--neu-shadow-dark),
     inset calc(var(--neu-distance-sm) * -1) calc(var(--neu-distance-sm) * -1)
       var(--neu-blur-sm) var(--neu-shadow-light);
+  /* Docked section tab: raised, but deliberately NOT the paired recipe. The
+     tab's top edge tucks under the navbar island, and --neu-shadow-raised puts
+     its light highlight exactly there — a bright seam where one surface is
+     supposed to emerge from under another. This variant drops the upward
+     throw and keeps the light tint to the side only. */
+  --neu-shadow-tab:
+    var(--neu-distance-sm) 0.4375rem 0.75rem var(--neu-shadow-dark),
+    calc(var(--neu-distance-sm) * -1) 0.125rem 0.5625rem var(--neu-shadow-light);
+
   /* Deep well (form fields): a single dark inner shadow from the top-left —
      deliberately no light counterpart, so the field reads as a distinctly
      deeper recess than the paired --neu-shadow-inset surfaces around it.
@@ -264,16 +273,20 @@
   --z-notification: 10000;
   --z-skip-link: 10010;
 
-  /* Docked section headings: each heading shrinks on approach (main.js scrubs
-     --dock-progress) and sticks below the navbar as a slim bar until the next
-     section pushes it out. (No --dock-top token: the navbar+banner calc must
-     resolve at the header element, because --beta-banner-offset is overridden
-     on body — a :root-level token would bake in the 0rem fallback.) */
-  --dock-bar-height: 3rem;
+  /* Docked section headings: the full heading fades out on approach (main.js
+     scrubs --dock-progress) and a compact centred tab fades in beneath the
+     navbar island, staying until the next section pushes it out. (No
+     --dock-top token: the navbar+banner calc must resolve at the header
+     element, because --beta-banner-offset is overridden on body — a
+     :root-level token would bake in the 0rem fallback.)
+     --dock-tuck slides the tab under the island so no sub-pixel hairline of
+     background can open between them at fractional zoom; the navbar outranks
+     the header on z-index (--z-nav 1000 vs --z-section-header 100), so the
+     overlap is painted over. */
+  --dock-bar-height: 2.25rem;
   --dock-scrub-range: 7.5rem;
+  --dock-tuck: 2px;
   --text-section-title-compact: clamp(1rem, 1.4vw, 1.125rem);
-  --dock-prefix-width: 5.75rem;
-  --dock-title-rise: 2.1rem;
 
   /* Common style patterns */
   --focus-outline: 3px solid var(--color-focus-visible);

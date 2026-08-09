@@ -225,20 +225,17 @@
     transform var(--neu-release-duration) var(--ease-standard);
 }
 
-/* Echo the hero buttons: tint + a single signal-pulse ring on hover. */
+/* Echo the hero buttons: a tint on hover. The signal-pulse ring that used to
+   accompany it was removed site-wide (see the note in buttons.css). */
 /* Pointer devices only: keeps the effect from sticking after taps on
    touch screens. */
 @media (hover: hover) {
   .c-featured__btn:hover {
     background: rgba(var(--color-primary-rgb), 0.12);
-    animation: btnNeuPulse 1.1s ease-out 1;
   }
 }
 
-/* `animation: none` is required — the hover pulse animates box-shadow and
-   would otherwise outrank this rule for its full 1.1s. */
 .c-featured__btn:active {
-  animation: none;
   box-shadow: var(--neu-shadow-inset-sm);
   transform: var(--neu-press-key-transform);
   transition-duration: var(--neu-press-duration);
@@ -502,10 +499,14 @@
 }
 
 /* Pointer devices only: keeps the effect from sticking after taps on
-   touch screens. Active pills are excluded so hover can't un-recess them. */
+   touch screens. Active pills are excluded so hover can't un-recess them.
+   The tint is doing real work here, not decoration: the signal-pulse ring
+   that was removed site-wide (see buttons.css) had been this tab's ONLY
+   hover feedback, so dropping it without a replacement would have left the
+   tabs completely inert on hover. Same tint the filter pills below use. */
 @media (hover: hover) {
   .c-archive__tab:hover:not(.is-active) {
-    animation: btnNeuPulse 1.1s ease-out 1;
+    background: rgba(var(--color-primary-rgb), 0.12);
   }
 }
 
@@ -588,13 +589,12 @@
   box-shadow: var(--neu-shadow-inset-sm);
 }
 
-/* Hover stays a tint + pulse so it never looks like the recessed active state. */
+/* Hover stays a tint so it never looks like the recessed active state. */
 /* Pointer devices only: keeps the effect from sticking after taps on
    touch screens. */
 @media (hover: hover) {
   .c-archive__filter:hover:not(.is-active) {
     background: rgba(var(--color-primary-rgb), 0.12);
-    animation: btnNeuPulse 1.1s ease-out 1;
   }
 }
 
@@ -778,8 +778,9 @@ a.c-archive__row-link .c-archive__row-title {
     transform: none;
   }
 
+  /* `animation: none` dropped with the hover pulse — nothing animates here
+     any more; the tint is a plain colour change. */
   .c-featured__btn:hover {
     transform: none;
-    animation: none;
   }
 }
