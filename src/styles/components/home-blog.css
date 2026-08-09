@@ -91,7 +91,7 @@
 }
 
 .c-home-blog__card-meta span {
-  color: var(--color-electric-blue);
+  color: var(--color-primary);
 }
 
 .c-home-blog__card h3 {
@@ -107,7 +107,7 @@
 }
 
 .c-home-blog__card h3 a:hover {
-  color: var(--color-electric-blue);
+  color: var(--color-primary);
 }
 
 .c-home-blog__card p {

@@ -37,7 +37,7 @@
 .c-article__back,
 .c-article__meta,
 .c-blog-card__meta {
-  color: var(--color-electric-blue);
+  color: var(--color-primary);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
   text-transform: uppercase;
@@ -148,7 +148,7 @@
 .c-blog-card h2 a:hover,
 .c-blog-read-link:hover,
 .c-article__back:hover {
-  color: var(--color-electric-blue);
+  color: var(--color-primary);
 }
 
 .c-blog-card p,
@@ -163,7 +163,7 @@
   display: inline-flex;
   align-items: center;
   width: fit-content;
-  color: var(--color-electric-blue);
+  color: var(--color-primary);
   font-weight: var(--font-weight-semibold);
   transition: transform var(--neu-release-duration) var(--ease-standard);
 }

@@ -15,7 +15,7 @@
 .c-contact__info h3 {
   font-size: var(--text-panel-title);
   margin-bottom: var(--space-16);
-  color: var(--color-electric-blue);
+  color: var(--color-primary);
 }
 
 .c-contact__info p {
@@ -74,7 +74,7 @@
 }
 
 .c-contact__reveal-button:hover {
-  color: var(--color-electric-blue);
+  color: var(--color-primary);
 }
 
 /* Press-only, like the nav links: transparent at rest, sinks on tap. */

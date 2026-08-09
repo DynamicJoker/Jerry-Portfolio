@@ -173,7 +173,7 @@ function initializeContactInfo() {
     revealButton.addEventListener('mouseenter', () => {
       textSpan.style.filter = 'blur(2px)';
       textSpan.style.opacity = '1';
-      revealButton.style.color = 'var(--color-electric-blue)';
+      revealButton.style.color = 'var(--color-primary)';
     });
     revealButton.addEventListener('mouseleave', () => {
       textSpan.style.filter = 'blur(4px)';
@@ -192,7 +192,7 @@ function initializeContactInfo() {
 
       mailLink.addEventListener(
         'mouseenter',
-        () => (mailLink.style.color = 'var(--color-electric-blue)'),
+        () => (mailLink.style.color = 'var(--color-primary)'),
       );
       mailLink.addEventListener(
         'mouseleave',

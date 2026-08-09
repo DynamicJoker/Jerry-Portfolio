@@ -203,7 +203,7 @@
 
 .c-pipeline__node.is-active .c-pipeline__node-icon,
 .c-pipeline__node:hover .c-pipeline__node-icon {
-  color: var(--color-electric-blue);
+  color: var(--color-primary);
 }
 
 .c-pipeline__node-title {

@@ -117,7 +117,7 @@
 }
 
 .c-calendly-panel__title {
-  color: var(--color-electric-blue);
+  color: var(--color-primary);
   font-size: var(--text-panel-title);
   margin-bottom: var(--space-8);
 }

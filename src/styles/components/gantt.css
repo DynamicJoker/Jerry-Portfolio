@@ -153,13 +153,13 @@
 }
 
 .c-gantt__row:hover .c-gantt__label h3 {
-  color: var(--color-electric-blue);
+  color: var(--color-primary);
 }
 
 .c-gantt__tooltip-period {
   font-size: var(--font-size-sm);
   font-weight: 500;
-  color: var(--color-electric-blue);
+  color: var(--color-primary);
   margin-bottom: var(--space-12);
 }
 
@@ -182,7 +182,7 @@
   display: inline-flex;
   flex-shrink: 0;
   font-size: 1.1rem;
-  color: var(--color-electric-blue);
+  color: var(--color-primary);
 }
 
 @keyframes drawBar {
@@ -241,7 +241,7 @@
   .c-gantt__duration {
     display: inline-flex;
     align-items: center;
-    color: var(--color-electric-blue);
+    color: var(--color-primary);
     font-weight: var(--font-weight-medium);
   }
 

@@ -77,11 +77,14 @@ Personal portfolio + blog, deployed on Vercel at https://jerryjames.me.
   each build).
 - `npm run build` gates on `prettier --check`, `eslint .`, then the
   `check:critical`, `check:bemit`, `check:theme`, and `check:charts` scripts
-  before building —
+  before building, and `check:seo` (`scripts/check-seo.mjs`) **after** the
+  build, against the emitted `dist/` —
   format with `npm run format` and lint with `npm run lint` first. The
   pre-commit hook enforces format + lint only; the `check:*` gates run on
   build/CI (run them standalone with `npm run check:bemit` / `check:critical` /
-  `check:theme` / `check:charts`). `check:theme` (`scripts/check-theme-sync.mjs`) asserts the two
+  `check:theme` / `check:charts` / `check:seo` — note `check:seo` reads `dist/`,
+  so build first or it checks a stale tree).
+  `check:theme` (`scripts/check-theme-sync.mjs`) asserts the two
   dark-theme blocks in `settings.css` — the `@media (prefers-color-scheme: dark)`
   no-JS fallback and the `[data-color-scheme='dark']` block — stay token-for-token
   identical. ESLint flat config is `eslint.config.mjs` (browser globals for

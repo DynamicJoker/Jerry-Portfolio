@@ -41,7 +41,7 @@ body {
   align-items: center;
   gap: var(--space-12);
   margin-bottom: var(--space-12);
-  color: var(--color-electric-blue);
+  color: var(--color-primary);
   font-size: var(--text-kicker);
   font-weight: var(--font-weight-semibold);
   letter-spacing: var(--text-kicker-tracking);

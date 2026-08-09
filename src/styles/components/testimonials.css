@@ -151,7 +151,7 @@
 .c-testimonial__quote {
   font-style: italic;
   color: var(--color-text-secondary);
-  border-left: 3px solid var(--color-electric-blue);
+  border-left: 3px solid var(--color-primary);
   padding-left: var(--space-16);
 }
 
