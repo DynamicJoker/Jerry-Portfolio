@@ -816,6 +816,33 @@ export const siteContent = {
       // name can't drift from the site owner's name.
       brandHome: '{name} home',
       themeToggle: 'Dark theme',
+      // Nav links in render order. `id` MUST match the home page's section
+      // element id — the scroll-spy (main.js updateActiveNavLink) compares
+      // `#<id>` against the section in view, and the hamburger's announced
+      // name is built from the matching link's label. `anchor` overrides the
+      // in-page target when it differs from the id; `standalonePath` makes the
+      // link leave the page entirely when we're not on the home page.
+      links: [
+        { id: 'home', label: 'Home', anchor: 'hero' },
+        { id: 'about', label: 'About' },
+        { id: 'skills', label: 'Skills' },
+        { id: 'services', label: 'Services' },
+        { id: 'testimonials', label: 'Testimonials' },
+        { id: 'portfolio', label: 'Portfolio' },
+        { id: 'experience', label: 'Experience' },
+        { id: 'blog', label: 'Blog', standalonePath: '/blog/' },
+        { id: 'contact', label: 'Contact' },
+      ],
+      // Used when `current` matches no link (e.g. the 404 page).
+      defaultCurrentLabel: 'Home',
+      // The hamburger's accessible name, which changes as you scroll. Built in
+      // THREE places — server-rendered in SiteNav, then re-set by main.js on
+      // the home page and by SiteNav's own inline script everywhere else.
+      // Those two scripts can't import this file (one is `is:inline`), so both
+      // read these templates off the button's data-* attributes instead of
+      // carrying their own copy. `{section}` is the current section's label.
+      toggleLabelOpen: 'Open navigation menu, currently {section}',
+      toggleLabelClose: 'Close navigation menu, currently {section}',
     },
     hero: {
       scrollToNext: 'Scroll to next section',

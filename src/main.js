@@ -356,7 +356,7 @@ function initializeNavigation() {
 function getCurrentSectionText() {
   return (
     document.querySelector('[data-current-section]')?.textContent?.trim() ||
-    'Home'
+    siteContent.ui.nav.defaultCurrentLabel
   );
 }
 
@@ -364,10 +364,18 @@ function updateNavControls(isOpen, controls = []) {
   const currentText = getCurrentSectionText();
   controls.forEach((control) => {
     control.setAttribute('aria-expanded', String(isOpen));
-    control.setAttribute(
-      'aria-label',
-      `${isOpen ? 'Close' : 'Open'} navigation menu, currently ${currentText}`,
-    );
+    // Wording comes from content.js, server-rendered onto the control as
+    // data-label-open/-close so this and SiteNav's inline script share one
+    // source. Falls back to the rendered aria-label if it's missing.
+    const template = isOpen
+      ? control.dataset.labelClose
+      : control.dataset.labelOpen;
+    if (template) {
+      control.setAttribute(
+        'aria-label',
+        template.replace('{section}', currentText),
+      );
+    }
   });
 }
 
