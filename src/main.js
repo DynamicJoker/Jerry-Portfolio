@@ -688,7 +688,11 @@ function initializeFeaturedCarousel() {
     }
     index = n;
     if (counter) counter.textContent = String(index + 1).padStart(2, '0');
-    if (status) status.textContent = `Slide ${index + 1} of ${slides.length}`;
+    if (status) {
+      status.textContent = siteContent.ui.work.slideStatus
+        .replace('{index}', String(index + 1))
+        .replace('{total}', String(slides.length));
+    }
     warm(index + 1);
     warm(index - 1);
   };

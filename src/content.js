@@ -802,6 +802,64 @@ export const siteContent = {
     },
   },
 
+  // Accessible names and control labels — the wording screen readers announce
+  // and the text on chrome that isn't body copy. Kept here for the same reason
+  // as everything else in this file: so the site's language lives in one place
+  // rather than being scattered through markup. `{index}`/`{total}` are
+  // placeholders filled by JS, same convention as archiveUi.
+  ui: {
+    skipLink: 'Skip to content',
+    nav: {
+      // <nav> landmark name; distinguishes this from any future nav landmark.
+      landmark: 'Primary',
+      // `{name}` is filled from profile.name so the brand link's accessible
+      // name can't drift from the site owner's name.
+      brandHome: '{name} home',
+      themeToggle: 'Dark theme',
+    },
+    hero: {
+      scrollToNext: 'Scroll to next section',
+      pipelineList: 'What I do',
+    },
+    work: {
+      featuredRegion: 'Featured work',
+      previousItem: 'Previous featured item',
+      nextItem: 'Next featured item',
+      // Announced to screen readers on each carousel advance (main.js).
+      slideStatus: 'Slide {index} of {total}',
+      filterByType: 'Filter work by type',
+      filterByIndustry: 'Filter work by industry',
+      // Badge on archive rows whose piece is an interview.
+      interviewTag: 'Interview',
+      lightboxRegion: 'Work excerpt',
+      lightboxClose: 'Close excerpt',
+    },
+    testimonials: {
+      pause: 'Pause testimonials',
+      resume: 'Resume testimonials',
+    },
+    footer: {
+      rights: 'All rights reserved.',
+      backToTop: 'Back to Top',
+    },
+  },
+
+  // 404 page (src/pages/404.astro).
+  notFound: {
+    metaDescription:
+      'This page was announced but never shipped. Head back to the homepage or browse the blog.',
+    graphicAlt:
+      'A monogram-style ring containing the number 404, its orbital signal line breaking apart on one side',
+    kicker: 'Error 404 · Signal lost',
+    title: 'You found the vaporware.',
+    intro:
+      'This page was announced by your URL bar, but it never shipped. Could be a typo, could be a link that outlived its redirect. Everything below, though, is in production.',
+    actions: [
+      { label: 'Back to production', href: '/', variant: 'primary' },
+      { label: 'Browse the field notes', href: '/blog/', variant: 'outline' },
+    ],
+  },
+
   contactInfo: {
     revealTitle: 'Reveal email address',
     email: {
