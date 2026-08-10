@@ -34,6 +34,11 @@
   --color-success-glow: rgba(34, 197, 94, 0.5);
   --color-success-ring: rgba(34, 197, 94, 0.28);
   --color-notification-success: rgba(15, 118, 110, 0.95);
+  /* Foreground on a saturated success fill. Deliberately NOT --color-on-fill or
+     --color-btn-primary-text: both flip to near-black in dark mode, but the
+     success fill above does not flip, so a flipping foreground would land
+     near-black on dark teal. Theme-invariant, like the fill it sits on. */
+  --color-on-success: #ffffff;
   --color-focus-visible: var(--color-primary);
 
   /* Typography */
@@ -323,6 +328,11 @@
   --color-embed-bg: rgba(255, 255, 255, 0.6);
   --calendly-embed-filter: none;
   --color-inset-bg: rgba(26, 26, 46, 0.04);
+  /* Modal scrim (the work lightbox's ::backdrop). Theme-invariant on purpose:
+     a dimmed surround has to read as "behind" in both themes, and a light
+     scrim in light mode would leave the lightbox with nothing to sit against.
+     Lives outside the theme-dependent group below for that reason. */
+  --color-scrim: rgba(8, 9, 13, 0.8);
   /* Neutral fill sits directly on the ground — keep it ~19 per channel darker
      than --neu-bg so it stays legible as a filled control. */
   --color-btn-neutral: #dddbd7;
@@ -343,7 +353,27 @@
      in dark, hence series 2 goes darker in light and paler in dark. */
   --chart-series-1: var(--color-primary);
   --chart-series-2: #1d3140;
-  --shell-tint-violet: rgba(143, 92, 255, 0.08);
+  /* Editorial tint — the second hue in the blog surfaces' washes, played
+     against --color-primary. Clay rather than a fourth blue: the brand ramp is
+     entirely signal blues, so another blue reads as the primary slightly off
+     rather than as a deliberate pairing, while the ground (#f0eeea) is warm and
+     gives a warm tint something to sit with. Replaced a violet (#8f5cff) that
+     appeared nowhere in docs/brand.md; clay at these alphas composites to
+     within 0.2 of the violet's visual weight in light, so this is a hue swap,
+     not an intensity change.
+
+     Split into an rgb TRIPLET plus a composed tint (house pattern, cf.
+     --color-primary-rgb) so the hue is declared once instead of being repeated
+     in all three theme blocks the way the violet was. --tint-editorial-shell
+     carries the theme bump: a tint over a dark ground reads weaker per unit
+     alpha, so dark gets more (0.08 -> 0.12).
+
+     One consumer today: the .c-blog-shell / .c-article-shell corner glow.
+     The home page's blog band used to be a second consumer, but its rule never
+     won against .c-section:nth-child(2n) and has been removed — see
+     components/home-blog.css before reintroducing anything there. */
+  --tint-editorial-rgb: 201, 138, 91;
+  --tint-editorial-shell: rgba(var(--tint-editorial-rgb), 0.08);
   --loading-screen-bg: linear-gradient(135deg, #f0eeea 0%, #e3f1fb 100%);
   --hero-name-rest: #1a1a2e;
   --animation-speed: 0.3s;
@@ -411,7 +441,7 @@
     --color-btn-neutral-active: rgba(54, 59, 63, 0.98);
     --color-on-fill: var(--color-dark-primary);
     --chart-series-2: #cbe9ff;
-    --shell-tint-violet: rgba(143, 92, 255, 0.12);
+    --tint-editorial-shell: rgba(var(--tint-editorial-rgb), 0.12);
     --loading-screen-bg: linear-gradient(135deg, #1a1d29 0%, #232633 100%);
     --hero-name-rest: #fff;
   }
@@ -473,7 +503,7 @@
   --color-btn-neutral-active: rgba(54, 59, 63, 0.98);
   --color-on-fill: var(--color-dark-primary);
   --chart-series-2: #cbe9ff;
-  --shell-tint-violet: rgba(143, 92, 255, 0.12);
+  --tint-editorial-shell: rgba(var(--tint-editorial-rgb), 0.12);
   --loading-screen-bg: linear-gradient(135deg, #1a1d29 0%, #232633 100%);
   --hero-name-rest: #fff;
 }

@@ -70,8 +70,8 @@
 }
 
 .c-lightbox::backdrop {
-  /* Dark scrim is intentional in both themes (no semantic scrim token exists). */
-  background: rgba(8, 9, 13, 0.8);
+  /* Dark scrim is intentional in both themes — see --color-scrim. */
+  background: var(--color-scrim);
 }
 
 .c-lightbox__figure {

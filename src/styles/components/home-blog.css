@@ -2,15 +2,18 @@
 /* Above-the-fold rules that also exist in critical-home.css must be
    changed in both places. */
 
-.c-home-blog {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(var(--color-primary-rgb), 0.04),
-      rgba(143, 92, 255, 0.04)
-    ),
-    var(--color-background);
-}
+/* The .c-home-blog BLOCK deliberately carries no styles of its own — it exists
+   as the BEM namespace for the elements below, and the section's background
+   comes from the .c-section zebra rule in components/section.css.
+
+   Don't give it a background here. It used to hold a primary -> tint gradient
+   wash, which never once rendered: the section also matches
+   `.c-section:nth-child(2n)` (0,1,1), which outranks a lone `.c-home-blog`
+   (0,1,0) and won every time. The wash sat dead in the stylesheet long enough
+   that its violet end-stop was never given a dark-mode value and nobody
+   noticed. If this section really needs its own ground, it has to beat that
+   specificity (e.g. `.c-section.c-home-blog`) — and then it becomes a visible
+   design change, not a fix. */
 
 .c-home-blog__feature {
   display: grid;

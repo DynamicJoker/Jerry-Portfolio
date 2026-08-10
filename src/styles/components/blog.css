@@ -17,7 +17,7 @@
     ),
     radial-gradient(
       circle at 82% 18%,
-      var(--shell-tint-violet),
+      var(--tint-editorial-shell),
       transparent 30rem
     ),
     var(--color-background);
