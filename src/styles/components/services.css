@@ -22,7 +22,7 @@
 
 .c-engagements__lede {
   margin: var(--space-8) 0 var(--space-32);
-  max-width: 32rem;
+  max-width: var(--measure-xs);
   font-size: var(--font-size-sm);
   line-height: 1.65;
   color: var(--color-text-secondary);
@@ -78,7 +78,7 @@
 
 .c-engagement__description {
   margin: 0;
-  max-width: 34rem;
+  max-width: var(--measure-sm);
   font-size: var(--font-size-sm);
   line-height: 1.65;
   color: var(--color-text-secondary);

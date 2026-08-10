@@ -123,7 +123,7 @@
 }
 
 .c-calendly-panel__helper {
-  max-width: 44rem;
+  max-width: var(--measure-lg);
   color: var(--color-text-secondary);
   line-height: 1.6;
   margin-bottom: 0;

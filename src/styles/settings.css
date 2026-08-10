@@ -238,11 +238,50 @@
   --container-md: 48rem; /* 768px */
   --container-lg: 64rem; /* 1024px */
   --container-xl: 80rem; /* 1280px */
+
+  /* Breakpoints. Media queries CANNOT read custom properties, so these are
+     documentation plus a JS-readable source — the literals in the stylesheets
+     are the real switch points. `npm run check:breakpoints` closes that gap: it
+     reads this set and fails the build on any width media query in src/styles
+     that isn't one of these values (or its `.01rem` step twin — the house
+     convention that keeps a viewport at exactly a breakpoint on the smaller
+     side, e.g. iPad portrait at 48rem is mobile everywhere).
+
+     Add a value here before using it in a media query, not after. Height
+     queries are exempt: the two in hero.css are one-off viewport-fit rules,
+     not layout tiers. */
+  --breakpoint-xs: 30rem; /* 480px */
+  --breakpoint-sm: 40rem; /* 640px */
   --breakpoint-md: 48rem; /* 768px */
-  /* Nav collapse point. Media queries can't read custom properties, so the
-     64rem literals in nav.css / critical-home.css must stay in step with
-     this token; JS (main.js, SiteNav.astro) reads it at runtime. */
+  /* Nav collapse point — JS (main.js, SiteNav.astro) reads it at runtime. */
   --breakpoint-lg: 64rem; /* 1024px */
+  --breakpoint-xl: 80rem; /* 1280px */
+
+  /* Content shell widths — how wide the page's content column may grow.
+     THREE different values today, which is why they are listed together:
+       sections + footer -> --container-xl (80rem), applied via .o-container
+       nav island + logo bar -> --shell-max-nav (75rem)
+       hero -> --shell-max-hero (72rem)
+     At a 1905px viewport that is 1280 / 1200 / 1152, so the left edge steps
+     inward twice as you scroll from the hero into the sections. Whether that
+     stagger is intentional is an open question; naming the values here is
+     deliberately value-preserving so the answer can be a one-line edit.
+     Both tokens below are consumed above the fold — mirrored in
+     critical-home.css (check:critical). */
+  --shell-max-nav: 75rem; /* 1200px */
+  --shell-max-hero: 72rem; /* 1152px */
+
+  /* Reading measures — the widest a block of copy may run, by role. Pick from
+     this scale rather than inventing a new value. md/sm/xs sit within 10rem of
+     each other and are strong candidates for collapsing; naming them first is
+     what makes that visible. NOT for non-text boxes: the logo-bar grid also
+     caps at 44rem, but that constrains a logo grid, not a line length, so it
+     stays a literal on purpose. */
+  --measure-xl: 54rem; /* article body column */
+  --measure-lg: 44rem; /* intro paragraph under a heading */
+  --measure-md: 42rem; /* standalone prose block */
+  --measure-sm: 34rem; /* supporting copy inside a card */
+  --measure-xs: 32rem; /* section lede */
   /* The nav is a floating island: a detached, raised slab inset from the
      viewport edges. --navbar-height stays the RESERVED BAND (viewport top to
      the island's bottom edge) and keeps its old 4.375rem value, because a

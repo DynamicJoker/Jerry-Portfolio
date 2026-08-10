@@ -122,6 +122,12 @@
      (main.js) resolves it before the deferred stylesheet lands. Media
      queries can't read it; the 64rem literals below must stay in step. */
   --breakpoint-lg: 64rem;
+  /* Content shell widths — both consumed above the fold (nav island + logo bar,
+     hero), so they must be declared here or those elements paint uncapped and
+     then snap in when the deferred sheet lands. Mirror of settings.css, which
+     carries the note about the three-way width mismatch. */
+  --shell-max-nav: 75rem;
+  --shell-max-hero: 72rem;
   /* Floating-island nav: --navbar-height stays the reserved band (viewport top
      to the island's bottom), so everything that offsets against it is
      unchanged. See settings.css for the full rationale. */
@@ -384,7 +390,7 @@ a {
   justify-content: space-between;
   box-sizing: border-box;
   width: calc(100% - var(--nav-inset) * 2);
-  max-width: 75rem;
+  max-width: var(--shell-max-nav);
   height: var(--nav-island-height);
   min-width: 0;
   margin: var(--nav-inset) auto 0;
@@ -822,7 +828,7 @@ html.is-theme-transitioning *::after {
   align-items: center;
   gap: clamp(var(--space-32), 6vw, 3.5rem);
   width: 100%;
-  max-width: 72rem;
+  max-width: var(--shell-max-hero);
   margin: 0 auto;
   padding-inline: var(--viewport-inline-padding);
 }

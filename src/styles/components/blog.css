@@ -29,7 +29,7 @@
 
 .c-blog-hero__inner,
 .c-article {
-  max-width: 54rem;
+  max-width: var(--measure-xl);
   min-width: 0;
 }
 
@@ -56,7 +56,7 @@
 
 .c-blog-hero__intro,
 .c-article__header p {
-  max-width: 44rem;
+  max-width: var(--measure-lg);
   margin-top: 1.5rem;
   color: var(--color-text-secondary);
   font-size: clamp(1.08rem, 1.7vw, 1.28rem);
@@ -177,7 +177,7 @@
 
 /* Empty state recessed into an inset well (soft UI). */
 .c-blog-empty {
-  max-width: 42rem;
+  max-width: var(--measure-md);
   padding: 2rem;
   border-radius: var(--radius-xl);
   background: var(--neu-bg);
