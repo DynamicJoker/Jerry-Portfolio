@@ -68,7 +68,7 @@
   align-items: center;
   gap: clamp(var(--space-32), 6vw, 3.5rem);
   width: 100%;
-  max-width: 72rem;
+  max-width: var(--shell-max);
   margin: 0 auto;
   padding-inline: var(--viewport-inline-padding);
 }

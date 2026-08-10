@@ -10,11 +10,13 @@ const { backHref = '#hero' } = Astro.props;
       <div class="c-footer__text">
         <p>
           &copy; <span id="footer-year">{new Date().getFullYear()}</span>
-          {siteContent.profile.name}. All rights reserved.
+          {siteContent.profile.name}. {siteContent.ui.footer.rights}
         </p>
       </div>
       <div class="c-footer__links">
-        <a href={backHref} class="c-footer__link">Back to Top</a>
+        <a href={backHref} class="c-footer__link"
+          >{siteContent.ui.footer.backToTop}</a
+        >
       </div>
     </div>
   </div>

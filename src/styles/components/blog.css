@@ -1,6 +1,6 @@
 /* Component: blog */
-/* Above-the-fold rules that also exist in critical-home.css must be
-   changed in both places. */
+/* Blog and 404 pages link the full stylesheet directly — critical-home.css is
+   inlined on the home page only — so nothing here is duplicated there. */
 
 /* Blog */
 
@@ -17,7 +17,7 @@
     ),
     radial-gradient(
       circle at 82% 18%,
-      var(--shell-tint-violet),
+      var(--tint-editorial-shell),
       transparent 30rem
     ),
     var(--color-background);
@@ -29,7 +29,7 @@
 
 .c-blog-hero__inner,
 .c-article {
-  max-width: 54rem;
+  max-width: var(--measure-xl);
   min-width: 0;
 }
 
@@ -37,7 +37,7 @@
 .c-article__back,
 .c-article__meta,
 .c-blog-card__meta {
-  color: var(--color-electric-blue);
+  color: var(--color-primary);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
   text-transform: uppercase;
@@ -56,7 +56,7 @@
 
 .c-blog-hero__intro,
 .c-article__header p {
-  max-width: 44rem;
+  max-width: var(--measure-lg);
   margin-top: 1.5rem;
   color: var(--color-text-secondary);
   font-size: clamp(1.08rem, 1.7vw, 1.28rem);
@@ -148,7 +148,7 @@
 .c-blog-card h2 a:hover,
 .c-blog-read-link:hover,
 .c-article__back:hover {
-  color: var(--color-electric-blue);
+  color: var(--color-primary);
 }
 
 .c-blog-card p,
@@ -163,7 +163,7 @@
   display: inline-flex;
   align-items: center;
   width: fit-content;
-  color: var(--color-electric-blue);
+  color: var(--color-primary);
   font-weight: var(--font-weight-semibold);
   transition: transform var(--neu-release-duration) var(--ease-standard);
 }
@@ -177,7 +177,7 @@
 
 /* Empty state recessed into an inset well (soft UI). */
 .c-blog-empty {
-  max-width: 42rem;
+  max-width: var(--measure-md);
   padding: 2rem;
   border-radius: var(--radius-xl);
   background: var(--neu-bg);

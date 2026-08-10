@@ -1,30 +1,40 @@
 ---
 import BrandLogo from './BrandLogo.astro';
+import { siteContent } from '../content.js';
+
+const navUi = siteContent.ui.nav;
+const brandHomeLabel = navUi.brandHome.replace(
+  '{name}',
+  siteContent.profile.name,
+);
 
 const { current = 'home' } = Astro.props;
 const prefix = current === 'home' ? '' : '/';
+const isHome = current === 'home';
 
-const links = [
-  { href: `${prefix}#hero`, label: 'Home', id: 'home' },
-  { href: `${prefix}#about`, label: 'About', id: 'about' },
-  { href: `${prefix}#skills`, label: 'Skills', id: 'skills' },
-  { href: `${prefix}#services`, label: 'Services', id: 'services' },
-  { href: `${prefix}#testimonials`, label: 'Testimonials', id: 'testimonials' },
-  { href: `${prefix}#portfolio`, label: 'Portfolio', id: 'portfolio' },
-  { href: `${prefix}#experience`, label: 'Experience', id: 'experience' },
-  { href: current === 'home' ? '#blog' : '/blog/', label: 'Blog', id: 'blog' },
-  { href: `${prefix}#contact`, label: 'Contact', id: 'contact' },
-];
+// Labels/ids come from content.js; the href is derived here because it depends
+// on which page we're rendering: in-page anchors on the home page, absolute
+// links back to it elsewhere, and `standalonePath` for links that leave the
+// page entirely once we're off it.
+const links = navUi.links.map((link) => ({
+  ...link,
+  href:
+    link.standalonePath && !isHome
+      ? link.standalonePath
+      : `${prefix}#${link.anchor ?? link.id}`,
+}));
 
-const currentLabel = links.find((link) => link.id === current)?.label ?? 'Home';
+const currentLabel =
+  links.find((link) => link.id === current)?.label ?? navUi.defaultCurrentLabel;
+const toggleLabel = navUi.toggleLabelOpen.replace('{section}', currentLabel);
 ---
 
-<nav class="c-nav" id="navbar" aria-label="Primary">
+<nav class="c-nav" id="navbar" aria-label={navUi.landmark}>
   <div class="c-nav__container">
     <a
       href={current === 'home' ? '#hero' : '/'}
       class="c-nav__brand"
-      aria-label="Jerry James home"
+      aria-label={brandHomeLabel}
     >
       <BrandLogo />
     </a>
@@ -33,16 +43,21 @@ const currentLabel = links.find((link) => link.id === current)?.label ?? 'Home';
         class="c-nav__toggle"
         id="hamburger"
         type="button"
-        aria-label={`Open navigation menu, currently ${currentLabel}`}
+        aria-label={toggleLabel}
         aria-controls="nav-menu"
         aria-expanded="false"
+        data-label-open={navUi.toggleLabelOpen}
+        data-label-close={navUi.toggleLabelClose}
       >
         {
           /* Visually hidden, not removed: the round key shows only the glyph,
             but both main.js (updateCurrentSectionLabel) and this file's inline
             script (getCurrentSectionText) read this element to build the
             button's "currently <section>" aria-label. The aria-label on the
-            button overrides this text for AT, so it never double-announces. */
+            button overrides this text for AT, so it never double-announces.
+            The two data-label-* templates above are how those scripts get the
+            wording from content.js — neither can import it (one is is:inline),
+            so without this they would each carry their own copy. */
         }
         <span class="c-nav__toggle-label u-sr-only" data-current-section
           >{currentLabel}</span
@@ -77,7 +92,7 @@ const currentLabel = links.find((link) => link.id === current)?.label ?? 'Home';
         type="button"
         role="switch"
         aria-checked="false"
-        aria-label="Dark theme"
+        aria-label={navUi.themeToggle}
         hidden
       >
         <span class="c-theme-toggle__half c-theme-toggle__half--sun">
@@ -268,10 +283,19 @@ const currentLabel = links.find((link) => link.id === current)?.label ?? 'Home';
       navMenu.classList.toggle('is-active', isOpen);
       controls.forEach((control) => {
         control.setAttribute('aria-expanded', String(isOpen));
-        control.setAttribute(
-          'aria-label',
-          `${isOpen ? 'Close' : 'Open'} navigation menu, currently ${currentLabel?.textContent?.trim() || 'Blog'}`,
-        );
+        /* Wording comes from content.js via data-label-*; see SiteNav's
+           frontmatter. Falls back to the server-rendered aria-label if the
+           attribute is somehow missing, rather than inventing a string. */
+        const template = isOpen
+          ? control.dataset.labelClose
+          : control.dataset.labelOpen;
+        const section = currentLabel?.textContent?.trim();
+        if (template && section) {
+          control.setAttribute(
+            'aria-label',
+            template.replace('{section}', section),
+          );
+        }
       });
     };
     const isNavOpen = () => navMenu.classList.contains('is-active');

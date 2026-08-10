@@ -1,6 +1,5 @@
 /* Component: testimonials */
-/* Above-the-fold rules that also exist in critical-home.css must be
-   changed in both places. */
+/* Below the fold, so no rules here are duplicated in critical-home.css. */
 
 .c-testimonials-scroller {
   display: flex;
@@ -151,7 +150,7 @@
 .c-testimonial__quote {
   font-style: italic;
   color: var(--color-text-secondary);
-  border-left: 3px solid var(--color-electric-blue);
+  border-left: 3px solid var(--color-primary);
   padding-left: var(--space-16);
 }
 

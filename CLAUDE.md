@@ -53,7 +53,14 @@ Personal portfolio + blog, deployed on Vercel at https://jerryjames.me.
 - `<style>` blocks in `.astro` pages are silently dropped from the build —
   put all CSS in the `src/styles/` layer files.
 - Design tokens (colors, spacing, fonts, breakpoints) are CSS variables in
-  `src/styles/settings.css`; use them instead of raw values. Brand SVGs
+  `src/styles/settings.css`; use them instead of raw values. Three scales there
+  are worth knowing before adding a width: `--breakpoint-*` (the only legal
+  media-query switch points, build-enforced by `check:breakpoints`),
+  `--shell-max` (**one** cap for every content container — `.o-container`, the
+  hero, the nav island, the logo bar — paired with `--viewport-inline-padding`
+  as the single gutter; a second cap or a different gutter reintroduces the
+  hero/section drift documented in `objects.css`), and `--measure-*` (max line
+  length for copy, by role — pick a step, don't invent a value). Brand SVGs
   (`BrandLogo.astro`, 404 graphic, `public/brand/*`) intentionally hardcode the
   brand gradient hexes because standalone SVG files can't use CSS variables.
   **Brand palette + typography reference: `docs/brand.md`** (fonts, light/dark
@@ -62,10 +69,11 @@ Personal portfolio + blog, deployed on Vercel at https://jerryjames.me.
 - The MDX chart classes (`c-article-chart*`, `c-stacked-bar*`) are written by
   hand in blog post bodies — renaming them means editing published
   `src/content/blog/*.mdx` too. Chart fills come from `--chart-series-1` /
-  `--chart-series-2` (settings.css); **never point a chart at
-  `--color-electric-blue` or `--color-accent-teal`** — both are legacy aliases
-  of `--color-primary`, so a two-colour chart built on them renders as one flat
-  fill with nothing failing. `npm run check:charts` (build-gated) resolves the
+  `--chart-series-2` (settings.css); **never point the two series at tokens
+  that resolve to the same colour** — that once happened via two legacy aliases
+  (both pointing at `--color-primary`, since retired) and every two-colour
+  chart silently rendered as one flat fill with nothing failing.
+  `npm run check:charts` (build-gated) resolves the
   series through their `var()` chains per theme and fails if any two converge,
   and also rejects any `c-article-chart*`/`c-stacked-bar*` class used in MDX
   that the stylesheet doesn't define (catches typo'd modifiers in new posts).
@@ -76,12 +84,22 @@ Personal portfolio + blog, deployed on Vercel at https://jerryjames.me.
   changes with `npm run build` then `npm run preview` (restart preview after
   each build).
 - `npm run build` gates on `prettier --check`, `eslint .`, then the
-  `check:critical`, `check:bemit`, `check:theme`, and `check:charts` scripts
-  before building —
+  `check:critical`, `check:bemit`, `check:theme`, `check:charts`, and
+  `check:breakpoints` scripts
+  before building, and `check:seo` (`scripts/check-seo.mjs`) **after** the
+  build, against the emitted `dist/` —
   format with `npm run format` and lint with `npm run lint` first. The
   pre-commit hook enforces format + lint only; the `check:*` gates run on
   build/CI (run them standalone with `npm run check:bemit` / `check:critical` /
-  `check:theme` / `check:charts`). `check:theme` (`scripts/check-theme-sync.mjs`) asserts the two
+  `check:theme` / `check:charts` / `check:breakpoints` / `check:seo` — note
+  `check:seo` reads `dist/`, so build first or it checks a stale tree).
+  `check:breakpoints` (`scripts/check-breakpoints.mjs`) reads the
+  `--breakpoint-*` tokens in `settings.css` and fails on any **width** media
+  query in `src/styles/` that isn't one of them (or its `.01rem` step twin) —
+  media queries can't read custom properties, so this is what keeps the
+  literals honest. Add a value to the token scale before using it. Height
+  queries are exempt.
+  `check:theme` (`scripts/check-theme-sync.mjs`) asserts the two
   dark-theme blocks in `settings.css` — the `@media (prefers-color-scheme: dark)`
   no-JS fallback and the `[data-color-scheme='dark']` block — stay token-for-token
   identical. ESLint flat config is `eslint.config.mjs` (browser globals for

@@ -1,6 +1,5 @@
 /* Component: booking */
-/* Above-the-fold rules that also exist in critical-home.css must be
-   changed in both places. */
+/* Below the fold, so no rules here are duplicated in critical-home.css. */
 
 /* Contact Section */
 
@@ -117,13 +116,13 @@
 }
 
 .c-calendly-panel__title {
-  color: var(--color-electric-blue);
+  color: var(--color-primary);
   font-size: var(--text-panel-title);
   margin-bottom: var(--space-8);
 }
 
 .c-calendly-panel__helper {
-  max-width: 44rem;
+  max-width: var(--measure-lg);
   color: var(--color-text-secondary);
   line-height: 1.6;
   margin-bottom: 0;

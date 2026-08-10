@@ -1,6 +1,6 @@
 /* Component: article */
-/* Above-the-fold rules that also exist in critical-home.css must be
-   changed in both places. */
+/* Blog and 404 pages link the full stylesheet directly — critical-home.css is
+   inlined on the home page only — so nothing here is duplicated there. */
 
 .c-article-shell {
   padding-block: calc(var(--navbar-height) + 3rem) 5rem;
@@ -28,7 +28,7 @@
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-full);
   padding: 0.25rem 0.65rem;
-  color: var(--color-electric-blue);
+  color: var(--color-primary);
   background: rgba(var(--color-primary-rgb), 0.08);
   text-transform: none;
 }
@@ -67,7 +67,7 @@
 }
 
 .c-article__content a {
-  color: var(--color-electric-blue);
+  color: var(--color-primary);
 }
 
 .c-article__content ul,
@@ -83,7 +83,7 @@
 .c-article__content blockquote {
   margin-inline: 0;
   padding: 1rem 1.25rem;
-  border-left: 3px solid var(--color-electric-blue);
+  border-left: 3px solid var(--color-primary);
   border-radius: var(--radius-lg);
   background: var(--neu-bg);
   box-shadow: var(--neu-shadow-inset);
@@ -280,7 +280,7 @@
   align-items: center;
 }
 
-/* Routed through the series token, not --color-electric-blue directly: the
+/* Routed through the series token, not --color-primary directly: the
    swatch has to track whatever the segment it labels is actually painted. */
 .c-article-chart__legend-swatch {
   width: 0.7rem;

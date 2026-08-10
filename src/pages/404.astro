@@ -5,9 +5,9 @@ import SiteFooter from '../components/SiteFooter.astro';
 import { siteContent } from '../content.js';
 
 const profile = siteContent.profile;
+const notFound = siteContent.notFound;
 const title = `Page not found - ${profile.name}`;
-const description =
-  'This page was announced but never shipped. Head back to the homepage or browse the blog.';
+const description = notFound.metaDescription;
 ---
 
 <BaseLayout title={title} description={description} page="blog" noindex>
@@ -19,7 +19,7 @@ const description =
           class="c-not-found__graphic"
           viewBox="0 0 280 200"
           role="img"
-          aria-label="A monogram-style ring containing the number 404, its orbital signal line breaking apart on one side"
+          aria-label={notFound.graphicAlt}
         >
           <defs>
             <linearGradient
@@ -121,18 +121,17 @@ const description =
             fill="#90D5FF"></circle>
         </svg>
 
-        <p class="c-blog-kicker">Error 404 · Signal lost</p>
-        <h1 class="c-blog-hero__title">You found the vaporware.</h1>
-        <p class="c-blog-hero__intro">
-          This page was announced by your URL bar, but it never shipped. Could
-          be a typo, could be a link that outlived its redirect. Everything
-          below, though, is in production.
-        </p>
+        <p class="c-blog-kicker">{notFound.kicker}</p>
+        <h1 class="c-blog-hero__title">{notFound.title}</h1>
+        <p class="c-blog-hero__intro">{notFound.intro}</p>
         <div class="c-not-found__actions">
-          <a href="/" class="c-btn c-btn--primary">Back to production</a>
-          <a href="/blog/" class="c-btn c-btn--outline"
-            >Browse the field notes</a
-          >
+          {
+            notFound.actions.map((action) => (
+              <a href={action.href} class={`c-btn c-btn--${action.variant}`}>
+                {action.label}
+              </a>
+            ))
+          }
         </div>
       </div>
     </section>

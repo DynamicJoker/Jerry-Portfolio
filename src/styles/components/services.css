@@ -22,7 +22,7 @@
 
 .c-engagements__lede {
   margin: var(--space-8) 0 var(--space-32);
-  max-width: 32rem;
+  max-width: var(--measure-md);
   font-size: var(--font-size-sm);
   line-height: 1.65;
   color: var(--color-text-secondary);
@@ -41,6 +41,12 @@
 .c-engagement {
   position: relative;
   display: grid;
+  /* Grid items default to min-width: auto, which lets a row grow to its
+     min-content width and overrun the list track rather than being clamped
+     by it. The CTA below is deliberately unbreakable, so without this the
+     card's floor is "meta + CTA on one line" and narrow viewports lose the
+     right gutter. Clamp here; the rail wraps instead (see the 48rem block). */
+  min-width: 0;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: var(--space-24);
   padding: var(--space-24);
@@ -72,7 +78,7 @@
 
 .c-engagement__description {
   margin: 0;
-  max-width: 34rem;
+  max-width: var(--measure-md);
   font-size: var(--font-size-sm);
   line-height: 1.65;
   color: var(--color-text-secondary);
@@ -205,9 +211,16 @@
     gap: var(--space-12);
   }
 
-  /* Rail folds under the description as a single meta/CTA line. */
+  /* Rail folds under the description as a single meta/CTA line — but only
+     while both fit. The CTA keeps `white-space: nowrap` (breaking "Book a
+     discovery call ›" mid-phrase orphans the chevron), so below roughly
+     373px the pair can't share a line: meta + gap + CTA exceeds the card's
+     inner width and, before `min-width: 0` above, dragged the whole card
+     past the container's right gutter. Wrapping drops the CTA to its own
+     line instead, which costs one line of height and nothing else. */
   .c-engagement__rail {
     flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     text-align: left;

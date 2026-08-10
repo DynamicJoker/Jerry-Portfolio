@@ -55,7 +55,32 @@ Semantic tokens; components must never hardcode colors. Light values live in
 Status colors (theme-invariant): `--color-success: #22c55e` (availability
 dot, with `-glow`/`-ring` alpha derivatives) and the toast backgrounds
 `--color-notification-success` / `--color-notification-error` (keep ≥4.5:1
-against white text).
+against white text). `--color-on-success: #ffffff` is the foreground on a
+success fill — it does **not** flip per theme, because the fill it sits on
+doesn't either. `--color-scrim: rgba(8, 9, 13, 0.8)` backs the work lightbox's
+`::backdrop`, dark in both themes so the modal always has something to sit
+against.
+
+### Editorial tint
+
+The one accent outside the signal blues. `--tint-editorial-rgb: 201, 138, 91`
+(clay) is the second hue in the blog surfaces' wash, played against
+`--color-primary` as the corner glow on `.c-blog-shell` / `.c-article-shell`.
+It is warm on purpose — the ramp below is all blues, so a fourth blue reads as
+the primary slightly off rather than as a pair, while the ground (`#f0eeea`) is
+warm and gives it something to sit with.
+
+Split into an rgb triplet (like `--color-primary-rgb`) plus a composed
+`--tint-editorial-shell` (`0.08` light / `0.12` dark), so the hue is declared
+once rather than repeated across all three theme blocks. The dark alpha is
+higher because a tint over a dark ground reads weaker per unit alpha.
+
+Replaced a violet (`#8f5cff`) that was never in this document. Clay at these
+alphas composites to within 0.2 of the violet's visual weight in light, so the
+swap changed hue, not intensity. The home page's blog band was a second
+consumer on paper, but its rule lost to `.c-section:nth-child(2n)` and never
+rendered; it has been removed rather than promoted — see
+`components/home-blog.css`.
 
 The background pair (`#f0eeea` / `#1a1d29`) doubles as the browser
 `theme-color`: pre-paint hints come from `profile.themeColors` in

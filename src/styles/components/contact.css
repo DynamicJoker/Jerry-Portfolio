@@ -1,6 +1,5 @@
 /* Component: contact */
-/* Above-the-fold rules that also exist in critical-home.css must be
-   changed in both places. */
+/* Below the fold, so no rules here are duplicated in critical-home.css. */
 
 .c-contact__content {
   display: grid;
@@ -15,7 +14,7 @@
 .c-contact__info h3 {
   font-size: var(--text-panel-title);
   margin-bottom: var(--space-16);
-  color: var(--color-electric-blue);
+  color: var(--color-primary);
 }
 
 .c-contact__info p {
@@ -74,7 +73,7 @@
 }
 
 .c-contact__reveal-button:hover {
-  color: var(--color-electric-blue);
+  color: var(--color-primary);
 }
 
 /* Press-only, like the nav links: transparent at rest, sinks on tap. */
@@ -157,7 +156,7 @@
   opacity: 1;
   cursor: default;
   background: var(--color-notification-success);
-  color: #fff;
+  color: var(--color-on-success);
   box-shadow: 0 0 0 3px var(--color-success-ring);
   animation: contactSentCondense 0.5s var(--ease-standard) 1;
 }

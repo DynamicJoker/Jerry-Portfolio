@@ -802,6 +802,91 @@ export const siteContent = {
     },
   },
 
+  // Accessible names and control labels — the wording screen readers announce
+  // and the text on chrome that isn't body copy. Kept here for the same reason
+  // as everything else in this file: so the site's language lives in one place
+  // rather than being scattered through markup. `{index}`/`{total}` are
+  // placeholders filled by JS, same convention as archiveUi.
+  ui: {
+    skipLink: 'Skip to content',
+    nav: {
+      // <nav> landmark name; distinguishes this from any future nav landmark.
+      landmark: 'Primary',
+      // `{name}` is filled from profile.name so the brand link's accessible
+      // name can't drift from the site owner's name.
+      brandHome: '{name} home',
+      themeToggle: 'Dark theme',
+      // Nav links in render order. `id` MUST match the home page's section
+      // element id — the scroll-spy (main.js updateActiveNavLink) compares
+      // `#<id>` against the section in view, and the hamburger's announced
+      // name is built from the matching link's label. `anchor` overrides the
+      // in-page target when it differs from the id; `standalonePath` makes the
+      // link leave the page entirely when we're not on the home page.
+      links: [
+        { id: 'home', label: 'Home', anchor: 'hero' },
+        { id: 'about', label: 'About' },
+        { id: 'skills', label: 'Skills' },
+        { id: 'services', label: 'Services' },
+        { id: 'testimonials', label: 'Testimonials' },
+        { id: 'portfolio', label: 'Portfolio' },
+        { id: 'experience', label: 'Experience' },
+        { id: 'blog', label: 'Blog', standalonePath: '/blog/' },
+        { id: 'contact', label: 'Contact' },
+      ],
+      // Used when `current` matches no link (e.g. the 404 page).
+      defaultCurrentLabel: 'Home',
+      // The hamburger's accessible name, which changes as you scroll. Built in
+      // THREE places — server-rendered in SiteNav, then re-set by main.js on
+      // the home page and by SiteNav's own inline script everywhere else.
+      // Those two scripts can't import this file (one is `is:inline`), so both
+      // read these templates off the button's data-* attributes instead of
+      // carrying their own copy. `{section}` is the current section's label.
+      toggleLabelOpen: 'Open navigation menu, currently {section}',
+      toggleLabelClose: 'Close navigation menu, currently {section}',
+    },
+    hero: {
+      scrollToNext: 'Scroll to next section',
+      pipelineList: 'What I do',
+    },
+    work: {
+      featuredRegion: 'Featured work',
+      previousItem: 'Previous featured item',
+      nextItem: 'Next featured item',
+      // Announced to screen readers on each carousel advance (main.js).
+      slideStatus: 'Slide {index} of {total}',
+      filterByType: 'Filter work by type',
+      filterByIndustry: 'Filter work by industry',
+      // Badge on archive rows whose piece is an interview.
+      interviewTag: 'Interview',
+      lightboxRegion: 'Work excerpt',
+      lightboxClose: 'Close excerpt',
+    },
+    testimonials: {
+      pause: 'Pause testimonials',
+      resume: 'Resume testimonials',
+    },
+    footer: {
+      rights: 'All rights reserved.',
+      backToTop: 'Back to Top',
+    },
+  },
+
+  // 404 page (src/pages/404.astro).
+  notFound: {
+    metaDescription:
+      'This page was announced but never shipped. Head back to the homepage or browse the blog.',
+    graphicAlt:
+      'A monogram-style ring containing the number 404, its orbital signal line breaking apart on one side',
+    kicker: 'Error 404 · Signal lost',
+    title: 'You found the vaporware.',
+    intro:
+      'This page was announced by your URL bar, but it never shipped. Could be a typo, could be a link that outlived its redirect. Everything below, though, is in production.',
+    actions: [
+      { label: 'Back to production', href: '/', variant: 'primary' },
+      { label: 'Browse the field notes', href: '/blog/', variant: 'outline' },
+    ],
+  },
+
   contactInfo: {
     revealTitle: 'Reveal email address',
     email: {

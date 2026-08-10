@@ -34,6 +34,11 @@
   --color-success-glow: rgba(34, 197, 94, 0.5);
   --color-success-ring: rgba(34, 197, 94, 0.28);
   --color-notification-success: rgba(15, 118, 110, 0.95);
+  /* Foreground on a saturated success fill. Deliberately NOT --color-on-fill or
+     --color-btn-primary-text: both flip to near-black in dark mode, but the
+     success fill above does not flip, so a flipping foreground would land
+     near-black on dark teal. Theme-invariant, like the fill it sits on. */
+  --color-on-success: #ffffff;
   --color-focus-visible: var(--color-primary);
 
   /* Typography */
@@ -113,7 +118,6 @@
   /* Border Radius */
   --radius-sm: 0.375rem; /* 6px */
   --radius-base: 0.5rem; /* 8px */
-  --radius-md: 0.625rem; /* 10px */
   --radius-lg: 0.75rem; /* 12px */
   --radius-xl: 1rem; /* 16px — soft-UI corners for neumorphic surfaces */
   --radius-full: 999rem; /* Infinite */
@@ -230,15 +234,43 @@
   --ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
 
   /* Layout */
-  --container-sm: 40rem; /* 640px */
-  --container-md: 48rem; /* 768px */
-  --container-lg: 64rem; /* 1024px */
-  --container-xl: 80rem; /* 1280px */
+
+  /* Breakpoints. Media queries CANNOT read custom properties, so these are
+     documentation plus a JS-readable source — the literals in the stylesheets
+     are the real switch points. `npm run check:breakpoints` closes that gap: it
+     reads this set and fails the build on any width media query in src/styles
+     that isn't one of these values (or its `.01rem` step twin — the house
+     convention that keeps a viewport at exactly a breakpoint on the smaller
+     side, e.g. iPad portrait at 48rem is mobile everywhere).
+
+     Add a value here before using it in a media query, not after. Height
+     queries are exempt: the two in hero.css are one-off viewport-fit rules,
+     not layout tiers. */
+  --breakpoint-xs: 30rem; /* 480px */
+  --breakpoint-sm: 40rem; /* 640px */
   --breakpoint-md: 48rem; /* 768px */
-  /* Nav collapse point. Media queries can't read custom properties, so the
-     64rem literals in nav.css / critical-home.css must stay in step with
-     this token; JS (main.js, SiteNav.astro) reads it at runtime. */
+  /* Nav collapse point — JS (main.js, SiteNav.astro) reads it at runtime. */
   --breakpoint-lg: 64rem; /* 1024px */
+
+  /* The content shell — ONE cap for every page-copy container: .o-container
+     (sections, footer, blog + 404 shells), the hero, the nav island and the
+     logo bar. Paired with --viewport-inline-padding as the single gutter.
+
+     There used to be three caps (80 / 75 / 72rem) over two different gutter
+     systems, which made the hero's left edge drift against the sections' and
+     flip sides at each container step — see objects.css for the measurements.
+     Keep it one value: a second cap reintroduces the swing.
+     Consumed above the fold, so mirrored in critical-home.css
+     (check:critical). */
+  --shell-max: 75rem; /* 1200px */
+
+  /* Reading measures — the widest a block of copy may run, by role. Pick a
+     step; don't invent a value. NOT for non-text boxes: the logo-bar grid also
+     caps at 44rem, but that constrains a logo grid, not a line length, so it
+     stays a literal on purpose. */
+  --measure-xl: 54rem; /* article body column */
+  --measure-lg: 44rem; /* intro paragraph under a heading */
+  --measure-md: 34rem; /* short supporting copy (card body, section lede) */
   /* The nav is a floating island: a detached, raised slab inset from the
      viewport edges. --navbar-height stays the RESERVED BAND (viewport top to
      the island's bottom edge) and keeps its old 4.375rem value, because a
@@ -270,7 +302,6 @@
   --z-nav-menu: 1001;
   --z-beta-banner: 1002;
   --z-loading-screen: 10000;
-  --z-notification: 10000;
   --z-skip-link: 10010;
 
   /* Docked section headings: the full heading fades out on approach (main.js
@@ -312,28 +343,24 @@
   --color-overlay-strong: rgba(26, 26, 46, 0.1);
   --color-chip-border: rgba(26, 26, 46, 0.24);
   --color-dot-muted: rgba(26, 26, 46, 0.35);
-  /* Opaque on purpose. This backs the docked .c-section__header::before, which
-     has no backdrop-filter, so any alpha below 1 just lets the section copy
-     scrolling underneath read straight through the chrome. Frosted glass was
-     evaluated and rejected: at a usable alpha the blur only smears the ghost,
-     and it costs a backdrop pass on a page that already flattens its soft-UI
-     shadows for performance. Don't reintroduce alpha here without also adding
-     the blur — and re-check mobile if you do. (It used to back the scrolled
-     navbar too; the nav is now a floating island that carries its own ground.) */
-  --color-navbar-scrolled-bg: #f0eeea;
   --shadow-sheet: 0 1rem 2rem rgba(26, 26, 46, 0.16);
   --shadow-banner: 0 1px 0 rgba(26, 26, 46, 0.08);
   --shadow-banner-expanded: 0 0.5rem 1.5rem rgba(26, 26, 46, 0.12);
-  --color-control-bg-start: rgba(255, 255, 255, 0.82);
-  --color-control-bg-end: rgba(255, 255, 255, 0.65);
-  --color-control-border: rgba(26, 26, 46, 0.38);
+  /* Sole survivor of the old translucent-control set (bg-start/bg-end/border
+     went with the neumorphism rollout — controls now carry depth via the
+     --neu-shadow-* recipes on the ground colour, not a glassy fill). This one
+     still paints the nav hamburger bars. */
   --color-control-glyph: rgba(26, 26, 46, 0.82);
   --color-tooltip-bg: rgba(255, 255, 255, 0.97);
   --color-tooltip-bg-inline: rgba(26, 26, 46, 0.05);
-  --color-card-translucent: rgba(255, 255, 255, 0.85);
   --color-embed-bg: rgba(255, 255, 255, 0.6);
   --calendly-embed-filter: none;
   --color-inset-bg: rgba(26, 26, 46, 0.04);
+  /* Modal scrim (the work lightbox's ::backdrop). Theme-invariant on purpose:
+     a dimmed surround has to read as "behind" in both themes, and a light
+     scrim in light mode would leave the lightbox with nothing to sit against.
+     Lives outside the theme-dependent group below for that reason. */
+  --color-scrim: rgba(8, 9, 13, 0.8);
   /* Neutral fill sits directly on the ground — keep it ~19 per channel darker
      than --neu-bg so it stays legible as a filled control. */
   --color-btn-neutral: #dddbd7;
@@ -342,28 +369,46 @@
   --color-on-fill: #ffffff;
   /* Two-series chart palette (blog MDX charts). These MUST resolve to
      different colours. They previously ran through --color-electric-blue and
-     --color-accent-teal, which the rebrand aliased to --color-primary — both
-     of them — so every two-colour chart silently collapsed to one flat fill.
-     `npm run check:charts` now fails the build if the series ever converge
-     again. Series 2 is theme-explicit because --color-primary and
+     --color-accent-teal — legacy aliases that the rebrand pointed at
+     --color-primary, both of them, so every two-colour chart silently
+     collapsed to one flat fill. Those aliases have since been retired
+     (usages now name --color-primary directly), and `npm run check:charts`
+     fails the build if the series ever converge again. Series 2 is
+     theme-explicit because --color-primary and
      --color-accent sit at nearly identical luminance in light mode (4.75:1 vs
      4.78:1 against the ground), so they cannot serve as a two-series pair.
      Both series must keep --color-on-fill legible: white in light, near-black
      in dark, hence series 2 goes darker in light and paler in dark. */
   --chart-series-1: var(--color-primary);
   --chart-series-2: #1d3140;
-  --shell-tint-violet: rgba(143, 92, 255, 0.08);
+  /* Editorial tint — the second hue in the blog surfaces' washes, played
+     against --color-primary. Clay rather than a fourth blue: the brand ramp is
+     entirely signal blues, so another blue reads as the primary slightly off
+     rather than as a deliberate pairing, while the ground (#f0eeea) is warm and
+     gives a warm tint something to sit with. Replaced a violet (#8f5cff) that
+     appeared nowhere in docs/brand.md; clay at these alphas composites to
+     within 0.2 of the violet's visual weight in light, so this is a hue swap,
+     not an intensity change.
+
+     Split into an rgb TRIPLET plus a composed tint (house pattern, cf.
+     --color-primary-rgb) so the hue is declared once instead of being repeated
+     in all three theme blocks the way the violet was. --tint-editorial-shell
+     carries the theme bump: a tint over a dark ground reads weaker per unit
+     alpha, so dark gets more (0.08 -> 0.12).
+
+     One consumer today: the .c-blog-shell / .c-article-shell corner glow.
+     The home page's blog band used to be a second consumer, but its rule never
+     won against .c-section:nth-child(2n) and has been removed — see
+     components/home-blog.css before reintroducing anything there. */
+  --tint-editorial-rgb: 201, 138, 91;
+  --tint-editorial-shell: rgba(var(--tint-editorial-rgb), 0.08);
   --loading-screen-bg: linear-gradient(135deg, #f0eeea 0%, #e3f1fb 100%);
   --hero-name-rest: #1a1a2e;
-  /* Legacy accent names now alias the indigo primary so existing usages flip automatically */
-  --color-electric-blue: var(--color-primary);
-  --color-accent-teal: var(--color-primary);
   --animation-speed: 0.3s;
   --animation-curve: cubic-bezier(0.4, 0, 0.2, 1);
 
   /* Icon sizes */
   --font-size-icon-sm: 1.5rem;
-  --font-size-icon-lg: 2.5rem;
 
   /* Gantt chart layout split */
   --gantt-label-width: 30%;
@@ -393,7 +438,7 @@
     --color-border-strong: var(--color-hairline-strong);
     --color-error: rgba(255, 84, 89, 1);
     --color-focus-visible: var(--color-primary-hover);
-    --color-btn-primary-text: #0f1117;
+    --color-btn-primary-text: var(--color-dark-primary);
     --color-surface-raised: #232633;
     /* Neumorphism — mid-dark ground, NOT #0f1117: a near-black ground has no
        lighter tint to catch the top-left highlight and the effect collapses. */
@@ -410,26 +455,21 @@
     --color-overlay-strong: rgba(255, 255, 255, 0.1);
     --color-chip-border: rgba(245, 245, 245, 0.24);
     --color-dot-muted: rgba(255, 255, 255, 0.35);
-    --color-navbar-scrolled-bg: #1a1d29;
     --shadow-sheet: 0 1rem 2rem rgba(0, 0, 0, 0.4);
     --shadow-banner: 0 1px 0 rgba(0, 0, 0, 0.4);
     --shadow-banner-expanded: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.32);
-    --color-control-bg-start: rgba(13, 15, 18, 0.76);
-    --color-control-bg-end: rgba(13, 15, 18, 0.6);
-    --color-control-border: rgba(245, 245, 245, 0.34);
     --color-control-glyph: rgba(245, 245, 245, 0.86);
     --color-tooltip-bg: rgba(26, 29, 41, 0.95);
     --color-tooltip-bg-inline: rgba(26, 29, 41, 0.75);
-    --color-card-translucent: rgba(18, 22, 28, 0.78);
     --color-embed-bg: rgba(10, 10, 10, 0.6);
     --calendly-embed-filter: invert(0.92) hue-rotate(180deg);
     --color-inset-bg: rgba(10, 10, 10, 0.28);
     --color-btn-neutral: rgba(62, 68, 72, 0.98);
     --color-btn-neutral-hover: rgba(72, 79, 84, 0.98);
     --color-btn-neutral-active: rgba(54, 59, 63, 0.98);
-    --color-on-fill: #0f1117;
+    --color-on-fill: var(--color-dark-primary);
     --chart-series-2: #cbe9ff;
-    --shell-tint-violet: rgba(143, 92, 255, 0.12);
+    --tint-editorial-shell: rgba(var(--tint-editorial-rgb), 0.12);
     --loading-screen-bg: linear-gradient(135deg, #1a1d29 0%, #232633 100%);
     --hero-name-rest: #fff;
   }
@@ -457,7 +497,7 @@
   --color-border-strong: var(--color-hairline-strong);
   --color-error: rgba(255, 84, 89, 1);
   --color-focus-visible: var(--color-primary-hover);
-  --color-btn-primary-text: #0f1117;
+  --color-btn-primary-text: var(--color-dark-primary);
   --color-surface-raised: #232633;
   /* Neumorphism — the dark ground is this mid-dark tone, not a near-black:
      --color-background is mapped to the same #1a1d29 so a raised element
@@ -477,26 +517,21 @@
   --color-overlay-strong: rgba(255, 255, 255, 0.1);
   --color-chip-border: rgba(245, 245, 245, 0.24);
   --color-dot-muted: rgba(255, 255, 255, 0.35);
-  --color-navbar-scrolled-bg: #1a1d29;
   --shadow-sheet: 0 1rem 2rem rgba(0, 0, 0, 0.4);
   --shadow-banner: 0 1px 0 rgba(0, 0, 0, 0.4);
   --shadow-banner-expanded: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.32);
-  --color-control-bg-start: rgba(13, 15, 18, 0.76);
-  --color-control-bg-end: rgba(13, 15, 18, 0.6);
-  --color-control-border: rgba(245, 245, 245, 0.34);
   --color-control-glyph: rgba(245, 245, 245, 0.86);
   --color-tooltip-bg: rgba(26, 29, 41, 0.95);
   --color-tooltip-bg-inline: rgba(26, 29, 41, 0.75);
-  --color-card-translucent: rgba(18, 22, 28, 0.78);
   --color-embed-bg: rgba(10, 10, 10, 0.6);
   --calendly-embed-filter: invert(0.92) hue-rotate(180deg);
   --color-inset-bg: rgba(10, 10, 10, 0.28);
   --color-btn-neutral: rgba(62, 68, 72, 0.98);
   --color-btn-neutral-hover: rgba(72, 79, 84, 0.98);
   --color-btn-neutral-active: rgba(54, 59, 63, 0.98);
-  --color-on-fill: #0f1117;
+  --color-on-fill: var(--color-dark-primary);
   --chart-series-2: #cbe9ff;
-  --shell-tint-violet: rgba(143, 92, 255, 0.12);
+  --tint-editorial-shell: rgba(var(--tint-editorial-rgb), 0.12);
   --loading-screen-bg: linear-gradient(135deg, #1a1d29 0%, #232633 100%);
   --hero-name-rest: #fff;
 }

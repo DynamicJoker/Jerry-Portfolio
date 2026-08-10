@@ -173,7 +173,7 @@ function initializeContactInfo() {
     revealButton.addEventListener('mouseenter', () => {
       textSpan.style.filter = 'blur(2px)';
       textSpan.style.opacity = '1';
-      revealButton.style.color = 'var(--color-electric-blue)';
+      revealButton.style.color = 'var(--color-primary)';
     });
     revealButton.addEventListener('mouseleave', () => {
       textSpan.style.filter = 'blur(4px)';
@@ -192,7 +192,7 @@ function initializeContactInfo() {
 
       mailLink.addEventListener(
         'mouseenter',
-        () => (mailLink.style.color = 'var(--color-electric-blue)'),
+        () => (mailLink.style.color = 'var(--color-primary)'),
       );
       mailLink.addEventListener(
         'mouseleave',
@@ -356,7 +356,7 @@ function initializeNavigation() {
 function getCurrentSectionText() {
   return (
     document.querySelector('[data-current-section]')?.textContent?.trim() ||
-    'Home'
+    siteContent.ui.nav.defaultCurrentLabel
   );
 }
 
@@ -364,10 +364,18 @@ function updateNavControls(isOpen, controls = []) {
   const currentText = getCurrentSectionText();
   controls.forEach((control) => {
     control.setAttribute('aria-expanded', String(isOpen));
-    control.setAttribute(
-      'aria-label',
-      `${isOpen ? 'Close' : 'Open'} navigation menu, currently ${currentText}`,
-    );
+    // Wording comes from content.js, server-rendered onto the control as
+    // data-label-open/-close so this and SiteNav's inline script share one
+    // source. Falls back to the rendered aria-label if it's missing.
+    const template = isOpen
+      ? control.dataset.labelClose
+      : control.dataset.labelOpen;
+    if (template) {
+      control.setAttribute(
+        'aria-label',
+        template.replace('{section}', currentText),
+      );
+    }
   });
 }
 
@@ -688,7 +696,11 @@ function initializeFeaturedCarousel() {
     }
     index = n;
     if (counter) counter.textContent = String(index + 1).padStart(2, '0');
-    if (status) status.textContent = `Slide ${index + 1} of ${slides.length}`;
+    if (status) {
+      status.textContent = siteContent.ui.work.slideStatus
+        .replace('{index}', String(index + 1))
+        .replace('{total}', String(slides.length));
+    }
     warm(index + 1);
     warm(index - 1);
   };

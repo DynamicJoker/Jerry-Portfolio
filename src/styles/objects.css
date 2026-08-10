@@ -1,38 +1,28 @@
 /* Objects — structural layout patterns (o-*). */
-/* Above-the-fold rules that also exist in critical-home.css must be
-   changed in both places. */
+/* Nothing here is duplicated in critical-home.css: the hero uses its own
+   .c-hero__inner, and every .o-container on the home page sits below the
+   fold. Mirror a rule there only if that stops being true. */
 
 /* --- LAYOUT & UTILITIES --- */
 
+/* The single content shell. Everything that holds page copy — sections, the
+   footer, the blog and 404 shells — caps here, and so do the hero
+   (.c-hero__inner), the nav island and the logo bar, all via --shell-max.
+   One cap plus one gutter is what keeps the left edge steady down the page.
+
+   This used to be a stepped container (max-width 40/48/64/80rem at four
+   min-width breakpoints) with a fixed 16px gutter, while the hero used a flat
+   cap with the fluid --viewport-inline-padding. Two systems meant the offset
+   between hero copy and section copy swung with viewport width and reversed
+   at each step: measured 93px left at 985px, 48px left at 1265px, then 80px
+   right at 1281px — a 128px jump from one pixel of resize. They only lined up
+   in a narrow window near 800px.
+
+   So: don't reintroduce max-width steps here, and don't give this a gutter
+   that differs from --viewport-inline-padding, or the swing comes back. */
 .o-container {
   width: 100%;
-  margin: 0 auto;
-  padding: 0 var(--space-16);
-}
-
-/* Steps use the house .01 convention (see the max-width: Nrem /
-   min-width: N.01rem pairs in components) so a viewport at exactly a
-   breakpoint — e.g. iPad portrait at 48rem/768px — is mobile everywhere. */
-@media (min-width: 40.01rem) {
-  .o-container {
-    max-width: var(--container-sm);
-  }
-}
-
-@media (min-width: 48.01rem) {
-  .o-container {
-    max-width: var(--container-md);
-  }
-}
-
-@media (min-width: 64.01rem) {
-  .o-container {
-    max-width: var(--container-lg);
-  }
-}
-
-@media (min-width: 80.01rem) {
-  .o-container {
-    max-width: var(--container-xl);
-  }
+  max-width: var(--shell-max);
+  margin-inline: auto;
+  padding-inline: var(--viewport-inline-padding);
 }
