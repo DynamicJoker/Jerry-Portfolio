@@ -673,14 +673,19 @@
     display: none;
   }
 
+  /* min-width: 0 because a flex item defaults to min-width: auto, which stops
+     it shrinking below its content and pushes the chevron past the card's
+     padding box — where .c-capability's overflow: hidden clips it. */
   .c-capability--collapsible .c-capability__name {
     flex: 1;
+    min-width: 0;
     margin: 0;
     font-size: var(--font-size-base);
   }
 
   .c-capability__chev {
     display: block;
+    flex-shrink: 0;
     margin-left: auto;
     color: var(--color-text-muted);
     font-family: var(--font-family-mono);
