@@ -1,6 +1,5 @@
 /* Component: testimonials */
-/* Above-the-fold rules that also exist in critical-home.css must be
-   changed in both places. */
+/* Below the fold, so no rules here are duplicated in critical-home.css. */
 
 .c-testimonials-scroller {
   display: flex;

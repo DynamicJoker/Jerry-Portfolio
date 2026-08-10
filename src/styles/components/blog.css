@@ -1,6 +1,6 @@
 /* Component: blog */
-/* Above-the-fold rules that also exist in critical-home.css must be
-   changed in both places. */
+/* Blog and 404 pages link the full stylesheet directly — critical-home.css is
+   inlined on the home page only — so nothing here is duplicated there. */
 
 /* Blog */
 

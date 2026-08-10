@@ -1,7 +1,7 @@
 /* Objects — structural layout patterns (o-*). */
-/* Above-the-fold rules that also exist in critical-home.css must be
-   changed in both places. (None currently: the hero uses .c-hero__inner and
-   every .o-container on the home page sits below the fold.) */
+/* Nothing here is duplicated in critical-home.css: the hero uses its own
+   .c-hero__inner, and every .o-container on the home page sits below the
+   fold. Mirror a rule there only if that stops being true. */
 
 /* --- LAYOUT & UTILITIES --- */
 

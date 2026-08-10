@@ -69,10 +69,11 @@ Personal portfolio + blog, deployed on Vercel at https://jerryjames.me.
 - The MDX chart classes (`c-article-chart*`, `c-stacked-bar*`) are written by
   hand in blog post bodies — renaming them means editing published
   `src/content/blog/*.mdx` too. Chart fills come from `--chart-series-1` /
-  `--chart-series-2` (settings.css); **never point a chart at
-  `--color-electric-blue` or `--color-accent-teal`** — both are legacy aliases
-  of `--color-primary`, so a two-colour chart built on them renders as one flat
-  fill with nothing failing. `npm run check:charts` (build-gated) resolves the
+  `--chart-series-2` (settings.css); **never point the two series at tokens
+  that resolve to the same colour** — that once happened via two legacy aliases
+  (both pointing at `--color-primary`, since retired) and every two-colour
+  chart silently rendered as one flat fill with nothing failing.
+  `npm run check:charts` (build-gated) resolves the
   series through their `var()` chains per theme and fails if any two converge,
   and also rejects any `c-article-chart*`/`c-stacked-bar*` class used in MDX
   that the stylesheet doesn't define (catches typo'd modifiers in new posts).

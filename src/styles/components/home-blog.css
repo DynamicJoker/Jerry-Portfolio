@@ -1,6 +1,5 @@
 /* Component: home-blog */
-/* Above-the-fold rules that also exist in critical-home.css must be
-   changed in both places. */
+/* Below the fold, so no rules here are duplicated in critical-home.css. */
 
 /* The .c-home-blog BLOCK deliberately carries no styles of its own — it exists
    as the BEM namespace for the elements below, and the section's background
