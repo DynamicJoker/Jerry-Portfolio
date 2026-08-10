@@ -55,11 +55,12 @@ Personal portfolio + blog, deployed on Vercel at https://jerryjames.me.
 - Design tokens (colors, spacing, fonts, breakpoints) are CSS variables in
   `src/styles/settings.css`; use them instead of raw values. Three scales there
   are worth knowing before adding a width: `--breakpoint-*` (the only legal
-  media-query switch points, build-enforced), `--shell-max-*` (how wide the
-  content column grows — note sections, nav, and hero currently disagree at
-  80/75/72rem, deliberately named so the mismatch is visible in one place), and
-  `--measure-*` (max line length for copy, by role — pick a step, don't invent
-  a value). Brand SVGs
+  media-query switch points, build-enforced by `check:breakpoints`),
+  `--shell-max` (**one** cap for every content container — `.o-container`, the
+  hero, the nav island, the logo bar — paired with `--viewport-inline-padding`
+  as the single gutter; a second cap or a different gutter reintroduces the
+  hero/section drift documented in `objects.css`), and `--measure-*` (max line
+  length for copy, by role — pick a step, don't invent a value). Brand SVGs
   (`BrandLogo.astro`, 404 graphic, `public/brand/*`) intentionally hardcode the
   brand gradient hexes because standalone SVG files can't use CSS variables.
   **Brand palette + typography reference: `docs/brand.md`** (fonts, light/dark

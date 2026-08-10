@@ -14,7 +14,7 @@
 }
 
 .c-logo-bar__wrapper {
-  max-width: var(--shell-max-nav);
+  max-width: var(--shell-max);
   margin: 0 auto;
   padding-inline: var(--viewport-inline-padding);
 }

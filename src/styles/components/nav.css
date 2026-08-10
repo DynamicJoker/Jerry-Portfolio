@@ -33,7 +33,7 @@
   align-items: center;
   box-sizing: border-box;
   width: calc(100% - var(--nav-inset) * 2);
-  max-width: var(--shell-max-nav);
+  max-width: var(--shell-max);
   height: var(--nav-island-height);
   margin: var(--nav-inset) auto 0;
   padding: 0 var(--space-10) 0 var(--space-20);

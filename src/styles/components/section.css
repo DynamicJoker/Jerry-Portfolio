@@ -237,9 +237,9 @@ section[id] {
     padding-block: var(--section-padding-mobile);
   }
 
-  .o-container {
-    padding-inline: var(--viewport-inline-padding);
-  }
+  /* The .o-container padding override that used to live here is gone:
+     the shell now uses --viewport-inline-padding at every width, so this
+     block was re-declaring the value it already had. */
 
   .c-hero {
     align-items: flex-start;
