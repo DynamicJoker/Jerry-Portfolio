@@ -832,16 +832,20 @@ html.is-theme-transitioning *::after {
   padding-inline: var(--viewport-inline-padding);
 }
 
-/* Mobile-first: the lead is centered to match the centered proof panel below
-   it. The two-column desktop layout restores left alignment (see the
-   min-width breakpoint below). */
+/* Left-aligned at every width. This used to centre below 48rem to match the
+   centred proof panel, but centring only ever applied to the children that
+   fit: .c-hero__eyebrow and .c-hero__meta are wrapping flex rows, so once
+   their content exceeded the measure they filled the line and start-packed
+   themselves. The result read as three alignments in one block — left eyebrow,
+   centred name/title/copy/buttons, left meta. One axis for the whole hero also
+   keeps a 5-line paragraph on a steady left edge on small screens. */
 .c-hero__lead {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--space-24);
   min-width: 0;
-  text-align: center;
+  text-align: left;
 }
 
 .c-hero__eyebrow {
@@ -933,13 +937,21 @@ html.is-theme-transitioning *::after {
   animation: fadeInUp 1s ease-out 0.75s both;
 }
 
+/* The rules between items LEAD their item rather than trail it, and the list
+   clips. A trailing rule dangles at the end of a wrapped line ("12+ yrs |
+   Bangalore, IN |" then a new line), which is exactly what happens at 390px.
+   A leading rule sits in the column gap via a negative start margin — so it
+   costs no layout width — and the one belonging to an item that starts a
+   wrapped line lands outside the list's content box, where `overflow: hidden`
+   removes it. :first-child covers the very first item. */
 .c-hero__meta {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-6) 0;
+  gap: var(--space-6) var(--space-32);
   margin: 0;
   padding: 0;
+  overflow: hidden;
   list-style: none;
   font-family: var(--font-family-mono);
   font-size: var(--font-size-sm);
@@ -952,12 +964,16 @@ html.is-theme-transitioning *::after {
   align-items: center;
 }
 
-.c-hero__meta-item:not(:last-child)::after {
+.c-hero__meta-item::before {
   content: '';
   width: 1px;
   height: 0.9rem;
-  margin: 0 var(--space-16);
+  margin-inline: calc(-1 * var(--space-16) - 1px) var(--space-16);
   background: var(--color-hairline-strong);
+}
+
+.c-hero__meta-item:first-child::before {
+  content: none;
 }
 
 .c-hero__panel {
@@ -1087,17 +1103,12 @@ html.is-theme-transitioning *::after {
     grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
     gap: clamp(2rem, 5vw, 4.5rem);
   }
-
-  .c-hero__lead {
-    align-items: flex-start;
-    text-align: left;
-  }
 }
 
 @media (max-width: 48rem) {
   .c-hero__buttons {
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     width: 100%;
   }
 
