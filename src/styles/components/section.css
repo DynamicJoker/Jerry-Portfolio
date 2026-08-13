@@ -150,6 +150,64 @@ body {
   white-space: nowrap;
 }
 
+/* Second dock stage. The full-title tab is centred under the island, which
+   puts it directly over the content column — fine for the beat when the
+   section opens and its body is still below the line, wrong for the rest of
+   the section, where copy scrolls under an opaque label.
+
+   So once the body reaches the tab (main.js adds .is-docked-compact) the tab
+   sheds its title and parks in the inline-end gutter as a counter-only chip:
+   the section stays labelled for the whole scroll, but the ~36px chip sits
+   beside the measure instead of on it.
+
+   The end margin lands the chip's outer edge on the ISLAND's inline end, not
+   the content column's: half the leftover viewport once the shell is capped,
+   falling back to --nav-inset below --shell-max, which is exactly how the
+   island offsets itself. Stopping at the content edge instead would sit the
+   chip on the right-aligned meta that the engagement ledger and the archive
+   rows park there (measured: 32px of overlap); the shell's padding is the one
+   band on the line that no component writes into. It overrides the
+   `margin: 0 auto` the inner carries from .o-container.
+
+   Own keyframe rather than reusing dockTabIn: the browser only restarts an
+   animation when the computed animation-name changes, and both stages would
+   otherwise resolve to the same name and swap with no fade. */
+
+.c-section__header.is-docked-compact .c-section__header-inner {
+  margin-inline: auto max(var(--nav-inset), calc((100% - var(--shell-max)) / 2));
+  padding-inline: var(--space-12);
+  animation: dockChipIn var(--duration-fast) var(--ease-standard);
+}
+
+/* The counter is the whole chip, so drop the ' /' the kicker's ::before adds
+   to separate it from the label — nothing follows it here. */
+
+.c-section__header.is-docked-compact .c-section__kicker::before {
+  content: counter(section-kicker, decimal-leading-zero);
+}
+
+/* Visually gone, still the section's <h2>: `display: none` would pull the
+   only heading this section has out of the accessibility tree and the
+   document outline for as long as the chip is up. Same recipe as u-sr-only. */
+
+.c-section__header.is-docked-compact .c-section__title {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+@keyframes dockChipIn {
+  from {
+    opacity: 0;
+  }
+}
+
 /* Approach: the full heading dissolves as it nears the dock line. The 1.15
    multiplier lands it at zero slightly BEFORE the line, so there is a beat of
    nothing rather than the heading and the tab reading as duplicates of each
