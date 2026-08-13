@@ -360,11 +360,16 @@
   color: var(--color-text-muted);
 }
 
+/* Padding/negative-margin pair grows the hit box to the 24px target-size
+   minimum without moving the link or changing the row height — the row's own
+   10px block padding leaves room, so adjacent rows' targets never overlap. */
 .c-spotlight__link {
   display: inline-flex;
   align-items: baseline;
   gap: var(--space-8);
   min-width: 0;
+  padding-block: var(--space-4);
+  margin-block: calc(var(--space-4) * -1);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   color: var(--color-primary);

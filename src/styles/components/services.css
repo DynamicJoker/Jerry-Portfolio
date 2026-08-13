@@ -100,7 +100,12 @@
   color: var(--color-text-muted);
 }
 
+/* Padding/negative-margin pair grows the hit box to the 24px target-size
+   minimum while leaving the ledger row's height and the CTA's baseline where
+   the hover choreography below expects them. */
 .c-engagement__cta {
+  padding-block: var(--space-4);
+  margin-block: calc(var(--space-4) * -1);
   font-family: var(--font-family-mono);
   font-size: var(--font-size-sm);
   color: var(--color-primary);

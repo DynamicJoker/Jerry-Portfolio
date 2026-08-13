@@ -966,7 +966,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
                   tabindex="0"
                   role="button"
                   aria-expanded="false"
-                  aria-label={`Show details for ${job.title} at ${job.company}`}
+                  aria-label={`Show details for ${job.title} at ${job.company}, ${job.period}`}
                 >
                   <div
                     class={`c-gantt__bar ${isPresent ? 'is-present' : ''}`}
@@ -1155,6 +1155,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
                 name="name"
                 class="c-form-control"
                 placeholder={siteContent.contactForm.labels.name}
+                autocomplete="name"
                 required
                 aria-describedby="name-error"
               />
@@ -1170,6 +1171,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
                 name="email"
                 class="c-form-control"
                 placeholder={siteContent.contactForm.labels.email}
+                autocomplete="email"
                 required
                 aria-describedby="email-error"
               />
@@ -1185,6 +1187,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
                 name="company"
                 class="c-form-control"
                 placeholder={siteContent.contactForm.labels.company}
+                autocomplete="organization"
               />
             </div>
             <div class="c-form-group">

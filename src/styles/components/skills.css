@@ -213,8 +213,14 @@
   color: var(--color-text-muted);
 }
 
+/* Padding grows the hit box to the 24px target-size minimum (the mono text
+   alone is 18px); the matching negative margin keeps the CTA's painted
+   position and the card's height byte-identical. Same pattern on
+   .c-spotlight__link and .c-engagement__cta. */
 .c-capability__cta {
   align-self: flex-start;
+  padding-block: var(--space-4);
+  margin-block: calc(var(--space-4) * -1);
   font-family: var(--font-family-mono);
   font-size: var(--font-size-sm);
   color: var(--color-primary);
