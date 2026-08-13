@@ -788,6 +788,9 @@ siteContent.testimonials.forEach((testimonial, index) => {
         </div>
 
         <!-- Asset-type chip-tabs (single-select) -->
+        <p class="c-archive__filter-label" aria-hidden="true">
+          {archiveUi.typeFilterLabel}
+        </p>
         <div
           class="c-archive__tabs"
           role="group"
@@ -814,6 +817,9 @@ siteContent.testimonials.forEach((testimonial, index) => {
         </div>
 
         <!-- Industry sub-filter -->
+        <p class="c-archive__filter-label" aria-hidden="true">
+          {archiveUi.industryFilterLabel}
+        </p>
         <div
           class="c-archive__filters"
           role="group"
@@ -873,7 +879,10 @@ siteContent.testimonials.forEach((testimonial, index) => {
                           <span class="c-archive__tag">{interviewTag}</span>
                         )}
                       </span>
-                      <span class="c-archive__row-meta">{row.campaign}</span>
+                      <span class="c-archive__row-meta">
+                        <span class="c-archive__row-year">{row.year}</span>
+                        {row.campaign}
+                      </span>
                     </span>
                     <span class:list={['c-status', `c-status--${sm.tone}`]}>
                       <Icon name={sm.icon} />

@@ -324,6 +324,12 @@ export const siteContent = {
     showAllLabel: 'Show all {count}',
     countStatus: '{shown} of {total} pieces',
     countInitial: '{total} pieces',
+    // Visible rail labels for the two filter rows. The groups already carry
+    // the longer ui.work.filterBy* strings as their accessible names, so these
+    // are aria-hidden — they exist so a sighted user can tell the two rows
+    // apart, which nothing on screen previously said.
+    typeFilterLabel: 'Type',
+    industryFilterLabel: 'Industry',
   },
   featuredCampaigns: [
     {
