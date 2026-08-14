@@ -198,6 +198,13 @@ siteContent.testimonials.forEach((testimonial, index) => {
               ))
             }
           </dl>
+          <ul class="c-hero__proof-context">
+            {
+              profile.heroProofContext.map((domain) => (
+                <li class="c-hero__proof-context-item">{domain}</li>
+              ))
+            }
+          </ul>
         </div>
       </div>
     </div>
@@ -562,7 +569,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
                     class="c-engagement__cta"
                     href={siteContent.services.ctaHref}
                   >
-                    {siteContent.services.ctaLabel}
+                    {engagement.ctaLabel ?? siteContent.services.ctaLabel}
                   </a>
                 </div>
               </li>

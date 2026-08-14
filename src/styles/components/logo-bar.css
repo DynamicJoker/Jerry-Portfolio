@@ -87,6 +87,11 @@
     max-width: none;
     gap: var(--space-32);
     overflow-x: auto;
+    /* The edge fade below is the swipe affordance; a bar on top of it just
+       reads as chrome bolted to the strip. Touch UAs overlay-and-hide theirs
+       anyway, so this only shows up in narrow desktop windows — where it was a
+       bright classic scrollbar sitting under the logos. */
+    scrollbar-width: none;
     scroll-snap-type: x mandatory;
     padding-bottom: var(--space-8);
     -webkit-mask-image: linear-gradient(
@@ -103,6 +108,12 @@
       #000 92%,
       transparent
     );
+  }
+
+  /* scrollbar-width only landed in Safari 18.2; this covers the versions
+     before it. */
+  .c-logo-bar__set::-webkit-scrollbar {
+    display: none;
   }
 
   .c-logo-bar__item {

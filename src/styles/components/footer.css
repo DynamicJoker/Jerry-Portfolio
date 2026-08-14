@@ -20,6 +20,21 @@
   color: var(--color-text-secondary);
 }
 
+/* Zero the paragraph's block margin. align-items:center centres the two flex
+   ITEMS, and the inherited 16px bottom margin made this one 37px tall around a
+   21px line — so the wrapper centred correctly while the text inside it sat 8px
+   above the link's optical centre. */
+.c-footer__text p {
+  margin: 0;
+}
+
+.c-footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-8) var(--space-20);
+}
+
 /* Press-only, matching the nav links: flat at rest, the box sinks on tap.
    inline-flex because transform does not apply to inline boxes. The padding
    gives the inset well room to render around the text, and the equal negative

@@ -117,9 +117,14 @@ const breadcrumbJsonLd = {
             >{formatDate(post.data.pubDate)}</time
           >
           {
-            post.data.updatedDate && (
-              <span>Updated {formatDate(post.data.updatedDate)}</span>
-            )
+            /* Only a genuine revision earns the second date. Both posts ship
+               updatedDate equal to pubDate, which rendered as "May 19, 2026
+               Updated May 19, 2026" — the same day twice, reading as a bug. */
+            post.data.updatedDate &&
+              post.data.updatedDate.getTime() !==
+                post.data.pubDate.getTime() && (
+                <span>Updated {formatDate(post.data.updatedDate)}</span>
+              )
           }
         </div>
         <h1>{post.data.title}</h1>

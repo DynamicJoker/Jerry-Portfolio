@@ -1057,14 +1057,57 @@ html.is-theme-transitioning *::after {
 }
 
 /* Content-sized columns, not equal thirds — see components/hero.css. */
+/* Columns follow the data. This was repeat(3, auto) against a heroStats array,
+   so dropping an entry left a phantom third track and space-between pushed the
+   survivors to opposite edges of the card. grid-auto-flow: column sizes to
+   whatever the array holds. */
 .c-hero__metrics {
   display: grid;
-  grid-template-columns: repeat(3, auto);
+  grid-auto-flow: column;
+  grid-auto-columns: auto;
   justify-content: space-between;
   gap: var(--space-12);
   margin: 0;
   padding-top: var(--space-16);
   border-top: 1px solid var(--color-hairline-strong);
+}
+
+/* The card can't narrow — it's width-matched to the portrait above it — so with
+   two metrics it needs something holding the remaining measure. This restates
+   heroLede's domains; it is not a second claim.
+
+   A list rather than one string: the domains overrun the 288px measure, and as
+   plain text the wrap stranded a separator at the head of the second line. Same
+   fix as .c-hero__meta — the interpunct LEADS its item and sits in the column
+   gap on a negative start margin, so it costs no layout width and the one
+   belonging to an item that starts a line falls outside the box, where
+   overflow: hidden takes it. Correct at any width, not just this one. */
+.c-hero__proof-context {
+  display: flex;
+  flex-wrap: wrap;
+  /* 16px gaps land the four domains on one line at 285 of 288px. If the mono
+     falls back to a wider face and they no longer fit, the list wraps — which
+     is now a clean break rather than a stranded separator, so the tight fit
+     degrades safely instead of breaking. */
+  gap: 0 var(--space-16);
+  margin: 0;
+  padding: var(--space-12) 0 0;
+  overflow: hidden;
+  list-style: none;
+  border-top: 1px solid var(--color-hairline);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+.c-hero__proof-context-item::before {
+  content: '·';
+  margin-inline: calc(-1 * var(--space-6) - 1ch) var(--space-6);
+}
+
+.c-hero__proof-context-item:first-child::before {
+  content: none;
 }
 
 .c-hero__metric {

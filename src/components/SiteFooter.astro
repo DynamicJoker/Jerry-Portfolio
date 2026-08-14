@@ -14,6 +14,15 @@ const { backHref = '#hero' } = Astro.props;
         </p>
       </div>
       <div class="c-footer__links">
+        <a href="/blog/" class="c-footer__link">{siteContent.ui.footer.blog}</a>
+        <a href="/rss.xml" class="c-footer__link">{siteContent.ui.footer.rss}</a
+        >
+        <a
+          href={siteContent.contactInfo.linkedin.url}
+          class="c-footer__link"
+          target="_blank"
+          rel="noopener noreferrer">{siteContent.ui.footer.linkedin}</a
+        >
         <a href={backHref} class="c-footer__link"
           >{siteContent.ui.footer.backToTop}</a
         >

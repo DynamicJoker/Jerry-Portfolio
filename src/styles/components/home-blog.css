@@ -69,8 +69,15 @@
 
 /* Inset soft-UI teaser well. No hover lift — a recessed card sits still;
    the link-color hovers inside carry the feedback. */
+/* Rows are declared rather than implicit so the read link pins to the card's
+   bottom edge: meta, title, description, link — with the description row taking
+   the slack. The cards stretch to equal heights in the grid, so with implicit
+   auto rows a two-line description left its link 26px higher than the
+   three-line card's, and the two CTAs never shared a baseline. `margin-top:
+   auto` can't do this here: in grid it resolves inside a content-sized row. */
 .c-home-blog__card {
   display: grid;
+  grid-template-rows: auto auto 1fr auto;
   min-width: 0;
   gap: 0.9rem;
   align-content: start;
