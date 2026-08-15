@@ -860,7 +860,12 @@ export const siteContent = {
       toggleLabelClose: 'Close navigation menu, currently {section}',
     },
     hero: {
+      // scrollToNext stays the anchor's accessible name; scrollLabel is the
+      // visible mono micro-label. Keeping both is deliberate — the fuller
+      // string reads better out of context for a screen reader, and it
+      // contains the visible word, which is what WCAG 2.5.3 asks for.
       scrollToNext: 'Scroll to next section',
+      scrollLabel: 'scroll',
       pipelineList: 'What I do',
     },
     work: {

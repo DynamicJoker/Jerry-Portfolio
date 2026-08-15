@@ -1253,23 +1253,46 @@ html.is-theme-transitioning *::after {
   transition-duration: var(--neu-press-duration);
 }
 
+/* Mono micro-label over a fading hairline — the same pairing as the kickers
+   and `// proof`. Replaces a 24px box with two 2px borders rotated 45deg on an
+   infinite bounce: the only 2px rotated shape on a site otherwise built from
+   1px hairlines, which is what made it read as borrowed from another kit.
+   No glyph, so nothing here dates; no loop, so nothing needs a motion guard
+   beyond the entrance fade already listed in the reduced-motion block. */
 .c-scroll-indicator {
   position: relative;
   z-index: 2;
+  display: flex;
   flex: 0 0 auto;
+  flex-direction: column;
+  align-items: center;
   align-self: center;
+  gap: var(--space-10);
   margin-block-start: var(--space-24);
+  text-decoration: none;
   animation: fadeInUp 1s ease-out 1.5s both;
 }
 
-.c-scroll-indicator__arrow {
-  width: 1.5rem;
-  height: 1.5rem;
-  border: 2px solid var(--color-text-secondary);
-  border-top: none;
-  border-left: none;
-  transform: rotate(45deg);
-  animation: bounce 2s infinite;
+.c-scroll-indicator__label {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  transition: color var(--animation-speed) var(--animation-curve);
+}
+
+/* Fades out downward so the rule reads as travel rather than as a border. */
+.c-scroll-indicator__rule {
+  width: 1px;
+  height: 2.75rem;
+  background: linear-gradient(to bottom, var(--color-text-muted), transparent);
+}
+
+@media (hover: hover) {
+  .c-scroll-indicator:hover .c-scroll-indicator__label {
+    color: var(--color-text);
+  }
 }
 
 body:has(.c-beta-banner),
@@ -1623,24 +1646,6 @@ body.has-beta-banner .c-nav {
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-@keyframes bounce {
-  0%,
-  20%,
-  50%,
-  80%,
-  100% {
-    transform: translateY(0) rotate(45deg);
-  }
-
-  40% {
-    transform: translateY(-0.625rem) rotate(45deg);
-  }
-
-  60% {
-    transform: translateY(-0.3125rem) rotate(45deg);
   }
 }
 
