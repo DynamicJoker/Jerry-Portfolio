@@ -509,13 +509,19 @@ function initializeDockedSectionHeaders() {
   // change (load, fonts settling, resize). Nothing else is measured: the tab
   // is a cross-fade, not a morph, so there is no scale ratio to derive — see
   // "Docked section headings" in src/styles/components/section.css.
+  // Each header's body sibling — the block the tab starts covering once the
+  // section scrolls under it. Resolved once: the section shape is static.
+  const bodies = headers.map((header) => header.nextElementSibling);
+
   const measureHeaders = () => {
     headers.forEach((header) => {
       const wasDocked = header.classList.contains('is-docked');
-      header.classList.remove('is-docked');
+      const wasCompact = header.classList.contains('is-docked-compact');
+      header.classList.remove('is-docked', 'is-docked-compact');
       header.style.removeProperty('min-height');
       header.style.minHeight = `${header.offsetHeight}px`;
       if (wasDocked) header.classList.add('is-docked');
+      if (wasCompact) header.classList.add('is-docked-compact');
     });
   };
 
@@ -531,10 +537,26 @@ function initializeDockedSectionHeaders() {
     const scrubRange =
       cssLengthToPx(rootStyles.getPropertyValue('--dock-scrub-range'), 7.5) ||
       1;
+    const tabHeight =
+      cssLengthToPx(rootStyles.getPropertyValue('--dock-bar-height'), 2.25) ||
+      0;
+    // Reads stay batched ahead of the writes below: both rect passes run to
+    // completion before the first classList mutation.
     const rects = headers.map((header) => header.getBoundingClientRect());
+    const bodyTops = bodies.map((body) =>
+      body ? body.getBoundingClientRect().top : Number.POSITIVE_INFINITY,
+    );
     headers.forEach((header, index) => {
       const { top, bottom } = rects[index];
-      header.classList.toggle('is-docked', top <= dockY + 1 && bottom > dockY);
+      const isDocked = top <= dockY + 1 && bottom > dockY;
+      header.classList.toggle('is-docked', isDocked);
+      // Second stage: once the section body has climbed under the tab, the
+      // full-title tab would be sitting on copy, so collapse to the counter
+      // chip (CSS parks it in the inline-end gutter).
+      header.classList.toggle(
+        'is-docked-compact',
+        isDocked && bodyTops[index] <= dockY + tabHeight,
+      );
       if (!prefersReducedMotion) {
         const progress = Math.min(
           1,

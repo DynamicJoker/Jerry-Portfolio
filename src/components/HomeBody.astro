@@ -198,6 +198,13 @@ siteContent.testimonials.forEach((testimonial, index) => {
               ))
             }
           </dl>
+          <ul class="c-hero__proof-context">
+            {
+              profile.heroProofContext.map((domain) => (
+                <li class="c-hero__proof-context-item">{domain}</li>
+              ))
+            }
+          </ul>
         </div>
       </div>
     </div>
@@ -206,7 +213,8 @@ siteContent.testimonials.forEach((testimonial, index) => {
       class="c-scroll-indicator"
       aria-label={ui.hero.scrollToNext}
     >
-      <div class="c-scroll-indicator__arrow"></div>
+      <span class="c-scroll-indicator__label">{ui.hero.scrollLabel}</span>
+      <span class="c-scroll-indicator__rule" aria-hidden="true"></span>
     </a>
   </section>
 
@@ -562,7 +570,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
                     class="c-engagement__cta"
                     href={siteContent.services.ctaHref}
                   >
-                    {siteContent.services.ctaLabel}
+                    {engagement.ctaLabel ?? siteContent.services.ctaLabel}
                   </a>
                 </div>
               </li>
@@ -788,6 +796,9 @@ siteContent.testimonials.forEach((testimonial, index) => {
         </div>
 
         <!-- Asset-type chip-tabs (single-select) -->
+        <p class="c-archive__filter-label" aria-hidden="true">
+          {archiveUi.typeFilterLabel}
+        </p>
         <div
           class="c-archive__tabs"
           role="group"
@@ -814,6 +825,9 @@ siteContent.testimonials.forEach((testimonial, index) => {
         </div>
 
         <!-- Industry sub-filter -->
+        <p class="c-archive__filter-label" aria-hidden="true">
+          {archiveUi.industryFilterLabel}
+        </p>
         <div
           class="c-archive__filters"
           role="group"
@@ -873,7 +887,10 @@ siteContent.testimonials.forEach((testimonial, index) => {
                           <span class="c-archive__tag">{interviewTag}</span>
                         )}
                       </span>
-                      <span class="c-archive__row-meta">{row.campaign}</span>
+                      <span class="c-archive__row-meta">
+                        <span class="c-archive__row-year">{row.year}</span>
+                        {row.campaign}
+                      </span>
                     </span>
                     <span class:list={['c-status', `c-status--${sm.tone}`]}>
                       <Icon name={sm.icon} />
@@ -966,7 +983,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
                   tabindex="0"
                   role="button"
                   aria-expanded="false"
-                  aria-label={`Show details for ${job.title} at ${job.company}`}
+                  aria-label={`Show details for ${job.title} at ${job.company}, ${job.period}`}
                 >
                   <div
                     class={`c-gantt__bar ${isPresent ? 'is-present' : ''}`}
@@ -1155,6 +1172,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
                 name="name"
                 class="c-form-control"
                 placeholder={siteContent.contactForm.labels.name}
+                autocomplete="name"
                 required
                 aria-describedby="name-error"
               />
@@ -1170,6 +1188,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
                 name="email"
                 class="c-form-control"
                 placeholder={siteContent.contactForm.labels.email}
+                autocomplete="email"
                 required
                 aria-describedby="email-error"
               />
@@ -1185,6 +1204,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
                 name="company"
                 class="c-form-control"
                 placeholder={siteContent.contactForm.labels.company}
+                autocomplete="organization"
               />
             </div>
             <div class="c-form-group">

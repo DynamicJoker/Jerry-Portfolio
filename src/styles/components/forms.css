@@ -2,10 +2,16 @@
 
 /* Fields are borderless deep-well pills (soft UI): a single dark inner
    shadow (--neu-shadow-well) recesses them a full step below the inset form
-   tray, and the shadow's own rim is the resting boundary — no border, it
+   tray, and the shadow's own rim is the resting boundary — a visible border
    fights the carved look. The a11y boundary duty moves to the states that
    need it: the focus outline and red invalid outline below stay real
-   outlines, and lite mode flattens the well to a 1px hairline (perf.css). */
+   outlines, and lite mode flattens the well to a 1px hairline (perf.css).
+
+   The border is declared 1px TRANSPARENT rather than `none` — border-box
+   keeps it off the painted result, but it gives the prefers-contrast block in
+   neu.css a border-style to colour in. With `border: none` that override was
+   a silent no-op and fields were the one control in that list that never got
+   its high-contrast boundary. */
 .c-form-control {
   display: block;
   width: 100%;
@@ -18,10 +24,23 @@
   line-height: 1.5;
   color: var(--color-text);
   background-color: var(--neu-bg);
-  border: none;
+  border: 1px solid transparent;
   border-radius: var(--radius-full);
   box-shadow: var(--neu-shadow-well);
-  transition: box-shadow var(--duration-fast) var(--ease-standard);
+  transition:
+    box-shadow var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard);
+}
+
+/* Pointer affordance: the resting well has no state but focus and invalid, so
+   a pointer user gets no signal the pill is a control until they click it.
+   Fading in the already-declared border on hover is the smallest cue that
+   doesn't disturb the carved look at rest. Pointer devices only — :hover
+   sticks after a tap on touch. */
+@media (hover: hover) {
+  .c-form-control:hover {
+    border-color: var(--color-hairline-strong);
+  }
 }
 
 /* The multi-line message box keeps a soft rectangle: a full pill would curve

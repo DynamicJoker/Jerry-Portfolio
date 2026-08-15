@@ -42,6 +42,12 @@ export const siteContent = {
     heroLede:
       'Technical marketing for PC hardware, cybersecurity, cloud, and SaaS — translating what engineering builds into demand gen, positioning, and content that converts.',
     heroFocus: 'B2B + B2C tech',
+    // The proof card renders whatever is in here — the metrics grid sizes
+    // itself to the count, so entries can be added or dropped without touching
+    // CSS. heroProofContext fills the width the card holds to stay aligned with
+    // the portrait above it; it restates heroLede's domains rather than making
+    // a separate claim.
+    heroProofContext: ['PC hardware', 'cybersecurity', 'cloud', 'SaaS'],
     heroStats: [
       {
         value: '50M+',
@@ -50,10 +56,6 @@ export const siteContent = {
       {
         value: '1,000+',
         label: 'Pieces',
-      },
-      {
-        value: '50+',
-        label: 'Clients',
       },
     ],
     // Hero buttons, in order. `variant` maps to the c-btn--<variant> class.
@@ -96,7 +98,7 @@ export const siteContent = {
   // order. Kicker numbering ("01 /") is a CSS counter; write label text only.
   sections: {
     about: { kicker: 'About', title: 'About Me' },
-    skills: { kicker: 'Expertise', title: 'Skills & Expertise' },
+    skills: { kicker: 'Expertise', title: 'I Know Stuff' },
     services: {
       kicker: 'Services',
       title: "You Build It. I'll Bring the Party",
@@ -109,7 +111,7 @@ export const siteContent = {
       kicker: 'Selected Work',
       title: 'Spoiler Alert: It Went Well',
     },
-    experience: { kicker: 'Experience', title: 'Experience' },
+    experience: { kicker: 'Experience', title: "I've Been Around" },
     blog: { kicker: 'Writing', title: 'Field Notes From the Content Lab' },
     contact: { kicker: 'Contact', title: "Let's Work Together" },
   },
@@ -324,6 +326,12 @@ export const siteContent = {
     showAllLabel: 'Show all {count}',
     countStatus: '{shown} of {total} pieces',
     countInitial: '{total} pieces',
+    // Visible rail labels for the two filter rows. The groups already carry
+    // the longer ui.work.filterBy* strings as their accessible names, so these
+    // are aria-hidden — they exist so a sighted user can tell the two rows
+    // apart, which nothing on screen previously said.
+    typeFilterLabel: 'Type',
+    industryFilterLabel: 'Industry',
   },
   featuredCampaigns: [
     {
@@ -635,6 +643,10 @@ export const siteContent = {
   services: {
     tag: 'how_to_engage',
     lede: 'Three ways to plug me into your team — pick the shape that fits the problem.',
+    // Fallback label; each engagement can override it with `ctaLabel` so three
+    // parallel rows don't repeat one string down the section. All three still
+    // land on the same booking anchor — the wording names the conversation,
+    // not a different destination.
     ctaLabel: 'Book a discovery call',
     ctaHref: '#schedule',
     engagements: [
@@ -644,6 +656,7 @@ export const siteContent = {
         description:
           'A scoped, fixed deliverable — whitepaper packages, case-study series, launch content, a full site copy overhaul. Defined gap, defined deadline.',
         meta: 'scoped · fixed-deliverable',
+        ctaLabel: 'Scope a project',
       },
       {
         slug: 'retainer',
@@ -651,6 +664,7 @@ export const siteContent = {
         description:
           'An ongoing monthly engine — content pipeline, editorial calendar, demand-gen support, and an analytics feedback loop that compounds.',
         meta: 'monthly · ongoing',
+        ctaLabel: 'Start a retainer',
       },
       {
         slug: 'fractional',
@@ -658,6 +672,7 @@ export const siteContent = {
         description:
           'Embedded part-time — positioning, go-to-market planning, sales enablement, and translating between your engineers and your market.',
         meta: 'embedded · part-time',
+        ctaLabel: 'Talk fractional',
       },
     ],
   },
@@ -845,7 +860,12 @@ export const siteContent = {
       toggleLabelClose: 'Close navigation menu, currently {section}',
     },
     hero: {
+      // scrollToNext stays the anchor's accessible name; scrollLabel is the
+      // visible mono micro-label. Keeping both is deliberate — the fuller
+      // string reads better out of context for a screen reader, and it
+      // contains the visible word, which is what WCAG 2.5.3 asks for.
       scrollToNext: 'Scroll to next section',
+      scrollLabel: 'scroll',
       pipelineList: 'What I do',
     },
     work: {
@@ -868,6 +888,12 @@ export const siteContent = {
     footer: {
       rights: 'All rights reserved.',
       backToTop: 'Back to Top',
+      // Secondary links. Email is deliberately absent — it only ever reaches
+      // the page through the reveal button in the contact panel, which is what
+      // keeps it out of scrapers (see contactInfo).
+      blog: 'Blog',
+      rss: 'RSS',
+      linkedin: 'LinkedIn',
     },
   },
 

@@ -360,11 +360,16 @@
   color: var(--color-text-muted);
 }
 
+/* Padding/negative-margin pair grows the hit box to the 24px target-size
+   minimum without moving the link or changing the row height — the row's own
+   10px block padding leaves room, so adjacent rows' targets never overlap. */
 .c-spotlight__link {
   display: inline-flex;
   align-items: baseline;
   gap: var(--space-8);
   min-width: 0;
+  padding-block: var(--space-4);
+  margin-block: calc(var(--space-4) * -1);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   color: var(--color-primary);
@@ -465,6 +470,19 @@
 }
 
 /* Asset-type chip-tabs (single-select) above the industry chips. */
+/* Rail label above each filter row. The two rows are different axes — asset
+   type, then industry — and nothing on screen said so; they read as one
+   wrapped set of chips. Mono/uppercase matches the kicker vocabulary, and
+   aria-hidden keeps it from doubling the group's own accessible name. */
+.c-archive__filter-label {
+  margin: 0 0 var(--space-8);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
 .c-archive__tabs {
   display: flex;
   flex-wrap: wrap;
@@ -733,6 +751,25 @@ a.c-archive__row-link .c-archive__row-title {
 .c-archive__row-meta {
   font-size: var(--font-size-xs);
   color: var(--color-text-muted);
+}
+
+/* Year leads the meta line rather than sitting out by the status badge. All
+   251 rows carry one, and starting the line with it gives a column whose left
+   edge is steady down the whole list — the badge cluster on the right can't,
+   since those pills size to their own label. Mono so the digits align.
+
+   Colour is inherited on purpose. --color-text-secondary and
+   --color-text-muted swap relative prominence between the themes (secondary is
+   the darker of the two in light, the dimmer of the two in dark), so naming
+   either one here would emphasise the year in one theme and de-emphasise it in
+   the other. The mono face and the separator carry the distinction instead. */
+.c-archive__row-year {
+  font-family: var(--font-family-mono);
+  letter-spacing: 0.04em;
+}
+
+.c-archive__row-year::after {
+  content: ' · ';
 }
 
 /* Status badges (archive rows) */

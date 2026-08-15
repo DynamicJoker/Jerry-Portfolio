@@ -832,16 +832,20 @@ html.is-theme-transitioning *::after {
   padding-inline: var(--viewport-inline-padding);
 }
 
-/* Mobile-first: the lead is centered to match the centered proof panel below
-   it. The two-column desktop layout restores left alignment (see the
-   min-width breakpoint below). */
+/* Left-aligned at every width. This used to centre below 48rem to match the
+   centred proof panel, but centring only ever applied to the children that
+   fit: .c-hero__eyebrow and .c-hero__meta are wrapping flex rows, so once
+   their content exceeded the measure they filled the line and start-packed
+   themselves. The result read as three alignments in one block — left eyebrow,
+   centred name/title/copy/buttons, left meta. One axis for the whole hero also
+   keeps a 5-line paragraph on a steady left edge on small screens. */
 .c-hero__lead {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--space-24);
   min-width: 0;
-  text-align: center;
+  text-align: left;
 }
 
 .c-hero__eyebrow {
@@ -933,13 +937,21 @@ html.is-theme-transitioning *::after {
   animation: fadeInUp 1s ease-out 0.75s both;
 }
 
+/* The rules between items LEAD their item rather than trail it, and the list
+   clips. A trailing rule dangles at the end of a wrapped line ("12+ yrs |
+   Bangalore, IN |" then a new line), which is exactly what happens at 390px.
+   A leading rule sits in the column gap via a negative start margin — so it
+   costs no layout width — and the one belonging to an item that starts a
+   wrapped line lands outside the list's content box, where `overflow: hidden`
+   removes it. :first-child covers the very first item. */
 .c-hero__meta {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-6) 0;
+  gap: var(--space-6) var(--space-32);
   margin: 0;
   padding: 0;
+  overflow: hidden;
   list-style: none;
   font-family: var(--font-family-mono);
   font-size: var(--font-size-sm);
@@ -952,12 +964,16 @@ html.is-theme-transitioning *::after {
   align-items: center;
 }
 
-.c-hero__meta-item:not(:last-child)::after {
+.c-hero__meta-item::before {
   content: '';
   width: 1px;
   height: 0.9rem;
-  margin: 0 var(--space-16);
+  margin-inline: calc(-1 * var(--space-16) - 1px) var(--space-16);
   background: var(--color-hairline-strong);
+}
+
+.c-hero__meta-item:first-child::before {
+  content: none;
 }
 
 .c-hero__panel {
@@ -1041,14 +1057,67 @@ html.is-theme-transitioning *::after {
 }
 
 /* Content-sized columns, not equal thirds — see components/hero.css. */
+/* Columns follow the data. This was repeat(3, auto) against a heroStats array,
+   so dropping an entry left a phantom third track and space-between pushed the
+   survivors to opposite edges of the card. grid-auto-flow: column sizes to
+   whatever the array holds. */
 .c-hero__metrics {
   display: grid;
-  grid-template-columns: repeat(3, auto);
-  justify-content: space-between;
+  grid-auto-flow: column;
+  /* Equal tracks, NOT auto + space-between. Content-sized tracks push all the
+     leftover measure into the gaps, and that leftover is split by (count - 1) —
+     so the same rule that gave a tidy 17px gap at three metrics gave a 101px
+     canyon at two, with the second metric pinned to the card edge. Sizing the
+     tracks proportionally makes the split follow the card instead of whatever
+     is left over, so it holds at any count. Measured on the 288px card: two
+     metrics give equal 138px tracks, three give 80/107/77 with no overflow
+     (1fr keeps a min-content floor, so nothing is squeezed unreadable). Four
+     overflows — but four also overflowed under the old rule, because 344px of
+     content plus gaps cannot fit 288px. That is a card-width ceiling, not a
+     bug in this declaration. */
+  grid-auto-columns: 1fr;
   gap: var(--space-12);
   margin: 0;
   padding-top: var(--space-16);
   border-top: 1px solid var(--color-hairline-strong);
+}
+
+/* The card can't narrow — it's width-matched to the portrait above it — so with
+   two metrics it needs something holding the remaining measure. This restates
+   heroLede's domains; it is not a second claim.
+
+   A list rather than one string: the domains overrun the 288px measure, and as
+   plain text the wrap stranded a separator at the head of the second line. Same
+   fix as .c-hero__meta — the interpunct LEADS its item and sits in the column
+   gap on a negative start margin, so it costs no layout width and the one
+   belonging to an item that starts a line falls outside the box, where
+   overflow: hidden takes it. Correct at any width, not just this one. */
+.c-hero__proof-context {
+  display: flex;
+  flex-wrap: wrap;
+  /* 16px gaps land the four domains on one line at 285 of 288px. If the mono
+     falls back to a wider face and they no longer fit, the list wraps — which
+     is now a clean break rather than a stranded separator, so the tight fit
+     degrades safely instead of breaking. */
+  gap: 0 var(--space-16);
+  margin: 0;
+  padding: var(--space-12) 0 0;
+  overflow: hidden;
+  list-style: none;
+  border-top: 1px solid var(--color-hairline);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+.c-hero__proof-context-item::before {
+  content: '·';
+  margin-inline: calc(-1 * var(--space-6) - 1ch) var(--space-6);
+}
+
+.c-hero__proof-context-item:first-child::before {
+  content: none;
 }
 
 .c-hero__metric {
@@ -1087,17 +1156,12 @@ html.is-theme-transitioning *::after {
     grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
     gap: clamp(2rem, 5vw, 4.5rem);
   }
-
-  .c-hero__lead {
-    align-items: flex-start;
-    text-align: left;
-  }
 }
 
 @media (max-width: 48rem) {
   .c-hero__buttons {
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     width: 100%;
   }
 
@@ -1189,23 +1253,46 @@ html.is-theme-transitioning *::after {
   transition-duration: var(--neu-press-duration);
 }
 
+/* Mono micro-label over a fading hairline — the same pairing as the kickers
+   and `// proof`. Replaces a 24px box with two 2px borders rotated 45deg on an
+   infinite bounce: the only 2px rotated shape on a site otherwise built from
+   1px hairlines, which is what made it read as borrowed from another kit.
+   No glyph, so nothing here dates; no loop, so nothing needs a motion guard
+   beyond the entrance fade already listed in the reduced-motion block. */
 .c-scroll-indicator {
   position: relative;
   z-index: 2;
+  display: flex;
   flex: 0 0 auto;
+  flex-direction: column;
+  align-items: center;
   align-self: center;
+  gap: var(--space-10);
   margin-block-start: var(--space-24);
+  text-decoration: none;
   animation: fadeInUp 1s ease-out 1.5s both;
 }
 
-.c-scroll-indicator__arrow {
-  width: 1.5rem;
-  height: 1.5rem;
-  border: 2px solid var(--color-text-secondary);
-  border-top: none;
-  border-left: none;
-  transform: rotate(45deg);
-  animation: bounce 2s infinite;
+.c-scroll-indicator__label {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  transition: color var(--animation-speed) var(--animation-curve);
+}
+
+/* Fades out downward so the rule reads as travel rather than as a border. */
+.c-scroll-indicator__rule {
+  width: 1px;
+  height: 2.75rem;
+  background: linear-gradient(to bottom, var(--color-text-muted), transparent);
+}
+
+@media (hover: hover) {
+  .c-scroll-indicator:hover .c-scroll-indicator__label {
+    color: var(--color-text);
+  }
 }
 
 body:has(.c-beta-banner),
@@ -1559,24 +1646,6 @@ body.has-beta-banner .c-nav {
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-@keyframes bounce {
-  0%,
-  20%,
-  50%,
-  80%,
-  100% {
-    transform: translateY(0) rotate(45deg);
-  }
-
-  40% {
-    transform: translateY(-0.625rem) rotate(45deg);
-  }
-
-  60% {
-    transform: translateY(-0.3125rem) rotate(45deg);
   }
 }
 

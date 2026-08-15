@@ -163,4 +163,21 @@
   .c-testimonials-scroller__column:nth-child(n + 2) {
     display: none;
   }
+
+  /* Narrower fades than the 15% base. The mask is a fixed share of the column,
+     so the shorter mobile column pays for it twice: at 15% the clear band is
+     350px against a 271px card, which leaves a card fully legible for only
+     ~8.3s at the marquee's 9.5px/s — about one read-through of a 30-word quote
+     with nothing to spare. 8% widens the band to 420px and the window to
+     ~15.6s, close to the ~17s the taller desktop column already gives. Desktop
+     keeps its softer 15% fade. */
+  .c-testimonials-scroller__column {
+    mask-image: linear-gradient(
+      to bottom,
+      transparent,
+      black 8%,
+      black 92%,
+      transparent
+    );
+  }
 }
