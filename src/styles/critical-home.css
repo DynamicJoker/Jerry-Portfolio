@@ -1064,8 +1064,18 @@ html.is-theme-transitioning *::after {
 .c-hero__metrics {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: auto;
-  justify-content: space-between;
+  /* Equal tracks, NOT auto + space-between. Content-sized tracks push all the
+     leftover measure into the gaps, and that leftover is split by (count - 1) —
+     so the same rule that gave a tidy 17px gap at three metrics gave a 101px
+     canyon at two, with the second metric pinned to the card edge. Sizing the
+     tracks proportionally makes the split follow the card instead of whatever
+     is left over, so it holds at any count. Measured on the 288px card: two
+     metrics give equal 138px tracks, three give 80/107/77 with no overflow
+     (1fr keeps a min-content floor, so nothing is squeezed unreadable). Four
+     overflows — but four also overflowed under the old rule, because 344px of
+     content plus gaps cannot fit 288px. That is a card-width ceiling, not a
+     bug in this declaration. */
+  grid-auto-columns: 1fr;
   gap: var(--space-12);
   margin: 0;
   padding-top: var(--space-16);
