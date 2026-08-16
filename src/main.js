@@ -324,6 +324,27 @@ function initializeNavigation() {
     );
   }
 
+  // Flag the hero while the viewport is actively resizing so its proof surface
+  // can ease between the desktop card and the flat mobile band as the layout
+  // crosses the two-column breakpoint (see `.c-hero.is-resizing` in hero.css).
+  // Held off outside of resize so the change never animates on first paint or
+  // a theme toggle.
+  const hero = document.getElementById('hero');
+  if (hero) {
+    let heroResizeSettle = 0;
+    window.addEventListener(
+      'resize',
+      () => {
+        hero.classList.add('is-resizing');
+        window.clearTimeout(heroResizeSettle);
+        heroResizeSettle = window.setTimeout(() => {
+          hero.classList.remove('is-resizing');
+        }, 200);
+      },
+      { passive: true },
+    );
+  }
+
   navLinks.forEach((link) => {
     link.addEventListener('click', () => {
       navLinks.forEach((navLink) => {

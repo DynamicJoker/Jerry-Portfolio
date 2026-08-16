@@ -1158,17 +1158,153 @@ html.is-theme-transitioning *::after {
   }
 }
 
+/* Below tablet the hero becomes a single proof-forward column (the "G3"
+   mobile layout) — see the long note in components/hero.css. The lead's
+   children are hoisted with display:contents so the proof band re-sequences
+   under the lede and above the CTAs; the proof card dissolves to flat
+   typography while the portrait keeps its inset well. Mirror of the mobile
+   block in components/hero.css. */
 @media (max-width: 48rem) {
-  .c-hero__buttons {
+  .c-hero__inner {
+    display: flex;
     flex-direction: column;
     align-items: flex-start;
+    gap: var(--space-24);
+  }
+
+  .c-hero__lead {
+    display: contents;
+  }
+
+  .c-hero__eyebrow {
+    order: 1;
+  }
+  .c-hero__name {
+    order: 2;
+  }
+  .c-hero__headline {
+    order: 3;
+  }
+  .c-hero__lede {
+    order: 4;
+  }
+  .c-hero__panel {
+    order: 5;
+  }
+  .c-hero__meta {
+    order: 6;
+  }
+  .c-hero__buttons {
+    order: 7;
+  }
+
+  .c-hero__buttons {
+    flex-direction: column;
+    align-items: stretch;
     width: 100%;
   }
 
   .c-hero__buttons .c-btn {
     width: 100%;
-    max-width: min(100%, 18.75rem);
+    max-width: none;
   }
+
+  /* Centred actions — see components/hero.css. Prose + meta stay left (the
+     meta's separators need left-alignment to clip cleanly on wrap); the
+     eyebrow row centres and the full-span CTAs anchor the balance. */
+  .c-hero__eyebrow {
+    justify-content: center;
+  }
+
+  /* Proof band: two-row grid — // proof tag spans the top, portrait + stats
+     readout beneath. Proof collapses to display:contents so tag + metrics
+     become grid items. Portrait flat (well moves to the stats). Mirror of
+     the mobile block in components/hero.css. */
+  .c-hero__panel {
+    display: grid;
+    grid-template-columns: clamp(5.5rem, 26vw, 7rem) minmax(0, 1fr);
+    grid-template-areas:
+      'tag   tag'
+      'pic   stats';
+    align-items: stretch;
+    justify-items: stretch;
+    gap: var(--space-12) var(--space-16);
+    width: 100%;
+  }
+
+  .c-hero__proof {
+    display: contents;
+  }
+
+  .c-hero__proof-tag {
+    grid-area: tag;
+    display: flex;
+    gap: var(--space-10);
+  }
+
+  .c-hero__proof-tag::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      var(--color-hairline-strong),
+      transparent
+    );
+  }
+
+  .c-hero__portrait {
+    grid-area: pic;
+    width: 100%;
+    max-width: none;
+    aspect-ratio: auto;
+    align-self: stretch;
+    box-shadow: none;
+  }
+
+  .c-hero__metrics {
+    grid-area: stats;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+    padding: var(--space-16);
+    border-top: none;
+    border-radius: var(--radius-xl);
+    background: var(--neu-bg);
+    box-shadow: var(--neu-shadow-inset);
+  }
+
+  .c-hero__metric + .c-hero__metric {
+    padding-left: 0;
+    padding-top: var(--space-8);
+    border-left: none;
+    border-top: 1px solid var(--color-hairline);
+  }
+
+  .c-hero__metric:first-child .c-hero__metric-value {
+    font-size: clamp(2rem, 9vw, 2.6rem);
+  }
+
+  .c-hero__metric + .c-hero__metric .c-hero__metric-value {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-secondary);
+  }
+
+  .c-hero__proof-context {
+    display: none;
+  }
+}
+
+/* Smooth resize: eases the proof surface between its card and flat forms as
+   the layout crosses 48rem. Scoped to the is-resizing flag (main.js) so it
+   never fires on first paint or theme toggle. Mirror of components/hero.css. */
+.c-hero.is-resizing .c-hero__metrics,
+.c-hero.is-resizing .c-hero__portrait {
+  transition:
+    background var(--animation-speed) var(--animation-curve),
+    box-shadow var(--animation-speed) var(--animation-curve),
+    padding var(--animation-speed) var(--animation-curve),
+    border-radius var(--animation-speed) var(--animation-curve);
 }
 
 .c-btn {
