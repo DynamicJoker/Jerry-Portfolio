@@ -61,6 +61,7 @@
   --space-32: 2rem;
   --radius-sm: 0.375rem;
   --radius-base: 0.5rem;
+  --radius-lg: 0.75rem;
   --radius-xl: 1rem;
   --radius-full: 999rem;
   /* Neumorphism tokens — mirror of settings.css (above-the-fold hero panel +
@@ -984,14 +985,20 @@ html.is-theme-transitioning *::after {
   animation: fadeInUp 1s ease-out 0.7s both;
 }
 
+/* Raised tile: photo on a thin ground pad that extrudes (--neu-shadow-raised),
+   the counterpoint to the inset proof/stats wells. Raised shadow paints outside
+   the box so it stays visible with the photo edge-to-edge. Mirror of
+   components/hero.css. */
 .c-hero__portrait {
   position: relative;
   width: 100%;
   max-width: 21rem;
   aspect-ratio: 1 / 1;
+  padding: var(--space-6);
   overflow: hidden;
   border-radius: var(--radius-xl);
-  box-shadow: var(--neu-shadow-inset);
+  background: var(--neu-bg);
+  box-shadow: var(--neu-shadow-raised);
 }
 
 .c-hero__portrait-img {
@@ -999,19 +1006,22 @@ html.is-theme-transitioning *::after {
   height: 100%;
   object-fit: cover;
   object-position: 50% 18%;
+  border-radius: var(--radius-lg);
   filter: grayscale(45%) contrast(1.03);
 }
 
+/* Brand top-wash over the photo only (inset by the pad). No fade-to-background
+   — it read as a glow in light and a faded bottom in dark; the raised tile
+   carries the depth now. Mirror of components/hero.css. */
 .c-hero__portrait::after {
   content: '';
   position: absolute;
-  inset: 0;
+  inset: var(--space-6);
+  border-radius: var(--radius-lg);
   background: linear-gradient(
     180deg,
     rgba(var(--color-primary-rgb), 0.16) 0%,
-    transparent 32%,
-    transparent 60%,
-    var(--color-background) 100%
+    transparent 34%
   );
   pointer-events: none;
 }
@@ -1259,7 +1269,6 @@ html.is-theme-transitioning *::after {
     max-width: none;
     aspect-ratio: auto;
     align-self: stretch;
-    box-shadow: none;
   }
 
   .c-hero__metrics {

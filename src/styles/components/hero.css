@@ -303,14 +303,22 @@
   animation: fadeInUp 1s ease-out 0.7s both;
 }
 
+/* Raised tile: the photo sits on a thin ground-coloured pad that EXTRUDES from
+   the surface (--neu-shadow-raised), the counterpoint to the inset proof/stats
+   wells — the extrude/inset mix is the whole neumorphic read. A raised shadow
+   is painted OUTSIDE the box, on the ground, so it stays fully visible with the
+   photo edge-to-edge (unlike an inset well, which the <img> covers unless it's
+   matted). The pad also gives the corner crosshair a frame to sit on. */
 .c-hero__portrait {
   position: relative;
   width: 100%;
   max-width: 21rem;
   aspect-ratio: 1 / 1;
+  padding: var(--space-6);
   overflow: hidden;
   border-radius: var(--radius-xl);
-  box-shadow: var(--neu-shadow-inset);
+  background: var(--neu-bg);
+  box-shadow: var(--neu-shadow-raised);
 }
 
 .c-hero__portrait-img {
@@ -318,21 +326,23 @@
   height: 100%;
   object-fit: cover;
   object-position: 50% 18%;
+  border-radius: var(--radius-lg);
   filter: grayscale(45%) contrast(1.03);
 }
 
-/* Brand-tinted top wash + a lower-edge fade into the page background so the
-   portrait dissolves into the canvas instead of ending on a hard box edge. */
+/* Brand-tinted top wash over the photo only (inset by the pad so it doesn't
+   tint the ground frame). No fade-to-background — it read as a glow in light
+   and a faded bottom in dark; the raised tile now carries the depth. The corner
+   crosshair (::before, z-index 1) stays above this overlay. */
 .c-hero__portrait::after {
   content: '';
   position: absolute;
-  inset: 0;
+  inset: var(--space-6);
+  border-radius: var(--radius-lg);
   background: linear-gradient(
     180deg,
     rgba(var(--color-primary-rgb), 0.16) 0%,
-    transparent 32%,
-    transparent 60%,
-    var(--color-background) 100%
+    transparent 34%
   );
   pointer-events: none;
 }
@@ -643,17 +653,15 @@
     );
   }
 
-  /* Portrait goes flat here — the inset well that framed it moves to the stats
-     (below). It still dissolves into the canvas via its lower-edge fade and
-     keeps the corner crosshair; it stretches to the readout's height so the
-     two sides square off as one band. */
+  /* Portrait keeps the raised-tile treatment here too — it just re-homes to the
+     grid, drops its square ratio and stretches to the readout's height so the
+     raised photo and the inset stats well square off as one band. */
   .c-hero__portrait {
     grid-area: pic;
     width: 100%;
     max-width: none;
     aspect-ratio: auto;
     align-self: stretch;
-    box-shadow: none;
   }
 
   /* The stats readout is now the recessed surface: the same --neu-shadow-inset
