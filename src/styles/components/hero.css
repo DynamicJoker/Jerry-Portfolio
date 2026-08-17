@@ -694,6 +694,22 @@
   .c-hero__proof-context {
     display: none;
   }
+
+  /* The name now lives in the nav bar on phones (the brand un-collapses to the
+     wordmark there). Keep the h1 element for document structure and SEO but
+     take it out of the visual flow — sr-only, so the hero leads with the role
+     kicker and headline. */
+  .c-hero__name {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
 }
 
 /* Smooth resize: while the viewport is actively resizing (flag set in

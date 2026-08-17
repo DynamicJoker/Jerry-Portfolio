@@ -1293,6 +1293,20 @@ html.is-theme-transitioning *::after {
   .c-hero__proof-context {
     display: none;
   }
+
+  /* Name moves to the nav bar on phones; keep the h1 element for structure/SEO
+     but sr-only it. Mirror of components/hero.css. */
+  .c-hero__name {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
 }
 
 /* Smooth resize: eases the proof surface between its card and flat forms as
@@ -1687,6 +1701,96 @@ body.has-beta-banner .c-nav {
   .c-nav__menu {
     right: var(--space-12);
     left: var(--space-12);
+  }
+
+  /* Phone: brand shows the full wordmark from the start on home (name lives in
+     the bar; hero drops its h1). Mirror of components/nav.css. */
+  body[data-page='home'] .c-nav__brand,
+  body[data-page='home'] .c-brand-logo {
+    width: clamp(8rem, 42vw, 10.5rem);
+  }
+
+  body[data-page='home'] .c-brand-logo__wordmark {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Hamburger → labelled section trigger (reuses its current-section text +
+     menu wiring). Chevron replaces the burger glyph; flat at rest, inset when
+     the sheet opens. */
+  .c-nav__toggle {
+    width: auto;
+    gap: var(--space-8);
+    padding: 0 var(--space-12);
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-xs);
+    letter-spacing: 0.02em;
+  }
+
+  .c-nav__toggle .c-nav__toggle-label {
+    position: static;
+    width: auto;
+    height: auto;
+    min-width: 0;
+    margin: 0;
+    overflow: hidden;
+    clip: auto;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .c-nav__toggle-icon {
+    display: none;
+  }
+
+  .c-nav__toggle::after {
+    content: '';
+    flex: 0 0 auto;
+    width: 0.4rem;
+    height: 0.4rem;
+    border-right: 1.5px solid var(--color-primary);
+    border-bottom: 1.5px solid var(--color-primary);
+    transform: translateY(-0.1rem) rotate(45deg);
+    transition: transform var(--animation-speed) var(--animation-curve);
+  }
+
+  .c-nav__toggle.is-active {
+    color: var(--color-accent);
+  }
+
+  .c-nav__toggle.is-active::after {
+    border-color: var(--color-accent);
+    transform: translateY(0.05rem) rotate(-135deg);
+  }
+
+  /* Wide theme tray → single round key showing the current scheme. Mirror of
+     components/nav.css. */
+  .c-theme-toggle {
+    width: var(--nav-touch-target);
+    gap: 0;
+    padding: 0;
+    background: none;
+    box-shadow: none;
+  }
+
+  .c-theme-toggle__half {
+    display: none;
+    box-shadow: none;
+    opacity: 1;
+  }
+
+  .c-theme-toggle__half--sun {
+    display: inline-flex;
+  }
+
+  [data-color-scheme='dark'] .c-theme-toggle__half--sun {
+    display: none;
+  }
+
+  [data-color-scheme='dark'] .c-theme-toggle__half--moon {
+    display: inline-flex;
+    box-shadow: none;
+    opacity: 1;
   }
 
   .c-beta-banner__content {
