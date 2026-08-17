@@ -51,6 +51,14 @@
       <stop offset=".45" stop-color="#57B9FF"></stop>
       <stop offset="1" stop-color="#517891"></stop>
     </linearGradient>
+    <!-- The wordmark is live TEXT, not a fixed logo mark, so its fill is
+         theme-aware (unlike the monogram gradients above, which stay the brand
+         blue on their dark disc in both schemes). The hardcoded light-blues
+         here were invisible on the light-mode cream ground once the wordmark
+         started showing in the mobile bar; the tokens resolve to the darker
+         light-mode blues there and the same light-blues in dark mode. Inline
+         SVG, so var() resolves and re-resolves on theme change (CSP style-src
+         keeps 'unsafe-inline'). -->
     <linearGradient
       id="jj-wordmark"
       x1="87"
@@ -59,9 +67,9 @@
       y2="32"
       gradientUnits="userSpaceOnUse"
     >
-      <stop stop-color="#90D5FF"></stop>
-      <stop offset=".45" stop-color="#57B9FF"></stop>
-      <stop offset="1" stop-color="#90D5FF"></stop>
+      <stop style="stop-color: var(--color-accent)"></stop>
+      <stop offset=".45" style="stop-color: var(--color-primary)"></stop>
+      <stop offset="1" style="stop-color: var(--color-accent)"></stop>
     </linearGradient>
     <mask
       id="jj-cut"

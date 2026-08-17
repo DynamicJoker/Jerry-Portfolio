@@ -622,4 +622,104 @@ html.is-theme-transitioning *::after {
     right: var(--space-12);
     left: var(--space-12);
   }
+
+  /* Phone: the name lives in the bar now, so the brand no longer collapses to
+     the monogram on home — show the full wordmark from the start (the hero
+     drops its h1 to match). The scroll-expand on wider screens is untouched.
+     Brand + logo share a width so the whole mark renders at that size. */
+  body[data-page='home'] .c-nav__brand,
+  body[data-page='home'] .c-brand-logo {
+    width: clamp(8rem, 42vw, 10.5rem);
+  }
+
+  body[data-page='home'] .c-brand-logo__wordmark {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* The hamburger becomes a labelled section trigger. It already carries the
+     current-section text (data-current-section, updated on scroll) and every
+     menu/aria hook, so it only needs to reveal that label and swap its
+     three-line glyph for a chevron. Flat at rest, latched inset when the sheet
+     opens — the same depth language as the icon it replaces. */
+  .c-nav__toggle {
+    width: auto;
+    gap: var(--space-8);
+    padding: 0 var(--space-12);
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-xs);
+    letter-spacing: 0.02em;
+  }
+
+  /* Reveal the section label (two-class selector beats .u-sr-only without
+     !important). min-width:0 + ellipsis let it truncate under flex pressure on
+     very narrow phones rather than overlapping the name — the trigger shrinks,
+     the name holds. */
+  .c-nav__toggle .c-nav__toggle-label {
+    position: static;
+    width: auto;
+    height: auto;
+    min-width: 0;
+    margin: 0;
+    overflow: hidden;
+    clip: auto;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .c-nav__toggle-icon {
+    display: none;
+  }
+
+  .c-nav__toggle::after {
+    content: '';
+    flex: 0 0 auto;
+    width: 0.4rem;
+    height: 0.4rem;
+    border-right: 1.5px solid var(--color-primary);
+    border-bottom: 1.5px solid var(--color-primary);
+    transform: translateY(-0.1rem) rotate(45deg);
+    transition: transform var(--animation-speed) var(--animation-curve);
+  }
+
+  .c-nav__toggle.is-active {
+    color: var(--color-accent);
+  }
+
+  .c-nav__toggle.is-active::after {
+    border-color: var(--color-accent);
+    transform: translateY(0.05rem) rotate(-135deg);
+  }
+
+  /* The wide two-position theme tray collapses to a single round key showing
+     only the scheme you're in — a flat sibling to the section trigger, no
+     trough. The engaged half's deep well is dropped here; depth returns on
+     press like the other island keys. */
+  .c-theme-toggle {
+    width: var(--nav-touch-target);
+    gap: 0;
+    padding: 0;
+    background: none;
+    box-shadow: none;
+  }
+
+  .c-theme-toggle__half {
+    display: none;
+    box-shadow: none;
+    opacity: 1;
+  }
+
+  .c-theme-toggle__half--sun {
+    display: inline-flex;
+  }
+
+  [data-color-scheme='dark'] .c-theme-toggle__half--sun {
+    display: none;
+  }
+
+  [data-color-scheme='dark'] .c-theme-toggle__half--moon {
+    display: inline-flex;
+    box-shadow: none;
+    opacity: 1;
+  }
 }

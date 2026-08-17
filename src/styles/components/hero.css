@@ -303,14 +303,22 @@
   animation: fadeInUp 1s ease-out 0.7s both;
 }
 
+/* Raised tile: the photo sits on a thin ground-coloured pad that EXTRUDES from
+   the surface (--neu-shadow-raised), the counterpoint to the inset proof/stats
+   wells — the extrude/inset mix is the whole neumorphic read. A raised shadow
+   is painted OUTSIDE the box, on the ground, so it stays fully visible with the
+   photo edge-to-edge (unlike an inset well, which the <img> covers unless it's
+   matted). The pad also gives the corner crosshair a frame to sit on. */
 .c-hero__portrait {
   position: relative;
   width: 100%;
   max-width: 21rem;
   aspect-ratio: 1 / 1;
+  padding: var(--space-6);
   overflow: hidden;
   border-radius: var(--radius-xl);
-  box-shadow: var(--neu-shadow-inset);
+  background: var(--neu-bg);
+  box-shadow: var(--neu-shadow-raised);
 }
 
 .c-hero__portrait-img {
@@ -318,21 +326,23 @@
   height: 100%;
   object-fit: cover;
   object-position: 50% 18%;
+  border-radius: var(--radius-lg);
   filter: grayscale(45%) contrast(1.03);
 }
 
-/* Brand-tinted top wash + a lower-edge fade into the page background so the
-   portrait dissolves into the canvas instead of ending on a hard box edge. */
+/* Brand-tinted top wash over the photo only (inset by the pad so it doesn't
+   tint the ground frame). No fade-to-background — it read as a glow in light
+   and a faded bottom in dark; the raised tile now carries the depth. The corner
+   crosshair (::before, z-index 1) stays above this overlay. */
 .c-hero__portrait::after {
   content: '';
   position: absolute;
-  inset: 0;
+  inset: var(--space-6);
+  border-radius: var(--radius-lg);
   background: linear-gradient(
     180deg,
     rgba(var(--color-primary-rgb), 0.16) 0%,
-    transparent 32%,
-    transparent 60%,
-    var(--color-background) 100%
+    transparent 34%
   );
   pointer-events: none;
 }
@@ -527,20 +537,204 @@
   }
 }
 
-/* Below tablet, the two CTAs stack full-width (capped) instead of sitting side
-   by side. (Consolidated here from nav.css's old 48rem block, which previously
-   competed with a 40rem rule in this file.) */
+/* Below tablet the hero becomes a single proof-forward column (the "G3"
+   mobile layout). The desktop split can't just stack — that strands the
+   portrait and proof card a full screen below the copy, and the panel's
+   centred 21rem cap fights the hard-left lead, so the block reads on four
+   different edges. Here the lead's children are hoisted with display:contents
+   so the proof band can be re-sequenced to sit directly under the lede, above
+   the CTAs (proof earns the ask before it's made). The proof *card* dissolves
+   to flat — no fill, no inset well, no radius — because a group of numbers is
+   typography, not a surface; only the portrait keeps its inset well (it's
+   content). One left edge for the whole hero. Mirrored in critical-home.css. */
 @media (max-width: 48rem) {
-  .c-hero__buttons {
+  .c-hero__inner {
+    display: flex;
     flex-direction: column;
     align-items: flex-start;
+    gap: var(--space-24);
+  }
+
+  .c-hero__lead {
+    display: contents;
+  }
+
+  .c-hero__eyebrow {
+    order: 1;
+  }
+  .c-hero__name {
+    order: 2;
+  }
+  .c-hero__headline {
+    order: 3;
+  }
+  .c-hero__lede {
+    order: 4;
+  }
+  .c-hero__panel {
+    order: 5;
+  }
+  .c-hero__meta {
+    order: 6;
+  }
+  .c-hero__buttons {
+    order: 7;
+  }
+
+  /* CTAs stack and span the full measure (no cap). A capped, left-pinned pair
+     left an odd gap down the right edge; a full span reads balanced and
+     doubles as the centred anchor of the "centred actions" treatment below.
+     (Consolidated here from nav.css's old 48rem block, which previously
+     competed with a 40rem rule in this file.) */
+  .c-hero__buttons {
+    flex-direction: column;
+    align-items: stretch;
     width: 100%;
   }
 
   .c-hero__buttons .c-btn {
     width: 100%;
-    max-width: min(100%, 18.75rem);
+    max-width: none;
   }
+
+  /* Centred actions: the reading spine (name · headline · lede · proof band)
+     stays hard-left, but the eyebrow row with its availability pill centres,
+     so the hero reads balanced without ever centre-justifying the prose. The
+     full-span CTAs below are the other centred anchor. The meta strip stays
+     LEFT on purpose: it aligns with the proof band above it, and its hairline
+     separators depend on left-alignment to clip a wrapped line's leading rule
+     off the edge — centring a strip that wraps at ~375px would strand that
+     rule mid-line (the bug the separator's negative-margin trick was built to
+     avoid). */
+  .c-hero__eyebrow {
+    justify-content: center;
+  }
+
+  /* Proof band: a two-row grid — the // proof tag spans the top, then the
+     portrait and the stats readout sit side by side beneath it. The proof
+     wrapper collapses to display:contents so the tag and metrics become grid
+     items directly; the portrait is a real grid item alongside them. The
+     portrait's width is fluid so dragging the viewport scales it continuously
+     rather than in steps. */
+  .c-hero__panel {
+    display: grid;
+    grid-template-columns: clamp(5.5rem, 26vw, 7rem) minmax(0, 1fr);
+    grid-template-areas:
+      'tag   tag'
+      'pic   stats';
+    align-items: stretch;
+    /* Reset the desktop panel's justify-items:center — here every item fills
+       its area (tag spans both columns, the well fills column two). */
+    justify-items: stretch;
+    gap: var(--space-12) var(--space-16);
+    width: 100%;
+  }
+
+  .c-hero__proof {
+    display: contents;
+  }
+
+  /* // proof tag trails a fading hairline — the scroll-indicator's rule
+     device reused so the tag reads as the band's header. Spans both columns. */
+  .c-hero__proof-tag {
+    grid-area: tag;
+    display: flex;
+    gap: var(--space-10);
+  }
+
+  .c-hero__proof-tag::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      var(--color-hairline-strong),
+      transparent
+    );
+  }
+
+  /* Portrait keeps the raised-tile treatment here too — it just re-homes to the
+     grid, drops its square ratio and stretches to the readout's height so the
+     raised photo and the inset stats well square off as one band. */
+  .c-hero__portrait {
+    grid-area: pic;
+    width: 100%;
+    max-width: none;
+    aspect-ratio: auto;
+    align-self: stretch;
+  }
+
+  /* The stats readout is now the recessed surface: the same --neu-shadow-inset
+     well that used to frame the portrait, relocated so the figures read as a
+     carved instrument readout (content recesses — the site's depth rule). The
+     first figure is the loud lead; the rest demote to a quiet support line
+     under a hairline inside the well. */
+  .c-hero__metrics {
+    grid-area: stats;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+    padding: var(--space-16);
+    border-top: none;
+    border-radius: var(--radius-xl);
+    background: var(--neu-bg);
+    box-shadow: var(--neu-shadow-inset);
+  }
+
+  .c-hero__metric + .c-hero__metric {
+    padding-left: 0;
+    padding-top: var(--space-8);
+    border-left: none;
+    border-top: 1px solid var(--color-hairline);
+  }
+
+  .c-hero__metric:first-child .c-hero__metric-value {
+    font-size: clamp(2rem, 9vw, 2.6rem);
+  }
+
+  .c-hero__metric + .c-hero__metric .c-hero__metric-value {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-secondary);
+  }
+
+  /* The domain list fills the desktop card's spare measure; the mobile band
+     carries the meta strip beneath it instead, so drop the duplicate. */
+  .c-hero__proof-context {
+    display: none;
+  }
+
+  /* The name now lives in the nav bar on phones (the brand un-collapses to the
+     wordmark there). Keep the h1 element for document structure and SEO but
+     take it out of the visual flow — sr-only, so the hero leads with the role
+     kicker and headline. */
+  .c-hero__name {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+}
+
+/* Smooth resize: while the viewport is actively resizing (flag set in
+   main.js) the proof surface eases between its desktop card and flat mobile
+   form as the layout crosses 48rem, instead of the fill/well popping in or
+   out. Scoped to the flag so it never fires on first paint or a theme
+   toggle; fluid clamps above already carry the continuous within-range
+   scaling, so only these discrete surface props need a transition. The well
+   lives on the metrics readout and the portrait flattens across the
+   breakpoint, so both carry the fade. */
+.c-hero.is-resizing .c-hero__metrics,
+.c-hero.is-resizing .c-hero__portrait {
+  transition:
+    background var(--animation-speed) var(--animation-curve),
+    box-shadow var(--animation-speed) var(--animation-curve),
+    padding var(--animation-speed) var(--animation-curve),
+    border-radius var(--animation-speed) var(--animation-curve);
 }
 
 @media (min-width: 40.01rem) and (max-height: 43.75rem) {
@@ -608,5 +802,10 @@
 
   .c-hero__name {
     background-position: 0 0;
+  }
+
+  .c-hero.is-resizing .c-hero__metrics,
+  .c-hero.is-resizing .c-hero__portrait {
+    transition: none;
   }
 }

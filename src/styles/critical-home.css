@@ -61,6 +61,7 @@
   --space-32: 2rem;
   --radius-sm: 0.375rem;
   --radius-base: 0.5rem;
+  --radius-lg: 0.75rem;
   --radius-xl: 1rem;
   --radius-full: 999rem;
   /* Neumorphism tokens — mirror of settings.css (above-the-fold hero panel +
@@ -984,14 +985,20 @@ html.is-theme-transitioning *::after {
   animation: fadeInUp 1s ease-out 0.7s both;
 }
 
+/* Raised tile: photo on a thin ground pad that extrudes (--neu-shadow-raised),
+   the counterpoint to the inset proof/stats wells. Raised shadow paints outside
+   the box so it stays visible with the photo edge-to-edge. Mirror of
+   components/hero.css. */
 .c-hero__portrait {
   position: relative;
   width: 100%;
   max-width: 21rem;
   aspect-ratio: 1 / 1;
+  padding: var(--space-6);
   overflow: hidden;
   border-radius: var(--radius-xl);
-  box-shadow: var(--neu-shadow-inset);
+  background: var(--neu-bg);
+  box-shadow: var(--neu-shadow-raised);
 }
 
 .c-hero__portrait-img {
@@ -999,19 +1006,22 @@ html.is-theme-transitioning *::after {
   height: 100%;
   object-fit: cover;
   object-position: 50% 18%;
+  border-radius: var(--radius-lg);
   filter: grayscale(45%) contrast(1.03);
 }
 
+/* Brand top-wash over the photo only (inset by the pad). No fade-to-background
+   — it read as a glow in light and a faded bottom in dark; the raised tile
+   carries the depth now. Mirror of components/hero.css. */
 .c-hero__portrait::after {
   content: '';
   position: absolute;
-  inset: 0;
+  inset: var(--space-6);
+  border-radius: var(--radius-lg);
   background: linear-gradient(
     180deg,
     rgba(var(--color-primary-rgb), 0.16) 0%,
-    transparent 32%,
-    transparent 60%,
-    var(--color-background) 100%
+    transparent 34%
   );
   pointer-events: none;
 }
@@ -1158,17 +1168,166 @@ html.is-theme-transitioning *::after {
   }
 }
 
+/* Below tablet the hero becomes a single proof-forward column (the "G3"
+   mobile layout) — see the long note in components/hero.css. The lead's
+   children are hoisted with display:contents so the proof band re-sequences
+   under the lede and above the CTAs; the proof card dissolves to flat
+   typography while the portrait keeps its inset well. Mirror of the mobile
+   block in components/hero.css. */
 @media (max-width: 48rem) {
-  .c-hero__buttons {
+  .c-hero__inner {
+    display: flex;
     flex-direction: column;
     align-items: flex-start;
+    gap: var(--space-24);
+  }
+
+  .c-hero__lead {
+    display: contents;
+  }
+
+  .c-hero__eyebrow {
+    order: 1;
+  }
+  .c-hero__name {
+    order: 2;
+  }
+  .c-hero__headline {
+    order: 3;
+  }
+  .c-hero__lede {
+    order: 4;
+  }
+  .c-hero__panel {
+    order: 5;
+  }
+  .c-hero__meta {
+    order: 6;
+  }
+  .c-hero__buttons {
+    order: 7;
+  }
+
+  .c-hero__buttons {
+    flex-direction: column;
+    align-items: stretch;
     width: 100%;
   }
 
   .c-hero__buttons .c-btn {
     width: 100%;
-    max-width: min(100%, 18.75rem);
+    max-width: none;
   }
+
+  /* Centred actions — see components/hero.css. Prose + meta stay left (the
+     meta's separators need left-alignment to clip cleanly on wrap); the
+     eyebrow row centres and the full-span CTAs anchor the balance. */
+  .c-hero__eyebrow {
+    justify-content: center;
+  }
+
+  /* Proof band: two-row grid — // proof tag spans the top, portrait + stats
+     readout beneath. Proof collapses to display:contents so tag + metrics
+     become grid items. Portrait flat (well moves to the stats). Mirror of
+     the mobile block in components/hero.css. */
+  .c-hero__panel {
+    display: grid;
+    grid-template-columns: clamp(5.5rem, 26vw, 7rem) minmax(0, 1fr);
+    grid-template-areas:
+      'tag   tag'
+      'pic   stats';
+    align-items: stretch;
+    justify-items: stretch;
+    gap: var(--space-12) var(--space-16);
+    width: 100%;
+  }
+
+  .c-hero__proof {
+    display: contents;
+  }
+
+  .c-hero__proof-tag {
+    grid-area: tag;
+    display: flex;
+    gap: var(--space-10);
+  }
+
+  .c-hero__proof-tag::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      var(--color-hairline-strong),
+      transparent
+    );
+  }
+
+  .c-hero__portrait {
+    grid-area: pic;
+    width: 100%;
+    max-width: none;
+    aspect-ratio: auto;
+    align-self: stretch;
+  }
+
+  .c-hero__metrics {
+    grid-area: stats;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+    padding: var(--space-16);
+    border-top: none;
+    border-radius: var(--radius-xl);
+    background: var(--neu-bg);
+    box-shadow: var(--neu-shadow-inset);
+  }
+
+  .c-hero__metric + .c-hero__metric {
+    padding-left: 0;
+    padding-top: var(--space-8);
+    border-left: none;
+    border-top: 1px solid var(--color-hairline);
+  }
+
+  .c-hero__metric:first-child .c-hero__metric-value {
+    font-size: clamp(2rem, 9vw, 2.6rem);
+  }
+
+  .c-hero__metric + .c-hero__metric .c-hero__metric-value {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-secondary);
+  }
+
+  .c-hero__proof-context {
+    display: none;
+  }
+
+  /* Name moves to the nav bar on phones; keep the h1 element for structure/SEO
+     but sr-only it. Mirror of components/hero.css. */
+  .c-hero__name {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+}
+
+/* Smooth resize: eases the proof surface between its card and flat forms as
+   the layout crosses 48rem. Scoped to the is-resizing flag (main.js) so it
+   never fires on first paint or theme toggle. Mirror of components/hero.css. */
+.c-hero.is-resizing .c-hero__metrics,
+.c-hero.is-resizing .c-hero__portrait {
+  transition:
+    background var(--animation-speed) var(--animation-curve),
+    box-shadow var(--animation-speed) var(--animation-curve),
+    padding var(--animation-speed) var(--animation-curve),
+    border-radius var(--animation-speed) var(--animation-curve);
 }
 
 .c-btn {
@@ -1551,6 +1710,96 @@ body.has-beta-banner .c-nav {
   .c-nav__menu {
     right: var(--space-12);
     left: var(--space-12);
+  }
+
+  /* Phone: brand shows the full wordmark from the start on home (name lives in
+     the bar; hero drops its h1). Mirror of components/nav.css. */
+  body[data-page='home'] .c-nav__brand,
+  body[data-page='home'] .c-brand-logo {
+    width: clamp(8rem, 42vw, 10.5rem);
+  }
+
+  body[data-page='home'] .c-brand-logo__wordmark {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Hamburger → labelled section trigger (reuses its current-section text +
+     menu wiring). Chevron replaces the burger glyph; flat at rest, inset when
+     the sheet opens. */
+  .c-nav__toggle {
+    width: auto;
+    gap: var(--space-8);
+    padding: 0 var(--space-12);
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-xs);
+    letter-spacing: 0.02em;
+  }
+
+  .c-nav__toggle .c-nav__toggle-label {
+    position: static;
+    width: auto;
+    height: auto;
+    min-width: 0;
+    margin: 0;
+    overflow: hidden;
+    clip: auto;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .c-nav__toggle-icon {
+    display: none;
+  }
+
+  .c-nav__toggle::after {
+    content: '';
+    flex: 0 0 auto;
+    width: 0.4rem;
+    height: 0.4rem;
+    border-right: 1.5px solid var(--color-primary);
+    border-bottom: 1.5px solid var(--color-primary);
+    transform: translateY(-0.1rem) rotate(45deg);
+    transition: transform var(--animation-speed) var(--animation-curve);
+  }
+
+  .c-nav__toggle.is-active {
+    color: var(--color-accent);
+  }
+
+  .c-nav__toggle.is-active::after {
+    border-color: var(--color-accent);
+    transform: translateY(0.05rem) rotate(-135deg);
+  }
+
+  /* Wide theme tray → single round key showing the current scheme. Mirror of
+     components/nav.css. */
+  .c-theme-toggle {
+    width: var(--nav-touch-target);
+    gap: 0;
+    padding: 0;
+    background: none;
+    box-shadow: none;
+  }
+
+  .c-theme-toggle__half {
+    display: none;
+    box-shadow: none;
+    opacity: 1;
+  }
+
+  .c-theme-toggle__half--sun {
+    display: inline-flex;
+  }
+
+  [data-color-scheme='dark'] .c-theme-toggle__half--sun {
+    display: none;
+  }
+
+  [data-color-scheme='dark'] .c-theme-toggle__half--moon {
+    display: inline-flex;
+    box-shadow: none;
+    opacity: 1;
   }
 
   .c-beta-banner__content {
