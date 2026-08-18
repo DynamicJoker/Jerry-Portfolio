@@ -141,7 +141,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initializeContactInfo();
   updateYearsExperience();
   updateFooterYear();
-  initializePipeline();
 });
 
 function initializeContactInfo() {
@@ -1397,59 +1396,6 @@ function initializeTestimonialPauseControl() {
 
   control.addEventListener('click', () => {
     setPaused(!scroller.classList.contains('is-paused'));
-  });
-}
-
-// Signal Pipeline (the About section): the capability nodes are an ARIA
-// tablist, each controlling a detail panel below. Selecting a node (click or
-// arrow/Home/End keys) activates its panel; roving tabindex keeps a single tab
-// stop, per the WAI-ARIA tabs pattern.
-function initializePipeline() {
-  const root = document.querySelector('[data-pipeline]');
-  if (!root) return;
-  const tabs = [...root.querySelectorAll('[data-pipeline-node]')];
-  const panels = [...root.querySelectorAll('[data-pipeline-panel]')];
-  if (!tabs.length || tabs.length !== panels.length) return;
-
-  const activate = (index, { focus = true } = {}) => {
-    const i = (index + tabs.length) % tabs.length;
-    tabs.forEach((tab, n) => {
-      const on = n === i;
-      tab.classList.toggle('is-active', on);
-      tab.setAttribute('aria-selected', String(on));
-      tab.tabIndex = on ? 0 : -1;
-    });
-    panels.forEach((panel, n) => {
-      panel.hidden = n !== i;
-    });
-    if (focus) tabs[i].focus();
-  };
-
-  tabs.forEach((tab, i) => {
-    tab.addEventListener('click', () => activate(i, { focus: false }));
-    tab.addEventListener('keydown', (event) => {
-      let next;
-      switch (event.key) {
-        case 'ArrowRight':
-        case 'ArrowDown':
-          next = i + 1;
-          break;
-        case 'ArrowLeft':
-        case 'ArrowUp':
-          next = i - 1;
-          break;
-        case 'Home':
-          next = 0;
-          break;
-        case 'End':
-          next = tabs.length - 1;
-          break;
-        default:
-          return;
-      }
-      event.preventDefault();
-      activate(next);
-    });
   });
 }
 

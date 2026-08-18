@@ -1,25 +1,66 @@
-/* Component: about — "Signal Pipeline" */
+/* Component: about — "Ascending Ledger" */
 
-/* The second section literally diagrams the pitch: an Engineering -> Marketing
-   signal trace with the four capabilities as nodes on the line. The nodes are a
-   tablist (main.js initializePipeline); the active node's detail shows below. A
-   brand pulse travels the line, echoing the hero's signal motif. */
+/* The About section is a career told as an ascending staircase: each role is an
+   extruded tile that reveals bottom-to-top as the section scrolls into view
+   (main.js adds `.c-section.is-visible`), and the present-day tile carries a
+   pulsing brand node — the site's "active node" motif, shared with the skills
+   distiller in the next section. It replaced the old "Signal Pipeline" tablist.
 
-.c-pipeline {
-  display: flex;
-  flex-direction: column;
+   Depth note: these tiles EXTRUDE, against the usual content=inset grammar. This
+   is a diagram, not a content card — a staircase whose whole point is stacking
+   UP — so the tiles read as raised treads (as the pipeline nodes did before).
+
+   Not duplicated in critical-home.css: the section sits below the hero fold. */
+
+/* Editorial split: bio prose in the left column, the ledger in the right. Below
+   --breakpoint-lg it collapses to a single column — prose, then ledger. */
+.c-about {
+  display: grid;
   gap: clamp(2rem, 5vw, 3rem);
 }
 
-.c-pipeline__caption {
-  margin: 0;
-  max-width: 62ch;
-  font-size: clamp(1.15rem, 0.95rem + 1vw, 1.5rem);
-  line-height: 1.55;
+@media (min-width: 64rem) {
+  .c-about {
+    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+    /* The prose is shorter than the ledger; centering splits the slack evenly
+       instead of pooling it under the text (which read as a lopsided gap). */
+    align-items: center;
+    gap: clamp(2.5rem, 5vw, 4rem);
+  }
+}
+
+/* Thesis line, display weight, with the mono `// tag` lead above it. */
+.c-about__lede {
+  margin: 0 0 var(--space-16);
+  max-width: 22ch;
+  font-family: var(--font-family-display);
+  font-size: clamp(1.2rem, 0.9rem + 1vw, 1.55rem);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--color-text-strong);
+  text-wrap: balance;
+}
+
+/* Supporting bio copy (set:html, may contain <b>). */
+.c-about__p {
+  margin: 0 0 var(--space-16);
+  max-width: 46ch;
+  font-size: var(--font-size-base);
+  line-height: 1.65;
   color: var(--color-text-secondary);
 }
 
-.c-pipeline__caption-tag {
+.c-about__p:last-child {
+  margin-bottom: 0;
+}
+
+.c-about__p b {
+  color: var(--color-text);
+  font-weight: var(--font-weight-medium);
+}
+
+.c-about__tag {
   display: block;
   margin-bottom: var(--space-12);
   font-family: var(--font-family-mono);
@@ -28,317 +69,165 @@
   color: var(--color-text-muted);
 }
 
-.c-pipeline__caption-tag::before {
+.c-about__tag::before {
   content: '// ';
   color: var(--color-primary);
 }
 
-/* Track: [ENGINEERING] —— rail of nodes —— [MARKETING] */
-.c-pipeline__track {
+/* The ledger: an ascending staircase at every size. DOM order is oldest -> newest
+   (reading/screen-reader order); `column-reverse` puts the present-day tile at the
+   top-left apex, earliest at the bottom-right. The SAME markup and copy render at
+   all widths — only presentation changes: the staircase fan is compact on phones
+   (small --step-shift) and wider on desktop (the bump in the min-width:64rem block,
+   where it also sits beside the prose). --n is the last index, set in the markup.
+   The offsets are margins (insets), so they never cause horizontal overflow. */
+.c-ledger {
+  --step-shift: 0.55rem;
   display: flex;
-  align-items: flex-start;
-  gap: var(--space-12);
-}
-
-.c-pipeline__terminus {
-  display: flex;
-  flex: 0 0 auto;
-  align-items: center;
-  height: 0.9rem;
-  font-family: var(--font-family-mono);
-  font-size: var(--font-size-xs);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  color: var(--color-text-muted);
-}
-
-.c-pipeline__terminus--in::after,
-.c-pipeline__terminus--out::before {
-  content: '\203A';
-  color: var(--color-primary);
-}
-
-.c-pipeline__terminus--in::after {
-  margin-left: var(--space-8);
-}
-
-.c-pipeline__terminus--out::before {
-  margin-right: var(--space-8);
-}
-
-.c-pipeline__rail {
-  position: relative;
-  flex: 1 1 auto;
-  min-width: 0;
-}
-
-/* The signal trace: a hairline with a faint brand glow through the middle. */
-.c-pipeline__nodes {
-  position: relative;
-  display: flex;
-  justify-content: space-between;
+  flex-direction: column-reverse;
   gap: var(--space-12);
   margin: 0;
   padding: 0;
+  max-width: 34rem;
   list-style: none;
 }
 
-/* The trace: a hairline wire with a soft brand current drifting along it
-   (Engineering -> Marketing) — ambient throughput, not a racing dot. The moving
-   layer is soft glow bands; the static layer underneath is the wire itself. */
-.c-pipeline__nodes::before {
-  content: '';
-  position: absolute;
-  top: calc(0.45rem - 1px);
-  right: 0;
-  left: 0;
-  height: 2px;
-  background:
-    repeating-linear-gradient(
-      90deg,
-      rgba(var(--color-primary-rgb), 0) 0,
-      rgba(var(--color-primary-rgb), 0.55) 10px,
-      rgba(var(--color-primary-rgb), 0) 20px
-    ),
-    linear-gradient(
-      90deg,
-      var(--color-hairline-strong),
-      rgba(var(--color-primary-rgb), 0.4),
-      var(--color-hairline-strong)
-    );
-  background-size:
-    20px 100%,
-    100% 100%;
-  animation: pipelineCurrentX 1.6s linear infinite;
-}
-
-@keyframes pipelineCurrentX {
-  to {
-    background-position:
-      20px 0,
-      0 0;
-  }
-}
-
-.c-pipeline__node-item {
-  display: flex;
-  flex: 1 1 0;
-  min-width: 0;
-}
-
-.c-pipeline__node {
+.c-ledger__step {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  gap: var(--space-4);
+  margin-right: calc(var(--i) * var(--step-shift));
+  margin-left: calc((var(--n) - var(--i)) * var(--step-shift));
+  padding: var(--space-16) var(--space-20);
+  background: var(--neu-bg);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--neu-shadow-raised);
+}
+
+.c-ledger__head {
+  display: flex;
+  align-items: baseline;
   gap: var(--space-8);
-  width: 100%;
-  padding: 0;
-  border: 0;
-  border-radius: var(--radius-base);
-  background: transparent;
-  font-family: inherit;
-  cursor: pointer;
+}
+
+.c-ledger__year {
+  flex: 0 0 auto;
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+}
+
+.c-ledger__role {
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-strong);
+}
+
+.c-ledger__note {
+  margin: 0;
+  max-width: 42ch;
+  font-size: var(--font-size-sm);
+  line-height: 1.55;
   color: var(--color-text-secondary);
-  transition: transform var(--neu-release-duration) var(--ease-standard);
 }
 
-/* Press: travel only, deliberately no inset well. These tabs sit ON the
-   pipeline rail (.c-pipeline__nodes::before) with a transparent background —
-   a recess drawn around a diagram node would read as a box appearing behind
-   the rail rather than as depth. The 1px dip is enough to answer the tap. */
-.c-pipeline__node:active {
-  transform: var(--neu-press-transform);
-  transition-duration: var(--neu-press-duration);
+/* Present-day apex: brand-lit year + the pulsing node (glow halo via box-shadow,
+   arrival ping via ::after) — the same active-node language as the distiller. */
+.c-ledger__step.is-now .c-ledger__year {
+  color: var(--color-primary);
 }
 
-.c-pipeline__node:focus-visible {
-  outline: var(--focus-outline);
-  outline-offset: 6px;
-}
-
-.c-pipeline__node-dot {
+.c-ledger__dot {
   position: relative;
-  z-index: 1;
-  width: 0.9rem;
-  height: 0.9rem;
-  border: 2px solid var(--color-hairline-strong);
+  align-self: center;
+  width: 0.5rem;
+  height: 0.5rem;
   border-radius: 50%;
-  background: var(--color-background);
-  transition:
-    border-color 0.2s ease,
-    background-color 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.c-pipeline__node:hover .c-pipeline__node-dot,
-.c-pipeline__node:focus-visible .c-pipeline__node-dot {
-  border-color: var(--color-primary);
-}
-
-.c-pipeline__node.is-active .c-pipeline__node-dot {
-  border-color: var(--color-primary);
   background: var(--color-primary);
   box-shadow: 0 0 0 4px rgba(var(--color-primary-rgb), 0.18);
 }
 
-.c-pipeline__node-index {
-  font-family: var(--font-family-mono);
-  font-size: var(--font-size-xs);
-  letter-spacing: 0.06em;
-  color: var(--color-text-muted);
-  transition: color 0.2s ease;
+.c-ledger__dot::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-primary);
+  opacity: 0;
 }
 
-.c-pipeline__node.is-active .c-pipeline__node-index {
-  color: var(--color-primary);
+/* Reveal. Base state is fully visible (no-JS / no-observer safe); the entrance
+   only runs once the section is in view. `backwards` fill holds each step hidden
+   through its stagger delay, so the stack builds bottom-to-top. The extrusion
+   fades in with the tile via opacity — no separate shadow tween needed. */
+.c-section.is-visible .c-ledger__step {
+  animation: ledgerRise 0.6s var(--ease-standard) backwards;
+  animation-delay: calc(var(--i) * 0.13s);
 }
 
-.c-pipeline__node-icon {
-  display: inline-flex;
-  font-size: var(--font-size-icon-sm);
-  color: var(--color-text-secondary);
-  transition: color 0.2s ease;
-}
-
-.c-pipeline__node.is-active .c-pipeline__node-icon,
-.c-pipeline__node:hover .c-pipeline__node-icon {
-  color: var(--color-primary);
-}
-
-.c-pipeline__node-title {
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-semibold);
-  line-height: 1.25;
-  text-align: center;
-  color: var(--color-text);
-  transition: color 0.2s ease;
-}
-
-.c-pipeline__node.is-active .c-pipeline__node-title {
-  color: var(--color-text-strong);
-}
-
-/* Selected-node readout recessed into an inset well (soft UI). */
-.c-pipeline__detail {
-  padding: var(--space-24);
-  background: var(--neu-bg);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--neu-shadow-inset);
-}
-
-.c-pipeline__detail-item {
-  animation: pipelineFade 0.3s ease both;
-}
-
-.c-pipeline__detail-item[hidden] {
-  display: none;
-}
-
-.c-pipeline__detail-item:focus-visible {
-  outline: var(--focus-outline);
-  outline-offset: 4px;
-}
-
-.c-pipeline__detail-text {
-  margin: 0;
-  max-width: 64ch;
-  font-size: var(--font-size-lg);
-  line-height: 1.7;
-  color: var(--color-text-secondary);
-}
-
-@keyframes pipelineFade {
-  from {
+@keyframes ledgerRise {
+  0% {
     opacity: 0;
-    transform: translateY(0.4rem);
+    transform: translateY(11px) scale(0.985);
   }
-  to {
+  45% {
     opacity: 1;
-    transform: translateY(0);
+  }
+  62% {
+    transform: translateY(-2px) scale(1.005);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
   }
 }
 
-/* Mobile: the pipeline stands up vertically — Engineering at the top, Marketing
-   at the bottom, nodes stacked along a vertical trace. */
-@media (max-width: 48rem) {
-  .c-pipeline__track {
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--space-16);
-  }
+.c-section.is-visible .c-ledger__step.is-now .c-ledger__dot {
+  animation: ledgerNowPulse 3s ease-in-out 1.1s infinite;
+}
 
-  .c-pipeline__terminus {
-    height: auto;
-    padding-left: calc(0.45rem + var(--space-16));
-  }
+.c-section.is-visible .c-ledger__step.is-now .c-ledger__dot::after {
+  animation: ledgerNowPing 2.6s ease-out 0.95s infinite;
+}
 
-  .c-pipeline__terminus--in::after,
-  .c-pipeline__terminus--out::before {
-    content: none;
+@keyframes ledgerNowPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 4px rgba(var(--color-primary-rgb), 0.18);
   }
-
-  .c-pipeline__nodes {
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--space-20);
-  }
-
-  .c-pipeline__nodes::before {
-    top: 0;
-    right: auto;
-    bottom: 0;
-    left: calc(0.45rem - 1px);
-    width: 2px;
-    height: auto;
-    background:
-      repeating-linear-gradient(
-        180deg,
-        rgba(var(--color-primary-rgb), 0) 0,
-        rgba(var(--color-primary-rgb), 0.55) 10px,
-        rgba(var(--color-primary-rgb), 0) 20px
-      ),
-      linear-gradient(
-        180deg,
-        var(--color-hairline-strong),
-        rgba(var(--color-primary-rgb), 0.4),
-        var(--color-hairline-strong)
-      );
-    background-size:
-      100% 20px,
-      100% 100%;
-    animation: pipelineCurrentY 1.6s linear infinite;
-  }
-
-  .c-pipeline__node {
-    flex-direction: row;
-    align-items: center;
-    gap: var(--space-16);
-  }
-
-  .c-pipeline__node-index {
-    display: none;
-  }
-
-  .c-pipeline__node-title {
-    text-align: left;
+  50% {
+    box-shadow: 0 0 0 7px rgba(var(--color-primary-rgb), 0.06);
   }
 }
 
-@keyframes pipelineCurrentY {
-  to {
-    background-position:
-      0 20px,
-      0 0;
+@keyframes ledgerNowPing {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  70%,
+  100% {
+    transform: scale(2.7);
+    opacity: 0;
   }
 }
 
+/* Desktop: the ledger sits beside the prose (grid split above) and has the room
+   to fan the staircase wider — same offsets, larger step. */
+@media (min-width: 64rem) {
+  .c-ledger {
+    --step-shift: clamp(0.7rem, 1.8vw, 1.6rem);
+  }
+}
+
+/* Reduced motion: skip the entrance and the node's perpetual pulse; the resting
+   state (visible extruded tiles, a static brand node) already reads. */
 @media (prefers-reduced-motion: reduce) {
-  .c-pipeline__nodes::before {
-    animation: none;
-  }
-
-  .c-pipeline__detail-item {
+  .c-section.is-visible .c-ledger__step,
+  .c-section.is-visible .c-ledger__step.is-now .c-ledger__dot,
+  .c-section.is-visible .c-ledger__step.is-now .c-ledger__dot::after {
     animation: none;
   }
 }

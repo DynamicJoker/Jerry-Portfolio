@@ -47,11 +47,22 @@
    can't be composited, so each frame is a full repaint. */
 [data-perf='lite'] .c-availability-dot::after,
 [data-perf='lite'] .c-contact-form__submit.is-submitting:disabled,
-[data-perf='lite'] .c-pipeline__nodes::before,
 [data-perf='lite'] .c-nav__link.is-active::before,
 [data-perf='lite'] .c-not-found__halo,
 [data-perf='lite'] .c-not-found__orbit-fragments,
 [data-perf='lite'] .c-not-found__blip {
+  animation: none;
+}
+
+/* --- About ledger: the present-day node's infinite pulse + arrival ping both
+   animate box-shadow / transform forever while on screen. Freeze to the resting
+   node (the one-shot ledgerRise entrance is cheap and stays). The
+   `.c-section.is-visible` prefix out-specifies the rules that apply them. */
+[data-perf='lite'] .c-section.is-visible .c-ledger__step.is-now .c-ledger__dot,
+[data-perf='lite']
+  .c-section.is-visible
+  .c-ledger__step.is-now
+  .c-ledger__dot::after {
   animation: none;
 }
 
