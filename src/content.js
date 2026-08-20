@@ -97,7 +97,10 @@ export const siteContent = {
   // Home page section chrome — kicker label + title per section, in page
   // order. Kicker numbering ("01 /") is a CSS counter; write label text only.
   sections: {
-    about: { kicker: 'About', title: 'About Me' },
+    // Title and about.lede are a single sentence split across the section
+    // header and the prose column ("I Didn't Plan This…" / "…But it's all
+    // connected."), so the ellipses are load-bearing — edit them together.
+    about: { kicker: 'About', title: "I Didn't Plan This…" },
     skills: { kicker: 'Expertise', title: 'I Know Stuff' },
     services: {
       kicker: 'Services',
@@ -130,11 +133,12 @@ export const siteContent = {
     // the supporting copy (may contain <b>, rendered with set:html). It stays
     // clear of the hero metrics and the ledger tiles — it adds the connective
     // voice neither of those carries (who I am + what I do for businesses).
-    tag: 'the_throughline',
-    lede: "I didn't switch careers — I stacked them.",
+    tag: 'whoami',
+    // Completes the section title — see the note on sections.about above.
+    lede: "… But it's all connected.",
     bio: [
       "I'm a technical marketer who came up through the code, the community, and the editor's desk. So I can sit with your <b>engineers</b>, actually follow what they're shipping, and still leave with a story your <b>buyers</b> want to hear.",
-      'That’s the job I do for tech companies now — turning deep, hard-to-explain products into positioning, content, and demand gen. Honest enough for engineering to sign off on, sharp enough to move the market.',
+      "That's the job I do for tech companies now — turning deep, hard-to-explain products into positioning, content, and demand gen. Honest enough for engineering to sign off on, sharp enough to move the market.",
     ],
     // Career ledger, rendered as an ascending staircase (the "About" graphic).
     // Order is oldest -> newest for reading/DOM order; CSS `column-reverse`

@@ -13,7 +13,9 @@
    Not duplicated in critical-home.css: the section sits below the hero fold. */
 
 /* Editorial split: bio prose in the left column, the ledger in the right. Below
-   --breakpoint-lg it collapses to a single column — prose, then ledger. */
+   --breakpoint-lg (64rem) it collapses to a single column — prose, then ledger.
+   A second 64rem block near the bottom widens the staircase; keep the two in
+   step. */
 .c-about {
   display: grid;
   gap: clamp(2rem, 5vw, 3rem);
@@ -22,16 +24,41 @@
 @media (min-width: 64rem) {
   .c-about {
     grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
-    /* The prose is shorter than the ledger; centering splits the slack evenly
-       instead of pooling it under the text (which read as a lopsided gap). */
-    align-items: center;
+    /* Stretch, not start/center: the prose has less content than the ledger, so
+       either alignment leaves the surplus at one edge (centering broke the top
+       line under the title; start left ~117px hanging at the bottom). Stretching
+       gives both columns the row height and lets each distribute its own slack
+       via space-between below, so they meet at BOTH edges. Self-correcting at any
+       width — no hand-tuned heights to go stale when the copy rewraps. */
+    align-items: stretch;
     gap: clamp(2.5rem, 5vw, 4rem);
   }
+
+  /* Whichever column is shorter absorbs the difference, so the split meets at
+     both edges regardless of which one wins. Today the ledger is the taller of
+     the two (4 entries vs 2 paragraphs) so only the prose spreads. If the ledger
+     ever loses that margin — an entry removed, or the bio grown — the ledger
+     spreads instead and its tiles drift apart (3 entries pushes the 8px gaps to
+     ~34px), which loosens the staircase. Re-check the tile gap if you change
+     either side's length. */
+  .c-about__prose,
+  .c-ledger {
+    justify-content: space-between;
+  }
+}
+
+/* Prose stack. `gap` (not child margins) sets the minimum rhythm, so the
+   space-between distribution above adds to it rather than fighting it — and the
+   paragraphs keep proper spacing even when there is no slack to distribute. */
+.c-about__prose {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
 }
 
 /* Thesis line, display weight, with the mono `// tag` lead above it. */
 .c-about__lede {
-  margin: 0 0 var(--space-16);
+  margin: 0;
   max-width: 22ch;
   font-family: var(--font-family-display);
   font-size: clamp(1.2rem, 0.9rem + 1vw, 1.55rem);
@@ -42,17 +69,16 @@
   text-wrap: balance;
 }
 
-/* Supporting bio copy (set:html, may contain <b>). */
+/* Supporting bio copy (set:html, may contain <b>). Slightly tighter measure than
+   the 46ch used in the hero/work copy: it buys the paragraphs an extra line each,
+   which lifts the column closer to the ledger's height so the space-between
+   distribution above stays a gentle rhythm (~40px) instead of a wide gap. */
 .c-about__p {
-  margin: 0 0 var(--space-16);
-  max-width: 46ch;
+  margin: 0;
+  max-width: 42ch;
   font-size: var(--font-size-base);
   line-height: 1.65;
   color: var(--color-text-secondary);
-}
-
-.c-about__p:last-child {
-  margin-bottom: 0;
 }
 
 .c-about__p b {
@@ -85,7 +111,10 @@
   --step-shift: 0.55rem;
   display: flex;
   flex-direction: column-reverse;
-  gap: var(--space-12);
+  /* Tighter than the prose rhythm on purpose: it shrinks the ledger toward the
+     prose's natural height, so the split's leftover space (spread by
+     space-between above) stays a gentle rhythm rather than a visible hole. */
+  gap: var(--space-8);
   margin: 0;
   padding: 0;
   max-width: 34rem;
@@ -98,7 +127,7 @@
   gap: var(--space-4);
   margin-right: calc(var(--i) * var(--step-shift));
   margin-left: calc((var(--n) - var(--i)) * var(--step-shift));
-  padding: var(--space-16) var(--space-20);
+  padding: var(--space-12) var(--space-20);
   background: var(--neu-bg);
   border-radius: var(--radius-xl);
   box-shadow: var(--neu-shadow-raised);
@@ -215,7 +244,9 @@
 }
 
 /* Desktop: the ledger sits beside the prose (grid split above) and has the room
-   to fan the staircase wider — same offsets, larger step. */
+   to fan the staircase wider — same offsets, larger step. Keep this breakpoint in
+   step with the .c-about split block near the top of the file; both are
+   --breakpoint-lg (64rem). */
 @media (min-width: 64rem) {
   .c-ledger {
     --step-shift: clamp(0.7rem, 1.8vw, 1.6rem);
