@@ -137,7 +137,7 @@ export const siteContent = {
     // Completes the section title — see the note on sections.about above.
     lede: "… But it's all connected.",
     bio: [
-      "I'm a technical marketer who came up through the code, the community, and the editor's desk. So I can sit with your <b>engineers</b>, actually follow what they're shipping, and still leave with a story your <b>buyers</b> want to hear.",
+      "I'm a technical marketer who came up through the code, the community, and the editor's desk. So I can sit with your <b>engineers</b>, actually follow what they're shipping, and still leave with a narrative your <b>buyers</b> notice and resonate with.",
       "That's the job I do for tech companies now — turning deep, hard-to-explain products into positioning, content, and demand gen. Honest enough for engineering to sign off on, sharp enough to move the market.",
     ],
     // Career ledger, rendered as an ascending staircase (the "About" graphic).
@@ -161,13 +161,13 @@ export const siteContent = {
       },
       {
         year: '2019',
-        role: 'Technical editor',
-        note: 'Led hardware editorial, making complex silicon read simple.',
+        role: 'Technical editor and Features writer',
+        note: 'Led hardware editorial and features – explaining tech with informative deep-dives.',
       },
       {
         year: 'Now',
         role: 'Technical marketer',
-        note: 'Turn what engineers build into demand for deep-tech brands.',
+        note: 'Turning what engineers build into demand for deep-tech brands.',
         current: true,
       },
     ],
