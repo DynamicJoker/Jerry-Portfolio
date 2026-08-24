@@ -97,7 +97,10 @@ export const siteContent = {
   // Home page section chrome — kicker label + title per section, in page
   // order. Kicker numbering ("01 /") is a CSS counter; write label text only.
   sections: {
-    about: { kicker: 'About', title: 'About Me' },
+    // Title and about.lede are a single sentence split across the section
+    // header and the prose column ("I Didn't Plan This…" / "…But it's all
+    // connected."), so the ellipses are load-bearing — edit them together.
+    about: { kicker: 'About', title: "I Didn't Plan This…" },
     skills: { kicker: 'Expertise', title: 'I Know Stuff' },
     services: {
       kicker: 'Services',
@@ -124,36 +127,48 @@ export const siteContent = {
   },
 
   about: {
-    // Mono `// tag` label + the pipeline graphic's end labels (same pattern
-    // as skills.feature.tag / skills.feature.distiller).
-    tag: 'how_i_work',
-    pipeline: { inputLabel: 'Engineering', outputLabel: 'Marketing' },
-    description:
-      'I bridge your engineering and marketing teams – making sure that the cool stuff your engineering is building behind-the-scenes each day translates into marketing that focuses and targets real customer issues with data-driven narratives.',
-    highlights: [
+    // Mono `// tag` label (same lowercase snake_case pattern as
+    // skills.feature.tag). Prose sits in the left column of the About split,
+    // the ledger in the right. `lede` is the display-weight thesis; `bio` is
+    // the supporting copy (may contain <b>, rendered with set:html). It stays
+    // clear of the hero metrics and the ledger tiles — it adds the connective
+    // voice neither of those carries (who I am + what I do for businesses).
+    tag: 'whoami',
+    // Completes the section title — see the note on sections.about above.
+    lede: "… But it's all connected.",
+    bio: [
+      "I'm a technical marketer who came up through the code, the community, and the editor's desk. So I can sit with your <b>engineers</b>, actually follow what they're shipping, and still leave with a narrative your <b>buyers</b> notice and resonate with.",
+      "That's the job I do for tech companies now — turning deep, hard-to-explain products into positioning, content, and demand gen. Honest enough for engineering to sign off on, sharp enough to move the market.",
+    ],
+    // Career ledger, rendered as an ascending staircase (the "About" graphic).
+    // Order is oldest -> newest for reading/DOM order; CSS `column-reverse`
+    // puts "now" at the top of the climb, and main.js's section .is-visible
+    // toggle drives the bottom-to-top extrude-in reveal. `current: true` marks
+    // the present-day apex (gets the pulsing brand node). The last note is the
+    // "what I do for businesses" payoff the section builds toward. Deliberately
+    // carries no metric column — the hero directly above already showcases the
+    // 50M+/1,000+ figures, so repeating them here would read as an echo.
+    ledger: [
       {
-        icon: 'pen',
-        title: 'Technical Content Creation',
-        description:
-          'I create compelling white papers, case studies, and documentation that turn complex technical features into clear benefits, while driving lead gen strategies and establishing your brand as a thought leader.',
+        year: '2012',
+        role: 'Community manager',
+        note: 'Ran a gaming community and learned how an audience actually thinks.',
       },
       {
-        icon: 'target',
-        title: 'B2B & B2C Marketing Strategy',
-        description:
-          'From account-based marketing (ABM) for enterprise clients to broad consumer campaigns, I develop and execute cohesive strategies that resonate with the target audience and achieve measurable goals.',
+        year: '2014',
+        role: 'Web developer',
+        note: "Shipped Node APIs — got under the hood of the tech I'd later sell.",
       },
       {
-        icon: 'compass',
-        title: 'Complex Product Positioning',
-        description:
-          'I weave narratives around complex tech products to position them within crowded markets by highlighting their unique strengths and targeting real-world customer problems.',
+        year: '2019',
+        role: 'Technical editor and Features writer',
+        note: 'Led hardware editorial and features – explaining tech with informative deep-dives.',
       },
       {
-        icon: 'bar-chart',
-        title: 'Data-Driven Results',
-        description:
-          'Every decision is backed by data. I leverage analytics from Google, HubSpot, and other platforms to track KPIs, in addition to sales data to optimize campaign performance, and deliver clear marketing ROI.',
+        year: 'Now',
+        role: 'Technical marketer',
+        note: 'Turning what engineers build into demand for deep-tech brands.',
+        current: true,
       },
     ],
   },
@@ -866,7 +881,6 @@ export const siteContent = {
       // contains the visible word, which is what WCAG 2.5.3 asks for.
       scrollToNext: 'Scroll to next section',
       scrollLabel: 'scroll',
-      pipelineList: 'What I do',
     },
     work: {
       featuredRegion: 'Featured work',
