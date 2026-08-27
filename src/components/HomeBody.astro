@@ -311,116 +311,263 @@ siteContent.testimonials.forEach((testimonial, index) => {
                 )
               }
             </p>
-            {
-              /* Distiller: blurred Engineering complexity is pulled into focus,
-               distilled to one clear strategy (the clarity node), then assembled
-               segment-by-segment into a marketing campaign that goes live.
-               Decorative; the animation (skills.css, .c-distiller__*) runs once
-               the section scrolls into view. These SVG coordinates are referenced
-               by that animation's keyframe offsets — keep them in sync. */
-            }
-            <div class="c-distiller" aria-hidden="true">
-              <svg
-                class="c-distiller__svg"
-                viewBox="0 0 320 60"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
+            <div class="c-capability__meta">
+              <a
+                class="c-capability__cta"
+                href={siteContent.skills.feature.cta.href}
               >
-                <g class="c-distiller__bars">
-                  <rect x="0" y="8" width="4" height="44" rx="1"></rect>
-                  <rect x="7" y="16" width="4" height="28" rx="1"></rect>
-                  <rect x="14" y="4" width="4" height="52" rx="1"></rect>
-                  <rect x="21" y="20" width="4" height="20" rx="1"></rect>
-                  <rect x="28" y="12" width="4" height="36" rx="1"></rect>
-                  <rect x="35" y="22" width="4" height="16" rx="1"></rect>
-                  <rect x="42" y="10" width="4" height="40" rx="1"></rect>
-                  <rect x="49" y="18" width="4" height="24" rx="1"></rect>
-                </g>
-                <rect
-                  class="c-distiller__scan"
-                  x="0"
-                  y="2"
-                  width="2.5"
-                  height="56"
-                  rx="1.25"></rect>
-                <path
-                  class="c-distiller__lead"
-                  d="M56 30 L132 30"
-                  stroke-width="2.5"></path>
-                <circle class="c-distiller__halo" cx="138" cy="30" r="8"
-                ></circle>
-                <circle class="c-distiller__node" cx="138" cy="30" r="4.5"
-                ></circle>
-                <circle class="c-distiller__ring" cx="138" cy="30" r="4.5"
-                ></circle>
-                <path
-                  class="c-distiller__branch"
-                  d="M144 30 L176 30"
-                  stroke-width="1.5"></path>
-                <rect
-                  class="c-distiller__frame"
-                  x="180"
-                  y="21"
-                  width="116"
-                  height="18"
-                  rx="4.5"
-                  stroke-width="1.4"></rect>
-                <rect
-                  class="c-distiller__seg"
-                  x="184"
-                  y="25"
-                  width="25"
-                  height="10"
-                  rx="2"></rect>
-                <rect
-                  class="c-distiller__seg c-distiller__seg--2"
-                  x="211"
-                  y="25"
-                  width="25"
-                  height="10"
-                  rx="2"></rect>
-                <rect
-                  class="c-distiller__seg c-distiller__seg--3"
-                  x="238"
-                  y="25"
-                  width="25"
-                  height="10"
-                  rx="2"></rect>
-                <rect
-                  class="c-distiller__seg c-distiller__seg--4"
-                  x="265"
-                  y="25"
-                  width="25"
-                  height="10"
-                  rx="2"></rect>
-              </svg>
-              <div class="c-distiller__ends">
-                <span class="c-distiller__end c-distiller__end--in"
-                  >{siteContent.skills.feature.distiller.inputLabel}</span
-                >
-                <span class="c-distiller__end c-distiller__end--out"
-                  >{siteContent.skills.feature.distiller.outputLabel}</span
-                >
-              </div>
+                {siteContent.skills.feature.cta.label}
+              </a>
             </div>
           </div>
-          <div class="c-capability__meta">
-            <ul class="c-capability__stats">
-              {
-                siteContent.skills.feature.stats.map((stat) => (
-                  <li class="c-capability__stat">
-                    <span class="c-capability__stat-value">{stat.value}</span>
-                    <span class="c-capability__stat-label">{stat.label}</span>
-                  </li>
-                ))
-              }
-            </ul>
-            <a
-              class="c-capability__cta"
-              href={siteContent.skills.feature.cta.href}
+          {
+            /* Distiller: the raw material on the left is two textures, not
+                 one — indented, ragged `code` rows above a hairline, and a
+                 `spec` table of label/value pairs below. It stays put and gives
+                 up its essence: each row emits a drip that travels right and
+                 converges on one of the three campaign rows, which grow as the
+                 drips land. Decorative; the sequence (skills.css,
+                 .c-distiller__*) runs ONCE when the section scrolls into view
+                 and rests on the final frame — the same frame reduced-motion
+                 and perf-lite visitors get, so all three states agree.
+                 These SVG coordinates are referenced by that animation's
+                 keyframe offsets and by the per-drip translate targets —
+                 keep them in sync. */
+          }
+          <div class="c-distiller" aria-hidden="true">
+            <svg
+              class="c-distiller__svg"
+              viewBox="0 0 320 160"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              {siteContent.skills.feature.cta.label}
-            </a>
+              <g class="c-distiller__code">
+                <rect
+                  class="c-distiller__row c-distiller__row--kw"
+                  x="0"
+                  y="6"
+                  width="26"
+                  height="3"
+                  rx="1.5"></rect>
+                <rect
+                  class="c-distiller__row"
+                  x="32"
+                  y="6"
+                  width="52"
+                  height="3"
+                  rx="1.5"></rect>
+                <rect
+                  class="c-distiller__row"
+                  x="90"
+                  y="6"
+                  width="22"
+                  height="3"
+                  rx="1.5"></rect>
+                <rect
+                  class="c-distiller__row c-distiller__row--kw"
+                  x="10"
+                  y="24"
+                  width="18"
+                  height="3"
+                  rx="1.5"></rect>
+                <rect
+                  class="c-distiller__row"
+                  x="34"
+                  y="24"
+                  width="62"
+                  height="3"
+                  rx="1.5"></rect>
+                <rect
+                  class="c-distiller__row"
+                  x="10"
+                  y="42"
+                  width="42"
+                  height="3"
+                  rx="1.5"></rect>
+                <rect
+                  class="c-distiller__row c-distiller__row--kw"
+                  x="58"
+                  y="42"
+                  width="16"
+                  height="3"
+                  rx="1.5"></rect>
+                <rect
+                  class="c-distiller__row"
+                  x="80"
+                  y="42"
+                  width="44"
+                  height="3"
+                  rx="1.5"></rect>
+                <rect
+                  class="c-distiller__row"
+                  x="0"
+                  y="60"
+                  width="16"
+                  height="3"
+                  rx="1.5"></rect>
+              </g>
+              <rect
+                class="c-distiller__rule"
+                x="0"
+                y="76"
+                width="130"
+                height="1"
+                rx="0.5"></rect>
+              <g class="c-distiller__spec">
+                <rect
+                  class="c-distiller__row"
+                  x="0"
+                  y="92"
+                  width="42"
+                  height="3"
+                  rx="1.5"></rect>
+                <rect
+                  class="c-distiller__row"
+                  x="96"
+                  y="92"
+                  width="34"
+                  height="3"
+                  rx="1.5"></rect>
+                <rect
+                  class="c-distiller__row"
+                  x="0"
+                  y="110"
+                  width="56"
+                  height="3"
+                  rx="1.5"></rect>
+                <rect
+                  class="c-distiller__row"
+                  x="104"
+                  y="110"
+                  width="26"
+                  height="3"
+                  rx="1.5"></rect>
+                <rect
+                  class="c-distiller__row"
+                  x="0"
+                  y="128"
+                  width="36"
+                  height="3"
+                  rx="1.5"></rect>
+                <rect
+                  class="c-distiller__row"
+                  x="88"
+                  y="128"
+                  width="42"
+                  height="3"
+                  rx="1.5"></rect>
+                <rect
+                  class="c-distiller__row"
+                  x="0"
+                  y="146"
+                  width="50"
+                  height="3"
+                  rx="1.5"></rect>
+                <rect
+                  class="c-distiller__row"
+                  x="100"
+                  y="146"
+                  width="30"
+                  height="3"
+                  rx="1.5"></rect>
+              </g>
+              {
+                /* Drips: source row -> campaign row. Each one's travel vector
+                     and delay are set per :nth-child in skills.css; the cx/cy
+                     here are only the launch points. */
+              }
+              <g class="c-distiller__drips">
+                <circle class="c-distiller__drip" cx="134" cy="7.5" r="2.4"
+                ></circle>
+                <circle
+                  class="c-distiller__drip c-distiller__drip--2"
+                  cx="134"
+                  cy="43.5"
+                  r="2.4"></circle>
+                <circle
+                  class="c-distiller__drip c-distiller__drip--3"
+                  cx="134"
+                  cy="93.5"
+                  r="2.4"></circle>
+                <circle
+                  class="c-distiller__drip c-distiller__drip--4"
+                  cx="134"
+                  cy="111.5"
+                  r="2.4"></circle>
+                <circle
+                  class="c-distiller__drip c-distiller__drip--5"
+                  cx="134"
+                  cy="129.5"
+                  r="2.4"></circle>
+                <circle
+                  class="c-distiller__drip c-distiller__drip--6"
+                  cx="134"
+                  cy="147.5"
+                  r="2.4"></circle>
+              </g>
+              <g class="c-distiller__campaign">
+                <circle class="c-distiller__dot" cx="196" cy="26.5" r="4"
+                ></circle>
+                <rect
+                  class="c-distiller__bar"
+                  x="206"
+                  y="20"
+                  width="114"
+                  height="13"
+                  rx="4"></rect>
+                <rect
+                  class="c-distiller__subline"
+                  x="206"
+                  y="38"
+                  width="62"
+                  height="6"
+                  rx="3"></rect>
+              </g>
+              <g class="c-distiller__campaign c-distiller__campaign--2">
+                <circle class="c-distiller__dot" cx="196" cy="80.5" r="4"
+                ></circle>
+                <rect
+                  class="c-distiller__bar"
+                  x="206"
+                  y="74"
+                  width="88"
+                  height="13"
+                  rx="4"></rect>
+                <rect
+                  class="c-distiller__subline"
+                  x="206"
+                  y="92"
+                  width="44"
+                  height="6"
+                  rx="3"></rect>
+              </g>
+              <g class="c-distiller__campaign c-distiller__campaign--3">
+                <circle class="c-distiller__dot" cx="196" cy="134.5" r="4"
+                ></circle>
+                <rect
+                  class="c-distiller__bar"
+                  x="206"
+                  y="128"
+                  width="104"
+                  height="13"
+                  rx="4"></rect>
+                <rect
+                  class="c-distiller__subline"
+                  x="206"
+                  y="146"
+                  width="54"
+                  height="6"
+                  rx="3"></rect>
+              </g>
+            </svg>
+            <div class="c-distiller__ends">
+              <span class="c-distiller__end c-distiller__end--in"
+                >{siteContent.skills.feature.distiller.inputLabel}</span
+              >
+              <span class="c-distiller__end c-distiller__end--out"
+                >{siteContent.skills.feature.distiller.outputLabel}</span
+              >
+            </div>
           </div>
         </div>
 
@@ -465,18 +612,15 @@ siteContent.testimonials.forEach((testimonial, index) => {
           <summary class="c-capability__summary">
             <span class="c-capability__topline">
               <span class="c-capability__dot" aria-hidden="true"></span>
+              {
+                /* No numeric index here, deliberately: the stack is a
+                   materials list, not a fourth discipline. Numbering it put it
+                   on a par with 01-03 and is what made the old bento split the
+                   three disciplines 2/1. Slug only. */
+              }
               <span class="c-capability__index">
-                <b>
-                  {
-                    String(siteContent.skills.disciplines.length + 1).padStart(
-                      2,
-                      '0',
-                    )
-                  }
-                </b>
                 <span class="c-capability__slug">
-                  {' '}
-                  · {siteContent.skills.tools.slug}
+                  {siteContent.skills.tools.slug}
                 </span>
               </span>
             </span>
