@@ -1138,7 +1138,7 @@ function initializeCalendlyBookingPanel() {
   const openLabel =
     cta.buttonLabel ||
     trigger.getAttribute('aria-label') ||
-    'Schedule a Discovery Call';
+    'Schedule a discovery call';
   const closeLabel = cta.closeLabel || 'Close scheduler';
   // Events Calendly posts once the inline widget has actually painted a
   // calendar (as opposed to the iframe element merely existing, which can
@@ -1379,7 +1379,9 @@ function initializeTestimonialPauseControl() {
     control.setAttribute('aria-pressed', String(isPaused));
     control.setAttribute(
       'aria-label',
-      isPaused ? 'Resume testimonial animation' : 'Pause testimonial animation',
+      isPaused
+        ? siteContent.ui.testimonials.resume
+        : siteContent.ui.testimonials.pause,
     );
   };
 
@@ -1389,7 +1391,7 @@ function initializeTestimonialPauseControl() {
     control.disabled = true;
     control.setAttribute(
       'aria-label',
-      'Testimonials paused because reduced motion is enabled',
+      siteContent.ui.testimonials.reducedMotion,
     );
     return;
   }

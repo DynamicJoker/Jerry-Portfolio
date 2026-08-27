@@ -30,7 +30,7 @@ export const siteContent = {
     sameAs: ['https://linkedin.com/in/jerry-james-tech/'],
     experienceStartYear: 2014,
     availability: {
-      status: 'Available Worldwide',
+      status: 'Remote, worldwide',
     },
     // Hero headline: `accent` is rendered in the brand color inline between
     // `pre` and `post`. Keep each part short — it wraps on small screens.
@@ -60,19 +60,23 @@ export const siteContent = {
     ],
     // Hero buttons, in order. `variant` maps to the c-btn--<variant> class.
     heroCtas: [
-      { label: 'View Portfolio', href: '#portfolio', variant: 'primary' },
-      { label: 'Book a Discovery Call', href: '#schedule', variant: 'outline' },
+      { label: 'View portfolio', href: '#portfolio', variant: 'primary' },
+      {
+        label: 'Schedule a discovery call',
+        href: '#schedule',
+        variant: 'outline',
+      },
     ],
     bookingCta: {
       text: 'Open to freelance & consulting engagements',
-      buttonLabel: 'Schedule a Discovery Call',
+      buttonLabel: 'Schedule a discovery call',
       url: 'https://calendly.com/jerryjames-cal/discover',
       expandedTitle: 'Choose a time for a discovery call',
       helperText:
         'Pick a slot that works for you. Everything happens right here — no redirects, no leaving the page.',
-      loadingText: 'Loading available times...',
+      loadingText: 'Loading available times…',
       closeLabel: 'Close scheduler',
-      bookedText: 'You are booked. Thanks, I will see you on the call.',
+      bookedText: "You're in. Invite's on its way — see you then.",
       // Calendly only honors these color params on plans with custom theming
       // (custom_theme_allowed); until then the embed always renders its white
       // default and dark mode is handled by --calendly-embed-filter (an
@@ -101,7 +105,7 @@ export const siteContent = {
     // header and the prose column ("I Didn't Plan This…" / "…But it's all
     // connected."), so the ellipses are load-bearing — edit them together.
     about: { kicker: 'About', title: "I Didn't Plan This…" },
-    skills: { kicker: 'Expertise', title: 'I Know Stuff' },
+    skills: { kicker: 'Expertise', title: 'Fluent in Both' },
     services: {
       kicker: 'Services',
       title: "You Build It. I'll Bring the Party",
@@ -123,7 +127,7 @@ export const siteContent = {
   betaBanner: {
     stripLabel: 'Beta',
     eyebrow: 'Beta site',
-    message: 'this website is still a work in progress.',
+    message: 'still under construction — mind the scaffolding.',
   },
 
   about: {
@@ -135,7 +139,7 @@ export const siteContent = {
     // voice neither of those carries (who I am + what I do for businesses).
     tag: 'whoami',
     // Completes the section title — see the note on sections.about above.
-    lede: "… But it's all connected.",
+    lede: "…But it's all connected.",
     bio: [
       "I'm a technical marketer who came up through the code, the community, and the editor's desk. So I can sit with your <b>engineers</b>, actually follow what they're shipping, and still leave with a narrative your <b>buyers</b> notice and resonate with.",
       "That's the job I do for tech companies now — turning deep, hard-to-explain products into positioning, content, and demand gen. Honest enough for engineering to sign off on, sharp enough to move the market.",
@@ -162,7 +166,7 @@ export const siteContent = {
       {
         year: '2019',
         role: 'Technical editor and Features writer',
-        note: 'Led hardware editorial and features – explaining tech with informative deep-dives.',
+        note: 'Led hardware editorial and features — explaining tech with deep-dives.',
       },
       {
         year: 'Now',
@@ -336,7 +340,7 @@ export const siteContent = {
   // and `{total}` are placeholders filled in by HomeBody / main.js.
   archiveUi: {
     heading: 'Full body of work',
-    emptyMessage: 'No pieces match this filter.',
+    emptyMessage: 'Nothing to see here. Yet.',
     showFewerLabel: 'Show fewer',
     showAllLabel: 'Show all {count}',
     countStatus: '{shown} of {total} pieces',
@@ -662,7 +666,7 @@ export const siteContent = {
     // parallel rows don't repeat one string down the section. All three still
     // land on the same booking anchor — the wording names the conversation,
     // not a different destination.
-    ctaLabel: 'Book a discovery call',
+    ctaLabel: 'Schedule a discovery call',
     ctaHref: '#schedule',
     engagements: [
       {
@@ -699,8 +703,7 @@ export const siteContent = {
       imageAlt:
         'Abstract illustration of tangled technical lines passing through a lens and emerging as clean, ordered content with a rising trend line',
       kicker: 'Blog',
-      heading:
-        'Useful thinking for technical marketers, founders, and product teams.',
+      heading: 'Notes from inside the spec sheet.',
       text: 'Notes on turning complex technology into clearer positioning, sharper content systems, and pages that help buyers understand what matters.',
       ctaLabel: 'View all posts',
     },
@@ -717,10 +720,10 @@ export const siteContent = {
 
   // No-posts empty states. Shared title; each surface has its own body copy.
   blogEmpty: {
-    title: 'Articles are coming soon.',
-    homeText: 'Published posts will appear here automatically.',
+    title: 'Nothing published yet.',
+    homeText: 'Still in the lab. Check back.',
     indexText:
-      'Drafts can already be created in Pages CMS and will appear here once published.',
+      'Nothing here yet. Turns out writing about writing takes a while.',
   },
 
   testimonials: [
@@ -791,8 +794,8 @@ export const siteContent = {
 
   // Contact section intro panel (left of the form).
   contactPanel: {
-    title: 'Get In Touch',
-    text: "Ready to elevate your technical marketing? Let's discuss how I can help drive growth for your B2B or B2C business.",
+    title: 'Now the Easy Part',
+    text: "Tell me what you're launching and who has to understand it. I'll tell you straight whether I'm the right fit — and if I'm not, who is.",
   },
 
   // Contact form (Web3Forms; the access key is public by design)
@@ -824,7 +827,8 @@ export const siteContent = {
         message: 'Please enter a message.',
       },
       invalidEmail: 'Please enter a valid email address.',
-      submitFailed: 'Something went wrong. Please try again.',
+      submitFailed:
+        "That didn't send. Try again, or reach me on LinkedIn — link's in the panel.",
       network: 'Network error. Please check your connection and try again.',
       // Announced once to screen readers on a failed submit (main.js), followed
       // by the list of affected field labels. Not shown visually.
@@ -898,6 +902,9 @@ export const siteContent = {
     testimonials: {
       pause: 'Pause testimonials',
       resume: 'Resume testimonials',
+      // Replaces the pause/resume name when the control is disabled because
+      // the OS asked for reduced motion (main.js). Not shown visually.
+      reducedMotion: 'Testimonials paused because reduced motion is enabled',
     },
     footer: {
       rights: 'All rights reserved.',
