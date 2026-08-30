@@ -96,8 +96,7 @@
 [data-perf='lite'] .c-distiller.is-running .c-distiller__rule,
 [data-perf='lite'] .c-distiller.is-running .c-distiller__drip,
 [data-perf='lite'] .c-distiller.is-running .c-distiller__dot,
-[data-perf='lite'] .c-distiller.is-running .c-distiller__bar,
-[data-perf='lite'] .c-distiller.is-running .c-distiller__subline {
+[data-perf='lite'] .c-distiller.is-running .c-distiller__deliverable {
   animation: none;
 }
 

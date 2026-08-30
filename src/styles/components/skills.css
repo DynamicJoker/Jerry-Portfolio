@@ -435,23 +435,48 @@
   opacity: 0.64;
 }
 
+/* The drip's landing point and the seed each deliverable blooms from. */
 .c-distiller__dot {
   fill: var(--color-primary);
   transform-box: fill-box;
   transform-origin: center;
 }
 
-.c-distiller__bar {
-  fill: var(--color-primary);
+/* Each campaign output is a small deliverable glyph — a browser-window landing
+   page, an article page, a case-study page — rather than an abstract bar, so
+   the right side reads as specific things the left side becomes. The parts
+   share three theme-aware classes: --out-frame (the page/window outline),
+   --out-fill (brand solids: hero band, title bar, button, window dots, chart
+   bars) and --out-line (muted body-text rows); --out-hair is the faint
+   connector + window title-bar divider. Colour comes from tokens so both
+   themes track automatically. The glyph reveals as one unit (see
+   .c-distiller__deliverable animation below), so the whole group carries a
+   single transform origin at its left edge — it grows out of the node dot. */
+.c-distiller__deliverable {
   transform-box: fill-box;
   transform-origin: left center;
 }
 
-.c-distiller__subline {
+.c-distiller__out-frame {
+  fill: none;
+  stroke: var(--color-primary);
+  stroke-width: 1.4;
+}
+
+.c-distiller__out-fill {
   fill: var(--color-primary);
-  opacity: 0.38;
-  transform-box: fill-box;
-  transform-origin: left center;
+}
+
+.c-distiller__out-line {
+  fill: var(--color-text-muted);
+  fill-opacity: 0.55;
+}
+
+.c-distiller__out-hair {
+  fill: none;
+  stroke: var(--color-primary);
+  stroke-width: 1;
+  stroke-opacity: 0.45;
 }
 
 .c-distiller__ends {
@@ -565,27 +590,24 @@
   animation-delay: calc(1.78s + var(--drip-i) * 0.075s);
 }
 
-/* Phase 3 — campaigns build as the drips land, sublines settle last. The
-   final subline finishes at ~3.3s; DISTILLER_RUN_MS in main.js must stay at
-   or above that or the rest beat starts mid-sequence. */
+/* Phase 3 — as each drip lands, its node dot pops and the deliverable glyph
+   blooms out of it. The glyph can't use the bars' scaleX (that would stretch
+   the icon), so it fades + scales up as one unit from its left edge, seeded at
+   the node. The last glyph finishes at ~3.25s; DISTILLER_RUN_MS in main.js
+   must stay at or above that or the rest beat starts mid-sequence. */
 .c-distiller.is-running .c-distiller__dot {
   animation: distillerDotPop 0.3s var(--ease-standard) backwards;
   animation-delay: calc(2.2s + var(--camp-i) * 0.15s);
 }
 
-.c-distiller.is-running .c-distiller__bar {
-  animation: distillerGrow 0.5s var(--ease-standard) backwards;
-  animation-delay: calc(2.26s + var(--camp-i) * 0.15s);
+.c-distiller.is-running .c-distiller__deliverable {
+  animation: distillerReveal 0.5s var(--ease-standard) backwards;
+  animation-delay: calc(2.3s + var(--camp-i) * 0.16s);
 }
 
-.c-distiller.is-running .c-distiller__subline {
-  animation: distillerGrow 0.32s var(--ease-standard) backwards;
-  animation-delay: calc(2.8s + var(--camp-i) * 0.09s);
-}
-
-/* One grow keyframe covers rows, rule, bars and sublines: each rests at a
-   different fill/opacity, and scaleX(0) hides them all regardless, so none of
-   them needs an opacity track of its own. */
+/* One grow keyframe covers rows, rule, and (via scaleX) the source marks: each
+   rests at a different fill/opacity, and scaleX(0) hides them all regardless,
+   so none needs an opacity track of its own. */
 @keyframes distillerGrow {
   from {
     transform: scaleX(0);
@@ -630,6 +652,26 @@
   70% {
     opacity: 1;
     transform: scale(1.3);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Deliverable glyph: fades and scales up as one piece from its left edge, so it
+   grows out of the node the drip just landed on. No opacity track past the
+   fade-in — the resting glyph inherits its group's depth opacity, and this
+   animation only needs to hide it (scale + opacity 0) until its turn. */
+@keyframes distillerReveal {
+  0% {
+    opacity: 0;
+    transform: scale(0.62);
+  }
+
+  60% {
+    opacity: 1;
   }
 
   100% {
@@ -821,8 +863,7 @@
   .c-distiller.is-running .c-distiller__rule,
   .c-distiller.is-running .c-distiller__drip,
   .c-distiller.is-running .c-distiller__dot,
-  .c-distiller.is-running .c-distiller__bar,
-  .c-distiller.is-running .c-distiller__subline {
+  .c-distiller.is-running .c-distiller__deliverable {
     animation: none;
   }
 }
