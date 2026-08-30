@@ -73,11 +73,8 @@
 .c-gantt__bar {
   height: 1.75rem;
   border-radius: var(--radius-sm);
-  background: linear-gradient(
-    90deg,
-    var(--color-primary) 0%,
-    var(--color-primary-hover) 100%
-  );
+  /* Solid fill — past roles read in signal blue (no gradient). */
+  background: var(--color-primary);
   position: relative;
   overflow: hidden;
   transform: scaleX(0);
@@ -89,20 +86,59 @@
     var(--anim-delay, 0ms) forwards;
 }
 
+/* CURRENT roles are the ember statement (past roles stay signal blue), with a
+   pulsing ember "now" dot at the leading (right) edge — echoes the About
+   ledger's live node. overflow:visible lets the dot + pulse ring show past the
+   bar's rounded end; the page clips horizontally (overflow-x: clip), so the
+   ring can't open a scrollbar. */
+.c-gantt__bar.is-present {
+  background: var(--color-ember);
+  overflow: visible;
+}
+
 .c-gantt__bar.is-present::after {
   content: '';
   position: absolute;
   right: 0;
-  top: 0;
-  height: 100%;
-  width: 1.25rem;
-  background: linear-gradient(
-    90deg,
-    rgba(var(--color-primary-rgb), 0),
-    rgba(var(--color-primary-rgb), 0.5)
-  );
-  filter: blur(3px);
-  border-radius: 0 6px 6px 0;
+  top: 50%;
+  width: 0.5rem;
+  height: 0.5rem;
+  transform: translate(50%, -50%);
+  border-radius: 50%;
+  background: var(--color-ember);
+  box-shadow: 0 0 8px rgba(var(--color-ember-rgb), 0.6);
+}
+
+.c-gantt__bar.is-present::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  width: 0.5rem;
+  height: 0.5rem;
+  transform: translate(50%, -50%);
+  border-radius: 50%;
+  border: 1px solid rgba(var(--color-ember-rgb), 0.55);
+  animation: ganttNowPulse 2.6s ease-out infinite;
+}
+
+@keyframes ganttNowPulse {
+  from {
+    opacity: 0.55;
+    transform: translate(50%, -50%) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translate(50%, -50%) scale(2.6);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c-gantt__bar.is-present::before {
+    animation: none;
+    opacity: 0;
+  }
 }
 
 .c-gantt__tooltip {

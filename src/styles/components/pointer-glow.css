@@ -1,0 +1,43 @@
+/* Component: pointer-glow — dark-mode pointer glow, home page only (the element
+   is created by main.js). NOTE the name: `.c-spotlight` is already taken by the
+   featured-work carousel slides, so this cursor effect must NOT reuse it.
+   Light mode keeps an ordinary pointer, so this only paints under
+   [data-color-scheme='dark']. A soft signal-blue glow (ambiance — ember stays
+   reserved for statements). Pointer devices only, and suppressed under
+   prefers-reduced-motion and data-perf="lite". Below the fold's concern, so no
+   critical-home.css mirror. */
+.c-pointer-glow {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    22rem 22rem at var(--spot-x, 50%) var(--spot-y, 50%),
+    rgba(var(--color-primary-rgb), 0.12),
+    transparent 60%
+  );
+  mix-blend-mode: screen;
+  transition: opacity 0.4s var(--ease-standard);
+}
+
+[data-color-scheme='dark'] .c-pointer-glow {
+  opacity: 1;
+}
+
+/* No pointer (touch) → no glow. */
+@media (hover: none) {
+  .c-pointer-glow {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c-pointer-glow {
+    display: none;
+  }
+}
+
+[data-perf='lite'] .c-pointer-glow {
+  display: none;
+}

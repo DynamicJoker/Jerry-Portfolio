@@ -22,6 +22,23 @@
   --color-accent: #2f6e96;
   --color-accent-hover: #255a7d;
   --color-accent-rgb: 47, 110, 150;
+  /* Ember — the statement accent. Semantics: NOW / CURRENT / IMPACT (full lane
+     in docs/brand.md). Two colours because ember-as-fill and ember-as-text
+     have different contrast needs:
+       --color-ember      pure marks/fills carrying NO text — the timeline
+                          "now" bar, the ledger now-node, the distiller output,
+                          the hover shine. Vivid; fails as text (~2.2:1).
+       --color-ember-ink  deeper (light) / brighter (dark) ember that stays
+                          legible AS text or under an on-fill label — the hero
+                          impact word and chart series 2 (4.47:1 light / 7.34:1
+                          dark, both clearing the large-text bar).
+     --color-ember-rgb backs the hover-shine alphas. All three mirror into
+     critical-home.css (the hero impact word is above the fold) and live in both
+     dark blocks (check:theme). Distinct from --tint-editorial (clay), which is
+     the writing/editorial wash and is never a statement or data colour. */
+  --color-ember: #f5822b;
+  --color-ember-ink: #c2410c;
+  --color-ember-rgb: 245, 130, 43;
   --color-secondary: rgba(26, 26, 46, 0.06);
   --color-border-strong: rgba(26, 26, 46, 0.45);
   --color-btn-primary-text: #ffffff;
@@ -228,10 +245,23 @@
     inset calc(var(--neu-distance-sm) * -1) calc(var(--neu-distance-sm) * -1)
       var(--neu-blur-sm) rgba(255, 255, 255, 0.14);
 
+  /* Fading ember border shine, layered on hover AFTER an element's rest shadow
+     (raised or inset). F2 "balanced": a tight ember ring + a soft outer glow.
+     Composed from --color-ember-rgb so it resolves per theme; slide the two
+     alphas toward whisper (lower) / statement (higher). Theme-independent
+     composition, so — like the --neu-shadow-* recipes — it lives only here. */
+  --ember-shine:
+    0 0 0 1.5px rgba(var(--color-ember-rgb), 0.55),
+    0 0 9px rgba(var(--color-ember-rgb), 0.25);
+
   /* Animation */
   --duration-fast: 150ms;
   --duration-normal: 250ms;
   --ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Elastic (back-out overshoot) — the springy easing for the neumorphic card
+     hover (lift on raised cards, sink on inset ones). Deferred-sheet only, so
+     no critical-home mirror. */
+  --ease-elastic: cubic-bezier(0.34, 1.56, 0.64, 1);
 
   /* Layout */
 
@@ -368,19 +398,15 @@
   --color-btn-neutral-active: #c8c6c2;
   --color-on-fill: #ffffff;
   /* Two-series chart palette (blog MDX charts). These MUST resolve to
-     different colours. They previously ran through --color-electric-blue and
-     --color-accent-teal — legacy aliases that the rebrand pointed at
-     --color-primary, both of them, so every two-colour chart silently
-     collapsed to one flat fill. Those aliases have since been retired
-     (usages now name --color-primary directly), and `npm run check:charts`
-     fails the build if the series ever converge again. Series 2 is
-     theme-explicit because --color-primary and
-     --color-accent sit at nearly identical luminance in light mode (4.75:1 vs
-     4.78:1 against the ground), so they cannot serve as a two-series pair.
-     Both series must keep --color-on-fill legible: white in light, near-black
-     in dark, hence series 2 goes darker in light and paler in dark. */
+     different colours (`npm run check:charts` fails the build if they ever
+     converge). Series 1 is signal blue; series 2 is now the ember statement
+     ink — the brand's warm second series, so charts inherit the same blue/ember
+     pairing as the rest of the site. --color-ember-ink (not the fill ember) is
+     used because the stacked-bar segments carry --color-on-fill labels: white
+     on it is 5.18:1 in light, near-black on it is 8.26:1 in dark — both clear
+     4.5:1. Distinct from series 1 in both themes, so the check holds. */
   --chart-series-1: var(--color-primary);
-  --chart-series-2: #1d3140;
+  --chart-series-2: var(--color-ember-ink);
   /* Editorial tint — the second hue in the blog surfaces' washes, played
      against --color-primary. Clay rather than a fourth blue: the brand ramp is
      entirely signal blues, so another blue reads as the primary slightly off
@@ -431,6 +457,9 @@
     --color-accent: #90d5ff;
     --color-accent-hover: #b4e2ff;
     --color-accent-rgb: 144, 213, 255;
+    --color-ember: #d0701c;
+    --color-ember-ink: #f2954f;
+    --color-ember-rgb: 208, 112, 28;
     --color-text: rgba(232, 232, 234, 1);
     --color-text-secondary: rgba(154, 154, 165, 1);
     --color-text-muted: rgba(174, 176, 186, 1);
@@ -468,7 +497,6 @@
     --color-btn-neutral-hover: rgba(72, 79, 84, 0.98);
     --color-btn-neutral-active: rgba(54, 59, 63, 0.98);
     --color-on-fill: var(--color-dark-primary);
-    --chart-series-2: #cbe9ff;
     --tint-editorial-shell: rgba(var(--tint-editorial-rgb), 0.12);
     --loading-screen-bg: linear-gradient(135deg, #1a1d29 0%, #232633 100%);
     --hero-name-rest: #fff;
@@ -489,6 +517,9 @@
   --color-accent: #90d5ff;
   --color-accent-hover: #b4e2ff;
   --color-accent-rgb: 144, 213, 255;
+  --color-ember: #d0701c;
+  --color-ember-ink: #f2954f;
+  --color-ember-rgb: 208, 112, 28;
   --color-text: rgba(232, 232, 234, 1);
   --color-text-secondary: rgba(154, 154, 165, 1);
   /* AA contrast: must stay >=4.5:1 on raised chip backgrounds (.c-tag) */
@@ -530,7 +561,6 @@
   --color-btn-neutral-hover: rgba(72, 79, 84, 0.98);
   --color-btn-neutral-active: rgba(54, 59, 63, 0.98);
   --color-on-fill: var(--color-dark-primary);
-  --chart-series-2: #cbe9ff;
   --tint-editorial-shell: rgba(var(--tint-editorial-rgb), 0.12);
   --loading-screen-bg: linear-gradient(135deg, #1a1d29 0%, #232633 100%);
   --hero-name-rest: #fff;

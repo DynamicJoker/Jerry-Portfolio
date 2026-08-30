@@ -3,6 +3,9 @@ dist/
 .astro/
 .vite/
 
+# Local-only design mockups (untracked exploration; not part of the site build)
+mockups/
+
 # npm-managed; npm rewrites it on every install, so don't let Prettier touch it
 package-lock.json
 

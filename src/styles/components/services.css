@@ -52,8 +52,13 @@
   padding: var(--space-24);
   background: var(--neu-bg);
   border-radius: var(--radius-xl);
+  /* Inset — the recessed half of the section depth alternation. Sinks deeper
+     (to the well) with an ember shine on hover; see the hover block below. */
   box-shadow: var(--neu-shadow-inset);
-  transition: background-color var(--animation-speed) ease;
+  transition:
+    background-color var(--animation-speed) ease,
+    transform 0.5s var(--ease-elastic),
+    box-shadow 0.35s var(--ease-standard);
 }
 
 .c-engagement__index {
@@ -139,6 +144,9 @@
   .c-engagement:hover,
   .c-engagement:focus-within {
     background-color: var(--color-overlay-weak);
+    /* Sinks deeper into the ground + the ember shine. */
+    box-shadow: var(--neu-shadow-pressed), var(--ember-shine);
+    transform: translateY(2px);
   }
 
   /* Brand line drawing along the row's top hairline, stopping just short of
@@ -237,7 +245,8 @@
   }
 }
 
-/* Reduced motion: no draw, no ping — hover just shows the settled line. */
+/* Reduced motion: no draw, no ping — hover just shows the settled line. The
+   depth + ember shine stay (a state, not motion); only the travel drops. */
 @media (prefers-reduced-motion: reduce) {
   .c-engagement::before {
     transition: none;
@@ -245,6 +254,11 @@
 
   .c-engagement::after {
     display: none;
+  }
+
+  .c-engagement:hover,
+  .c-engagement:focus-within {
+    transform: none;
   }
 
   .c-engagement:hover .c-engagement__cta,

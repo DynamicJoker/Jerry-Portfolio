@@ -5,7 +5,14 @@ import globals from 'globals';
 
 export default [
   {
-    ignores: ['dist/', 'node_modules/', '.astro/', '.npm-cache/', 'public/'],
+    ignores: [
+      'dist/',
+      'node_modules/',
+      '.astro/',
+      '.npm-cache/',
+      'public/',
+      'mockups/',
+    ],
   },
   js.configs.recommended,
   ...astro.configs.recommended,

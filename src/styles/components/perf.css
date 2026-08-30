@@ -34,6 +34,9 @@
      section headers are all below the fold, so the tab never paints on first
      paint and doesn't belong in the critical bundle. */
   --neu-shadow-tab: 0 0 0 1px var(--color-hairline-strong);
+  /* Ember hover shine → ring only (drop the soft outer glow's blur). The
+     elastic lift/sink transitions stay — they run on demand, not per frame. */
+  --ember-shine: 0 0 0 1.5px rgba(var(--color-ember-rgb), 0.6);
 }
 
 /* --- Testimonials marquee: freeze the infinite transform loop (it otherwise
@@ -72,8 +75,11 @@
   backdrop-filter: none;
 }
 
-[data-perf='lite'] .c-gantt__bar.is-present::after {
-  filter: none;
+/* Present-role "now" dot: freeze its infinite pulse ring (the solid dot stays;
+   the expanding ring is the per-frame cost). */
+[data-perf='lite'] .c-gantt__bar.is-present::before {
+  animation: none;
+  opacity: 0;
 }
 
 /* --- Skills distiller: a ~3.3s reveal with six travelling drips, replayed on

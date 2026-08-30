@@ -234,6 +234,13 @@
   color: var(--color-primary);
 }
 
+/* Second statement word ("moves buyers") — the ember impact half of the
+   tech → impact line. Ember ink (not the fill ember) so it clears the
+   large-text contrast bar. Mirrored in critical-home.css. */
+.c-hero__headline-accent--ember {
+  color: var(--color-ember-ink);
+}
+
 .c-hero__lede {
   margin: 0;
   max-width: 46ch;
@@ -359,6 +366,27 @@
   border-top: 2px solid var(--color-primary);
   border-left: 2px solid var(--color-primary);
   opacity: 0.85;
+}
+
+/* Raised tile → lifts with the ember shine on hover (pointer only). Hover is
+   not a first-paint concern, so this stays out of critical-home.css. */
+@media (hover: hover) {
+  .c-hero__portrait {
+    transition:
+      transform 0.5s var(--ease-elastic),
+      box-shadow 0.35s var(--ease-standard);
+  }
+
+  .c-hero__portrait:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--neu-shadow-raised), var(--ember-shine);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c-hero__portrait:hover {
+    transform: none;
+  }
 }
 
 .c-hero__proof {

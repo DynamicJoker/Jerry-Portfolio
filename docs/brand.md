@@ -50,6 +50,8 @@ Semantic tokens; components must never hardcode colors. Light values live in
 | `--color-primary`        | `#4a6d84` (slate blue) | `#57b9ff` (signal blue)   |
 | `--color-primary-hover`  | `#426074`              | `#90d5ff`                 |
 | `--color-accent`         | `#2f6e96`              | `#90d5ff`                 |
+| `--color-ember`          | `#f5822b`              | `#d0701c`                 |
+| `--color-ember-ink`      | `#c2410c`              | `#f2954f`                 |
 | `--color-error`          | `rgba(192, 21, 47, 1)` | `rgba(255, 84, 89, 1)`    |
 
 Status colors (theme-invariant): `--color-success: #22c55e` (availability
@@ -60,6 +62,35 @@ success fill — it does **not** flip per theme, because the fill it sits on
 doesn't either. `--color-scrim: rgba(8, 9, 13, 0.8)` backs the work lightbox's
 `::backdrop`, dark in both themes so the modal always has something to sit
 against.
+
+### Ember (statement accent)
+
+The one warm statement colour, played against the signal blues. **Semantics:
+now / current / impact** — ember marks what is *live* and the payoff, never
+decoration. Two tokens, because ember-as-fill and ember-as-text have different
+contrast needs:
+
+- **`--color-ember`** (`#f5822b` light / `#d0701c` dark) — pure marks and fills
+  that carry **no** text: the experience timeline's current ("Present") bars,
+  the About ledger now-node, the skills distiller's output, and the hover
+  shine. Vivid, but only ~2.2:1 on the ground, so never use it as text.
+- **`--color-ember-ink`** (`#c2410c` light / `#f2954f` dark) — the deeper
+  (light) / brighter (dark) ember that stays legible **as text** or under an
+  on-fill label: the hero impact word ("moves buyers") and **chart series 2**
+  (`--chart-series-2`). Both clear the large-text bar (4.47:1 / 7.34:1); the
+  light value is validated for on-fill labels too (white text ≥4.5:1).
+
+`--color-ember-rgb` (`245, 130, 43` / `208, 112, 28`) backs the alphas in
+`--ember-shine` — the fading ember border shine layered on hover (a tight ring
++ a soft glow; F2 "balanced"). All the colour tokens mirror into
+`critical-home.css` (the hero impact word is above the fold) and live in both
+dark blocks (`check:theme`); `--ember-shine` is a theme-independent recipe, so
+like the `--neu-shadow-*` recipes it lives only in `settings.css` `:root`.
+
+**Ember vs clay:** ember is the *statement / data* accent; clay
+(`--tint-editorial`, below) is the *editorial / writing* wash. They never
+overlap — clay is never a statement or a data-series colour, and ember never
+washes a surface.
 
 ### Editorial tint
 
