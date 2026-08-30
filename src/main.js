@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initializeTestimonialPauseControl();
   enhanceGanttRows();
   initializeScrollAnimations();
-  initializeDistillerPause();
+  initializeDistillerLoop();
   initializeDockedSectionHeaders();
   initializeBrandCollapse();
   initializeWorkLightbox();
@@ -481,6 +481,64 @@ function initializeScrollAnimations() {
   );
 }
 
+// The skills distiller plays a ~3.3s staggered reveal (CSS, gated on
+// .is-running), rests on its finished frame, then replays. The loop is driven
+// from here rather than with an `infinite` iteration count because every
+// element in that sequence carries its own animation-delay: infinite
+// iterations would let each element restart on its own clock, and the stagger
+// that makes the graphic legible would drift apart within a couple of cycles.
+// Toggling one class keeps a single shared clock and makes the rest beat an
+// explicit number. Between runs nothing animates at all — the graphic sits on
+// its finished frame — so this is cheaper than the nine perpetual loops the
+// old distiller ran.
+//
+// RUN must stay >= the sequence length in components/skills.css, or the rest
+// beat starts while the tail of the sequence is still playing.
+const DISTILLER_RUN_MS = 3400;
+const DISTILLER_REST_MS = 4000;
+
+function initializeDistillerLoop() {
+  const distiller = document.querySelector('.c-distiller');
+  if (!distiller || prefersReducedMotion) return;
+
+  let timer = null;
+  let onScreen = false;
+
+  const stop = () => {
+    clearTimeout(timer);
+    timer = null;
+    distiller.classList.remove('is-running');
+  };
+
+  const play = () => {
+    // Lite mode is probed after first paint, so re-check every cycle rather
+    // than once at init; CSS already suppresses the animations there, this
+    // just stops the timer churning for a graphic that will never move.
+    if (document.documentElement.dataset.perf === 'lite') {
+      stop();
+      return;
+    }
+    // Removing the class, forcing a reflow, then re-adding it is what
+    // restarts the CSS animations. Without the reflow the two class writes
+    // coalesce into no change at all and the sequence never replays.
+    distiller.classList.remove('is-running');
+    void distiller.offsetWidth;
+    distiller.classList.add('is-running');
+    timer = setTimeout(() => {
+      // Dropping the class rests on the finished frame (the static rules).
+      distiller.classList.remove('is-running');
+      timer = setTimeout(play, DISTILLER_REST_MS);
+    }, DISTILLER_RUN_MS);
+  };
+
+  watchViewportPresence(distiller, (isVisible) => {
+    if (isVisible === onScreen) return;
+    onScreen = isVisible;
+    if (isVisible) play();
+    else stop();
+  });
+}
+
 // Report whether an element is in the viewport, so long-lived animations
 // (marquees, drifts, carousels) can stop burning GPU/battery while their
 // section is scrolled out of view.
@@ -489,17 +547,6 @@ function watchViewportPresence(element, onChange) {
     entries.forEach((entry) => onChange(entry.isIntersecting));
   });
   observer.observe(element);
-}
-
-// The skills distiller runs nine infinite SVG loops (stroke draws, radius
-// pings, a blur focus); pause them (CSS acts on .is-offscreen) once the skills
-// section scrolls out of view.
-function initializeDistillerPause() {
-  const distiller = document.querySelector('.c-distiller');
-  if (!distiller || prefersReducedMotion) return;
-  watchViewportPresence(distiller, (isVisible) =>
-    distiller.classList.toggle('is-offscreen', !isVisible),
-  );
 }
 
 // Docked section headings: each .c-section__header is position:sticky (CSS). As

@@ -1,8 +1,9 @@
 /* Component: skills — "Capabilities" bento */
 /* Below the fold (section 02, after hero/about/logos), so none of these rules
    are duplicated in critical-home.css. The section is a bento: a feature cell
-   (thesis + distiller graphic + aggregate stats) alongside three discipline
-   cards and the tool stack. Every card is the same inset soft-UI well —
+   (thesis + distiller graphic + CTA) beside the tool stack on the top row,
+   with the three discipline cards as a triad below. Every card is
+   the same inset soft-UI well —
    content is carved into the ground, interactive controls extrude — and depth
    means "card container" here, never state. Hover feedback is the brand-lit
    node-dot and accent tints, never a lift (a recessed well can't float). */
@@ -27,15 +28,46 @@
   overflow: hidden;
 }
 
+/* Three full-width bands: the feature cell, then the three disciplines as a
+   triad, then the tool stack as a strip.
+
+   The disciplines are a SET and have to read as one. An earlier 3+3 bento put
+   two of them beside the feature cell and orphaned the third next to the
+   stack, which is what made the section look lopsided: five items, four of
+   them equal-weight, always split 2/1 in a two-column bento. The stack isn't a
+   peer of the three — it's a materials list — so it gets a strip of its own
+   rather than a peer's cell, and nothing has to share a row with an odd
+   number of siblings.
+
+   Everything below spans by source order (feature -> 01 -> 02 -> 03 -> tools),
+   so nothing is placed out of flow: visual order, DOM order, the mobile
+   accordion's order and desktop tab order all agree. Don't reintroduce
+   explicit grid-row/grid-column placement here without checking that. */
 .c-capability--feature {
-  grid-column: span 3;
-  grid-row: span 2;
-  justify-content: space-between;
-  gap: 1.75rem;
+  grid-column: span 6;
+  /* Text column beside the graphic. The gap does double duty: it's the column
+     gap here and the row gap once this collapses to one column, so the
+     distiller carries no margin of its own. */
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 3rem);
 }
 
-.c-capability:not(.c-capability--feature) {
-  grid-column: span 3;
+.c-capability__lead {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.c-capability:not(.c-capability--feature):not(.c-capability--tools) {
+  grid-column: span 2;
+}
+
+/* Tool stack as a full-width strip. Its internal row layout is further down,
+   after the collapsible rules it has to override. */
+.c-capability--tools {
+  grid-column: span 6;
 }
 
 /* Card header: pipeline node-dot + mono index, echoing the About nodes. */
@@ -172,10 +204,13 @@
 }
 
 /* Feature cell */
+/* Sized for the band's text column, which is roughly half the shell wide —
+   bigger than it was when this shared a third-width card with the graphic. */
 .c-capability__thesis {
   margin: var(--space-12) 0 var(--space-24);
+  max-width: var(--measure-md);
   font-family: var(--font-family-display);
-  font-size: clamp(1.35rem, 2.4vw, 1.8rem);
+  font-size: clamp(1.35rem, 2.8vw, 2.15rem);
   font-weight: var(--font-weight-semibold);
   line-height: 1.28;
   color: var(--color-text-strong);
@@ -184,33 +219,6 @@
 .c-capability__thesis b {
   color: var(--color-primary);
   font-weight: var(--font-weight-semibold);
-}
-
-.c-capability__stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: clamp(1.25rem, 3vw, 2.25rem);
-  margin: 0 0 var(--space-16);
-  padding: 0;
-  list-style: none;
-}
-
-.c-capability__stat-value {
-  display: block;
-  font-family: var(--font-family-display);
-  font-size: clamp(1.9rem, 4vw, 2.7rem);
-  font-weight: var(--font-weight-bold);
-  line-height: 1;
-  color: var(--color-text-strong);
-}
-
-.c-capability__stat-label {
-  display: block;
-  margin-top: var(--space-6);
-  font-family: var(--font-family-mono);
-  font-size: var(--font-size-xs);
-  letter-spacing: 0.04em;
-  color: var(--color-text-muted);
 }
 
 /* Padding grows the hit box to the 24px target-size minimum (the mono text
@@ -253,6 +261,21 @@
   list-style: none;
 }
 
+/* Tool-stack strip: label line, then the chips as one full-width wrapped row.
+   A strip rather than a card because ten short tool names can't carry a
+   card-sized box — as a tall column they left two thirds of the width empty,
+   and as a multi-column block they filled the width but collapsed the height.
+
+   The chips deliberately get the WHOLE width rather than sitting beside the
+   label: the ten of them measure ~926px and the label ~158px, which doesn't
+   fit the 1080px content box, so an inline label always pushed one chip onto a
+   row by itself. Stacked, they fit one row with room to spare and wrap evenly
+   as the viewport narrows. Nothing here changes flex-direction, so the mobile
+   accordion inherits this untouched. */
+.c-capability--tools .c-capability__topline {
+  margin-bottom: var(--space-6);
+}
+
 .c-capability__chip {
   font-family: var(--font-family-mono);
   font-size: var(--font-size-xs);
@@ -275,13 +298,49 @@
 }
 
 /* -------------------------------------------------------------------------
-   Distiller graphic — blurred Engineering complexity is pulled into focus and
-   distilled to one clean Marketing output. The whole sequence is paced (4s
-   with a rest) and only runs once the section is in view (.is-visible), so it
-   reveals on scroll rather than churning perpetually.
+   Distiller graphic — the source material on the left is two textures, not
+   one: indented, ragged `code` rows above a hairline, and a `spec` table of
+   label/value pairs below. It stays put and gives up its essence — each row
+   emits a drip that travels right and converges on one of three campaign rows,
+   which grow as the drips land.
+
+   THE STATIC RULES BELOW ARE THE RESTING (FINISHED) FRAME, and every keyframe
+   set starts hidden and returns to that frame at 100%. That ordering is
+   load-bearing three times over:
+     - No JS: the section never gains .is-visible, so nothing animates and the
+       graphic simply paints its finished frame instead of staying blank.
+     - prefers-reduced-motion (bottom of this file) and [data-perf='lite']
+       (components/perf.css) only need `animation: none` — neither has to
+       restate the end state, so the three can no longer drift apart. The old
+       nine-loop version duplicated the resolved state in both places.
+   The sequence LOOPS, driven from main.js (initializeDistillerLoop), which
+   adds `.is-running` for the length of one run, drops it for a rest beat, and
+   repeats — only while the graphic is on screen. It is not an `infinite`
+   iteration count, and shouldn't become one: every element carries its own
+   animation-delay, so infinite iterations would let each restart on its own
+   clock and the stagger would visibly drift apart within a couple of cycles.
+   The class swap keeps one shared clock, makes the rest beat an explicit
+   number, and means nothing animates at all between runs. During the rest
+   `.is-running` is absent, so the graphic simply sits at the static rules —
+   i.e. its finished frame, the same one every other non-animating path lands
+   on.
+
+   Timing is index-driven: `--row-i` / `--drip-i` / `--camp-i` carry position
+   and the delays are calc()'d off one offset per phase, so the whole rhythm
+   re-tunes from the handful of literals below rather than 25 hand-written
+   delays. Total runtime ~3.3s — if you change it, update DISTILLER_RUN_MS in
+   main.js to match or the rest beat will start mid-sequence.
+
+   NOTE: the per-drip travel vectors are tied to the SVG geometry in
+   HomeBody.astro — a drip launches at x=134 and must land on its campaign dot
+   at x=196, hence --drip-x: 58px. Change the markup coordinates and these move
+   with them. (CSS transform lengths on SVG children are user units, not
+   screen pixels, so they track the viewBox rather than the rendered size.)
    ------------------------------------------------------------------------- */
+/* No margin of its own: the feature card's `gap` spaces it from the text
+   column, as a column gap in the band and a row gap once that stacks. */
 .c-distiller {
-  margin-top: var(--space-24);
+  min-width: 0;
 }
 
 .c-distiller__svg {
@@ -291,72 +350,108 @@
   overflow: visible;
 }
 
-.c-distiller__bars {
-  /* currentColor drives the grey(complex) -> brand(clear) shift; the rects
-     inherit it. Static (pre-focus) state: blurred + muted. */
-  color: var(--color-text-muted);
-  filter: blur(3px);
+/* Source material — sized to read as text rather than as bars: 5-unit marks on
+   12-unit leading (roughly 1:2, near real type) instead of the 3-on-18 the
+   first pass used, with word runs separated by real inter-word gaps and an
+   indent staircase. Kept SHARP, not blurred: an earlier version blurred the
+   left side because the whole graphic resolved to clarity, but this one leaves
+   the source in place and only draws its essence off as drips, so a permanent
+   blur had no payoff and read as unloaded skeleton lines. The technical ->
+   market transformation is carried instead by form (ragged dense code/specs ->
+   clean uniform campaign bars) and colour (muted source -> brand drips ->
+   brand campaigns). transform-box: fill-box so scaleX measures against each
+   rect's own box rather than the SVG viewport. */
+.c-distiller__row {
+  fill: var(--color-text-muted);
+  opacity: 0.45;
+  transform-box: fill-box;
+  transform-origin: left center;
 }
 
-.c-distiller__bars rect {
-  fill: currentColor;
-}
-
-.c-distiller__scan {
+/* Keyword segments — the only brand colour on the source side, so the block
+   reads as code rather than as generic placeholder lines. */
+.c-distiller__row--kw {
   fill: var(--color-primary);
-  opacity: 0;
-  filter: drop-shadow(0 0 4px rgba(var(--color-primary-rgb), 0.7));
+  opacity: 0.55;
 }
 
-/* Lead line: bars -> clarity node. */
-.c-distiller__lead {
-  stroke: var(--color-primary);
-  stroke-dasharray: 90;
-  stroke-dashoffset: 90;
+.c-distiller__rule {
+  fill: var(--color-text-muted);
+  opacity: 0.2;
+  transform-box: fill-box;
+  transform-origin: left center;
 }
 
-/* Clarity node: the distilled strategy — a pipeline-style dot with a glow halo
-   and an arrival ring (echoes the About pipeline's active node). */
-.c-distiller__halo {
-  fill: rgba(var(--color-primary-rgb), 0.16);
-  opacity: 0;
-}
-
-.c-distiller__node {
+/* Drips exist only while the sequence runs; their resting state is invisible. */
+.c-distiller__drip {
+  --drip-x: 58px;
+  --drip-y: 19px;
+  --drip-i: 0;
   fill: var(--color-primary);
   opacity: 0;
   transform-box: fill-box;
   transform-origin: center;
 }
 
-.c-distiller__ring {
-  fill: none;
-  stroke: var(--color-primary);
-  opacity: 0;
+.c-distiller__drip--2 {
+  --drip-y: -17px;
+  --drip-i: 1;
 }
 
-/* Branch: clarity node -> campaign frame. */
-.c-distiller__branch {
-  stroke: var(--color-primary);
-  stroke-dasharray: 40;
-  stroke-dashoffset: 40;
-  opacity: 0;
+.c-distiller__drip--3 {
+  --drip-y: -13px;
+  --drip-i: 2;
 }
 
-/* Campaign: an outlined frame whose segments grow in left-to-right (the Gantt
-   bar motif), then the frame border warms to brand — the campaign "goes live". */
-.c-distiller__frame {
-  fill: none;
-  stroke: var(--color-hairline-strong);
-  opacity: 0;
+.c-distiller__drip--4 {
+  --drip-y: -31px;
+  --drip-i: 3;
 }
 
-.c-distiller__seg {
+.c-distiller__drip--5 {
+  --drip-y: 5px;
+  --drip-i: 4;
+}
+
+.c-distiller__drip--6 {
+  --drip-y: -13px;
+  --drip-i: 5;
+}
+
+/* Campaign rows. The step-down in opacity lives on the GROUP, not on the dot
+   and bar individually, so their keyframes can animate opacity 0 -> 1 freely
+   without fighting a per-element resting value. */
+.c-distiller__campaign {
+  --camp-i: 0;
+}
+
+.c-distiller__campaign--2 {
+  --camp-i: 1;
+  opacity: 0.82;
+}
+
+.c-distiller__campaign--3 {
+  --camp-i: 2;
+  opacity: 0.64;
+}
+
+.c-distiller__dot {
   fill: var(--color-primary);
-  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.c-distiller__bar {
+  fill: var(--color-primary);
   transform-box: fill-box;
   transform-origin: left center;
-  transform: scaleX(0);
+}
+
+.c-distiller__subline {
+  fill: var(--color-primary);
+  opacity: 0.38;
+  transform-box: fill-box;
+  transform-origin: left center;
 }
 
 .c-distiller__ends {
@@ -374,243 +469,172 @@
   color: var(--color-primary);
 }
 
-/* Animations start only when the section scrolls into view.
-   NOTE: the pixel/scale values in the keyframes below are tied to the SVG
-   geometry in HomeBody.astro's distiller markup — the scan sweeps the bars
-   (x 0->~56), the lead line runs bars->clarity node (56->132), and the four
-   campaign segments grow inside the frame (x 180->296). If you change the SVG
-   coordinates, re-tune these values to match. */
-.c-section.is-visible .c-distiller__bars {
-  animation: distillerFocus 4.4s var(--ease-standard) infinite;
+/* --- The sequence. Everything below is gated on `.is-running`, which main.js
+   adds and removes to drive the loop, so it only ever runs while the graphic
+   is on screen. `backwards` fill is required, not cosmetic: without it an
+   element with a 2.5s delay would sit in its finished state for 2.5s and then
+   snap back to hidden when its animation began. It is also what clears the
+   graphic at the start of each run — the moment the class lands every element
+   is in its delay phase and paints its 0% frame. */
+
+/* Row index within its own <g>. Fourteen rules because the code block is the
+   longer of the two groups (14 word-marks across 6 lines); the spec group has
+   8 and simply uses the first eight, since :nth-child counts per parent. */
+.c-distiller__row:nth-child(1) {
+  --row-i: 0;
 }
 
-.c-section.is-visible .c-distiller__scan {
-  animation: distillerSweep 4.4s var(--ease-standard) infinite;
+.c-distiller__row:nth-child(2) {
+  --row-i: 1;
 }
 
-.c-section.is-visible .c-distiller__lead {
-  animation: distillerDraw 4.4s var(--ease-standard) infinite;
+.c-distiller__row:nth-child(3) {
+  --row-i: 2;
 }
 
-.c-section.is-visible .c-distiller__halo {
-  animation: distillerHalo 4.4s var(--ease-standard) infinite;
+.c-distiller__row:nth-child(4) {
+  --row-i: 3;
 }
 
-.c-section.is-visible .c-distiller__node {
-  animation: distillerNode 4.4s var(--ease-standard) infinite;
+.c-distiller__row:nth-child(5) {
+  --row-i: 4;
 }
 
-.c-section.is-visible .c-distiller__ring {
-  animation: distillerRing 4.4s ease-out infinite;
+.c-distiller__row:nth-child(6) {
+  --row-i: 5;
 }
 
-.c-section.is-visible .c-distiller__branch {
-  animation: distillerBranch 4.4s var(--ease-standard) infinite;
+.c-distiller__row:nth-child(7) {
+  --row-i: 6;
 }
 
-.c-section.is-visible .c-distiller__frame {
-  animation: distillerFrame 4.4s var(--ease-standard) infinite;
+.c-distiller__row:nth-child(8) {
+  --row-i: 7;
 }
 
-.c-section.is-visible .c-distiller__seg {
-  animation: distillerSeg 4.4s var(--ease-standard) infinite;
+.c-distiller__row:nth-child(9) {
+  --row-i: 8;
 }
 
-/* Stagger the segments so the campaign assembles left-to-right. These must sit
-   after (and at equal specificity to) the shorthand above, which otherwise
-   resets animation-delay to 0. */
-.c-section.is-visible .c-distiller__seg--2 {
-  animation-delay: 0.17s;
+.c-distiller__row:nth-child(10) {
+  --row-i: 9;
 }
 
-.c-section.is-visible .c-distiller__seg--3 {
-  animation-delay: 0.34s;
+.c-distiller__row:nth-child(11) {
+  --row-i: 10;
 }
 
-.c-section.is-visible .c-distiller__seg--4 {
-  animation-delay: 0.51s;
+.c-distiller__row:nth-child(12) {
+  --row-i: 11;
 }
 
-/* JS-toggled while the skills section is scrolled out of view (see
-   watchViewportPresence in main.js) so the distiller's nine infinite loops
-   don't keep painting offscreen. Declared after the application rules above so
-   it wins the (equal-specificity) cascade tie. */
-.c-distiller.is-offscreen .c-distiller__bars,
-.c-distiller.is-offscreen .c-distiller__scan,
-.c-distiller.is-offscreen .c-distiller__lead,
-.c-distiller.is-offscreen .c-distiller__halo,
-.c-distiller.is-offscreen .c-distiller__node,
-.c-distiller.is-offscreen .c-distiller__ring,
-.c-distiller.is-offscreen .c-distiller__branch,
-.c-distiller.is-offscreen .c-distiller__frame,
-.c-distiller.is-offscreen .c-distiller__seg {
-  animation-play-state: paused;
+.c-distiller__row:nth-child(13) {
+  --row-i: 12;
 }
 
-@keyframes distillerFocus {
-  0%,
-  7% {
-    filter: blur(3px);
-    color: var(--color-text-muted);
+.c-distiller__row:nth-child(14) {
+  --row-i: 13;
+}
+
+/* Phase 1 — the code block writes itself in word by word, then the rule, then
+   the spec table fills. Each group carries its own offset AND its own step, so
+   the denser code block can tick faster than the spec rows without either
+   group's tail colliding with the next phase. */
+.c-distiller__code {
+  --row-offset: 0.05s;
+  --row-step: 0.05s;
+}
+
+.c-distiller__spec {
+  --row-offset: 1.28s;
+  --row-step: 0.06s;
+}
+
+.c-distiller.is-running .c-distiller__row {
+  animation: distillerGrow 0.34s var(--ease-standard) backwards;
+  animation-delay: calc(var(--row-offset) + var(--row-i, 0) * var(--row-step));
+}
+
+.c-distiller.is-running .c-distiller__rule {
+  animation: distillerGrow 0.28s var(--ease-standard) 1.1s backwards;
+}
+
+/* Phase 2 — drips detach and travel. */
+.c-distiller.is-running .c-distiller__drip {
+  animation: distillerDrip 0.55s var(--ease-standard) backwards;
+  animation-delay: calc(1.78s + var(--drip-i) * 0.075s);
+}
+
+/* Phase 3 — campaigns build as the drips land, sublines settle last. The
+   final subline finishes at ~3.3s; DISTILLER_RUN_MS in main.js must stay at
+   or above that or the rest beat starts mid-sequence. */
+.c-distiller.is-running .c-distiller__dot {
+  animation: distillerDotPop 0.3s var(--ease-standard) backwards;
+  animation-delay: calc(2.2s + var(--camp-i) * 0.15s);
+}
+
+.c-distiller.is-running .c-distiller__bar {
+  animation: distillerGrow 0.5s var(--ease-standard) backwards;
+  animation-delay: calc(2.26s + var(--camp-i) * 0.15s);
+}
+
+.c-distiller.is-running .c-distiller__subline {
+  animation: distillerGrow 0.32s var(--ease-standard) backwards;
+  animation-delay: calc(2.8s + var(--camp-i) * 0.09s);
+}
+
+/* One grow keyframe covers rows, rule, bars and sublines: each rests at a
+   different fill/opacity, and scaleX(0) hides them all regardless, so none of
+   them needs an opacity track of its own. */
+@keyframes distillerGrow {
+  from {
+    transform: scaleX(0);
   }
-  34% {
-    filter: blur(0);
-    color: var(--color-primary);
-  }
-  90% {
-    filter: blur(0);
-    color: var(--color-primary);
-  }
-  97%,
-  100% {
-    filter: blur(3px);
-    color: var(--color-text-muted);
+
+  to {
+    transform: scaleX(1);
   }
 }
 
-@keyframes distillerSweep {
+/* Drip: fades in just off its launch point, carries across, fades as it merges
+   into the campaign row. The 22% frame sets a fifth of the travel so the fade-in
+   happens in motion rather than in place. */
+@keyframes distillerDrip {
   0% {
-    transform: translateX(-6px);
     opacity: 0;
+    transform: translate(0, 0) scale(0.4);
   }
-  6% {
-    opacity: 0.9;
-  }
-  34% {
-    transform: translateX(56px);
-    opacity: 0.9;
-  }
-  40%,
-  100% {
-    transform: translateX(56px);
-    opacity: 0;
-  }
-}
 
-/* Lead + branch lines draw in via stroke-dashoffset. */
-@keyframes distillerDraw {
-  0%,
-  36% {
-    stroke-dashoffset: 90;
+  22% {
+    opacity: 1;
+    transform: translate(calc(var(--drip-x) / 5), calc(var(--drip-y) / 5))
+      scale(1);
   }
-  50%,
-  100% {
-    stroke-dashoffset: 0;
-  }
-}
 
-@keyframes distillerBranch {
-  0%,
-  56% {
-    stroke-dashoffset: 40;
-    opacity: 0;
-  }
-  62% {
-    opacity: 0.4;
-  }
-  70% {
-    stroke-dashoffset: 0;
-    opacity: 0.4;
-  }
-  100% {
-    stroke-dashoffset: 0;
-    opacity: 0.35;
-  }
-}
-
-/* Clarity node: halo fades in, dot pops, ring pings on arrival. */
-@keyframes distillerHalo {
-  0%,
-  46% {
-    opacity: 0;
-  }
-  56%,
-  100% {
+  78% {
     opacity: 1;
   }
+
+  100% {
+    opacity: 0;
+    transform: translate(var(--drip-x), var(--drip-y)) scale(0.55);
+  }
 }
 
-@keyframes distillerNode {
-  0%,
-  44% {
+@keyframes distillerDotPop {
+  0% {
     opacity: 0;
     transform: scale(0.2);
   }
-  54% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  60% {
-    transform: scale(1.28);
-  }
-  66%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
 
-@keyframes distillerRing {
-  0%,
-  50% {
-    r: 4.5;
-    opacity: 0;
-  }
-  57% {
-    r: 4.5;
-    opacity: 0.6;
-  }
-  68%,
-  100% {
-    r: 12;
-    opacity: 0;
-  }
-}
-
-/* Campaign: frame fades in, then its border warms to brand (goes "live"). */
-@keyframes distillerFrame {
-  0%,
-  58% {
-    opacity: 0;
-    stroke: var(--color-hairline-strong);
-    filter: none;
-  }
-  66% {
-    opacity: 1;
-    stroke: var(--color-hairline-strong);
-  }
-  86% {
-    stroke: var(--color-hairline-strong);
-    filter: none;
-  }
-  93% {
-    stroke: var(--color-primary);
-    filter: drop-shadow(0 0 3px rgba(var(--color-primary-rgb), 0.55));
-  }
-  100% {
-    opacity: 1;
-    stroke: var(--color-primary);
-    filter: drop-shadow(0 0 3px rgba(var(--color-primary-rgb), 0.55));
-  }
-}
-
-/* Segments grow left-to-right (the Gantt bar motif), staggered per segment. */
-@keyframes distillerSeg {
-  0%,
-  66% {
-    transform: scaleX(0);
-    opacity: 0;
-  }
   70% {
     opacity: 1;
+    transform: scale(1.3);
   }
-  82% {
-    transform: scaleX(1);
-    opacity: 1;
-  }
+
   100% {
-    transform: scaleX(1);
     opacity: 1;
+    transform: scale(1);
   }
 }
 
@@ -627,6 +651,36 @@
     grid-column: span 1;
     grid-row: auto;
   }
+
+  /* Undo the band: back to a single stacked column. Spacing reverts to the
+     children's own margins, so the band's gap is dropped. */
+  .c-capability--feature {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+  }
+
+  /* Dissolve the text column so its parts can be re-sequenced around the
+     graphic: statement, graphic, then the CTA last — which is where a card's
+     CTA belongs once the two stop sitting side by side. Same display:contents
+     + order technique the mobile hero uses. */
+  .c-capability__lead {
+    display: contents;
+  }
+
+  .c-capability--feature .c-distiller {
+    order: 1;
+  }
+
+  .c-capability--feature .c-capability__meta {
+    order: 2;
+    margin-top: var(--space-24);
+  }
+
+  /* The strip needs no undoing here — it never changed flex-direction, and
+     `.c-capability--collapsible .c-capability__topline` below reclaims the
+     header spacing for the accordion row. */
 
   .c-capability--feature {
     margin-bottom: var(--space-32);
@@ -677,6 +731,19 @@
   /* The slug is redundant with the name in the header row, so hide it. */
   .c-capability__slug {
     display: none;
+  }
+
+  /* The stack's index holds nothing but that slug (no number, by design), so
+     hiding the slug would otherwise leave an empty span padding the row. */
+  .c-capability--tools .c-capability__index {
+    display: none;
+  }
+
+  /* Back to a wrapped row: the vertical list exists to fill a desktop column,
+     and here height is the scarce axis. */
+  .c-capability--tools .c-capability__chips {
+    flex-direction: row;
+    align-items: flex-start;
   }
 
   /* min-width: 0 because a flex item defaults to min-width: auto, which stops
@@ -743,43 +810,19 @@
   }
 }
 
-/* Reduced motion: skip the focus-pull entirely and show the resolved state —
-   sharp brand-coloured detail distilled to a built output. */
+/* Reduced motion: never run the sequence — and that is the whole fix. The
+   static rules in the distiller block above already ARE the finished frame,
+   so skipping the animations lands on exactly what everyone else ends up
+   seeing. The [data-perf='lite'] block in components/perf.css says the same
+   thing for the same reason. Neither restates the end state any more, so they
+   can't drift out of step with it. */
 @media (prefers-reduced-motion: reduce) {
-  /* Resolved end state: sharp brand detail -> clarity node -> a fully
-     assembled, live campaign frame. No sweep/ring flourishes. */
-  .c-distiller__bars {
-    filter: none;
-    color: var(--color-primary);
-  }
-
-  .c-distiller__lead,
-  .c-distiller__branch {
-    stroke-dashoffset: 0;
-    opacity: 0.4;
-  }
-
-  .c-distiller__halo,
-  .c-distiller__node,
-  .c-distiller__frame {
-    opacity: 1;
-  }
-
-  .c-distiller__node {
-    transform: none;
-  }
-
-  .c-distiller__frame {
-    stroke: var(--color-primary);
-  }
-
-  .c-distiller__seg {
-    transform: scaleX(1);
-    opacity: 1;
-  }
-
-  .c-distiller__scan,
-  .c-distiller__ring {
-    display: none;
+  .c-distiller.is-running .c-distiller__row,
+  .c-distiller.is-running .c-distiller__rule,
+  .c-distiller.is-running .c-distiller__drip,
+  .c-distiller.is-running .c-distiller__dot,
+  .c-distiller.is-running .c-distiller__bar,
+  .c-distiller.is-running .c-distiller__subline {
+    animation: none;
   }
 }

@@ -571,12 +571,15 @@ export const siteContent = {
   workArchive,
 
   // Skills & Expertise — rendered as a bento in HomeBody: a feature cell (the
-  // thesis, the Engineering->Marketing "distiller" graphic, and real
-  // aggregate stats) alongside three discipline cards and the tool stack.
-  // `feature.thesis` is a segment list so the emphasised words can be coloured
-  // to match the distiller's end labels. `slug` values are the mono
-  // `// category` labels. Keyword consumers (llms.txt, knowsAbout schema)
-  // flatten disciplines[].skills + tools.items — see skillKeywords below.
+  // thesis, the "distiller" graphic, and a CTA) sits beside the
+  // tool stack on the top row, with the three discipline cards as a triad
+  // below. The disciplines are a set and must read as one — don't restore a
+  // layout that splits them, and don't give the tool stack a numeric index
+  // (it's a materials list, not a fourth discipline).
+  // `feature.thesis` is a segment list so the emphasised words can be
+  // coloured. `slug` values are the mono `// category` labels. Keyword
+  // consumers (llms.txt, knowsAbout schema) flatten disciplines[].skills +
+  // tools.items — see skillKeywords below.
   skills: {
     feature: {
       tag: 'what_i_do',
@@ -587,15 +590,7 @@ export const siteContent = {
         { text: 'market', emphasis: true },
         { text: ' buys.' },
       ],
-      distiller: { inputLabel: 'Engineering', outputLabel: 'Campaigns' },
-      // Aggregate stats are archive-derived: distinct campaigns (~59 raw
-      // `campaign` labels in workArchive, rounded down for near-dupes and
-      // generic buckets), distinct industries, and consulting tenure (2015-).
-      stats: [
-        { value: '50+', label: 'campaigns' },
-        { value: '4', label: 'industries' },
-        { value: '10+', label: 'years' },
-      ],
+      distiller: { inputLabel: 'Code & specs', outputLabel: 'Campaigns' },
       cta: { label: 'See the work', href: '#portfolio' },
     },
     disciplines: [

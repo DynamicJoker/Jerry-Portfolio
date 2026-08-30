@@ -76,46 +76,29 @@
   filter: none;
 }
 
-/* --- Skills distiller: nine infinite loops, one of which animates a blur.
-   Freeze to the resolved end state. These declarations mirror the
-   `@media (prefers-reduced-motion: reduce)` block in components/skills.css —
-   keep them in step. The `.c-section.is-visible` prefix is needed only to
-   out-specify the rules that apply the animations. */
-[data-perf='lite'] .c-section.is-visible .c-distiller__bars,
-[data-perf='lite'] .c-section.is-visible .c-distiller__scan,
-[data-perf='lite'] .c-section.is-visible .c-distiller__lead,
-[data-perf='lite'] .c-section.is-visible .c-distiller__halo,
-[data-perf='lite'] .c-section.is-visible .c-distiller__node,
-[data-perf='lite'] .c-section.is-visible .c-distiller__ring,
-[data-perf='lite'] .c-section.is-visible .c-distiller__branch,
-[data-perf='lite'] .c-section.is-visible .c-distiller__frame,
-[data-perf='lite'] .c-section.is-visible .c-distiller__seg {
+/* --- Skills distiller: a ~3.3s reveal with six travelling drips, replayed on
+   a loop by main.js. Cheap per run by lite-mode standards (transforms and
+   opacity, no blur), but it's ~25 elements moving at once and it comes back
+   every few seconds, so skip it here.
+
+   Suppressing the animations is the whole job: the static rules in
+   components/skills.css ARE the finished frame, so an element that never
+   animates simply paints the state everyone else ends up at. Nothing to
+   restate, and nothing that can fall out of step with skills.css the way the
+   old nine-loop version's duplicated end state could. main.js also stops
+   scheduling replays once it sees data-perf='lite', so on a lite machine the
+   class below stops being applied at all — this rule is the guard for the
+   window before the probe resolves, and for a mid-session flip.
+
+   The `.is-running` prefix is needed only to out-specify the rules that apply
+   the animations. */
+[data-perf='lite'] .c-distiller.is-running .c-distiller__row,
+[data-perf='lite'] .c-distiller.is-running .c-distiller__rule,
+[data-perf='lite'] .c-distiller.is-running .c-distiller__drip,
+[data-perf='lite'] .c-distiller.is-running .c-distiller__dot,
+[data-perf='lite'] .c-distiller.is-running .c-distiller__bar,
+[data-perf='lite'] .c-distiller.is-running .c-distiller__subline {
   animation: none;
-}
-
-[data-perf='lite'] .c-distiller__bars {
-  filter: none;
-  color: var(--color-primary);
-}
-
-[data-perf='lite'] .c-distiller__lead,
-[data-perf='lite'] .c-distiller__branch {
-  stroke-dashoffset: 0;
-  opacity: 0.4;
-}
-
-[data-perf='lite'] .c-distiller__halo,
-[data-perf='lite'] .c-distiller__node,
-[data-perf='lite'] .c-distiller__frame {
-  opacity: 1;
-}
-
-[data-perf='lite'] .c-distiller__node {
-  transform: none;
-}
-
-[data-perf='lite'] .c-distiller__frame {
-  stroke: var(--color-primary);
 }
 
 [data-perf='lite'] .c-distiller__seg {
