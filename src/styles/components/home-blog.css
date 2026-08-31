@@ -22,7 +22,9 @@
   margin-bottom: clamp(1.75rem, 4vw, 3rem);
 }
 
-/* Feature image recessed into the ground as an inset well. */
+/* Feature image recessed into the ground as an inset well. Deliberately has NO
+   hover treatment: it is artwork, not a control, and the lift + ember shine the
+   interactive cards use would make an unclickable image read as clickable. */
 .c-home-blog__image {
   overflow: hidden;
   aspect-ratio: 16 / 9;
@@ -67,8 +69,9 @@
   gap: 1rem;
 }
 
-/* Inset soft-UI teaser well. No hover lift — a recessed card sits still;
-   the link-color hovers inside carry the feedback. */
+/* Inset soft-UI teaser well — the recessed half of the section depth
+   alternation. On hover it sinks a step deeper (to the well) and gains the
+   ember shine; the link-color hover inside still carries its own feedback. */
 /* Rows are declared rather than implicit so the read link pins to the card's
    bottom edge: meta, title, description, link — with the description row taking
    the slack. The cards stretch to equal heights in the grid, so with implicit
@@ -86,6 +89,31 @@
   border-radius: var(--radius-xl);
   background: var(--neu-bg);
   box-shadow: var(--neu-shadow-inset);
+}
+
+/* z-index: a permanent stacking context so the hover transform never promotes
+   and then discretely demotes the card's paint layer. Deliberately constant —
+   raising it on hover would reintroduce the same snap (full note in
+   components/about.css). */
+@media (hover: hover) {
+  .c-home-blog__card {
+    position: relative;
+    z-index: 0;
+    transition:
+      transform 0.5s var(--ease-elastic),
+      box-shadow 0.35s var(--ease-standard);
+  }
+
+  .c-home-blog__card:hover {
+    box-shadow: var(--neu-shadow-pressed), var(--ember-shine-recessed);
+    transform: translateY(2px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c-home-blog__card:hover {
+    transform: none;
+  }
 }
 
 .c-home-blog__card-meta {

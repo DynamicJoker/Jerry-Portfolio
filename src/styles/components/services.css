@@ -52,6 +52,8 @@
   padding: var(--space-24);
   background: var(--neu-bg);
   border-radius: var(--radius-xl);
+  /* Inset — the recessed half of the section depth alternation. Sinks deeper
+     (to the well) with an ember shine on hover; see the hover block below. */
   box-shadow: var(--neu-shadow-inset);
   transition: background-color var(--animation-speed) ease;
 }
@@ -133,81 +135,42 @@
   font-size: 1.1em;
 }
 
-/* Hover/focus story (pointer devices only): wash + draw + ping + CTA warmth.
-   :focus-within mirrors it for keyboard users tabbing to the CTA. */
+/* Hover/focus (pointer devices only): the row sinks deeper into the ground and
+   gains the ember shine, and its CTA warms. :focus-within mirrors it for
+   keyboard users tabbing to the CTA. (The old blue line-draw + arrival ping
+   were removed — they clashed with the ember hover.) */
 @media (hover: hover) {
+  /* z-index: a permanent stacking context so the hover transform never promotes
+     and then discretely demotes the row's paint layer. Deliberately constant —
+     raising it on hover would reintroduce the same snap (full note in
+     components/about.css). */
+  .c-engagement {
+    z-index: 0;
+    transition:
+      background-color var(--animation-speed) ease,
+      transform 0.5s var(--ease-elastic),
+      box-shadow 0.35s var(--ease-standard);
+  }
+
   .c-engagement:hover,
   .c-engagement:focus-within {
     background-color: var(--color-overlay-weak);
+    /* Sinks deeper into the ground + the recessed ember halo (see
+       --ember-shine-recessed: it renders like the raised cards' shine, which
+       the plain --ember-shine can't do on a surface with no outer shadow). */
+    box-shadow: var(--neu-shadow-pressed), var(--ember-shine-recessed);
+    transform: translateY(2px);
   }
 
-  /* Brand line drawing along the row's top hairline, stopping just short of
-     the right edge where the arrival ring lands. */
-  .c-engagement::before {
-    content: '';
-    position: absolute;
-    top: 0.75rem;
-    left: var(--radius-xl);
-    width: calc(100% - var(--radius-xl) - 0.75rem);
-    height: 1.5px;
-    background: rgba(var(--color-primary-rgb), 0.6);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.45s var(--animation-curve);
-  }
-
-  .c-engagement:hover::before,
-  .c-engagement:focus-within::before {
-    transform: scaleX(1);
-  }
-
-  /* Arrival ring: transient expanding ping where the line meets the CTA
-     rail (no resting state, so it never reads as a radio control). */
-  .c-engagement::after {
-    content: '';
-    position: absolute;
-    top: 0.47rem;
-    left: calc(100% - 0.75rem);
-    width: 0.5625rem;
-    height: 0.5625rem;
-    border: 1.5px solid var(--color-primary);
-    border-radius: 50%;
-    opacity: 0;
-    transform: scale(0.4);
-    pointer-events: none;
-  }
-
-  .c-engagement:hover::after,
-  .c-engagement:focus-within::after {
-    animation: engagementPing 0.55s ease-out 0.4s 1 forwards;
-  }
-
-  /* CTA lights up once the line arrives (delay matches the draw). */
   .c-engagement:hover .c-engagement__cta,
   .c-engagement:focus-within .c-engagement__cta {
     color: var(--color-primary-hover);
     text-decoration: underline;
-    transition-delay: 0.4s;
   }
 }
 
 .c-engagement__cta:hover {
   text-decoration: underline;
-}
-
-@keyframes engagementPing {
-  0% {
-    opacity: 0;
-    transform: scale(0.4);
-  }
-  35% {
-    opacity: 0.9;
-    transform: scale(0.8);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(1.9);
-  }
 }
 
 @media (max-width: 48rem) {
@@ -237,19 +200,12 @@
   }
 }
 
-/* Reduced motion: no draw, no ping — hover just shows the settled line. */
+/* Reduced motion: the depth + ember shine stay (a state, not motion); only the
+   travel drops. */
 @media (prefers-reduced-motion: reduce) {
-  .c-engagement::before {
-    transition: none;
-  }
-
-  .c-engagement::after {
-    display: none;
-  }
-
-  .c-engagement:hover .c-engagement__cta,
-  .c-engagement:focus-within .c-engagement__cta {
-    transition-delay: 0s;
+  .c-engagement:hover,
+  .c-engagement:focus-within {
+    transform: none;
   }
 }
 

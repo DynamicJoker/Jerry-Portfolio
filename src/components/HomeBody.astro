@@ -57,6 +57,18 @@ function getGanttDurationText(startDate, endDate) {
 // narrows it. Each row's `status` drives its badge + link via `workStatusMeta`.
 const featuredCampaigns = siteContent.featuredCampaigns;
 const sections = siteContent.sections;
+// Skills thesis: the emphasised segments are brand blue by default; a segment
+// marked `accent: 'ember'` (the "market" half) takes the ember ink instead, the
+// same tech → impact split as the hero headline. Precomputed here so the <b>
+// stays on one line in the markup — wrapped, Astro 7 pads the emphasis with
+// whitespace ("> market <"), the same trap that makes compressHTML load-bearing.
+const thesisSegments = siteContent.skills.feature.thesis.map((segment) => ({
+  ...segment,
+  emberClass:
+    segment.accent === 'ember'
+      ? 'c-capability__thesis-accent--ember'
+      : undefined,
+}));
 const archiveUi = siteContent.archiveUi;
 // Aliased short so the chip's markup fits on one line at its indent depth.
 // Wrapped across lines, Astro 7 keeps the newlines as whitespace INSIDE the
@@ -146,6 +158,9 @@ siteContent.testimonials.forEach((testimonial, index) => {
         <p class="c-hero__headline">
           {profile.heroHeadline.pre}<span class="c-hero__headline-accent"
             >{profile.heroHeadline.accent}</span
+          >{profile.heroHeadline.mid}<span
+            class="c-hero__headline-accent c-hero__headline-accent--ember"
+            >{profile.heroHeadline.accentEmber}</span
           >{profile.heroHeadline.post}
         </p>
         <p class="c-hero__lede">{profile.heroLede}</p>
@@ -306,8 +321,12 @@ siteContent.testimonials.forEach((testimonial, index) => {
             >
             <p class="c-capability__thesis">
               {
-                siteContent.skills.feature.thesis.map((segment) =>
-                  segment.emphasis ? <b>{segment.text}</b> : segment.text,
+                thesisSegments.map((segment) =>
+                  segment.emphasis ? (
+                    <b class={segment.emberClass}>{segment.text}</b>
+                  ) : (
+                    segment.text
+                  ),
                 )
               }
             </p>

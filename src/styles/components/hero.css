@@ -234,6 +234,13 @@
   color: var(--color-primary);
 }
 
+/* Second statement word ("moves buyers") — the ember impact half of the
+   tech → impact line. Ember ink (not the fill ember) so it clears the
+   large-text contrast bar. Mirrored in critical-home.css. */
+.c-hero__headline-accent--ember {
+  color: var(--color-ember-ink);
+}
+
 .c-hero__lede {
   margin: 0;
   max-width: 46ch;
@@ -359,6 +366,55 @@
   border-top: 2px solid var(--color-primary);
   border-left: 2px solid var(--color-primary);
   opacity: 0.85;
+}
+
+/* Raised tile → lifts with the ember shine on hover (pointer only). Hover is
+   not a first-paint concern, so this stays out of critical-home.css. */
+/* z-index: a permanent stacking context so the hover transform never promotes
+   and then discretely demotes the tile's paint layer. Deliberately constant —
+   raising it on hover would reintroduce the same snap (full note in
+   components/about.css). */
+@media (hover: hover) {
+  .c-hero__portrait {
+    z-index: 0;
+    transition:
+      transform 0.5s var(--ease-elastic),
+      box-shadow 0.35s var(--ease-standard);
+  }
+
+  .c-hero__portrait:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: var(--neu-shadow-raised), var(--ember-shine);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c-hero__portrait:hover {
+    transform: none;
+  }
+}
+
+/* Inset proof card → sinks a step deeper with the ember shine on hover (pointer
+   only; on mobile the proof card is display:contents, so this never applies). */
+@media (hover: hover) {
+  .c-hero__proof {
+    position: relative;
+    z-index: 0;
+    transition:
+      transform 0.5s var(--ease-elastic),
+      box-shadow 0.35s var(--ease-standard);
+  }
+
+  .c-hero__proof:hover {
+    box-shadow: var(--neu-shadow-pressed), var(--ember-shine-recessed);
+    transform: translateY(2px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c-hero__proof:hover {
+    transform: none;
+  }
 }
 
 .c-hero__proof {

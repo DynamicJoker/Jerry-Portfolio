@@ -24,8 +24,36 @@
   padding: clamp(1.2rem, 2.4vw, 1.75rem);
   background: var(--neu-bg);
   border-radius: var(--radius-xl);
-  box-shadow: var(--neu-shadow-inset);
+  /* Raised — the extrude half of the section depth alternation (Skills raised,
+     Services inset, Testimonials raised, Blog inset). Lifts with an ember shine
+     on hover; the shine + raised shadow paint outside the box, so overflow:hidden
+     (for the feature graphic's rounded clip) doesn't clip them. */
+  box-shadow: var(--neu-shadow-raised);
   overflow: hidden;
+}
+
+/* z-index: a permanent stacking context so the hover transform never promotes
+   and then discretely demotes the card's paint layer. Deliberately constant —
+   raising it on hover would reintroduce the same snap (full note in
+   components/about.css). */
+@media (hover: hover) {
+  .c-capability {
+    z-index: 0;
+    transition:
+      transform 0.5s var(--ease-elastic),
+      box-shadow 0.35s var(--ease-standard);
+  }
+
+  .c-capability:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: var(--neu-shadow-raised), var(--ember-shine);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c-capability:hover {
+    transform: none;
+  }
 }
 
 /* Three full-width bands: the feature cell, then the three disciplines as a
@@ -219,6 +247,16 @@
 .c-capability__thesis b {
   color: var(--color-primary);
   font-weight: var(--font-weight-semibold);
+}
+
+/* The "market" half of the thesis — the impact side, in ember, mirroring the
+   hero headline's blue "deep tech" → ember "moves buyers". Ember INK because
+   this is text; at this size (clamp 1.35–2.15rem semibold) it is large text,
+   which it clears comfortably. The selector is qualified with `b` on purpose:
+   the rule above is `.c-capability__thesis b` (0,1,1), so a bare modifier class
+   (0,1,0) would lose to it and the word would stay blue. */
+.c-capability__thesis b.c-capability__thesis-accent--ember {
+  color: var(--color-ember-ink);
 }
 
 /* Padding grows the hit box to the 24px target-size minimum (the mono text
@@ -435,9 +473,11 @@
   opacity: 0.64;
 }
 
-/* The drip's landing point and the seed each deliverable blooms from. */
+/* The drip's landing point and the seed each deliverable blooms from. The
+   OUTPUT side of the distiller is the ember statement — blue code + specs flow
+   in, ember campaigns come out. Input rows/drips/in-label stay signal blue. */
 .c-distiller__dot {
-  fill: var(--color-primary);
+  fill: var(--color-ember);
   transform-box: fill-box;
   transform-origin: center;
 }
@@ -459,12 +499,12 @@
 
 .c-distiller__out-frame {
   fill: none;
-  stroke: var(--color-primary);
+  stroke: var(--color-ember);
   stroke-width: 1.4;
 }
 
 .c-distiller__out-fill {
-  fill: var(--color-primary);
+  fill: var(--color-ember);
 }
 
 .c-distiller__out-line {
@@ -474,7 +514,7 @@
 
 .c-distiller__out-hair {
   fill: none;
-  stroke: var(--color-primary);
+  stroke: var(--color-ember);
   stroke-width: 1;
   stroke-opacity: 0.45;
 }

@@ -32,12 +32,17 @@ export const siteContent = {
     availability: {
       status: 'Remote, worldwide',
     },
-    // Hero headline: `accent` is rendered in the brand color inline between
-    // `pre` and `post`. Keep each part short — it wraps on small screens.
+    // Hero headline: two statement words rendered inline. `accent` ("deep
+    // tech") gets the brand blue; `accentEmber` ("moves buyers") gets the ember
+    // ink — the tech → impact story. `pre`/`mid`/`post` are the plain
+    // connective text (keep their leading/trailing spaces — they carry the word
+    // spacing). Keep each part short — it wraps on small screens.
     heroHeadline: {
       pre: 'I turn ',
       accent: 'deep tech',
-      post: ' into marketing that moves buyers.',
+      mid: ' into marketing that ',
+      accentEmber: 'moves buyers',
+      post: '.',
     },
     heroLede:
       'Technical marketing for PC hardware, cybersecurity, cloud, and SaaS — translating what engineering builds into demand gen, positioning, and content that converts.',
@@ -583,11 +588,13 @@ export const siteContent = {
   skills: {
     feature: {
       tag: 'what_i_do',
+      // Same tech → impact pairing as the hero headline: the engineering half
+      // takes the brand blue, the market (impact) half takes ember.
       thesis: [
         { text: 'I turn what ' },
         { text: 'engineering', emphasis: true },
         { text: ' builds into what the ' },
-        { text: 'market', emphasis: true },
+        { text: 'market', emphasis: true, accent: 'ember' },
         { text: ' buys.' },
       ],
       distiller: { inputLabel: 'Code & specs', outputLabel: 'Campaigns' },

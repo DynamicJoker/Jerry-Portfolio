@@ -190,10 +190,14 @@
   color: var(--color-btn-primary-text);
 }
 
-/* Pressed: recesses into its own fill. No `animation: none` needed any more —
-   there is no hover animation left to outrank it (see the note further down). */
+/* Pressed: recesses into its own fill AND flashes to the ember statement, then
+   eases back to blue on release (the base --animation-speed background
+   transition carries the return; the 0.08s press duration only applies while
+   :active). Ember INK, not the fill ember, so --color-btn-primary-text stays
+   legible during the press (white 5.18:1 light / near-black 8.26:1 dark).
+   No `animation: none` needed — there is no hover animation left to outrank it. */
 .c-btn--primary:active {
-  background: var(--color-primary-active);
+  background: var(--color-ember-ink);
   box-shadow: var(--neu-shadow-inset-fill);
   transform: var(--neu-press-transform);
   transition-duration: var(--neu-press-duration);

@@ -14,6 +14,12 @@
   --color-accent: #2f6e96;
   --color-accent-hover: #255a7d;
   --color-accent-rgb: 47, 110, 150;
+  /* Ember statement accent — mirror of settings.css. The hero impact word uses
+     --color-ember-ink above the fold, so the tokens must exist at first paint;
+     see docs/brand.md for the ember lane. */
+  --color-ember: #f5822b;
+  --color-ember-ink: #c2410c;
+  --color-ember-rgb: 245, 130, 43;
   --color-border-strong: rgba(26, 26, 46, 0.45);
   --color-btn-primary-text: #ffffff;
   /* Availability-dot status colors — mirror settings.css. */
@@ -184,6 +190,9 @@
     --color-accent: #90d5ff;
     --color-accent-hover: #b4e2ff;
     --color-accent-rgb: 144, 213, 255;
+    --color-ember: #d0701c;
+    --color-ember-ink: #f2954f;
+    --color-ember-rgb: 208, 112, 28;
     --color-border-strong: var(--color-hairline-strong);
     --color-focus-visible: var(--color-primary-hover);
     --color-btn-primary-text: var(--color-dark-primary);
@@ -214,6 +223,9 @@
   --color-accent: #90d5ff;
   --color-accent-hover: #b4e2ff;
   --color-accent-rgb: 144, 213, 255;
+  --color-ember: #d0701c;
+  --color-ember-ink: #f2954f;
+  --color-ember-rgb: 208, 112, 28;
   --color-text: rgba(232, 232, 234, 1);
   --color-text-secondary: rgba(154, 154, 165, 1);
   /* AA contrast: must stay >=4.5:1 on raised chip backgrounds (.c-tag) */
@@ -929,6 +941,11 @@ html.is-theme-transitioning *::after {
   color: var(--color-primary);
 }
 
+/* Ember impact word ("moves buyers") — mirror of components/hero.css. */
+.c-hero__headline-accent--ember {
+  color: var(--color-ember-ink);
+}
+
 .c-hero__lede {
   margin: 0;
   max-width: 46ch;
@@ -1400,7 +1417,9 @@ html.is-theme-transitioning *::after {
    ordinary inset. `animation: none` guards against the deferred sheet's hover
    pulse masking the depth change. */
 .c-btn--primary:active {
-  background: var(--color-primary-active);
+  /* Press flashes to the ember statement, eases back to blue on release.
+     Ember ink keeps the label legible during the press. Mirror of buttons.css. */
+  background: var(--color-ember-ink);
   box-shadow: var(--neu-shadow-inset-fill);
   transform: var(--neu-press-transform);
   transition-duration: var(--neu-press-duration);

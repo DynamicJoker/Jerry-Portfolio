@@ -42,11 +42,15 @@
   min-width: 0;
 }
 
+/* Ember mark — the contact section's splash. Ember INK rather than the vivid
+   fill: these are graphical objects, so they want 3:1 against the ground, which
+   the ink clears in both themes (4.47:1 / 7.34:1) and the fill does not. */
 .c-contact__icon {
   font-size: var(--font-size-icon-sm);
   display: flex;
   align-items: center;
   justify-content: center;
+  color: var(--color-ember-ink);
 }
 
 .c-contact__text {
