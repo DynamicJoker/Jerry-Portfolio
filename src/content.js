@@ -588,11 +588,13 @@ export const siteContent = {
   skills: {
     feature: {
       tag: 'what_i_do',
+      // Same tech → impact pairing as the hero headline: the engineering half
+      // takes the brand blue, the market (impact) half takes ember.
       thesis: [
         { text: 'I turn what ' },
         { text: 'engineering', emphasis: true },
         { text: ' builds into what the ' },
-        { text: 'market', emphasis: true },
+        { text: 'market', emphasis: true, accent: 'ember' },
         { text: ' buys.' },
       ],
       distiller: { inputLabel: 'Code & specs', outputLabel: 'Campaigns' },

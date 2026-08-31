@@ -55,10 +55,7 @@
   /* Inset — the recessed half of the section depth alternation. Sinks deeper
      (to the well) with an ember shine on hover; see the hover block below. */
   box-shadow: var(--neu-shadow-inset);
-  transition:
-    background-color var(--animation-speed) ease,
-    transform 0.5s var(--ease-elastic),
-    box-shadow 0.35s var(--ease-standard);
+  transition: background-color var(--animation-speed) ease;
 }
 
 .c-engagement__index {
@@ -143,6 +140,18 @@
    keyboard users tabbing to the CTA. (The old blue line-draw + arrival ping
    were removed — they clashed with the ember hover.) */
 @media (hover: hover) {
+  /* z-index: a permanent stacking context so the hover transform never promotes
+     and then discretely demotes the row's paint layer. Deliberately constant —
+     raising it on hover would reintroduce the same snap (full note in
+     components/about.css). */
+  .c-engagement {
+    z-index: 0;
+    transition:
+      background-color var(--animation-speed) ease,
+      transform 0.5s var(--ease-elastic),
+      box-shadow 0.35s var(--ease-standard);
+  }
+
   .c-engagement:hover,
   .c-engagement:focus-within {
     background-color: var(--color-overlay-weak);

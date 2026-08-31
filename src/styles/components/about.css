@@ -135,9 +135,29 @@
 
 /* Raised tiles → lift with the ember shine on hover (pointer only), matching
    the Skills/Testimonials extrude cards. The one-shot ledgerRise reveal owns
-   transform on scroll-in; it has finished by the time a hover can land. */
+   transform on scroll-in; it has finished by the time a hover can land.
+
+   The `position: relative; z-index: 0` is load-bearing, not decoration, and it
+   must NOT be paired with a z-index change on hover.
+
+   A transform creates a stacking context, so a hovered tile was being promoted
+   above its siblings; when the transform landed back on `none` at the end of the
+   0.5s elastic return, that context was DESTROYED in one frame and the tile
+   snapped back into normal-flow paint order. These tiles sit 8px apart and the
+   raised shadow reaches ~20px, so a tile's dark shadow either falls ONTO its
+   neighbour (painted above) or is hidden by the neighbour's opaque box (painted
+   below) — which is why the snap read as a shadow popping in half a second after
+   the pointer had left.
+
+   A permanent stacking context fixes it because the transform can no longer
+   change the paint layer. Raising z-index on hover would NOT fix it — it just
+   moves the same discrete swap from the transform's end to the z-index's, at the
+   same moment. So the tiles stay at one z-index always and only transform and
+   box-shadow animate, both continuously. Nothing is left to snap. */
 @media (hover: hover) {
   .c-ledger__step {
+    position: relative;
+    z-index: 0;
     transition:
       transform 0.5s var(--ease-elastic),
       box-shadow 0.35s var(--ease-standard);

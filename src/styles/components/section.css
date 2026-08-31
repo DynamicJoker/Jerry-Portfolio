@@ -53,13 +53,17 @@ body {
   content: counter(section-kicker, decimal-leading-zero) ' /';
 }
 
+/* The leading tick is the ember splash every section carries — a small warm
+   mark against the blue kicker label, echoing the hero's ember word. A
+   decorative mark rather than text, so the vivid --color-ember is safe here
+   (as text it would be under AA; that is what --color-ember-ink is for). */
 .c-section__kicker::after {
   content: '';
   order: -1;
   width: 2rem;
   height: 2px;
   border-radius: 2px;
-  background: var(--color-accent);
+  background: var(--color-ember);
 }
 
 .c-section__title {

@@ -29,13 +29,21 @@
      on hover; the shine + raised shadow paint outside the box, so overflow:hidden
      (for the feature graphic's rounded clip) doesn't clip them. */
   box-shadow: var(--neu-shadow-raised);
-  transition:
-    transform 0.5s var(--ease-elastic),
-    box-shadow 0.35s var(--ease-standard);
   overflow: hidden;
 }
 
+/* z-index: a permanent stacking context so the hover transform never promotes
+   and then discretely demotes the card's paint layer. Deliberately constant —
+   raising it on hover would reintroduce the same snap (full note in
+   components/about.css). */
 @media (hover: hover) {
+  .c-capability {
+    z-index: 0;
+    transition:
+      transform 0.5s var(--ease-elastic),
+      box-shadow 0.35s var(--ease-standard);
+  }
+
   .c-capability:hover {
     transform: translateY(-6px) scale(1.02);
     box-shadow: var(--neu-shadow-raised), var(--ember-shine);
@@ -239,6 +247,16 @@
 .c-capability__thesis b {
   color: var(--color-primary);
   font-weight: var(--font-weight-semibold);
+}
+
+/* The "market" half of the thesis — the impact side, in ember, mirroring the
+   hero headline's blue "deep tech" → ember "moves buyers". Ember INK because
+   this is text; at this size (clamp 1.35–2.15rem semibold) it is large text,
+   which it clears comfortably. The selector is qualified with `b` on purpose:
+   the rule above is `.c-capability__thesis b` (0,1,1), so a bare modifier class
+   (0,1,0) would lose to it and the word would stay blue. */
+.c-capability__thesis b.c-capability__thesis-accent--ember {
+  color: var(--color-ember-ink);
 }
 
 /* Padding grows the hit box to the 24px target-size minimum (the mono text
