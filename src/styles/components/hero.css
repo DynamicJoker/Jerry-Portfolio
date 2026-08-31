@@ -378,13 +378,34 @@
   }
 
   .c-hero__portrait:hover {
-    transform: translateY(-4px);
+    transform: translateY(-6px) scale(1.02);
     box-shadow: var(--neu-shadow-raised), var(--ember-shine);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .c-hero__portrait:hover {
+    transform: none;
+  }
+}
+
+/* Inset proof card → sinks a step deeper with the ember shine on hover (pointer
+   only; on mobile the proof card is display:contents, so this never applies). */
+@media (hover: hover) {
+  .c-hero__proof {
+    transition:
+      transform 0.5s var(--ease-elastic),
+      box-shadow 0.35s var(--ease-standard);
+  }
+
+  .c-hero__proof:hover {
+    box-shadow: var(--neu-shadow-pressed), var(--ember-shine-recessed);
+    transform: translateY(2px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c-hero__proof:hover {
     transform: none;
   }
 }

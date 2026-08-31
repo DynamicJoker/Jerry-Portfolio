@@ -29,6 +29,22 @@
   border-radius: var(--radius-xl);
   background: var(--neu-bg);
   box-shadow: var(--neu-shadow-inset);
+  transition:
+    transform 0.5s var(--ease-elastic),
+    box-shadow 0.35s var(--ease-standard);
+}
+
+@media (hover: hover) {
+  .c-home-blog__image:hover {
+    box-shadow: var(--neu-shadow-pressed), var(--ember-shine-recessed);
+    transform: translateY(2px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c-home-blog__image:hover {
+    transform: none;
+  }
 }
 
 .c-home-blog__image img {
@@ -94,7 +110,7 @@
 
 @media (hover: hover) {
   .c-home-blog__card:hover {
-    box-shadow: var(--neu-shadow-pressed), var(--ember-shine);
+    box-shadow: var(--neu-shadow-pressed), var(--ember-shine-recessed);
     transform: translateY(2px);
   }
 }

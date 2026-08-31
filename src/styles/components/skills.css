@@ -37,7 +37,7 @@
 
 @media (hover: hover) {
   .c-capability:hover {
-    transform: translateY(-4px);
+    transform: translateY(-6px) scale(1.02);
     box-shadow: var(--neu-shadow-raised), var(--ember-shine);
   }
 }

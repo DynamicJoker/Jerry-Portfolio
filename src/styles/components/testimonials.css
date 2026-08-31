@@ -117,7 +117,7 @@
 
 @media (hover: hover) {
   .c-testimonial:hover {
-    transform: translateY(-4px);
+    transform: translateY(-6px) scale(1.02);
     box-shadow: var(--neu-shadow-raised), var(--ember-shine);
   }
 }

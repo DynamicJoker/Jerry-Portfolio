@@ -254,14 +254,27 @@
     0 0 0 1.5px rgba(var(--color-ember-rgb), 0.55),
     0 0 9px rgba(var(--color-ember-rgb), 0.25);
 
+  /* Recessed twin. Deliberately NOT the same declaration, because the goal is
+     for the two to RENDER alike — matching the values is what made them differ.
+     On a RAISED surface the outer neu shadows (6px offset, 14px blur) are
+     painted ON TOP of the ember ring and veil it into a soft halo. An INSET
+     surface paints nothing at all outside itself, so that identical ring sits
+     naked on the ground and reads as a hard drawn rectangle. This variant drops
+     the crisp spread ring for a blurred halo, which is what the raised card
+     actually looks like. Tune the two together by APPEARANCE, not by value. */
+  --ember-shine-recessed:
+    0 0 10px 1px rgba(var(--color-ember-rgb), 0.4),
+    0 0 22px rgba(var(--color-ember-rgb), 0.18);
+
   /* Animation */
   --duration-fast: 150ms;
   --duration-normal: 250ms;
   --ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
   /* Elastic (back-out overshoot) — the springy easing for the neumorphic card
-     hover (lift on raised cards, sink on inset ones). Deferred-sheet only, so
-     no critical-home mirror. */
-  --ease-elastic: cubic-bezier(0.34, 1.56, 0.64, 1);
+     hover (lift on raised cards, sink on inset ones). Tuned for a visible
+     overshoot: paired with a ~6px lift + a hair of scale, the card pops past
+     its target and settles. Deferred-sheet only, so no critical-home mirror. */
+  --ease-elastic: cubic-bezier(0.34, 1.7, 0.5, 1);
 
   /* Layout */
 

@@ -133,6 +133,28 @@
   box-shadow: var(--neu-shadow-raised);
 }
 
+/* Raised tiles → lift with the ember shine on hover (pointer only), matching
+   the Skills/Testimonials extrude cards. The one-shot ledgerRise reveal owns
+   transform on scroll-in; it has finished by the time a hover can land. */
+@media (hover: hover) {
+  .c-ledger__step {
+    transition:
+      transform 0.5s var(--ease-elastic),
+      box-shadow 0.35s var(--ease-standard);
+  }
+
+  .c-ledger__step:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: var(--neu-shadow-raised), var(--ember-shine);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c-ledger__step:hover {
+    transform: none;
+  }
+}
+
 .c-ledger__head {
   display: flex;
   align-items: baseline;
