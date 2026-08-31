@@ -741,39 +741,29 @@ siteContent.testimonials.forEach((testimonial, index) => {
         </div>
 
         {
-          /* Discipline + tool cards. On mobile these collapse into an
-             accordion (native <details>); on desktop CSS force-opens every
-             panel so the bento reads as static cards. First discipline opens
-             by default. */
+          /* Disciplines as editorial rows: no cards, no 01/02/03 numbering —
+             the name anchors each row and the skills read as inline tags,
+             divided by hairlines. The feature cell above and the tool stack
+             below (still a native <details> accordion on mobile) keep their
+             card treatment. */
         }
-        {
-          siteContent.skills.disciplines.map((discipline, i) => (
-            <details
-              class="c-capability c-capability--collapsible"
-              open={i === 0}
-            >
-              <summary class="c-capability__summary">
-                <span class="c-capability__topline">
-                  <span class="c-capability__dot" aria-hidden="true" />
-                  <span class="c-capability__index">
-                    <b>{String(i + 1).padStart(2, '0')}</b>
-                    <span class="c-capability__slug"> · {discipline.slug}</span>
-                  </span>
-                </span>
-                <span class="c-capability__name">{discipline.name}</span>
-                <span class="c-capability__chev" aria-hidden="true" />
-              </summary>
-              <div class="c-capability__panel">
-                <p class="c-capability__skills">
-                  {discipline.skills.join(', ')}.
-                </p>
-                <div class="c-capability__foot">
-                  <span class="c-capability__note">{discipline.note}</span>
+        <ul class="c-disciplines">
+          {
+            siteContent.skills.disciplines.map((discipline) => (
+              <li class="c-discipline">
+                <div class="c-discipline__head">
+                  <h3 class="c-discipline__name">{discipline.name}</h3>
+                  <span class="c-discipline__note">{discipline.note}</span>
                 </div>
-              </div>
-            </details>
-          ))
-        }
+                <ul class="c-discipline__tags">
+                  {discipline.skills.map((skill) => (
+                    <li class="c-discipline__tag">{skill}</li>
+                  ))}
+                </ul>
+              </li>
+            ))
+          }
+        </ul>
 
         <details
           class="c-capability c-capability--tools c-capability--collapsible"

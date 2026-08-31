@@ -14,6 +14,85 @@
   gap: var(--space-24);
 }
 
+/* Disciplines — an editorial list spanning the full bento width (replaces the
+   old numbered discipline cards). Each row: the name (+ its mono note) anchors
+   the left, the skills flow as inline tags on the right, divided by hairlines.
+   No card, no lift — a light band between the feature cell and the tool stack. */
+.c-disciplines {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.c-discipline {
+  display: grid;
+  grid-template-columns: minmax(9rem, 15rem) 1fr;
+  gap: var(--space-16) var(--space-32);
+  align-items: start;
+  padding: var(--space-24) 0;
+  border-top: 1px solid var(--color-hairline);
+}
+
+.c-discipline:last-child {
+  border-bottom: 1px solid var(--color-hairline);
+}
+
+.c-discipline__name {
+  margin: 0;
+  font-size: var(--text-card-title);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-strong);
+}
+
+/* Signal blue, the site's mono-accent colour (same as the ledger year, the
+   service index, the distiller's "CODE & SPECS") — this is where the rows earn
+   their colour. Blue not ember: it is ~12px text, which blue clears (4.5:1+ in
+   both themes) and ember ink does not; the section's ember lives on the kicker
+   tick + the thesis "market" above. */
+.c-discipline__note {
+  display: block;
+  margin-top: var(--space-4);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.06em;
+  color: var(--color-primary);
+}
+
+.c-discipline__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8) var(--space-12);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.c-discipline__tag {
+  position: relative;
+  padding-right: var(--space-12);
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+}
+
+/* Interpunct between tags (not after the last) — the brand blue as connective
+   tissue, so the colour carries across the whole tag column, not just the note.
+   A decorative mark, so this is fine below text-contrast. */
+.c-discipline__tag:not(:last-child)::after {
+  content: '·';
+  position: absolute;
+  right: 0;
+  color: var(--color-primary);
+}
+
+@media (max-width: 48rem) {
+  .c-discipline {
+    grid-template-columns: 1fr;
+    gap: var(--space-12);
+    padding: var(--space-20) 0;
+  }
+}
+
 /* Inset soft-UI well (neumorphic): shares the ground color, depth from the
    paired inner top-left shadow rather than a border. No hover lift — the
    card's hover feedback is the node-dot/accent rules below. */
@@ -88,10 +167,6 @@
   align-items: flex-start;
 }
 
-.c-capability:not(.c-capability--feature):not(.c-capability--tools) {
-  grid-column: span 2;
-}
-
 /* Tool stack as a full-width strip. Its internal row layout is further down,
    after the collapsible rules it has to override. */
 .c-capability--tools {
@@ -136,11 +211,6 @@
   color: var(--color-text-muted);
 }
 
-.c-capability__index b {
-  color: var(--color-primary);
-  font-weight: var(--font-weight-medium);
-}
-
 .c-capability__name {
   /* A <span> (it lives inside <summary>, where a heading would be invalid) —
      display: block keeps the card layout and vertical margin. */
@@ -151,31 +221,7 @@
   color: var(--color-text-strong);
 }
 
-.c-capability__skills {
-  margin: 0 0 var(--space-16);
-  font-size: var(--font-size-sm);
-  line-height: 1.65;
-  color: var(--color-text-secondary);
-}
-
-.c-capability__foot {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-8);
-  margin-top: auto;
-  padding-top: var(--space-12);
-  border-top: 1px solid var(--color-hairline);
-}
-
-.c-capability__note {
-  font-family: var(--font-family-mono);
-  font-size: var(--font-size-xs);
-  letter-spacing: 0.06em;
-  color: var(--color-text-muted);
-}
-
-/* mono `// tag`, reused by the feature lead and (via --note) card feet. */
+/* mono `// tag` on the feature lead. */
 .c-capability__tag {
   font-family: var(--font-family-mono);
   font-size: var(--font-size-xs);
