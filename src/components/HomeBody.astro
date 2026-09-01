@@ -1269,7 +1269,15 @@ siteContent.testimonials.forEach((testimonial, index) => {
             return (
               <div class="c-gantt__row">
                 <div class="c-gantt__label">
-                  <h3>{job.title}</h3>
+                  {/* The "now" dot leads the role title on current roles —
+                       decorative, so aria-hidden; the period text already says
+                       "Present" to assistive tech. */}
+                  <h3>
+                    {isPresent && (
+                      <span class="c-gantt__now" aria-hidden="true" />
+                    )}
+                    {job.title}
+                  </h3>
                   <p>{job.company}</p>
                   <div class="c-gantt__meta">
                     <span class="c-gantt__period">{job.period}</span>

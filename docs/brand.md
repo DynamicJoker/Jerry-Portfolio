@@ -70,15 +70,21 @@ now / current / impact** — ember marks what is *live* and the payoff, never
 decoration. Two tokens, because ember-as-fill and ember-as-text have different
 contrast needs:
 
-- **`--color-ember`** (`#f5822b` light / `#d0701c` dark) — pure marks and fills
-  that carry **no** text: the experience timeline's current ("Present") bars,
-  the About ledger now-node, the skills distiller's output, and the hover
-  shine. Vivid, but only ~2.2:1 on the ground, so never use it as text.
-- **`--color-ember-ink`** (`#c2410c` light / `#f2954f` dark) — the deeper
-  (light) / brighter (dark) ember that stays legible **as text** or under an
-  on-fill label: the hero impact word ("moves buyers") and **chart series 2**
-  (`--chart-series-2`). Both clear the large-text bar (4.47:1 / 7.34:1); the
-  light value is validated for on-fill labels too (white text ≥4.5:1).
+- **`--color-ember-ink`** (`#c2410c` light / `#f2954f` dark) — **the ember to
+  reach for.** The deeper (light) / brighter (dark) ember, and the only one that
+  holds up in both themes (4.47:1 / 7.34:1). It carries text (the hero impact
+  word, "moves buyers"), on-fill labels (the button/filter press states, white
+  ≥4.5:1 on it), **chart series 2** (`--chart-series-2`), *and* every mark: the
+  experience timeline's current ("Present") bars, the About ledger now-node, the
+  section kicker tick, and the skills distiller's output.
+- **`--color-ember`** (`#f5822b` light / `#d0701c` dark) — the raw vivid brand
+  hue. Only ~2.23:1 on the light ground, which fails the **3:1 bar for
+  meaningful non-text graphics** (WCAG 1.4.11), not just the text bar. It used
+  to own the marks listed above on the reasoning that "decorative marks don't
+  need contrast" — but in light mode they washed out while reading loud in dark,
+  so the same mark looked like two different colours depending on the theme
+  (swept and fixed 2026-09-02). **Currently unused.** Don't reach for it without
+  measuring it against whatever it lands on.
 
 `--color-ember-rgb` (`245, 130, 43` / `208, 112, 28`) backs the alphas in
 `--ember-shine` — the fading ember border shine layered on hover (a tight ring

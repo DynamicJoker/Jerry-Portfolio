@@ -230,7 +230,13 @@
 
 /* Ground-coloured, so it takes the ordinary ground-tinted inset — identical to
    a nav link's press. */
+/* Same ember press flash as --primary above: the fill is the statement, and
+   ember INK (not the fill ember) keeps --color-btn-primary-text legible while
+   it's held. Outline buttons rest transparent, so this is the one press state
+   that also has to paint a background. DUPLICATED in critical-home.css. */
 .c-btn--outline:active {
+  background: var(--color-ember-ink);
+  color: var(--color-btn-primary-text);
   box-shadow: var(--neu-shadow-inset-sm);
   transform: var(--neu-press-transform);
   transition-duration: var(--neu-press-duration);

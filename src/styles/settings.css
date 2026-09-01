@@ -23,16 +23,24 @@
   --color-accent-hover: #255a7d;
   --color-accent-rgb: 47, 110, 150;
   /* Ember — the statement accent. Semantics: NOW / CURRENT / IMPACT (full lane
-     in docs/brand.md). Two colours because ember-as-fill and ember-as-text
-     have different contrast needs:
-       --color-ember      pure marks/fills carrying NO text — the timeline
-                          "now" bar, the ledger now-node, the distiller output,
-                          the hover shine. Vivid; fails as text (~2.2:1).
-       --color-ember-ink  deeper (light) / brighter (dark) ember that stays
-                          legible AS text or under an on-fill label — the hero
-                          impact word and chart series 2 (4.47:1 light / 7.34:1
-                          dark, both clearing the large-text bar).
-     --color-ember-rgb backs the hover-shine alphas. All three mirror into
+     in docs/brand.md).
+       --color-ember-ink  THE ember to reach for. Deeper (light) / brighter
+                          (dark), and the only one that survives both themes:
+                          4.47:1 light / 7.34:1 dark. Text (the hero impact
+                          word), on-fill labels (button press states), chart
+                          series 2, AND every mark — the timeline "now" bars,
+                          the ledger now-node, the section kicker tick, the
+                          distiller output.
+       --color-ember      the raw vivid brand hue. Only ~2.23:1 on the light
+                          ground, so it fails the 3:1 WCAG bar for meaningful
+                          non-text graphics, not just the text bar. It used to
+                          carry the marks listed above; in light mode they washed
+                          out while reading loud in dark, so the same mark looked
+                          like two different colours per theme (fixed 2026-09-02).
+                          Currently unused — do not reach for it without checking
+                          the contrast of what it lands on.
+     --color-ember-rgb backs the hover-shine alphas and soft glow halos, where
+     translucency is the point and contrast is not. All three mirror into
      critical-home.css (the hero impact word is above the fold) and live in both
      dark blocks (check:theme). Distinct from --tint-editorial (clay), which is
      the writing/editorial wash and is never a statement or data colour. */

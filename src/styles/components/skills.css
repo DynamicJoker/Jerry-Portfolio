@@ -447,9 +447,17 @@
 
 /* The drip's landing point and the seed each deliverable blooms from. The
    OUTPUT side of the distiller is the ember statement — blue code + specs flow
-   in, ember campaigns come out. Input rows/drips/in-label stay signal blue. */
+   in, ember campaigns come out. Input rows/drips/in-label stay signal blue.
+
+   All four output classes take ember INK rather than the vivid --color-ember:
+   these are thin strokes (1–1.4px) and small fills read against the page, and
+   the vivid token is 2.23:1 on the light ground — under the 3:1 non-text bar.
+   The input side is --color-primary, which tracks the theme properly, so the
+   vivid ember left the output half looking washed out in light and loud in
+   dark while the blue half stayed put. Ink matches primary's spread almost
+   exactly (4.47/4.75 light, 7.34/7.82 dark), so both halves now move together. */
 .c-distiller__dot {
-  fill: var(--color-ember);
+  fill: var(--color-ember-ink);
   transform-box: fill-box;
   transform-origin: center;
 }
@@ -471,12 +479,12 @@
 
 .c-distiller__out-frame {
   fill: none;
-  stroke: var(--color-ember);
+  stroke: var(--color-ember-ink);
   stroke-width: 1.4;
 }
 
 .c-distiller__out-fill {
-  fill: var(--color-ember);
+  fill: var(--color-ember-ink);
 }
 
 .c-distiller__out-line {
@@ -486,7 +494,7 @@
 
 .c-distiller__out-hair {
   fill: none;
-  stroke: var(--color-ember);
+  stroke: var(--color-ember-ink);
   stroke-width: 1;
   stroke-opacity: 0.45;
 }

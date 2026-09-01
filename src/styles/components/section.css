@@ -54,16 +54,21 @@ body {
 }
 
 /* The leading tick is the ember splash every section carries — a small warm
-   mark against the blue kicker label, echoing the hero's ember word. A
-   decorative mark rather than text, so the vivid --color-ember is safe here
-   (as text it would be under AA; that is what --color-ember-ink is for). */
+   mark against the blue kicker label, echoing the hero's ember word.
+
+   Ember INK, not the vivid --color-ember. "Decorative, so contrast doesn't
+   apply" was the old reasoning here, and it only held for TEXT: this is a 2px
+   rule, and the vivid token lands at 2.23:1 on the light ground, under the 3:1
+   WCAG bar for meaningful non-text graphics. At that weight it also simply
+   disappeared in light mode while reading loud in dark, so the same tick looked
+   like two different marks depending on the theme. */
 .c-section__kicker::after {
   content: '';
   order: -1;
   width: 2rem;
   height: 2px;
   border-radius: 2px;
-  background: var(--color-ember);
+  background: var(--color-ember-ink);
 }
 
 .c-section__title {

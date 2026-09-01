@@ -554,9 +554,18 @@
    `animation: none` stops the hover pulse masking either. */
 .c-archive__tab:active {
   animation: none;
+  background: var(--color-ember-ink);
+  color: var(--color-btn-primary-text);
   box-shadow: var(--neu-shadow-inset-sm);
   transform: var(--neu-press-transform);
   transition-duration: var(--neu-press-duration);
+}
+
+/* The count badge dissolves into the ember fill while held — its resting pill
+   (overlay background + muted ink) has no contrast to spare on top of it. */
+.c-archive__tab:active .c-archive__tab-count {
+  background: transparent;
+  color: inherit;
 }
 
 .c-archive__tab.is-active:active {
@@ -632,6 +641,8 @@
    already-selected pill presses to the deeper well so the press stays legible. */
 .c-archive__filter:active {
   animation: none;
+  background: var(--color-ember-ink);
+  color: var(--color-btn-primary-text);
   box-shadow: var(--neu-shadow-inset-sm);
   transform: var(--neu-press-transform);
   transition-duration: var(--neu-press-duration);

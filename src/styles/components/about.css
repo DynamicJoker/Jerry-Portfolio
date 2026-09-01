@@ -218,8 +218,12 @@
   border-radius: 50%;
   /* Present-day node = the ember "now" statement (the year label stays brand
      blue: ember ink is a hair under AA at this 12px size, so text keeps blue
-     while the mark carries the ember). */
-  background: var(--color-ember);
+     while the mark carries the ember).
+     Ember INK, not the vivid --color-ember: an 8px dot is a meaningful
+     graphic, and the vivid token is only 2.23:1 on the light ground — under
+     the 3:1 non-text bar, and visibly washed out next to the same mark in dark
+     mode. Ink clears it in both (4.47 light / 7.34 dark). */
+  background: var(--color-ember-ink);
   box-shadow: 0 0 0 4px rgba(var(--color-ember-rgb), 0.18);
 }
 
@@ -228,7 +232,7 @@
   position: absolute;
   inset: -2px;
   border-radius: 50%;
-  border: 1.5px solid var(--color-ember);
+  border: 1.5px solid var(--color-ember-ink);
   opacity: 0;
 }
 
