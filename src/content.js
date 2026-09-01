@@ -912,9 +912,10 @@ export const siteContent = {
       backToTop: 'Back to Top',
       // Secondary links. Email is deliberately absent — it only ever reaches
       // the page through the reveal button in the contact panel, which is what
-      // keeps it out of scrapers (see contactInfo).
+      // keeps it out of scrapers (see contactInfo). RSS is absent too: the feed
+      // is still built and still advertised in the head for feed readers, but a
+      // visible link only ever showed a visitor raw XML.
       blog: 'Blog',
-      rss: 'RSS',
       linkedin: 'LinkedIn',
     },
   },
