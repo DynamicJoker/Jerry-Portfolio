@@ -1,12 +1,11 @@
-/* Component: services — engagement ledger */
-/* Below the fold, so no rules here are duplicated in critical-home.css.
-   The section is three hairline-separated "engagement" rows (project /
-   retainer / fractional — how to work with me), each ending in the booking
-   CTA that deep-links to the #schedule bar in the contact section. On hover
-   (or keyboard focus within the row) a brand line draws along the row's top
-   hairline and lands with a transient ring ping at the CTA rail — the
-   distiller's arrival ring at row scale. The effects are decorative; the CTA
-   link is the row's only interactive element. */
+/* Component: services — verb-led engagement cards */
+/* Below the fold, so no rules here are duplicated in critical-home.css. Three
+   inset soft-UI cards (project / retainer / fractional — how to work with me).
+   Each card leads with the model name as a small blue mono eyebrow, then the
+   action verb (its model word in ember) with a chevron, a supporting line, and
+   the engagement's shape as a quiet mono note on the right. The verb is a link
+   to the #schedule booking bar, and its stretched ::before overlay makes the
+   WHOLE card clickable — the recess + a hover sink read as "click me". */
 
 .c-engagements__tag {
   font-family: var(--font-family-mono);
@@ -36,176 +35,136 @@
   gap: var(--space-16);
 }
 
-/* Inset soft-UI engagement well (3 rows only, so per-panel shadows are
-   cheap). The hover line-draw + arrival-ping story is preserved. */
+/* Inset card. position + z-index give it a permanent stacking context: the
+   whole-card link overlay hangs off it, AND the hover transform can't flip the
+   card's paint layer on the way out (the stacking-context pop documented in
+   components/about.css). */
 .c-engagement {
   position: relative;
+  z-index: 0;
   display: grid;
-  /* Grid items default to min-width: auto, which lets a row grow to its
-     min-content width and overrun the list track rather than being clamped
-     by it. The CTA below is deliberately unbreakable, so without this the
-     card's floor is "meta + CTA on one line" and narrow viewports lose the
-     right gutter. Clamp here; the rail wraps instead (see the 48rem block). */
-  min-width: 0;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: var(--space-24);
+  gap: var(--space-16) var(--space-32);
+  align-items: center;
   padding: var(--space-24);
   background: var(--neu-bg);
   border-radius: var(--radius-xl);
-  /* Inset — the recessed half of the section depth alternation. Sinks deeper
-     (to the well) with an ember shine on hover; see the hover block below. */
   box-shadow: var(--neu-shadow-inset);
-  transition: background-color var(--animation-speed) ease;
+  transition:
+    box-shadow 0.35s var(--ease-standard),
+    transform 0.5s var(--ease-elastic);
 }
 
-.c-engagement__index {
-  display: block;
-  margin-bottom: var(--space-8);
+/* Hover / keyboard focus: the card sinks a step deeper and picks up the
+   recessed ember halo — the "this is a button" cue. */
+@media (hover: hover) {
+  .c-engagement:hover,
+  .c-engagement:focus-within {
+    box-shadow: var(--neu-shadow-pressed), var(--ember-shine-recessed);
+    transform: translateY(2px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c-engagement:hover,
+  .c-engagement:focus-within {
+    transform: none;
+  }
+}
+
+/* The model name, a small blue mono eyebrow above the verb (still the row's
+   semantic <h3>). Blue is the site's mono-accent and clears small-text contrast
+   where ember can't. */
+.c-engagement__name {
+  margin: 0 0 var(--space-6);
   font-family: var(--font-family-mono);
   font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
   letter-spacing: 0.06em;
-  color: var(--color-text-muted);
+  color: var(--color-primary);
 }
 
-.c-engagement__index b {
+/* The action verb links to the booking bar. Its model word (project / retainer
+   / fractional) takes the ember ink; min font-size 1.5rem keeps that word
+   "large text" (>=24px) so it clears contrast at 3:1 at any viewport. */
+.c-engagement__verb {
+  display: inline-block;
+  max-width: 22ch;
+  font-family: var(--font-family-display);
+  font-size: clamp(1.5rem, 2.4vw, 1.9rem);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.15;
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-text-strong);
+  text-decoration: none;
+  transition: color var(--animation-speed) ease;
+}
+
+.c-engagement__verb b {
+  color: var(--color-ember-ink);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Chevron — the affordance that this is an action. */
+.c-engagement__verb::after {
+  content: ' \203A';
   color: var(--color-primary);
   font-weight: var(--font-weight-medium);
 }
 
-.c-engagement__name {
-  margin: 0 0 var(--space-6);
-  font-size: var(--text-card-title);
-  color: var(--color-text-strong);
+/* Stretched link: covers the whole card so a click anywhere follows the verb to
+   the booking bar. The verb stays inline-block/static, so this pins to the card
+   (its nearest positioned ancestor), not to the verb text. */
+.c-engagement__verb::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.c-engagement__verb:focus-visible {
+  outline: var(--focus-outline);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+/* Hovering anywhere on the card (via the overlay) warms the verb to brand blue;
+   the ember model word holds. */
+@media (hover: hover) {
+  .c-engagement:hover .c-engagement__verb,
+  .c-engagement:focus-within .c-engagement__verb {
+    color: var(--color-primary);
+  }
 }
 
 .c-engagement__description {
-  margin: 0;
+  margin: var(--space-10) 0 0;
   max-width: var(--measure-md);
   font-size: var(--font-size-sm);
   line-height: 1.65;
   color: var(--color-text-secondary);
 }
 
-.c-engagement__rail {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--space-12);
-  text-align: right;
-}
-
+/* The engagement's shape — a quiet mono note, right-aligned against the verb. */
 .c-engagement__meta {
   font-family: var(--font-family-mono);
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-sm);
   letter-spacing: 0.06em;
   color: var(--color-text-muted);
-}
-
-/* Padding/negative-margin pair grows the hit box to the 24px target-size
-   minimum while leaving the ledger row's height and the CTA's baseline where
-   the hover choreography below expects them. */
-.c-engagement__cta {
-  padding-block: var(--space-4);
-  margin-block: calc(var(--space-4) * -1);
-  font-family: var(--font-family-mono);
-  font-size: var(--font-size-sm);
-  color: var(--color-primary);
-  text-decoration: none;
+  text-align: right;
   white-space: nowrap;
-  transition:
-    color var(--animation-speed) ease,
-    transform var(--neu-release-duration) var(--ease-standard);
-}
-
-/* Press: travel only. No inset well — the row already runs a choreographed
-   hover (line draw → arrival ping → CTA warmth) and a recess drawn around the
-   link would land mid-sequence and read as a second, competing surface.
-   transition-delay MUST be reset: the row's hover rule below sets a 0.4s delay
-   on this element so the CTA lights up after the line arrives, and without
-   this reset that delay also applies to the press, lagging it by 400ms. */
-.c-engagement__cta:active {
-  transform: var(--neu-press-transform);
-  transition-duration: var(--neu-press-duration);
-  transition-delay: 0s;
-}
-
-.c-engagement__cta::after {
-  content: ' \203A';
-  font-size: 1.1em;
-}
-
-/* Hover/focus (pointer devices only): the row sinks deeper into the ground and
-   gains the ember shine, and its CTA warms. :focus-within mirrors it for
-   keyboard users tabbing to the CTA. (The old blue line-draw + arrival ping
-   were removed — they clashed with the ember hover.) */
-@media (hover: hover) {
-  /* z-index: a permanent stacking context so the hover transform never promotes
-     and then discretely demotes the row's paint layer. Deliberately constant —
-     raising it on hover would reintroduce the same snap (full note in
-     components/about.css). */
-  .c-engagement {
-    z-index: 0;
-    transition:
-      background-color var(--animation-speed) ease,
-      transform 0.5s var(--ease-elastic),
-      box-shadow 0.35s var(--ease-standard);
-  }
-
-  .c-engagement:hover,
-  .c-engagement:focus-within {
-    background-color: var(--color-overlay-weak);
-    /* Sinks deeper into the ground + the recessed ember halo (see
-       --ember-shine-recessed: it renders like the raised cards' shine, which
-       the plain --ember-shine can't do on a surface with no outer shadow). */
-    box-shadow: var(--neu-shadow-pressed), var(--ember-shine-recessed);
-    transform: translateY(2px);
-  }
-
-  .c-engagement:hover .c-engagement__cta,
-  .c-engagement:focus-within .c-engagement__cta {
-    color: var(--color-primary-hover);
-    text-decoration: underline;
-  }
-}
-
-.c-engagement__cta:hover {
-  text-decoration: underline;
 }
 
 @media (max-width: 48rem) {
   .c-engagement {
     grid-template-columns: 1fr;
-    gap: var(--space-12);
+    gap: var(--space-8);
+    align-items: start;
   }
 
-  /* Rail folds under the description as a single meta/CTA line — but only
-     while both fit. The CTA keeps `white-space: nowrap` (breaking "Book a
-     discovery call ›" mid-phrase orphans the chevron), so below roughly
-     373px the pair can't share a line: meta + gap + CTA exceeds the card's
-     inner width and, before `min-width: 0` above, dragged the whole card
-     past the container's right gutter. Wrapping drops the CTA to its own
-     line instead, which costs one line of height and nothing else. */
-  .c-engagement__rail {
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
+  /* No right rail on narrow screens — the shape drops under the row, left. */
+  .c-engagement__meta {
     text-align: left;
-  }
-
-  /* Comfortable touch target for the row's only link (WCAG 2.5.8). */
-  .c-engagement__cta {
-    padding-block: var(--space-8);
-  }
-}
-
-/* Reduced motion: the depth + ember shine stay (a state, not motion); only the
-   travel drops. */
-@media (prefers-reduced-motion: reduce) {
-  .c-engagement:hover,
-  .c-engagement:focus-within {
-    transform: none;
   }
 }
 

@@ -2,6 +2,7 @@
 import { siteContent } from '../content.js';
 import Icon from './Icon.astro';
 import LogoMark from './LogoMark.astro';
+import ToolLogo from './ToolLogo.astro';
 import SiteFooter from './SiteFooter.astro';
 
 const profile = siteContent.profile;
@@ -69,6 +70,19 @@ const thesisSegments = siteContent.skills.feature.thesis.map((segment) => ({
       ? 'c-capability__thesis-accent--ember'
       : undefined,
 }));
+
+// Services are shown verb-led: the CTA label ("Scope a project") is the row's
+// headline, and its last word — the engagement model (project / retainer /
+// fractional) — takes the ember ink. Built as an HTML string and rendered with
+// set:html (as the about bio + gantt do) so the inline <b> keeps exact spacing,
+// sidestepping the Astro 7 whitespace trap that padding the emphasis in markup
+// would hit. Labels are static site copy, so there is no untrusted input here.
+const engagementRows = siteContent.services.engagements.map((engagement) => {
+  const label = engagement.ctaLabel ?? siteContent.services.ctaLabel;
+  const words = label.trim().split(/\s+/);
+  const verbWord = words.pop();
+  return { ...engagement, verbHtml: `${words.join(' ')} <b>${verbWord}</b>` };
+});
 const archiveUi = siteContent.archiveUi;
 // Aliased short so the chip's markup fits on one line at its indent depth.
 // Wrapped across lines, Astro 7 keeps the newlines as whitespace INSIDE the
@@ -765,39 +779,27 @@ siteContent.testimonials.forEach((testimonial, index) => {
           }
         </ul>
 
-        <details
-          class="c-capability c-capability--tools c-capability--collapsible"
-        >
-          <summary class="c-capability__summary">
-            <span class="c-capability__topline">
-              <span class="c-capability__dot" aria-hidden="true"></span>
-              {
-                /* No numeric index here, deliberately: the stack is a
-                   materials list, not a fourth discipline. Numbering it put it
-                   on a par with 01-03 and is what made the old bento split the
-                   three disciplines 2/1. Slug only. */
-              }
-              <span class="c-capability__index">
-                <span class="c-capability__slug">
-                  {siteContent.skills.tools.slug}
-                </span>
-              </span>
-            </span>
-            <span class="c-capability__name">
-              {siteContent.skills.tools.name}
-            </span>
-            <span class="c-capability__chev" aria-hidden="true"></span>
-          </summary>
-          <div class="c-capability__panel">
-            <ul class="c-capability__chips">
-              {
-                siteContent.skills.tools.items.map((item) => (
-                  <li class="c-capability__chip">{item}</li>
-                ))
-              }
-            </ul>
-          </div>
-        </details>
+        {
+          /* The stack is a materials list, not a fourth discipline — no
+             numeric index (numbering it once split the three disciplines 2/1),
+             just the mono slug + name over a strip of tool logos. Each glyph is
+             inlined by ToolLogo so it inherits currentColor; the tool names
+             stay the accessible labels (glyphs are decorative). */
+        }
+        <div class="c-capability c-capability--tools">
+          <span class="c-capability__tag">{siteContent.skills.tools.slug}</span>
+          <h3 class="c-capability__name">{siteContent.skills.tools.name}</h3>
+          <ul class="c-stack">
+            {
+              siteContent.skills.tools.items.map((item) => (
+                <li class="c-stack__item">
+                  <ToolLogo name={item} />
+                  <span class="c-stack__name">{item}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
       </div>
     </div>
   </section>
@@ -820,26 +822,20 @@ siteContent.testimonials.forEach((testimonial, index) => {
         <p class="c-engagements__lede">{siteContent.services.lede}</p>
         <ul class="c-engagements__list">
           {
-            siteContent.services.engagements.map((engagement, i) => (
+            engagementRows.map((engagement) => (
               <li class="c-engagement">
-                <div class="c-engagement__main">
-                  <span class="c-engagement__index">
-                    <b>{String(i + 1).padStart(2, '0')}</b> · {engagement.slug}
-                  </span>
+                <div class="c-engagement__body">
                   <h3 class="c-engagement__name">{engagement.name}</h3>
+                  <a
+                    class="c-engagement__verb"
+                    href={siteContent.services.ctaHref}
+                    set:html={engagement.verbHtml}
+                  />
                   <p class="c-engagement__description">
                     {engagement.description}
                   </p>
                 </div>
-                <div class="c-engagement__rail">
-                  <span class="c-engagement__meta">{engagement.meta}</span>
-                  <a
-                    class="c-engagement__cta"
-                    href={siteContent.services.ctaHref}
-                  >
-                    {engagement.ctaLabel ?? siteContent.services.ctaLabel}
-                  </a>
-                </div>
+                <span class="c-engagement__meta">{engagement.meta}</span>
               </li>
             ))
           }

@@ -649,7 +649,6 @@ export const siteContent = {
         'Salesforce',
         'Google Analytics',
         'Marketo',
-        'Pardot',
         'Mailchimp',
         'Hootsuite',
         'Figma',
