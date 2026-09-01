@@ -253,6 +253,105 @@ const toggleLabel = navUi.toggleLabelOpen.replace('{section}', currentLabel);
       if (getStored()) return;
       swapScheme(() => apply(event.matches ? 'dark' : 'light'));
     });
+
+    /* Back/forward restores from the bfcache do NOT re-run the pre-paint
+       script in BaseLayout — the page comes back painted in whatever scheme it
+       carried when you left it, while the stored preference may have moved on.
+       Toggle the theme on one page, go back, and the restored page is stale
+       (verified: restored with data-color-scheme="light" while storage said
+       "dark"). Re-read the preference on restore. No cross-fade: the page is
+       arriving, not changing, and animating it would look like a glitch. */
+    window.addEventListener('pageshow', (event) => {
+      if (!event.persisted) return;
+      const stored = getStored();
+      const scheme =
+        stored === 'light' || stored === 'dark'
+          ? stored
+          : media.matches
+            ? 'dark'
+            : 'light';
+      if (scheme !== root.dataset.colorScheme) apply(scheme);
+    });
+  })();
+</script>
+
+<script is:inline>
+  /* In-page links scroll without leaving a #fragment in the address bar.
+     Runs on every page (main.js is home-only).
+
+     The links stay real <a href="#section"> anchors on purpose: with no JS they
+     still work, they keep their meaning for assistive tech, and open-in-new-tab
+     still resolves to a shareable deep link. This only takes over a plain
+     left-click on a link pointing at the CURRENT page, so the blog's nav (which
+     points at /#about) still navigates for real, and a pasted /#contact deep
+     link still lands — see initializeHashLanding in main.js.
+
+     Focus is moved by hand because a real fragment navigation also moves the
+     browser's sequential-focus starting point. Skipping that would leave
+     keyboard and screen-reader users at the top of the document while the page
+     scrolled away beneath them — the skip link above all. */
+  (() => {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    const focusTarget = (element) => {
+      const hadTabindex = element.hasAttribute('tabindex');
+      if (!hadTabindex) element.setAttribute('tabindex', '-1');
+      /* preventScroll: the scroll is already in flight above; letting focus
+         scroll too would jump past the smooth animation. */
+      element.focus({ preventScroll: true });
+      if (!hadTabindex) {
+        element.addEventListener(
+          'blur',
+          () => element.removeAttribute('tabindex'),
+          { once: true },
+        );
+      }
+    };
+
+    document.addEventListener('click', (event) => {
+      /* Leave modified clicks alone — they mean "open in a new tab/window". */
+      if (event.defaultPrevented || event.button !== 0) return;
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
+        return;
+
+      const link = event.target.closest?.('a[href]');
+      if (!link || link.target === '_blank' || link.hasAttribute('download'))
+        return;
+
+      let url;
+      try {
+        url = new URL(link.href, location.href);
+      } catch {
+        return;
+      }
+      /* Same document only; anything else is a real navigation. */
+      if (
+        url.origin !== location.origin ||
+        url.pathname !== location.pathname ||
+        url.search !== location.search
+      ) {
+        return;
+      }
+
+      const id = decodeURIComponent(url.hash.slice(1));
+      if (!id) return;
+      const target = document.getElementById(id);
+      if (!target) return;
+
+      event.preventDefault();
+      /* 'instant', not 'auto' — 'auto' resolves to the computed
+         scroll-behavior, which is smooth. scroll-margin-top on the sections
+         keeps the landing clear of the nav island. */
+      target.scrollIntoView({
+        block: 'start',
+        behavior: reducedMotion.matches ? 'instant' : 'smooth',
+      });
+      focusTarget(target);
+      /* Shed a fragment the page arrived with, so the bar ends up clean too. */
+      if (location.hash) {
+        history.replaceState(null, '', location.pathname + location.search);
+      }
+    });
   })();
 </script>
 

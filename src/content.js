@@ -69,7 +69,7 @@ export const siteContent = {
       {
         label: 'Schedule a discovery call',
         href: '#schedule',
-        variant: 'outline',
+        variant: 'ember',
       },
     ],
     bookingCta: {

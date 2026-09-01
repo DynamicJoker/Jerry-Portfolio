@@ -7,6 +7,8 @@
    Calendly panel) — recessed like the rest of the contact content. The
    button inside stays extruded and carries the raised→inset press toggle. */
 .c-booking-cta {
+  position: relative;
+  z-index: 0;
   width: 100%;
   margin-bottom: var(--space-32);
   scroll-margin-top: calc(var(--navbar-height) + var(--space-24));
@@ -14,14 +16,41 @@
   border-radius: var(--radius-xl);
   box-shadow: var(--neu-shadow-inset);
   overflow: hidden;
+  transition:
+    box-shadow 0.35s var(--ease-standard),
+    transform 0.5s var(--ease-elastic);
 }
 
+/* The whole bar is the hit area, not just the button in it — main.js forwards a
+   click anywhere on it to the trigger. The button stays the real control (it
+   keeps focus and the accessible name), so this only widens the target. */
 .c-booking-cta__bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-20);
   padding: var(--space-20) var(--space-24);
+  cursor: pointer;
+}
+
+/* Inset hover: the well sinks a step and picks up the recessed ember halo — the
+   same treatment the Services engagement cards use, so the site's one
+   "recessed thing you can click" language covers this too.
+   Scoped through :has() to the BAR being hovered, deliberately: the expanded
+   Calendly panel lives inside this same inset, and hovering the scheduler
+   shouldn't light the container up. Browsers without :has() drop the rule and
+   simply get no hover — the bar is still clickable. */
+@media (hover: hover) {
+  .c-booking-cta:has(.c-booking-cta__bar:hover) {
+    box-shadow: var(--neu-shadow-pressed), var(--ember-shine-recessed);
+    transform: translateY(2px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c-booking-cta:has(.c-booking-cta__bar:hover) {
+    transform: none;
+  }
 }
 
 .c-booking-cta__message {

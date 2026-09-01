@@ -142,7 +142,75 @@ document.addEventListener('DOMContentLoaded', () => {
   initializePointerSpotlight();
   updateYearsExperience();
   updateFooterYear();
+  // Last: the passes above (docked-header measuring in particular) are what
+  // settle the page's final height, so re-anchor after them.
+  initializeHashLanding();
 });
+
+// Re-anchor a #hash load once the layout has actually settled.
+//
+// The browser's own jump happens against the critical-CSS layout, which is more
+// than twice the finished height on this page — and the docked section headers
+// pin an inline min-height measured on load and on font settle, so the geometry
+// keeps moving for a while after that. Both leave a hash load parked on the
+// wrong section. The head's inline script has already made the initial jump
+// instant (a smooth one would keep animating over these corrections); this
+// re-runs the anchor at each point where the layout can still change.
+//
+// Any real scroll input cancels the remaining passes — after that the reader is
+// driving, and yanking them back to the anchor would be worse than landing
+// slightly off.
+function initializeHashLanding() {
+  const id = location.hash ? decodeURIComponent(location.hash.slice(1)) : '';
+  const target = id ? document.getElementById(id) : null;
+  if (!target) return;
+
+  let released = false;
+  let observer = null;
+  const release = () => {
+    released = true;
+    observer?.disconnect();
+  };
+  ['wheel', 'touchstart', 'pointerdown', 'keydown'].forEach((type) =>
+    window.addEventListener(type, release, { once: true, passive: true }),
+  );
+
+  // 'instant', NOT 'auto'. `auto` does not mean "jump" — it means "use the
+  // element's computed scroll-behavior", and html carries
+  // scroll-behavior: smooth, so `auto` here launches a ~600ms ANIMATION that
+  // the next correction (or the layout still settling) interrupts, stranding
+  // the page partway down — the exact bug this function exists to fix.
+  // scroll-margin-top on the sections keeps the landing clear of the nav island.
+  const settle = () => {
+    if (released) return;
+    target.scrollIntoView({ block: 'start', behavior: 'instant' });
+  };
+
+  // Re-anchor whenever the page's height actually changes, rather than at a few
+  // guessed moments. Measured on this page, the height goes 34789 → 8389 →
+  // 10020 across the first ~200ms: the deferred stylesheet lands, then the
+  // docked section headers pin their measured height as an inline min-height
+  // (eight of them, ~1600px in total). Every one of those moves the target, and
+  // a fixed set of passes always ended a beat before the last change — landing
+  // ~1600px short, on Experience instead of Contact.
+  let lastHeight = 0;
+  if (typeof ResizeObserver === 'function') {
+    observer = new ResizeObserver(() => {
+      const height = document.documentElement.scrollHeight;
+      if (height === lastHeight) return;
+      lastHeight = height;
+      settle();
+    });
+    observer.observe(document.body);
+  }
+  // Bounded: stop chasing once the page has had time to settle, so nothing can
+  // re-anchor minutes later if something resizes.
+  window.setTimeout(release, 4000);
+
+  settle();
+  document.fonts?.ready?.then(settle).catch(() => {});
+  window.addEventListener('load', settle, { once: true });
+}
 
 // Dark-mode pointer spotlight (home only). Light mode keeps a regular pointer,
 // so the element is always created but the CSS only paints it under
@@ -1491,6 +1559,20 @@ function initializeCalendlyBookingPanel() {
       openPanel();
     }
   });
+
+  // The whole bar is the hit area: a click anywhere on it acts on the trigger.
+  // The trigger itself stays the real control — it keeps focus, the accessible
+  // name and the keyboard handling above — so this only widens the target and
+  // costs nothing when JS is absent. Clicks that land on the trigger (or any
+  // other interactive element in the bar) are left alone so they aren't
+  // handled twice.
+  const bar = booking.querySelector('.c-booking-cta__bar');
+  if (bar) {
+    bar.addEventListener('click', (event) => {
+      if (event.target.closest('a, button')) return;
+      trigger.click();
+    });
+  }
 
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && isOpen) {

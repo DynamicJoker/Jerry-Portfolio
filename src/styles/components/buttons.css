@@ -81,10 +81,13 @@
   cursor: not-allowed;
 }
 
+/* 0,2,0, so it outranks the .c-btn--ember variant the markup carries and has to
+   name the ember fill itself. Left explicit rather than dropped: the close-state
+   rules below key off this same compound. */
 .c-btn.c-booking-cta__button {
   flex-shrink: 0;
   isolation: isolate;
-  background: var(--color-accent);
+  background: var(--color-ember-ink);
   color: var(--color-btn-primary-text);
   box-shadow: none;
   transition:
@@ -95,8 +98,12 @@
     transform var(--neu-release-duration) var(--ease-standard);
 }
 
+/* Ember hover, matching the .c-btn--ember variant this button now uses. The
+   selector is 0,4,0, so it outranks .c-btn--ember:hover and has to name the
+   ember hover itself rather than inherit it. Only while OPEN does the button
+   hand over to the neutral close-state rules below. */
 .c-btn.c-booking-cta__button:not(.is-close-state):hover {
-  background: var(--color-accent-hover);
+  background: var(--color-ember-ink-hover);
 }
 
 /* Panel open: the button recesses (raised→inset) to read as "active". The
@@ -207,6 +214,29 @@
    No `animation: none` needed — there is no hover animation left to outrank it. */
 .c-btn--primary:active {
   background: var(--color-ember-ink);
+  box-shadow: var(--neu-shadow-inset-fill);
+  transform: var(--neu-press-transform);
+  transition-duration: var(--neu-press-duration);
+}
+
+/* Ember fill — the booking CTAs (hero "Schedule a discovery call" and the
+   contact bar's button), where ember's now/impact semantic is the point.
+   Ember INK, so the label clears contrast on it in both themes (white 5.18:1
+   light / near-black 8.26:1 dark) and the fill tracks the theme rather than
+   staying vivid. No ember press flash like --primary has: this already IS
+   ember, so the press is carried by depth alone.
+   DUPLICATED in critical-home.css (the hero CTA is above the fold). */
+.c-btn--ember {
+  background: var(--color-ember-ink);
+  color: var(--color-btn-primary-text);
+}
+
+.c-btn--ember:hover {
+  background: var(--color-ember-ink-hover);
+  color: var(--color-btn-primary-text);
+}
+
+.c-btn--ember:active {
   box-shadow: var(--neu-shadow-inset-fill);
   transform: var(--neu-press-transform);
   transition-duration: var(--neu-press-duration);

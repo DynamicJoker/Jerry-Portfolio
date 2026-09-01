@@ -120,7 +120,23 @@ const loadStylesheet=()=>{
   // The deferred sheet finalises below-the-fold layout (e.g. the work filmstrip),
   // so any geometry measured before it lands (docked section headers, scroll-spy)
   // is stale. A resize once it applies re-runs those recalcs.
-  link.addEventListener('load',()=>{window.dispatchEvent(new Event('resize'));},{once:true});
+  // The browser's own jump to a #hash is stale for the same reason, and worse:
+  // under critical CSS alone the page is more than twice its finished height
+  // (#contact sits at ~20900 vs ~9400), so the jump targets a position that
+  // stops existing a moment later — and because html has scroll-behavior:smooth
+  // that jump is an ANIMATION, which gets stranded partway when this sheet
+  // swaps the layout underneath it. Landing short, on an earlier section, is the
+  // symptom. Re-anchor once against the real geometry, instantly so it can't be
+  // stranded the same way; scrollIntoView honours the sections' scroll-margin-top.
+  // 'instant', NOT 'auto' — 'auto' means "use the computed scroll-behavior",
+  // which is smooth here, so it would animate and be interrupted in turn.
+  link.addEventListener('load',()=>{
+    window.dispatchEvent(new Event('resize'));
+    if(!location.hash) return;
+    let target=null;
+    try{target=document.getElementById(decodeURIComponent(location.hash.slice(1)));}catch{}
+    if(target) target.scrollIntoView({block:'start',behavior:'instant'});
+  },{once:true});
   document.head.append(link);
 };
 if('requestAnimationFrame' in window){
@@ -158,6 +174,34 @@ const noScriptStylesheetHtml = isHome
               ? 'dark'
               : 'light';
         document.documentElement.dataset.colorScheme = scheme;
+      })();
+    </script>
+    <!-- Land a #hash correctly. This must run BEFORE the browser performs its
+         own jump to the fragment, which is why it is here and not in main.js.
+         Two things go wrong otherwise on the homepage, which defers most of its
+         CSS: the jump is computed against the critical-CSS layout (more than
+         twice the finished height), and because html carries
+         scroll-behavior: smooth it is a long ANIMATION that keeps running after
+         the stylesheet lands — overriding any correction made in the meantime
+         and stranding the page on an earlier section. Making the initial jump
+         instant removes the animation that was doing the overriding; the
+         stylesheet's load handler and main.js then re-anchor against the real
+         geometry. Smooth is restored afterwards so in-page nav links keep it. -->
+    <script is:inline>
+      (() => {
+        if (!location.hash) return;
+        document.documentElement.style.scrollBehavior = 'auto';
+        // Stops the browser restoring a stale offset on reload, which would
+        // otherwise land on top of the corrected position.
+        if ('scrollRestoration' in history)
+          history.scrollRestoration = 'manual';
+        const restore = () =>
+          document.documentElement.style.removeProperty('scroll-behavior');
+        // After load, give main.js's settling passes a beat to finish first.
+        window.addEventListener('load', () => setTimeout(restore, 1200), {
+          once: true,
+        });
+        setTimeout(restore, 6000);
       })();
     </script>
     <!-- Performance tier: some visual effects (the soft-UI blur shadows,
