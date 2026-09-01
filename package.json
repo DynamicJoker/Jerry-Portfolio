@@ -39,6 +39,7 @@
     "globals": "^17.6.0",
     "lightningcss": "^1.29.0",
     "prettier": "3.8.3",
-    "prettier-plugin-astro": "0.14.1"
+    "prettier-plugin-astro": "0.14.1",
+    "simple-icons": "^16.29.0"
   }
 }

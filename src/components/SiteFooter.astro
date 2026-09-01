@@ -14,9 +14,14 @@ const { backHref = '#hero' } = Astro.props;
         </p>
       </div>
       <div class="c-footer__links">
+        {
+          /* No RSS link here on purpose: browsers no longer render a feed, so
+             clicking it just dumps raw XML at a visitor. The feed still exists
+             and is still discoverable the way feed readers actually look for
+             it — the <link rel="alternate" type="application/rss+xml"> in
+             BaseLayout's head. */
+        }
         <a href="/blog/" class="c-footer__link">{siteContent.ui.footer.blog}</a>
-        <a href="/rss.xml" class="c-footer__link">{siteContent.ui.footer.rss}</a
-        >
         <a
           href={siteContent.contactInfo.linkedin.url}
           class="c-footer__link"

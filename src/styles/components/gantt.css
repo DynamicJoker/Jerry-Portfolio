@@ -86,56 +86,61 @@
     var(--anim-delay, 0ms) forwards;
 }
 
-/* CURRENT roles are the ember statement (past roles stay signal blue), with a
-   pulsing ember "now" dot at the leading (right) edge — echoes the About
-   ledger's live node. overflow:visible lets the dot + pulse ring show past the
-   bar's rounded end; the page clips horizontally (overflow-x: clip), so the
-   ring can't open a scrollbar. */
+/* CURRENT roles are the ember statement; past roles stay signal blue.
+
+   Ember INK, not the fill ember: this is a large filled shape read against the
+   page, and --color-ember is tuned for small marks. It holds up on the dark
+   ground (4.81:1) but collapses to 2.23:1 on the light one, so in light mode the
+   bars washed out while the blue ones stayed solid — the two themes stopped
+   agreeing. Ember ink is the same choice --chart-series-2 already makes for the
+   blog charts, and it tracks --color-primary almost exactly across both themes
+   (7.34/7.82 dark, 4.47/4.75 light), which is what makes the pair read as one
+   palette. */
 .c-gantt__bar.is-present {
-  background: var(--color-ember);
-  overflow: visible;
+  background: var(--color-ember-ink);
 }
 
-.c-gantt__bar.is-present::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 50%;
+/* Pulsing "now" marker — echoes the About ledger's live node. It sits with the
+   role title in the label, NOT hanging off the bar's leading edge: out there it
+   read as a stray nub on the end of the bar, unattached to anything, and on a
+   timeline a dot at the bar's right edge implies a data point at that date
+   rather than "this role is current". Beside the title it is unambiguous, and
+   it survives the mobile layout (where the label goes full-width and
+   left-aligned) without needing its own placement rules. */
+.c-gantt__now {
+  position: relative;
+  display: inline-block;
   width: 0.5rem;
   height: 0.5rem;
-  transform: translate(50%, -50%);
+  margin-right: var(--space-8);
+  vertical-align: middle;
   border-radius: 50%;
-  background: var(--color-ember);
-  box-shadow: 0 0 8px rgba(var(--color-ember-rgb), 0.6);
+  background: var(--color-ember-ink);
 }
 
-.c-gantt__bar.is-present::before {
+.c-gantt__now::after {
   content: '';
   position: absolute;
-  right: 0;
-  top: 50%;
-  width: 0.5rem;
-  height: 0.5rem;
-  transform: translate(50%, -50%);
+  inset: 0;
   border-radius: 50%;
-  border: 1px solid rgba(var(--color-ember-rgb), 0.55);
+  border: 1px solid var(--color-ember-ink);
   animation: ganttNowPulse 2.6s ease-out infinite;
 }
 
 @keyframes ganttNowPulse {
   from {
     opacity: 0.55;
-    transform: translate(50%, -50%) scale(1);
+    transform: scale(1);
   }
 
   to {
     opacity: 0;
-    transform: translate(50%, -50%) scale(2.6);
+    transform: scale(2.6);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .c-gantt__bar.is-present::before {
+  .c-gantt__now::after {
     animation: none;
     opacity: 0;
   }

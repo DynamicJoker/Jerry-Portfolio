@@ -1,0 +1,73 @@
+---
+// Tool-stack glyphs for the Skills "The Stack" strip. Inlined (not <img src>)
+// so each mark inherits the page's currentColor — an externally referenced SVG
+// is an isolated document and would resolve currentColor to black, invisible on
+// the dark ground (same reason LogoMark.astro inlines its client marks). At
+// rest the glyph is monochrome (currentColor, muted by .c-stack__item); on hover
+// skills.css reveals the brand hue via the per-glyph --tool-hex custom property.
+//
+// Seven marks come from the Simple Icons set (a build-time import — this runs at
+// build, so the package never ships to the client). Salesforce isn't in Simple
+// Icons (pulled after a trademark request), so it uses the cloud from its
+// Wikimedia SVG: that file is the blue cloud with a white "salesforce" wordmark
+// cut into it, and the FIRST path is the whole cloud — rendered mono it reads as
+// the recognisable cloud mark, so the wordmark paths are dropped. Marketo isn't
+// in Simple Icons either and its Wikimedia file is a full wordmark, so it's a
+// drawn flame matching its brand mark — swap an official glyph in here if wanted.
+import {
+  siHubspot,
+  siGoogleanalytics,
+  siMailchimp,
+  siHootsuite,
+  siFigma,
+  siWordpress,
+  siWebflow,
+} from 'simple-icons';
+
+const { name } = Astro.props;
+
+// Simple Icons expose a 24x24 `path` + brand `hex` per icon.
+const simple = {
+  HubSpot: siHubspot,
+  'Google Analytics': siGoogleanalytics,
+  Mailchimp: siMailchimp,
+  Hootsuite: siHootsuite,
+  Figma: siFigma,
+  WordPress: siWordpress,
+  Webflow: siWebflow,
+};
+
+// Custom marks not in Simple Icons: { hex, viewBox, body }. Fills are omitted so
+// the paths inherit fill from CSS (currentColor at rest, --tool-hex on hover).
+const custom = {
+  Salesforce: {
+    hex: '00A1E0',
+    viewBox: '0 0 273 191',
+    body: '<path fill-rule="evenodd" d="m113 21.3c8.78-9.14 21-14.8 34.5-14.8 18 0 33.6 10 42 24.9a58 58 0 0 1 23.7-5.05c32.4 0 58.7 26.5 58.7 59.2s-26.3 59.2-58.7 59.2c-3.96 0-7.82-0.398-11.6-1.15-7.35 13.1-21.4 22-37.4 22a42.7 42.7 0 0 1-18.8-4.32c-7.45 17.5-24.8 29.8-45 29.8-21.1 0-39-13.3-45.9-32a45.1 45.1 0 0 1-9.34 0.972c-25.1 0-45.4-20.6-45.4-45.9 0-17 9.14-31.8 22.7-39.8a52.6 52.6 0 0 1-4.35-21c0-29.2 23.7-52.8 52.9-52.8 17.1 0 32.4 8.15 42 20.8"/>',
+  },
+  Marketo: {
+    hex: '5C4C9F',
+    viewBox: '0 0 24 24',
+    body: '<path d="M12 2c4 4.5 6 7.5 6 11a6 6 0 0 1-12 0c0-2.2 1-4 2.5-5.4-.3 1.6.4 2.9 1.6 3.4C9 8.5 9.8 5 12 2z"/>',
+  },
+};
+
+let viewBox = '0 0 24 24';
+let body = '';
+let hex = '';
+if (simple[name]) {
+  hex = simple[name].hex;
+  body = `<path d="${simple[name].path}"/>`;
+} else if (custom[name]) {
+  ({ viewBox, body, hex } = custom[name]);
+}
+---
+
+<svg
+  class="c-stack__glyph"
+  viewBox={viewBox}
+  aria-hidden="true"
+  focusable="false"
+  style={`--tool-hex:#${hex}`}
+  set:html={body}
+/>

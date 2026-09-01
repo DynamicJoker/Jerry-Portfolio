@@ -9,7 +9,11 @@
 .c-pointer-glow {
   position: fixed;
   inset: 0;
-  z-index: 0;
+  /* Above every page surface — see the token's note in settings.css. At z-index
+     0 this sat below any positioned component (the archive filter bar, section
+     headers, the gantt), so each of their opaque backgrounds cut a hard
+     rectangle out of the gradient wherever the pointer came near. */
+  z-index: var(--z-pointer-glow);
   pointer-events: none;
   opacity: 0;
   background: radial-gradient(
@@ -17,9 +21,22 @@
     rgba(var(--color-primary-rgb), 0.12),
     transparent 60%
   );
-  mix-blend-mode: screen;
   transition: opacity 0.4s var(--ease-standard);
 }
+
+/* NO mix-blend-mode here — do not add one back.
+   This is a fixed, full-viewport layer, so `mix-blend-mode: screen` made the
+   ENTIRE page its blend backdrop: nothing underneath could be composited on its
+   own any more, and every change beneath it forced the compositor to
+   re-rasterize the backdrop in tiles. That showed up as animations repainting
+   in horizontal bands — the archive's arrival flash drained line-by-line inside
+   each row — and only in dark mode, because that is the only place this layer
+   is visible. It also quietly taxed every other animation on the page.
+   It bought nothing: over this dark ground (#1a1d29) screen and ordinary alpha
+   compositing land within 2/255 per channel. Bright content (the hero portrait)
+   is the only place they diverge, and a soft 0.12 wash is imperceptible there
+   too. If a lighten-only effect is ever genuinely needed, scope the blending to
+   a small element rather than a viewport-sized one. */
 
 [data-color-scheme='dark'] .c-pointer-glow {
   opacity: 1;

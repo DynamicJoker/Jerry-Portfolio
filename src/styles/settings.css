@@ -23,21 +23,30 @@
   --color-accent-hover: #255a7d;
   --color-accent-rgb: 47, 110, 150;
   /* Ember — the statement accent. Semantics: NOW / CURRENT / IMPACT (full lane
-     in docs/brand.md). Two colours because ember-as-fill and ember-as-text
-     have different contrast needs:
-       --color-ember      pure marks/fills carrying NO text — the timeline
-                          "now" bar, the ledger now-node, the distiller output,
-                          the hover shine. Vivid; fails as text (~2.2:1).
-       --color-ember-ink  deeper (light) / brighter (dark) ember that stays
-                          legible AS text or under an on-fill label — the hero
-                          impact word and chart series 2 (4.47:1 light / 7.34:1
-                          dark, both clearing the large-text bar).
-     --color-ember-rgb backs the hover-shine alphas. All three mirror into
+     in docs/brand.md).
+       --color-ember-ink  THE ember to reach for. Deeper (light) / brighter
+                          (dark), and the only one that survives both themes:
+                          4.47:1 light / 7.34:1 dark. Text (the hero impact
+                          word), on-fill labels (button press states), chart
+                          series 2, AND every mark — the timeline "now" bars,
+                          the ledger now-node, the section kicker tick, the
+                          distiller output.
+       --color-ember      the raw vivid brand hue. Only ~2.23:1 on the light
+                          ground, so it fails the 3:1 WCAG bar for meaningful
+                          non-text graphics, not just the text bar. It used to
+                          carry the marks listed above; in light mode they washed
+                          out while reading loud in dark, so the same mark looked
+                          like two different colours per theme (fixed 2026-09-02).
+                          Currently unused — do not reach for it without checking
+                          the contrast of what it lands on.
+     --color-ember-rgb backs the hover-shine alphas and soft glow halos, where
+     translucency is the point and contrast is not. All three mirror into
      critical-home.css (the hero impact word is above the fold) and live in both
      dark blocks (check:theme). Distinct from --tint-editorial (clay), which is
      the writing/editorial wash and is never a statement or data colour. */
   --color-ember: #f5822b;
   --color-ember-ink: #c2410c;
+  --color-ember-ink-hover: #9a340a;
   --color-ember-rgb: 245, 130, 43;
   --color-secondary: rgba(26, 26, 46, 0.06);
   --color-border-strong: rgba(26, 26, 46, 0.45);
@@ -266,6 +275,17 @@
     0 0 10px 1px rgba(var(--color-ember-rgb), 0.4),
     0 0 22px rgba(var(--color-ember-rgb), 0.18);
 
+  /* Contained twin, for a surface that OTHER UI overlaps — a scrollport under a
+     sticky bar, say. Both variants above paint up to ~23px outside the box, and
+     an overlapped element's box carries on behind whatever covers it, so that
+     halo escapes past the covering element and draws a stray ember edge beside
+     and above it. Same light, thrown inward instead: contained by definition,
+     and on a window-like element it reads as the glow spilling into the well.
+     Reach for it only when the outer halo can't be seen in full. */
+  --ember-shine-contained:
+    inset 0 0 10px 1px rgba(var(--color-ember-rgb), 0.4),
+    inset 0 0 22px rgba(var(--color-ember-rgb), 0.18);
+
   /* Animation */
   --duration-fast: 150ms;
   --duration-normal: 250ms;
@@ -341,6 +361,14 @@
   /* Page-level stacking order, lowest to highest (local stacking inside a
      component keeps literal 0/1/2). Mirrored in critical-home.css. */
   --z-section-header: 100;
+  /* The dark-mode pointer glow rides ABOVE every page surface, deliberately. At
+     a lower layer it was occluded by any positioned component with z-index >= 1
+     (archive filter bar, section headers, gantt, hero, services), and each of
+     those punched a hard-edged rectangle out of what is meant to be a soft
+     radial gradient. Above them it simply washes over everything uniformly.
+     Below --z-nav so the floating nav island — chrome, not page surface —
+     stays clean. */
+  --z-pointer-glow: 900;
   --z-nav: 1000;
   --z-nav-menu: 1001;
   --z-beta-banner: 1002;
@@ -472,6 +500,7 @@
     --color-accent-rgb: 144, 213, 255;
     --color-ember: #d0701c;
     --color-ember-ink: #f2954f;
+    --color-ember-ink-hover: #f7a869;
     --color-ember-rgb: 208, 112, 28;
     --color-text: rgba(232, 232, 234, 1);
     --color-text-secondary: rgba(154, 154, 165, 1);
@@ -532,6 +561,7 @@
   --color-accent-rgb: 144, 213, 255;
   --color-ember: #d0701c;
   --color-ember-ink: #f2954f;
+  --color-ember-ink-hover: #f7a869;
   --color-ember-rgb: 208, 112, 28;
   --color-text: rgba(232, 232, 234, 1);
   --color-text-secondary: rgba(154, 154, 165, 1);

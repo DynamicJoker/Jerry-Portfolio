@@ -42,15 +42,23 @@
   min-width: 0;
 }
 
-/* Ember mark — the contact section's splash. Ember INK rather than the vivid
-   fill: these are graphical objects, so they want 3:1 against the ground, which
-   the ink clears in both themes (4.47:1 / 7.34:1) and the fill does not. */
+/* Plain ink at rest — white on the dark ground, near-black on the light one —
+   warming to brand blue when its row is hovered. */
 .c-contact__icon {
   font-size: var(--font-size-icon-sm);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-ember-ink);
+  color: var(--color-text-strong);
+  transition: color var(--animation-speed) ease;
+}
+
+/* Pointer devices only: keeps the colour from sticking after taps on touch
+   screens. */
+@media (hover: hover) {
+  .c-contact__item:hover .c-contact__icon {
+    color: var(--color-primary);
+  }
 }
 
 .c-contact__text {

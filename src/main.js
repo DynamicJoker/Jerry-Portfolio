@@ -142,7 +142,75 @@ document.addEventListener('DOMContentLoaded', () => {
   initializePointerSpotlight();
   updateYearsExperience();
   updateFooterYear();
+  // Last: the passes above (docked-header measuring in particular) are what
+  // settle the page's final height, so re-anchor after them.
+  initializeHashLanding();
 });
+
+// Re-anchor a #hash load once the layout has actually settled.
+//
+// The browser's own jump happens against the critical-CSS layout, which is more
+// than twice the finished height on this page — and the docked section headers
+// pin an inline min-height measured on load and on font settle, so the geometry
+// keeps moving for a while after that. Both leave a hash load parked on the
+// wrong section. The head's inline script has already made the initial jump
+// instant (a smooth one would keep animating over these corrections); this
+// re-runs the anchor at each point where the layout can still change.
+//
+// Any real scroll input cancels the remaining passes — after that the reader is
+// driving, and yanking them back to the anchor would be worse than landing
+// slightly off.
+function initializeHashLanding() {
+  const id = location.hash ? decodeURIComponent(location.hash.slice(1)) : '';
+  const target = id ? document.getElementById(id) : null;
+  if (!target) return;
+
+  let released = false;
+  let observer = null;
+  const release = () => {
+    released = true;
+    observer?.disconnect();
+  };
+  ['wheel', 'touchstart', 'pointerdown', 'keydown'].forEach((type) =>
+    window.addEventListener(type, release, { once: true, passive: true }),
+  );
+
+  // 'instant', NOT 'auto'. `auto` does not mean "jump" — it means "use the
+  // element's computed scroll-behavior", and html carries
+  // scroll-behavior: smooth, so `auto` here launches a ~600ms ANIMATION that
+  // the next correction (or the layout still settling) interrupts, stranding
+  // the page partway down — the exact bug this function exists to fix.
+  // scroll-margin-top on the sections keeps the landing clear of the nav island.
+  const settle = () => {
+    if (released) return;
+    target.scrollIntoView({ block: 'start', behavior: 'instant' });
+  };
+
+  // Re-anchor whenever the page's height actually changes, rather than at a few
+  // guessed moments. Measured on this page, the height goes 34789 → 8389 →
+  // 10020 across the first ~200ms: the deferred stylesheet lands, then the
+  // docked section headers pin their measured height as an inline min-height
+  // (eight of them, ~1600px in total). Every one of those moves the target, and
+  // a fixed set of passes always ended a beat before the last change — landing
+  // ~1600px short, on Experience instead of Contact.
+  let lastHeight = 0;
+  if (typeof ResizeObserver === 'function') {
+    observer = new ResizeObserver(() => {
+      const height = document.documentElement.scrollHeight;
+      if (height === lastHeight) return;
+      lastHeight = height;
+      settle();
+    });
+    observer.observe(document.body);
+  }
+  // Bounded: stop chasing once the page has had time to settle, so nothing can
+  // re-anchor minutes later if something resizes.
+  window.setTimeout(release, 4000);
+
+  settle();
+  document.fonts?.ready?.then(settle).catch(() => {});
+  window.addEventListener('load', settle, { once: true });
+}
 
 // Dark-mode pointer spotlight (home only). Light mode keeps a regular pointer,
 // so the element is always created but the CSS only paints it under
@@ -848,9 +916,13 @@ function initializeWorkArchive() {
   const statusEl = root.querySelector('[data-archive-status]');
   const emptyEl = root.querySelector('[data-archive-empty]');
   const moreBtn = root.querySelector('[data-archive-more]');
+  const listEl = root.querySelector('[data-archive-list]');
+  const frameEl = root.querySelector('[data-archive-frame]');
   if (!tabs.length) return;
 
-  const LIMIT = 20; // rows shown per filter before "Show all" reveals the rest
+  const LIMIT = 20; // rows shown for a single selected type before "see more"
+  const SAMPLE_PER_TYPE = 3; // rows shown per type in the "All" view before "see more"
+  // The first tab is "All" (data-type-tab="all"), so both filters default to All.
   let activeType = tabs[0].dataset.typeTab;
   let activeIndustry = 'all';
   let expanded = false;
@@ -858,21 +930,128 @@ function initializeWorkArchive() {
   const matchesIndustry = (row) =>
     activeIndustry === 'all' || row.dataset.industry === activeIndustry;
 
-  const apply = () => {
-    let matched = 0;
-    rows.forEach((row) => {
-      const isMatch =
-        row.dataset.assetType === activeType && matchesIndustry(row);
-      if (isMatch) matched += 1;
-      // Within a matching set, collapse rows past LIMIT until expanded.
-      const show = isMatch && (expanded || matched <= LIMIT);
-      row.toggleAttribute('hidden', !show);
+  const matchesFilters = (row) =>
+    (activeType === 'all' || row.dataset.assetType === activeType) &&
+    matchesIndustry(row);
+
+  // The DOM starts in canonical (sorted) order, and `rows` keeps that order for
+  // good — every sampling decision below iterates it, so which rows the
+  // collapsed view picks never depends on how the DOM is currently arranged.
+  // Expanding re-parks the newly revealed rows below the ones already on screen
+  // (see the more-button handler); this puts the sorted order back whenever the
+  // list collapses or refilters.
+  const canonicalOrder = rows.slice();
+  let reordered = false;
+
+  // The list is only a scroll frame on wide screens — under 48rem the CSS drops
+  // the height cap and it flows in the page (see components/work.css). Reading
+  // the computed overflow keeps this in step with that rule instead of
+  // duplicating the breakpoint here.
+  const isFramed = () => {
+    if (!listEl) return false;
+    const overflow = getComputedStyle(listEl).overflowY;
+    return overflow === 'auto' || overflow === 'scroll';
+  };
+
+  const distanceToBottom = () =>
+    listEl ? listEl.scrollHeight - listEl.scrollTop - listEl.clientHeight : 0;
+
+  // Toggles the frame's bottom fade. Also the answer to "nothing visibly
+  // happened": expanding while parked at the bottom reveals rows off-frame, and
+  // the fade appearing is what says the list now continues past its edge.
+  const updateScrollAffordance = () => {
+    if (!frameEl) return;
+    frameEl.classList.toggle(
+      'has-more-below',
+      isFramed() && distanceToBottom() > 2,
+    );
+  };
+
+  // Scrolls the frame so `row` sits at its top edge (less the list's own top
+  // padding, so the row isn't flush against the lip). Measured from live rects
+  // rather than offsetTop, which would be relative to whichever ancestor
+  // happens to be positioned.
+  const scrollRowToFrameTop = (row) => {
+    if (!listEl || !row) return;
+    const delta =
+      row.getBoundingClientRect().top - listEl.getBoundingClientRect().top;
+    listEl.scrollTo({
+      top: Math.max(0, listEl.scrollTop + delta - 8),
+      behavior: prefersReducedMotion ? 'auto' : 'smooth',
     });
-    // Each tab's count reflects the active industry filter; dim empty tabs.
+  };
+
+  // Arrival flash. Capped at roughly one frame's worth of rows: the frame
+  // scrolls so the first arrival sits at its top, so these are the ones the
+  // reader actually sees land. Marking all ~227 meant that many simultaneous
+  // animations, which is what made the flash judder — and the rows past the
+  // first screenful would have finished long before anyone scrolled to them.
+  const FLASH_ROWS = 12;
+  let arrivalTimer = 0;
+  const clearArrivals = () => {
+    rows.forEach((row) => {
+      if (!row.classList.contains('is-new')) return;
+      row.classList.remove('is-new');
+      row.style.removeProperty('--arrive-i');
+    });
+  };
+
+  const markArrivals = (arrivals) => {
+    clearArrivals();
+    window.clearTimeout(arrivalTimer);
+    if (!arrivals.length) return;
+    arrivals.slice(0, FLASH_ROWS).forEach((row, index) => {
+      row.style.setProperty('--arrive-i', String(index));
+      row.classList.add('is-new');
+    });
+    // Drop the class once the animation is spent so a later expand can re-run it.
+    arrivalTimer = window.setTimeout(clearArrivals, 2600);
+  };
+
+  const restoreOrder = () => {
+    if (!reordered || !listEl) return;
+    const frag = document.createDocumentFragment();
+    canonicalOrder.forEach((row) => frag.appendChild(row));
+    listEl.appendChild(frag);
+    reordered = false;
+  };
+
+  const apply = () => {
+    let matched = 0; // rows matching the active type + industry
+    let collapsedShown = 0; // how many WOULD show in the capped (collapsed) view
+    // In the All view the cap is per type (a few from each); for a single
+    // selected type it is a flat LIMIT. Rows are pre-sorted type → industry →
+    // newest, so "first N" reads as the newest few of each type.
+    const perTypeShown = {};
+    rows.forEach((row) => {
+      const typeMatch =
+        activeType === 'all' || row.dataset.assetType === activeType;
+      const isMatch = typeMatch && matchesIndustry(row);
+      if (!isMatch) {
+        row.toggleAttribute('hidden', true);
+        return;
+      }
+      matched += 1;
+      let inCollapsed;
+      if (activeType === 'all') {
+        const t = row.dataset.assetType;
+        const n = perTypeShown[t] || 0;
+        inCollapsed = n < SAMPLE_PER_TYPE;
+        if (inCollapsed) perTypeShown[t] = n + 1;
+      } else {
+        inCollapsed = matched <= LIMIT;
+      }
+      if (inCollapsed) collapsedShown += 1;
+      row.toggleAttribute('hidden', !(expanded || inCollapsed));
+    });
+    // Each tab's count reflects the active industry filter (the All tab counts
+    // every type); dim empty tabs.
     tabs.forEach((tab) => {
+      const type = tab.dataset.typeTab;
       const count = rows.filter(
         (r) =>
-          r.dataset.assetType === tab.dataset.typeTab && matchesIndustry(r),
+          (type === 'all' || r.dataset.assetType === type) &&
+          matchesIndustry(r),
       ).length;
       const countEl = tab.querySelector('[data-tab-count]');
       if (countEl) countEl.textContent = String(count);
@@ -884,7 +1063,7 @@ function initializeWorkArchive() {
         .replace('{shown}', String(matched))
         .replace('{total}', String(rows.length));
     if (moreBtn) {
-      moreBtn.hidden = matched <= LIMIT;
+      moreBtn.hidden = matched <= collapsedShown;
       moreBtn.textContent = expanded
         ? siteContent.archiveUi.showFewerLabel
         : siteContent.archiveUi.showAllLabel.replace(
@@ -892,6 +1071,7 @@ function initializeWorkArchive() {
             String(matched),
           );
     }
+    updateScrollAffordance();
   };
 
   const select = (items, chosen, attr, value) => {
@@ -903,7 +1083,11 @@ function initializeWorkArchive() {
     if (attr === 'type') activeType = value;
     else activeIndustry = value;
     expanded = false; // collapse back to the capped view on any filter change
+    clearArrivals();
+    restoreOrder();
     apply();
+    // Land at the top of the freshly filtered set inside the scroll frame.
+    if (listEl) listEl.scrollTop = 0;
   };
 
   tabs.forEach((tab) =>
@@ -918,18 +1102,74 @@ function initializeWorkArchive() {
   );
   if (moreBtn) {
     moreBtn.addEventListener('click', () => {
-      expanded = !expanded;
-      apply();
-      // Collapsing from a long list: bring the archive back into view so the
-      // user isn't stranded far down the page.
-      if (!expanded) {
-        root.scrollIntoView({
-          block: 'start',
-          behavior: prefersReducedMotion ? 'auto' : 'smooth',
-        });
+      if (expanded) {
+        // Collapsing keeps the reader where they were rather than snapping to
+        // the top. Captured BEFORE restoreOrder(), which briefly empties the
+        // list and so zeroes scrollTop. Clamping to the collapsed list's new
+        // maximum does both halves of the job: a position that still exists is
+        // kept, and one that only existed while expanded lands on the last row
+        // of the filter instead of scrolling past the end.
+        const previousTop = listEl ? listEl.scrollTop : 0;
+        const framed = isFramed();
+        expanded = false;
+        clearArrivals();
+        restoreOrder();
+        apply();
+        if (listEl && framed) {
+          const maxTop = Math.max(0, listEl.scrollHeight - listEl.clientHeight);
+          listEl.scrollTop = Math.min(previousTop, maxTop);
+          updateScrollAffordance();
+        } else {
+          // Unframed (mobile): the list flows in the page, so collapsing it
+          // shortens the document and would otherwise strand the reader far
+          // below the archive.
+          if (listEl) listEl.scrollTop = 0;
+          root.scrollIntoView({
+            block: 'start',
+            behavior: prefersReducedMotion ? 'auto' : 'smooth',
+          });
+        }
+        return;
       }
+      // Expanding: rows already on screen keep their place and the ones being
+      // revealed are parked below them. Without this they insert themselves
+      // BETWEEN rows the reader has already scrolled past, so the part of the
+      // list behind them reshuffles. The move happens while those rows are
+      // still [hidden] (zero height), so nothing shifts visually.
+      const arrivals = [];
+      if (listEl) {
+        const onScreen = new Set(
+          rows.filter((row) => !row.hasAttribute('hidden')),
+        );
+        const frag = document.createDocumentFragment();
+        canonicalOrder.forEach((row) => {
+          if (!onScreen.has(row) && matchesFilters(row)) {
+            arrivals.push(row);
+            frag.appendChild(row);
+          }
+        });
+        listEl.appendChild(frag);
+        reordered = true;
+      }
+      expanded = true;
+      apply();
+      // Announce the arrivals. Appending alone is invisible from the bottom of
+      // the frame — the new rows land off-frame and only the scrollbar reacts —
+      // so the frame travels to where they start and they light up briefly on
+      // the way in. The tint is held through the animation's delay (`backwards`
+      // in the CSS), so the rows are already marked when the scroll lands and
+      // then fade, rather than flashing at a viewport nobody is looking at.
+      markArrivals(arrivals);
+      if (arrivals.length && isFramed()) scrollRowToFrameTop(arrivals[0]);
     });
   }
+
+  if (listEl) {
+    listEl.addEventListener('scroll', updateScrollAffordance, {
+      passive: true,
+    });
+  }
+  window.addEventListener('resize', updateScrollAffordance, { passive: true });
 
   apply();
 }
@@ -1319,6 +1559,20 @@ function initializeCalendlyBookingPanel() {
       openPanel();
     }
   });
+
+  // The whole bar is the hit area: a click anywhere on it acts on the trigger.
+  // The trigger itself stays the real control — it keeps focus, the accessible
+  // name and the keyboard handling above — so this only widens the target and
+  // costs nothing when JS is absent. Clicks that land on the trigger (or any
+  // other interactive element in the bar) are left alone so they aren't
+  // handled twice.
+  const bar = booking.querySelector('.c-booking-cta__bar');
+  if (bar) {
+    bar.addEventListener('click', (event) => {
+      if (event.target.closest('a, button')) return;
+      trigger.click();
+    });
+  }
 
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && isOpen) {

@@ -442,6 +442,18 @@
   margin-top: var(--space-8);
 }
 
+/* Sticky control bar: the heading + Type/Industry filters stay put while the
+   list scrolls in its own frame below, and stay under the nav island while the
+   page scrolls through the section. The opaque background masks list rows
+   passing beneath it; z-index keeps it above the recessed list well. */
+.c-archive__controls {
+  position: sticky;
+  top: calc(var(--navbar-height) + var(--space-12));
+  z-index: 2;
+  background: var(--color-background);
+  padding-bottom: var(--space-8);
+}
+
 .c-archive__head {
   display: flex;
   flex-wrap: wrap;
@@ -640,6 +652,38 @@
    one shadow (the per-row content-visibility virtualization stays intact, and
    the many-element paint cost the guidelines warn about is avoided). Rows stay
    flat with their hairline separators. */
+/* Anchors the scroll-affordance fade below. The fade has to hold still while
+   the list scrolls under it, so it can't be a pseudo-element on the scroller
+   itself — that would scroll away with the rows. */
+.c-archive__frame {
+  position: relative;
+}
+
+/* "More below" cue. Expanding while parked at the bottom of the frame otherwise
+   changes nothing you can see: the revealed rows land off-frame and only the
+   scrollbar thumb reacts. JS toggles has-more-below whenever the frame has
+   further to scroll, so this doubles as a permanent affordance that the list
+   continues past its bottom edge. Inset on the right so it doesn't wash out the
+   scrollbar, and pointer-events: none so it can never eat a click on the last
+   visible row. */
+.c-archive__frame::after {
+  content: '';
+  position: absolute;
+  right: var(--space-12);
+  bottom: 0;
+  left: 0;
+  height: var(--space-32);
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+  background: linear-gradient(to top, var(--color-background), transparent);
+  opacity: 0;
+  transition: opacity var(--animation-speed) ease;
+  pointer-events: none;
+}
+
+.c-archive__frame.has-more-below::after {
+  opacity: 1;
+}
+
 .c-archive__list {
   list-style: none;
   display: flex;
@@ -648,6 +692,104 @@
   background: var(--neu-bg);
   border-radius: var(--radius-xl);
   box-shadow: var(--neu-shadow-inset);
+  /* Independent scroll frame: the list scrolls within a fixed height, so "see
+     more" reveals all ~250 rows without stretching the page. The wheel/touch
+     scrolls the list first and, once it hits the top or bottom, chains back to
+     the page (default overscroll — deliberately NOT `contain`, so the page
+     keeps scrolling as usual the moment the list bottoms out). Mobile drops the
+     cap below and flows in the page instead. */
+  max-height: clamp(28rem, 60vh, 44rem);
+  overflow-y: auto;
+  /* Reserve the gutter so revealing/hiding the scrollbar can't reflow the rows. */
+  scrollbar-gutter: stable;
+  /* Scroll anchoring off: the browser's "keep content stable" adjustment moves
+     scrollTop underneath a drag, which reads as the thumb fighting back. */
+  overflow-anchor: none;
+  transition: box-shadow 0.35s var(--ease-standard);
+}
+
+/* Themed scrollbar — the browser default is the only unstyled surface left in
+   the section. A slim pill on a transparent track, tiered so it is quiet while
+   you read and obvious the moment you might reach for it: chip-border at rest,
+   the muted ink once the pointer is anywhere in the frame, brand blue on the
+   thumb itself. `scrollbar-width`/`scrollbar-color` cover Firefox, the
+   ::-webkit- rules cover Chrome/Safari. */
+.c-archive__list {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-chip-border) transparent;
+}
+
+.c-archive__list::-webkit-scrollbar {
+  width: 0.625rem;
+}
+
+.c-archive__list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.c-archive__list::-webkit-scrollbar-thumb {
+  background: var(--color-chip-border);
+  border-radius: var(--radius-full);
+  /* Transparent border + background-clip insets the thumb from the track edge,
+     so it reads as a slim pill rather than a full-width bar. */
+  border: 3px solid transparent;
+  background-clip: content-box;
+  transition: background-color var(--animation-speed) ease;
+}
+
+@media (hover: hover) {
+  /* Inset hover: while the pointer is anywhere in the frame the whole well
+     sinks to the deeper shadow and picks up the ember shine.
+
+     --ember-shine-CONTAINED, not the -recessed halo the other insets use: the
+     sticky controls above slide down over this frame as the page scrolls, and
+     the frame's box carries on behind them (at full slide its top edge sits
+     ~240px above the bar). An outer halo escapes past the bar and draws a stray
+     ember edge up both sides of the filter chips, so this one throws its light
+     inward instead. No transform either: the frame is a scrollport, and
+     translating it under an in-progress scrollbar drag is exactly the kind of
+     fighting the content-visibility fix above removed. */
+  .c-archive__list:hover {
+    box-shadow: var(--neu-shadow-pressed), var(--ember-shine-contained);
+    scrollbar-color: var(--color-text-muted) transparent;
+  }
+
+  .c-archive__list:hover::-webkit-scrollbar-thumb {
+    background: var(--color-text-muted);
+    background-clip: content-box;
+  }
+
+  .c-archive__list::-webkit-scrollbar-thumb:hover,
+  .c-archive__list::-webkit-scrollbar-thumb:active {
+    background: var(--color-primary);
+    background-clip: content-box;
+  }
+}
+
+@media (max-width: 48rem) {
+  /* Flow naturally on phones: no fixed-height box (a small window holding the
+     expanded ~250-row list is worse than the page's own scroll), and the
+     controls stop being sticky so they don't eat vertical space. */
+  .c-archive__controls {
+    position: static;
+    padding-bottom: 0;
+  }
+
+  .c-archive__list {
+    max-height: none;
+    overflow: visible;
+    scrollbar-gutter: auto;
+  }
+
+  /* The list flows in the page here, so far-offscreen rows are worth skipping.
+     Inside the desktop scroll frame this is deliberately NOT set: the frame
+     already clips painting, and letting each row swap its estimated height for
+     its real one mid-scroll grows scrollHeight under the scrollbar thumb, which
+     makes dragging it stutter. */
+  .c-archive__row {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 4rem;
+  }
 }
 
 /* The row <li> carries only the separator. The flex layout lives on the inner
@@ -655,15 +797,60 @@
    an author `display` on the <li> would beat the UA [hidden] rule. */
 .c-archive__row {
   border-top: 1px solid var(--color-overlay-weak);
-  /* With ~250 rows in the list, let the browser skip layout/paint for rows
-     far offscreen. The intrinsic size approximates a collapsed row so the
-     scrollbar stays steady as rows render in. */
-  content-visibility: auto;
-  contain-intrinsic-size: auto 4rem;
 }
 
 .c-archive__row[hidden] {
   display: none;
+}
+
+/* Arrival flash — the rows "see more" just revealed light up in ember and fade.
+   Paired with the frame scrolling to the first of them (main.js), it answers
+   "did anything happen?": the scroll brings them into view, this says WHICH
+   rows are the new ones. `both` fill holds the tint through the delay, so the
+   rows are already marked while the frame is still travelling and fade once it
+   lands — rather than flashing at a viewport nobody is looking at yet.
+   --arrive-i staggers them into a sweep.
+
+   It animates OPACITY on an overlay, not the row's background-color. Colour is
+   a paint property on the main thread, so animating it lit up every revealed
+   row at once (227 of them) and the browser repainted them in tiles — the flash
+   visibly filled and drained in bands rather than as one surface. Opacity is
+   composited, and main.js now only marks the rows that actually land on screen.
+
+   The whole treatment hangs off .is-new, so the other ~240 rows carry no extra
+   positioning or pseudo-element when nothing is arriving. */
+@keyframes archiveRowArrive {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+.c-archive__row.is-new {
+  position: relative;
+}
+
+.c-archive__row.is-new::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(var(--color-ember-rgb), 0.18);
+  opacity: 0;
+  pointer-events: none;
+  animation: archiveRowArrive 1.2s var(--ease-standard) both;
+  animation-delay: calc(0.25s + var(--arrive-i, 0) * 0.06s);
+}
+
+/* Lifts the row's own content above that overlay, so the tint reads as a
+   background wash instead of a film over the title. A negative z-index would be
+   the usual way, but the list's opaque well is an ancestor background and would
+   swallow it. */
+.c-archive__row.is-new .c-archive__row-link {
+  position: relative;
+  z-index: 1;
 }
 
 .c-archive__row-link {
@@ -809,6 +996,13 @@ a.c-archive__row-link .c-archive__row-title {
   .c-archive__filter,
   .c-archive__tab {
     transition: none;
+  }
+
+  /* No arrival sweep. main.js already jumps the frame to the new rows instantly
+     (it reads the same preference for scroll behaviour), and that jump is the
+     signal on its own. */
+  .c-archive__row.is-new::after {
+    animation: none;
   }
 
   .c-work-card__media:hover .c-work-card__img {

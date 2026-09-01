@@ -2,6 +2,7 @@
 import { siteContent } from '../content.js';
 import Icon from './Icon.astro';
 import LogoMark from './LogoMark.astro';
+import ToolLogo from './ToolLogo.astro';
 import SiteFooter from './SiteFooter.astro';
 
 const profile = siteContent.profile;
@@ -69,6 +70,19 @@ const thesisSegments = siteContent.skills.feature.thesis.map((segment) => ({
       ? 'c-capability__thesis-accent--ember'
       : undefined,
 }));
+
+// Services are shown verb-led: the CTA label ("Scope a project") is the row's
+// headline, and its last word — the engagement model (project / retainer /
+// fractional) — takes the ember ink. Built as an HTML string and rendered with
+// set:html (as the about bio + gantt do) so the inline <b> keeps exact spacing,
+// sidestepping the Astro 7 whitespace trap that padding the emphasis in markup
+// would hit. Labels are static site copy, so there is no untrusted input here.
+const engagementRows = siteContent.services.engagements.map((engagement) => {
+  const label = engagement.ctaLabel ?? siteContent.services.ctaLabel;
+  const words = label.trim().split(/\s+/);
+  const verbWord = words.pop();
+  return { ...engagement, verbHtml: `${words.join(' ')} <b>${verbWord}</b>` };
+});
 const archiveUi = siteContent.archiveUi;
 // Aliased short so the chip's markup fits on one line at its indent depth.
 // Wrapped across lines, Astro 7 keeps the newlines as whitespace INSIDE the
@@ -106,16 +120,16 @@ const assetRank = (x) => {
   const i = assetTypeOrder.indexOf(x);
   return i === -1 ? 99 : i;
 };
-// Archive: asset-type chip-tabs (single-select) + an industry chip filter over a
-// flat, sorted list. `assetTypes` drives the tab bar; `archiveRows` is sorted by
-// type, then industry, then newest-first.
+// Archive: an "All" tab + per-type chip-tabs and an industry chip filter over a
+// flat, sorted list. `assetTypes` drives the per-type tabs (the "All" tab is
+// added in markup and is the default); `archiveRows` is sorted by type, then
+// industry, then newest-first.
 const assetTypes = [...new Set(workArchive.map((p) => p.assetType))]
   .sort((a, b) => assetRank(a) - assetRank(b))
   .map((assetType) => ({
     assetType,
     count: workArchive.filter((p) => p.assetType === assetType).length,
   }));
-const firstType = assetTypes[0]?.assetType;
 const archiveRows = [...workArchive].sort((a, b) => {
   const byType = assetRank(a.assetType) - assetRank(b.assetType);
   if (byType) return byType;
@@ -123,6 +137,20 @@ const archiveRows = [...workArchive].sort((a, b) => {
   if (byIndustry) return byIndustry;
   return (b.year || '').localeCompare(a.year || '');
 });
+// Default view is All types · All industries, showing the first few of each
+// type; "see more" (JS) then reveals everything. Precompute that sample so the
+// first paint and the no-JS fallback match the JS default (must stay in sync
+// with SAMPLE_PER_TYPE in main.js's initializeWorkArchive).
+const SAMPLE_PER_TYPE = 3;
+const archiveSampleCount = {};
+const archiveInitialShow = new Set();
+for (const row of archiveRows) {
+  const n = archiveSampleCount[row.assetType] || 0;
+  if (n < SAMPLE_PER_TYPE) {
+    archiveInitialShow.add(row);
+    archiveSampleCount[row.assetType] = n + 1;
+  }
+}
 const archiveHasLink = (status) =>
   status === 'live' || status === 'press' || status === 'archived';
 
@@ -741,73 +769,51 @@ siteContent.testimonials.forEach((testimonial, index) => {
         </div>
 
         {
-          /* Discipline + tool cards. On mobile these collapse into an
-             accordion (native <details>); on desktop CSS force-opens every
-             panel so the bento reads as static cards. First discipline opens
-             by default. */
+          /* Disciplines as editorial rows: no cards, no 01/02/03 numbering —
+             the name anchors each row and the skills read as inline tags,
+             divided by hairlines. The feature cell above and the tool stack
+             below (still a native <details> accordion on mobile) keep their
+             card treatment. */
         }
-        {
-          siteContent.skills.disciplines.map((discipline, i) => (
-            <details
-              class="c-capability c-capability--collapsible"
-              open={i === 0}
-            >
-              <summary class="c-capability__summary">
-                <span class="c-capability__topline">
-                  <span class="c-capability__dot" aria-hidden="true" />
-                  <span class="c-capability__index">
-                    <b>{String(i + 1).padStart(2, '0')}</b>
-                    <span class="c-capability__slug"> · {discipline.slug}</span>
-                  </span>
-                </span>
-                <span class="c-capability__name">{discipline.name}</span>
-                <span class="c-capability__chev" aria-hidden="true" />
-              </summary>
-              <div class="c-capability__panel">
-                <p class="c-capability__skills">
-                  {discipline.skills.join(', ')}.
-                </p>
-                <div class="c-capability__foot">
-                  <span class="c-capability__note">{discipline.note}</span>
+        <ul class="c-disciplines">
+          {
+            siteContent.skills.disciplines.map((discipline) => (
+              <li class="c-discipline">
+                <div class="c-discipline__head">
+                  <h3 class="c-discipline__name">{discipline.name}</h3>
+                  <span class="c-discipline__note">{discipline.note}</span>
                 </div>
-              </div>
-            </details>
-          ))
-        }
+                <ul class="c-discipline__tags">
+                  {discipline.skills.map((skill) => (
+                    <li class="c-discipline__tag">{skill}</li>
+                  ))}
+                </ul>
+              </li>
+            ))
+          }
+        </ul>
 
-        <details
-          class="c-capability c-capability--tools c-capability--collapsible"
-        >
-          <summary class="c-capability__summary">
-            <span class="c-capability__topline">
-              <span class="c-capability__dot" aria-hidden="true"></span>
-              {
-                /* No numeric index here, deliberately: the stack is a
-                   materials list, not a fourth discipline. Numbering it put it
-                   on a par with 01-03 and is what made the old bento split the
-                   three disciplines 2/1. Slug only. */
-              }
-              <span class="c-capability__index">
-                <span class="c-capability__slug">
-                  {siteContent.skills.tools.slug}
-                </span>
-              </span>
-            </span>
-            <span class="c-capability__name">
-              {siteContent.skills.tools.name}
-            </span>
-            <span class="c-capability__chev" aria-hidden="true"></span>
-          </summary>
-          <div class="c-capability__panel">
-            <ul class="c-capability__chips">
-              {
-                siteContent.skills.tools.items.map((item) => (
-                  <li class="c-capability__chip">{item}</li>
-                ))
-              }
-            </ul>
-          </div>
-        </details>
+        {
+          /* The stack is a materials list, not a fourth discipline — no
+             numeric index (numbering it once split the three disciplines 2/1),
+             just the mono slug + name over a strip of tool logos. Each glyph is
+             inlined by ToolLogo so it inherits currentColor; the tool names
+             stay the accessible labels (glyphs are decorative). */
+        }
+        <div class="c-capability c-capability--tools">
+          <span class="c-capability__tag">{siteContent.skills.tools.slug}</span>
+          <h3 class="c-capability__name">{siteContent.skills.tools.name}</h3>
+          <ul class="c-stack">
+            {
+              siteContent.skills.tools.items.map((item) => (
+                <li class="c-stack__item">
+                  <ToolLogo name={item} />
+                  <span class="c-stack__name">{item}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
       </div>
     </div>
   </section>
@@ -830,26 +836,20 @@ siteContent.testimonials.forEach((testimonial, index) => {
         <p class="c-engagements__lede">{siteContent.services.lede}</p>
         <ul class="c-engagements__list">
           {
-            siteContent.services.engagements.map((engagement, i) => (
+            engagementRows.map((engagement) => (
               <li class="c-engagement">
-                <div class="c-engagement__main">
-                  <span class="c-engagement__index">
-                    <b>{String(i + 1).padStart(2, '0')}</b> · {engagement.slug}
-                  </span>
+                <div class="c-engagement__body">
                   <h3 class="c-engagement__name">{engagement.name}</h3>
+                  <a
+                    class="c-engagement__verb"
+                    href={siteContent.services.ctaHref}
+                    set:html={engagement.verbHtml}
+                  />
                   <p class="c-engagement__description">
                     {engagement.description}
                   </p>
                 </div>
-                <div class="c-engagement__rail">
-                  <span class="c-engagement__meta">{engagement.meta}</span>
-                  <a
-                    class="c-engagement__cta"
-                    href={siteContent.services.ctaHref}
-                  >
-                    {engagement.ctaLabel ?? siteContent.services.ctaLabel}
-                  </a>
-                </div>
+                <span class="c-engagement__meta">{engagement.meta}</span>
               </li>
             ))
           }
@@ -1053,132 +1053,153 @@ siteContent.testimonials.forEach((testimonial, index) => {
 
       <!-- Archive: full body of work -->
       <div class="c-archive" data-archive>
-        <div class="c-archive__head">
-          <div class="c-archive__heading-group">
-            <h3 class="c-archive__heading">{archiveUi.heading}</h3>
-            <span
-              class="c-archive__count"
-              data-archive-status
-              role="status"
-              aria-live="polite"
+        {
+          /* Heading + both filter rows sit in a sticky bar so they stay
+             reachable while the list scrolls (inside its own frame) and while
+             the page scrolls through the section. */
+        }
+        <div class="c-archive__controls">
+          <div class="c-archive__head">
+            <div class="c-archive__heading-group">
+              <h3 class="c-archive__heading">{archiveUi.heading}</h3>
+              <span
+                class="c-archive__count"
+                data-archive-status
+                role="status"
+                aria-live="polite"
+              >
+                {
+                  archiveUi.countInitial.replace(
+                    '{total}',
+                    String(workArchive.length),
+                  )
+                }
+              </span>
+            </div>
+          </div>
+
+          <!-- Asset-type chip-tabs (single-select; "All" is the default) -->
+          <p class="c-archive__filter-label" aria-hidden="true">
+            {archiveUi.typeFilterLabel}
+          </p>
+          <div
+            class="c-archive__tabs"
+            role="group"
+            aria-label={ui.work.filterByType}
+          >
+            <button
+              type="button"
+              class="c-archive__tab is-active"
+              data-type-tab="all"
+              aria-pressed="true"
             >
-              {
-                archiveUi.countInitial.replace(
-                  '{total}',
-                  String(workArchive.length),
-                )
-              }
-            </span>
+              All
+              <span class="c-archive__tab-count" data-tab-count>
+                {workArchive.length}
+              </span>
+            </button>
+            {
+              assetTypes.map((t) => (
+                <button
+                  type="button"
+                  class="c-archive__tab"
+                  data-type-tab={t.assetType}
+                  aria-pressed="false"
+                >
+                  {assetTypeLabels[t.assetType] ?? t.assetType}
+                  <span class="c-archive__tab-count" data-tab-count>
+                    {t.count}
+                  </span>
+                </button>
+              ))
+            }
+          </div>
+
+          <!-- Industry sub-filter -->
+          <p class="c-archive__filter-label" aria-hidden="true">
+            {archiveUi.industryFilterLabel}
+          </p>
+          <div
+            class="c-archive__filters"
+            role="group"
+            aria-label={ui.work.filterByIndustry}
+          >
+            <button
+              type="button"
+              class="c-archive__filter is-active"
+              data-industry-filter="all"
+              aria-pressed="true"
+            >
+              All
+            </button>
+            {
+              archiveIndustries.map((industry) => (
+                <button
+                  type="button"
+                  class="c-archive__filter"
+                  data-industry-filter={industry}
+                  aria-pressed="false"
+                >
+                  {industry}
+                </button>
+              ))
+            }
           </div>
         </div>
 
-        <!-- Asset-type chip-tabs (single-select) -->
-        <p class="c-archive__filter-label" aria-hidden="true">
-          {archiveUi.typeFilterLabel}
-        </p>
-        <div
-          class="c-archive__tabs"
-          role="group"
-          aria-label={ui.work.filterByType}
-        >
-          {
-            assetTypes.map((t) => (
-              <button
-                type="button"
-                class:list={[
-                  'c-archive__tab',
-                  { 'is-active': t.assetType === firstType },
-                ]}
-                data-type-tab={t.assetType}
-                aria-pressed={t.assetType === firstType ? 'true' : 'false'}
-              >
-                {assetTypeLabels[t.assetType] ?? t.assetType}
-                <span class="c-archive__tab-count" data-tab-count>
-                  {t.count}
-                </span>
-              </button>
-            ))
-          }
-        </div>
-
-        <!-- Industry sub-filter -->
-        <p class="c-archive__filter-label" aria-hidden="true">
-          {archiveUi.industryFilterLabel}
-        </p>
-        <div
-          class="c-archive__filters"
-          role="group"
-          aria-label={ui.work.filterByIndustry}
-        >
-          <button
-            type="button"
-            class="c-archive__filter is-active"
-            data-industry-filter="all"
-            aria-pressed="true"
-          >
-            All
-          </button>
-          {
-            archiveIndustries.map((industry) => (
-              <button
-                type="button"
-                class="c-archive__filter"
-                data-industry-filter={industry}
-                aria-pressed="false"
-              >
-                {industry}
-              </button>
-            ))
-          }
-        </div>
-
-        <ul class="c-archive__list" data-archive-list>
-          {
-            archiveRows.map((row) => {
-              const sm = workStatusMeta[row.status] ?? {};
-              const linkable = archiveHasLink(row.status) && row.url;
-              const Wrapper = linkable ? 'a' : 'div';
-              const wrapperProps = linkable
-                ? {
-                    href: row.url,
-                    target: '_blank',
-                    rel: 'noopener noreferrer',
-                  }
-                : {};
-              return (
-                <li
-                  class="c-archive__row"
-                  data-archive-row
-                  data-asset-type={row.assetType}
-                  data-industry={row.industry}
-                  hidden={row.assetType !== firstType}
-                >
-                  <Wrapper
-                    class={`c-archive__row-link${linkable ? '' : ' c-archive__row-link--static'}`}
-                    {...wrapperProps}
+        {
+          /* Wrapper anchors the "more below" fade: it has to stay put while the
+             list scrolls underneath it, so it can't live on the scroller. */
+        }
+        <div class="c-archive__frame" data-archive-frame>
+          <ul class="c-archive__list" data-archive-list>
+            {
+              archiveRows.map((row) => {
+                const sm = workStatusMeta[row.status] ?? {};
+                const linkable = archiveHasLink(row.status) && row.url;
+                const Wrapper = linkable ? 'a' : 'div';
+                const wrapperProps = linkable
+                  ? {
+                      href: row.url,
+                      target: '_blank',
+                      rel: 'noopener noreferrer',
+                    }
+                  : {};
+                return (
+                  <li
+                    class="c-archive__row"
+                    data-archive-row
+                    data-asset-type={row.assetType}
+                    data-industry={row.industry}
+                    hidden={!archiveInitialShow.has(row)}
                   >
-                    <span class="c-archive__row-main">
-                      <span class="c-archive__row-head">
-                        <span class="c-archive__row-title">{row.title}</span>
-                        {row.interview && (
-                          <span class="c-archive__tag">{interviewTag}</span>
-                        )}
+                    <Wrapper
+                      class={`c-archive__row-link${linkable ? '' : ' c-archive__row-link--static'}`}
+                      {...wrapperProps}
+                    >
+                      <span class="c-archive__row-main">
+                        <span class="c-archive__row-head">
+                          <span class="c-archive__row-title">{row.title}</span>
+                          {row.interview && (
+                            <span class="c-archive__tag">{interviewTag}</span>
+                          )}
+                        </span>
+                        <span class="c-archive__row-meta">
+                          <span class="c-archive__row-year">{row.year}</span>
+                          {row.campaign}
+                        </span>
                       </span>
-                      <span class="c-archive__row-meta">
-                        <span class="c-archive__row-year">{row.year}</span>
-                        {row.campaign}
+                      <span class:list={['c-status', `c-status--${sm.tone}`]}>
+                        <Icon name={sm.icon} />
+                        {sm.label}
                       </span>
-                    </span>
-                    <span class:list={['c-status', `c-status--${sm.tone}`]}>
-                      <Icon name={sm.icon} />
-                      {sm.label}
-                    </span>
-                  </Wrapper>
-                </li>
-              );
-            })
-          }
-        </ul>
+                    </Wrapper>
+                  </li>
+                );
+              })
+            }
+          </ul>
+        </div>
         <div class="c-archive__more-wrap">
           <button
             type="button"
@@ -1248,7 +1269,15 @@ siteContent.testimonials.forEach((testimonial, index) => {
             return (
               <div class="c-gantt__row">
                 <div class="c-gantt__label">
-                  <h3>{job.title}</h3>
+                  {/* The "now" dot leads the role title on current roles —
+                       decorative, so aria-hidden; the period text already says
+                       "Present" to assistive tech. */}
+                  <h3>
+                    {isPresent && (
+                      <span class="c-gantt__now" aria-hidden="true" />
+                    )}
+                    {job.title}
+                  </h3>
                   <p>{job.company}</p>
                   <div class="c-gantt__meta">
                     <span class="c-gantt__period">{job.period}</span>
@@ -1315,7 +1344,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
             <span>{profile.bookingCta.text}</span>
           </div>
           <a
-            class="c-btn c-btn--primary c-booking-cta__button"
+            class="c-btn c-btn--ember c-booking-cta__button"
             href={profile.bookingCta.url}
             target="_blank"
             rel="noopener"

@@ -41,6 +41,9 @@
      it collapses to the same crisp ring. Consistent here: the neu shadows are
      flattened to 1px rings too, so raised and inset match in lite as well. */
   --ember-shine-recessed: 0 0 0 1.5px rgba(var(--color-ember-rgb), 0.6);
+  /* Contained twin: same flatten, kept inset so it still can't escape past
+     whatever overlaps the element it sits on. */
+  --ember-shine-contained: inset 0 0 0 1.5px rgba(var(--color-ember-rgb), 0.6);
 }
 
 /* --- Testimonials marquee: freeze the infinite transform loop (it otherwise
