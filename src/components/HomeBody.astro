@@ -1147,53 +1147,59 @@ siteContent.testimonials.forEach((testimonial, index) => {
           </div>
         </div>
 
-        <ul class="c-archive__list" data-archive-list>
-          {
-            archiveRows.map((row) => {
-              const sm = workStatusMeta[row.status] ?? {};
-              const linkable = archiveHasLink(row.status) && row.url;
-              const Wrapper = linkable ? 'a' : 'div';
-              const wrapperProps = linkable
-                ? {
-                    href: row.url,
-                    target: '_blank',
-                    rel: 'noopener noreferrer',
-                  }
-                : {};
-              return (
-                <li
-                  class="c-archive__row"
-                  data-archive-row
-                  data-asset-type={row.assetType}
-                  data-industry={row.industry}
-                  hidden={!archiveInitialShow.has(row)}
-                >
-                  <Wrapper
-                    class={`c-archive__row-link${linkable ? '' : ' c-archive__row-link--static'}`}
-                    {...wrapperProps}
+        {
+          /* Wrapper anchors the "more below" fade: it has to stay put while the
+             list scrolls underneath it, so it can't live on the scroller. */
+        }
+        <div class="c-archive__frame" data-archive-frame>
+          <ul class="c-archive__list" data-archive-list>
+            {
+              archiveRows.map((row) => {
+                const sm = workStatusMeta[row.status] ?? {};
+                const linkable = archiveHasLink(row.status) && row.url;
+                const Wrapper = linkable ? 'a' : 'div';
+                const wrapperProps = linkable
+                  ? {
+                      href: row.url,
+                      target: '_blank',
+                      rel: 'noopener noreferrer',
+                    }
+                  : {};
+                return (
+                  <li
+                    class="c-archive__row"
+                    data-archive-row
+                    data-asset-type={row.assetType}
+                    data-industry={row.industry}
+                    hidden={!archiveInitialShow.has(row)}
                   >
-                    <span class="c-archive__row-main">
-                      <span class="c-archive__row-head">
-                        <span class="c-archive__row-title">{row.title}</span>
-                        {row.interview && (
-                          <span class="c-archive__tag">{interviewTag}</span>
-                        )}
+                    <Wrapper
+                      class={`c-archive__row-link${linkable ? '' : ' c-archive__row-link--static'}`}
+                      {...wrapperProps}
+                    >
+                      <span class="c-archive__row-main">
+                        <span class="c-archive__row-head">
+                          <span class="c-archive__row-title">{row.title}</span>
+                          {row.interview && (
+                            <span class="c-archive__tag">{interviewTag}</span>
+                          )}
+                        </span>
+                        <span class="c-archive__row-meta">
+                          <span class="c-archive__row-year">{row.year}</span>
+                          {row.campaign}
+                        </span>
                       </span>
-                      <span class="c-archive__row-meta">
-                        <span class="c-archive__row-year">{row.year}</span>
-                        {row.campaign}
+                      <span class:list={['c-status', `c-status--${sm.tone}`]}>
+                        <Icon name={sm.icon} />
+                        {sm.label}
                       </span>
-                    </span>
-                    <span class:list={['c-status', `c-status--${sm.tone}`]}>
-                      <Icon name={sm.icon} />
-                      {sm.label}
-                    </span>
-                  </Wrapper>
-                </li>
-              );
-            })
-          }
-        </ul>
+                    </Wrapper>
+                  </li>
+                );
+              })
+            }
+          </ul>
+        </div>
         <div class="c-archive__more-wrap">
           <button
             type="button"

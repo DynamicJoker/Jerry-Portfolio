@@ -652,6 +652,38 @@
    one shadow (the per-row content-visibility virtualization stays intact, and
    the many-element paint cost the guidelines warn about is avoided). Rows stay
    flat with their hairline separators. */
+/* Anchors the scroll-affordance fade below. The fade has to hold still while
+   the list scrolls under it, so it can't be a pseudo-element on the scroller
+   itself — that would scroll away with the rows. */
+.c-archive__frame {
+  position: relative;
+}
+
+/* "More below" cue. Expanding while parked at the bottom of the frame otherwise
+   changes nothing you can see: the revealed rows land off-frame and only the
+   scrollbar thumb reacts. JS toggles has-more-below whenever the frame has
+   further to scroll, so this doubles as a permanent affordance that the list
+   continues past its bottom edge. Inset on the right so it doesn't wash out the
+   scrollbar, and pointer-events: none so it can never eat a click on the last
+   visible row. */
+.c-archive__frame::after {
+  content: '';
+  position: absolute;
+  right: var(--space-12);
+  bottom: 0;
+  left: 0;
+  height: var(--space-32);
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+  background: linear-gradient(to top, var(--color-background), transparent);
+  opacity: 0;
+  transition: opacity var(--animation-speed) ease;
+  pointer-events: none;
+}
+
+.c-archive__frame.has-more-below::after {
+  opacity: 1;
+}
+
 .c-archive__list {
   list-style: none;
   display: flex;
@@ -769,6 +801,56 @@
 
 .c-archive__row[hidden] {
   display: none;
+}
+
+/* Arrival flash — the rows "see more" just revealed light up in ember and fade.
+   Paired with the frame scrolling to the first of them (main.js), it answers
+   "did anything happen?": the scroll brings them into view, this says WHICH
+   rows are the new ones. `both` fill holds the tint through the delay, so the
+   rows are already marked while the frame is still travelling and fade once it
+   lands — rather than flashing at a viewport nobody is looking at yet.
+   --arrive-i staggers them into a sweep.
+
+   It animates OPACITY on an overlay, not the row's background-color. Colour is
+   a paint property on the main thread, so animating it lit up every revealed
+   row at once (227 of them) and the browser repainted them in tiles — the flash
+   visibly filled and drained in bands rather than as one surface. Opacity is
+   composited, and main.js now only marks the rows that actually land on screen.
+
+   The whole treatment hangs off .is-new, so the other ~240 rows carry no extra
+   positioning or pseudo-element when nothing is arriving. */
+@keyframes archiveRowArrive {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+.c-archive__row.is-new {
+  position: relative;
+}
+
+.c-archive__row.is-new::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(var(--color-ember-rgb), 0.18);
+  opacity: 0;
+  pointer-events: none;
+  animation: archiveRowArrive 1.2s var(--ease-standard) both;
+  animation-delay: calc(0.25s + var(--arrive-i, 0) * 0.06s);
+}
+
+/* Lifts the row's own content above that overlay, so the tint reads as a
+   background wash instead of a film over the title. A negative z-index would be
+   the usual way, but the list's opaque well is an ancestor background and would
+   swallow it. */
+.c-archive__row.is-new .c-archive__row-link {
+  position: relative;
+  z-index: 1;
 }
 
 .c-archive__row-link {
@@ -914,6 +996,13 @@ a.c-archive__row-link .c-archive__row-title {
   .c-archive__filter,
   .c-archive__tab {
     transition: none;
+  }
+
+  /* No arrival sweep. main.js already jumps the frame to the new rows instantly
+     (it reads the same preference for scroll behaviour), and that jump is the
+     signal on its own. */
+  .c-archive__row.is-new::after {
+    animation: none;
   }
 
   .c-work-card__media:hover .c-work-card__img {

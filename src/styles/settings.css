@@ -352,6 +352,14 @@
   /* Page-level stacking order, lowest to highest (local stacking inside a
      component keeps literal 0/1/2). Mirrored in critical-home.css. */
   --z-section-header: 100;
+  /* The dark-mode pointer glow rides ABOVE every page surface, deliberately. At
+     a lower layer it was occluded by any positioned component with z-index >= 1
+     (archive filter bar, section headers, gantt, hero, services), and each of
+     those punched a hard-edged rectangle out of what is meant to be a soft
+     radial gradient. Above them it simply washes over everything uniformly.
+     Below --z-nav so the floating nav island — chrome, not page surface —
+     stays clean. */
+  --z-pointer-glow: 900;
   --z-nav: 1000;
   --z-nav-menu: 1001;
   --z-beta-banner: 1002;

@@ -28,6 +28,15 @@
   position: relative;
 }
 
+/* The `display` above is an AUTHOR rule, so it beats the UA stylesheet's
+   `[hidden] { display: none }` — without this a .c-btn carrying [hidden] keeps
+   painting, which is how the archive's "Show all" button stayed on screen for
+   filters that had nothing more to show. Same trap as .c-archive__row[hidden]
+   in components/work.css. */
+.c-btn[hidden] {
+  display: none;
+}
+
 .c-btn:focus-visible {
   outline: var(--focus-outline);
   outline-offset: 3px;
