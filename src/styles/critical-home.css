@@ -1425,10 +1425,7 @@ html.is-theme-transitioning *::after {
   transition-duration: var(--neu-press-duration);
 }
 
-/* Ember press flash — see the note in components/buttons.css. Kept in sync. */
 .c-btn--outline:active {
-  background: var(--color-ember-ink);
-  color: var(--color-btn-primary-text);
   box-shadow: var(--neu-shadow-inset-sm);
   transform: var(--neu-press-transform);
   transition-duration: var(--neu-press-duration);
