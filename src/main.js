@@ -848,9 +848,12 @@ function initializeWorkArchive() {
   const statusEl = root.querySelector('[data-archive-status]');
   const emptyEl = root.querySelector('[data-archive-empty]');
   const moreBtn = root.querySelector('[data-archive-more]');
+  const listEl = root.querySelector('[data-archive-list]');
   if (!tabs.length) return;
 
-  const LIMIT = 20; // rows shown per filter before "Show all" reveals the rest
+  const LIMIT = 20; // rows shown for a single selected type before "see more"
+  const SAMPLE_PER_TYPE = 3; // rows shown per type in the "All" view before "see more"
+  // The first tab is "All" (data-type-tab="all"), so both filters default to All.
   let activeType = tabs[0].dataset.typeTab;
   let activeIndustry = 'all';
   let expanded = false;
@@ -858,21 +861,63 @@ function initializeWorkArchive() {
   const matchesIndustry = (row) =>
     activeIndustry === 'all' || row.dataset.industry === activeIndustry;
 
+  const matchesFilters = (row) =>
+    (activeType === 'all' || row.dataset.assetType === activeType) &&
+    matchesIndustry(row);
+
+  // The DOM starts in canonical (sorted) order, and `rows` keeps that order for
+  // good — every sampling decision below iterates it, so which rows the
+  // collapsed view picks never depends on how the DOM is currently arranged.
+  // Expanding re-parks the newly revealed rows below the ones already on screen
+  // (see the more-button handler); this puts the sorted order back whenever the
+  // list collapses or refilters.
+  const canonicalOrder = rows.slice();
+  let reordered = false;
+
+  const restoreOrder = () => {
+    if (!reordered || !listEl) return;
+    const frag = document.createDocumentFragment();
+    canonicalOrder.forEach((row) => frag.appendChild(row));
+    listEl.appendChild(frag);
+    reordered = false;
+  };
+
   const apply = () => {
-    let matched = 0;
+    let matched = 0; // rows matching the active type + industry
+    let collapsedShown = 0; // how many WOULD show in the capped (collapsed) view
+    // In the All view the cap is per type (a few from each); for a single
+    // selected type it is a flat LIMIT. Rows are pre-sorted type → industry →
+    // newest, so "first N" reads as the newest few of each type.
+    const perTypeShown = {};
     rows.forEach((row) => {
-      const isMatch =
-        row.dataset.assetType === activeType && matchesIndustry(row);
-      if (isMatch) matched += 1;
-      // Within a matching set, collapse rows past LIMIT until expanded.
-      const show = isMatch && (expanded || matched <= LIMIT);
-      row.toggleAttribute('hidden', !show);
+      const typeMatch =
+        activeType === 'all' || row.dataset.assetType === activeType;
+      const isMatch = typeMatch && matchesIndustry(row);
+      if (!isMatch) {
+        row.toggleAttribute('hidden', true);
+        return;
+      }
+      matched += 1;
+      let inCollapsed;
+      if (activeType === 'all') {
+        const t = row.dataset.assetType;
+        const n = perTypeShown[t] || 0;
+        inCollapsed = n < SAMPLE_PER_TYPE;
+        if (inCollapsed) perTypeShown[t] = n + 1;
+      } else {
+        inCollapsed = matched <= LIMIT;
+      }
+      if (inCollapsed) collapsedShown += 1;
+      row.toggleAttribute('hidden', !(expanded || inCollapsed));
     });
-    // Each tab's count reflects the active industry filter; dim empty tabs.
+    // Each tab's count reflects the active industry filter (the All tab counts
+    // every type); dim empty tabs.
     tabs.forEach((tab) => {
+      const type = tab.dataset.typeTab;
       const count = rows.filter(
         (r) =>
-          r.dataset.assetType === tab.dataset.typeTab && matchesIndustry(r),
+          (type === 'all' || r.dataset.assetType === type) &&
+          matchesIndustry(r),
       ).length;
       const countEl = tab.querySelector('[data-tab-count]');
       if (countEl) countEl.textContent = String(count);
@@ -884,7 +929,7 @@ function initializeWorkArchive() {
         .replace('{shown}', String(matched))
         .replace('{total}', String(rows.length));
     if (moreBtn) {
-      moreBtn.hidden = matched <= LIMIT;
+      moreBtn.hidden = matched <= collapsedShown;
       moreBtn.textContent = expanded
         ? siteContent.archiveUi.showFewerLabel
         : siteContent.archiveUi.showAllLabel.replace(
@@ -903,7 +948,10 @@ function initializeWorkArchive() {
     if (attr === 'type') activeType = value;
     else activeIndustry = value;
     expanded = false; // collapse back to the capped view on any filter change
+    restoreOrder();
     apply();
+    // Land at the top of the freshly filtered set inside the scroll frame.
+    if (listEl) listEl.scrollTop = 0;
   };
 
   tabs.forEach((tab) =>
@@ -918,16 +966,38 @@ function initializeWorkArchive() {
   );
   if (moreBtn) {
     moreBtn.addEventListener('click', () => {
-      expanded = !expanded;
-      apply();
-      // Collapsing from a long list: bring the archive back into view so the
-      // user isn't stranded far down the page.
-      if (!expanded) {
+      if (expanded) {
+        expanded = false;
+        restoreOrder();
+        apply();
+        // Collapsing from a long list: reset the frame to the top and bring the
+        // archive back into view so the user isn't stranded far down the page.
+        if (listEl) listEl.scrollTop = 0;
         root.scrollIntoView({
           block: 'start',
           behavior: prefersReducedMotion ? 'auto' : 'smooth',
         });
+        return;
       }
+      // Expanding: rows already on screen keep their place and the ones being
+      // revealed are parked below them. Without this they insert themselves
+      // BETWEEN rows the reader has already scrolled past, so the part of the
+      // list behind them reshuffles. The move happens while those rows are
+      // still [hidden] (zero height), so nothing shifts visually and the
+      // frame's scroll position stays exactly where the reader left it.
+      if (listEl) {
+        const onScreen = new Set(
+          rows.filter((row) => !row.hasAttribute('hidden')),
+        );
+        const frag = document.createDocumentFragment();
+        canonicalOrder.forEach((row) => {
+          if (!onScreen.has(row) && matchesFilters(row)) frag.appendChild(row);
+        });
+        listEl.appendChild(frag);
+        reordered = true;
+      }
+      expanded = true;
+      apply();
     });
   }
 

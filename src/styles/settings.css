@@ -266,6 +266,17 @@
     0 0 10px 1px rgba(var(--color-ember-rgb), 0.4),
     0 0 22px rgba(var(--color-ember-rgb), 0.18);
 
+  /* Contained twin, for a surface that OTHER UI overlaps — a scrollport under a
+     sticky bar, say. Both variants above paint up to ~23px outside the box, and
+     an overlapped element's box carries on behind whatever covers it, so that
+     halo escapes past the covering element and draws a stray ember edge beside
+     and above it. Same light, thrown inward instead: contained by definition,
+     and on a window-like element it reads as the glow spilling into the well.
+     Reach for it only when the outer halo can't be seen in full. */
+  --ember-shine-contained:
+    inset 0 0 10px 1px rgba(var(--color-ember-rgb), 0.4),
+    inset 0 0 22px rgba(var(--color-ember-rgb), 0.18);
+
   /* Animation */
   --duration-fast: 150ms;
   --duration-normal: 250ms;

@@ -120,16 +120,16 @@ const assetRank = (x) => {
   const i = assetTypeOrder.indexOf(x);
   return i === -1 ? 99 : i;
 };
-// Archive: asset-type chip-tabs (single-select) + an industry chip filter over a
-// flat, sorted list. `assetTypes` drives the tab bar; `archiveRows` is sorted by
-// type, then industry, then newest-first.
+// Archive: an "All" tab + per-type chip-tabs and an industry chip filter over a
+// flat, sorted list. `assetTypes` drives the per-type tabs (the "All" tab is
+// added in markup and is the default); `archiveRows` is sorted by type, then
+// industry, then newest-first.
 const assetTypes = [...new Set(workArchive.map((p) => p.assetType))]
   .sort((a, b) => assetRank(a) - assetRank(b))
   .map((assetType) => ({
     assetType,
     count: workArchive.filter((p) => p.assetType === assetType).length,
   }));
-const firstType = assetTypes[0]?.assetType;
 const archiveRows = [...workArchive].sort((a, b) => {
   const byType = assetRank(a.assetType) - assetRank(b.assetType);
   if (byType) return byType;
@@ -137,6 +137,20 @@ const archiveRows = [...workArchive].sort((a, b) => {
   if (byIndustry) return byIndustry;
   return (b.year || '').localeCompare(a.year || '');
 });
+// Default view is All types · All industries, showing the first few of each
+// type; "see more" (JS) then reveals everything. Precompute that sample so the
+// first paint and the no-JS fallback match the JS default (must stay in sync
+// with SAMPLE_PER_TYPE in main.js's initializeWorkArchive).
+const SAMPLE_PER_TYPE = 3;
+const archiveSampleCount = {};
+const archiveInitialShow = new Set();
+for (const row of archiveRows) {
+  const n = archiveSampleCount[row.assetType] || 0;
+  if (n < SAMPLE_PER_TYPE) {
+    archiveInitialShow.add(row);
+    archiveSampleCount[row.assetType] = n + 1;
+  }
+}
 const archiveHasLink = (status) =>
   status === 'live' || status === 'press' || status === 'archived';
 
@@ -1039,83 +1053,98 @@ siteContent.testimonials.forEach((testimonial, index) => {
 
       <!-- Archive: full body of work -->
       <div class="c-archive" data-archive>
-        <div class="c-archive__head">
-          <div class="c-archive__heading-group">
-            <h3 class="c-archive__heading">{archiveUi.heading}</h3>
-            <span
-              class="c-archive__count"
-              data-archive-status
-              role="status"
-              aria-live="polite"
-            >
-              {
-                archiveUi.countInitial.replace(
-                  '{total}',
-                  String(workArchive.length),
-                )
-              }
-            </span>
+        {
+          /* Heading + both filter rows sit in a sticky bar so they stay
+             reachable while the list scrolls (inside its own frame) and while
+             the page scrolls through the section. */
+        }
+        <div class="c-archive__controls">
+          <div class="c-archive__head">
+            <div class="c-archive__heading-group">
+              <h3 class="c-archive__heading">{archiveUi.heading}</h3>
+              <span
+                class="c-archive__count"
+                data-archive-status
+                role="status"
+                aria-live="polite"
+              >
+                {
+                  archiveUi.countInitial.replace(
+                    '{total}',
+                    String(workArchive.length),
+                  )
+                }
+              </span>
+            </div>
           </div>
-        </div>
 
-        <!-- Asset-type chip-tabs (single-select) -->
-        <p class="c-archive__filter-label" aria-hidden="true">
-          {archiveUi.typeFilterLabel}
-        </p>
-        <div
-          class="c-archive__tabs"
-          role="group"
-          aria-label={ui.work.filterByType}
-        >
-          {
-            assetTypes.map((t) => (
-              <button
-                type="button"
-                class:list={[
-                  'c-archive__tab',
-                  { 'is-active': t.assetType === firstType },
-                ]}
-                data-type-tab={t.assetType}
-                aria-pressed={t.assetType === firstType ? 'true' : 'false'}
-              >
-                {assetTypeLabels[t.assetType] ?? t.assetType}
-                <span class="c-archive__tab-count" data-tab-count>
-                  {t.count}
-                </span>
-              </button>
-            ))
-          }
-        </div>
-
-        <!-- Industry sub-filter -->
-        <p class="c-archive__filter-label" aria-hidden="true">
-          {archiveUi.industryFilterLabel}
-        </p>
-        <div
-          class="c-archive__filters"
-          role="group"
-          aria-label={ui.work.filterByIndustry}
-        >
-          <button
-            type="button"
-            class="c-archive__filter is-active"
-            data-industry-filter="all"
-            aria-pressed="true"
+          <!-- Asset-type chip-tabs (single-select; "All" is the default) -->
+          <p class="c-archive__filter-label" aria-hidden="true">
+            {archiveUi.typeFilterLabel}
+          </p>
+          <div
+            class="c-archive__tabs"
+            role="group"
+            aria-label={ui.work.filterByType}
           >
-            All
-          </button>
-          {
-            archiveIndustries.map((industry) => (
-              <button
-                type="button"
-                class="c-archive__filter"
-                data-industry-filter={industry}
-                aria-pressed="false"
-              >
-                {industry}
-              </button>
-            ))
-          }
+            <button
+              type="button"
+              class="c-archive__tab is-active"
+              data-type-tab="all"
+              aria-pressed="true"
+            >
+              All
+              <span class="c-archive__tab-count" data-tab-count>
+                {workArchive.length}
+              </span>
+            </button>
+            {
+              assetTypes.map((t) => (
+                <button
+                  type="button"
+                  class="c-archive__tab"
+                  data-type-tab={t.assetType}
+                  aria-pressed="false"
+                >
+                  {assetTypeLabels[t.assetType] ?? t.assetType}
+                  <span class="c-archive__tab-count" data-tab-count>
+                    {t.count}
+                  </span>
+                </button>
+              ))
+            }
+          </div>
+
+          <!-- Industry sub-filter -->
+          <p class="c-archive__filter-label" aria-hidden="true">
+            {archiveUi.industryFilterLabel}
+          </p>
+          <div
+            class="c-archive__filters"
+            role="group"
+            aria-label={ui.work.filterByIndustry}
+          >
+            <button
+              type="button"
+              class="c-archive__filter is-active"
+              data-industry-filter="all"
+              aria-pressed="true"
+            >
+              All
+            </button>
+            {
+              archiveIndustries.map((industry) => (
+                <button
+                  type="button"
+                  class="c-archive__filter"
+                  data-industry-filter={industry}
+                  aria-pressed="false"
+                >
+                  {industry}
+                </button>
+              ))
+            }
+          </div>
         </div>
 
         <ul class="c-archive__list" data-archive-list>
@@ -1137,7 +1166,7 @@ siteContent.testimonials.forEach((testimonial, index) => {
                   data-archive-row
                   data-asset-type={row.assetType}
                   data-industry={row.industry}
-                  hidden={row.assetType !== firstType}
+                  hidden={!archiveInitialShow.has(row)}
                 >
                   <Wrapper
                     class={`c-archive__row-link${linkable ? '' : ' c-archive__row-link--static'}`}
