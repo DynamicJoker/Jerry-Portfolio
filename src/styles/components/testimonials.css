@@ -66,11 +66,18 @@
 
 /* Toggle button: it stays DOWN while paused. The base .c-btn--outline press is
    transient, but this control has an on/off state (aria-pressed), and the
-   site's soft-UI language spends inset on "engaged" — so the paused button
-   rests recessed and presses to the deeper well from there. Imported after
-   buttons.css, so this out-orders the equal-specificity .c-btn--outline:active. */
+   site's soft-UI language spends inset on "engaged" — so while paused it sits
+   in the well and presses to the deeper one from there. Imported after
+   buttons.css, so this out-orders the equal-specificity .c-btn--outline:active.
+
+   This is exactly an active archive pill (.c-archive__tab.is-active): opaque
+   --neu-bg ground + inset-sm, pressing to --neu-shadow-pressed. The ground is
+   restated rather than inherited because a neu inset only reads correctly on an
+   OPAQUE surface — over a translucent one the well shows through and the
+   control looks glassy. */
 .c-testimonials-controls__pause-button[aria-pressed='true'] {
-  box-shadow: var(--neu-shadow-inset);
+  background: var(--neu-bg);
+  box-shadow: var(--neu-shadow-inset-sm);
 }
 
 .c-testimonials-controls__pause-button[aria-pressed='true']:active {

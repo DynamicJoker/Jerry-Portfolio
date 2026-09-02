@@ -56,16 +56,6 @@
   background: var(--color-primary-active);
 }
 
-.c-btn--outline {
-  background: transparent;
-  border: 1px solid var(--color-border-strong);
-  color: var(--color-text);
-}
-
-.c-btn--outline:hover {
-  background: var(--color-secondary);
-}
-
 .c-btn--lg {
   padding: var(--space-10) var(--space-20);
   font-size: var(--font-size-lg);
@@ -242,20 +232,46 @@
   transition-duration: var(--neu-press-duration);
 }
 
-/* Secondary is a GHOST button now, not an outline one. Flat with no border, its
-   boundary is a tint that cannot reach WCAG 1.4.11's 3:1 at any usable alpha
-   (measured: 1.13:1 at 10%, still only 1.84:1 light / 2.64:1 at 45%, by which
-   point it reads as a solid fill). It is identified by its label instead —
-   which is what a ghost button is. `prefers-contrast: more` in components/
-   neu.css restores a real accent border for anyone who needs the edge. */
+/* Secondary is borderless: a tint boundary cannot reach WCAG 1.4.11's 3:1 at
+   any usable alpha (measured: 1.13:1 at 10%, still only 1.84:1 light / 2.64:1
+   at 45%, by which point it reads as a solid fill). `prefers-contrast: more`
+   in components/neu.css restores a real accent border for anyone who needs the
+   edge.
+
+   RAISED at rest, unlike --primary/--ember (2026-09-02). Those two are flat
+   because their solid fill already carries the affordance; this variant has no
+   fill and no border, so flat left it with nothing — on screen it read as a
+   grey blob beside the archive pills and testimonial cards, which all carry
+   neu depth. It now takes exactly what every other small control on the page
+   uses: --neu-bg ground + --neu-shadow-raised-sm, pressing to the
+   --neu-shadow-inset-sm below.
+   This does NOT reintroduce the 2026-08-09 problem that flattened the CTAs:
+   that was --neu-shadow-raised (6px/14px), byte-identical to the nav island's
+   shadow. The -sm step is 4px/8px — the small-control weight, which the
+   archive pills already use without competing with the navbar.
+   DUPLICATED in critical-home.css. */
 .c-btn--outline {
-  background: rgba(var(--color-primary-rgb), 0.1);
+  background: var(--neu-bg);
   color: var(--color-text);
+  box-shadow: var(--neu-shadow-raised-sm);
 }
 
-.c-btn--outline:hover {
-  background: rgba(var(--color-primary-rgb), 0.18);
-  color: var(--color-text);
+/* Hover tint, mirroring the archive pills (.c-archive__tab). Two things matter
+   here and both are copied from them deliberately:
+
+   `:not([aria-pressed='true'])` — a toggle that is ON must NOT take the tint.
+   The tint is translucent, and over the inset well of an engaged toggle the
+   well shows straight through it, which reads as a glassy/frosted panel rather
+   than a recessed control. The pills avoid this with `:not(.is-active)`; the
+   aria-pressed selector is the same idea expressed on the accessible state, so
+   it works for any --outline button that becomes a toggle.
+
+   `@media (hover: hover)` — without it the tint sticks after a tap on touch
+   devices, leaving the button looking permanently hovered. */
+@media (hover: hover) {
+  .c-btn--outline:hover:not([aria-pressed='true']) {
+    background: rgba(var(--color-primary-rgb), 0.18);
+  }
 }
 
 /* Ground-coloured, so it takes the ordinary ground-tinted inset — identical to

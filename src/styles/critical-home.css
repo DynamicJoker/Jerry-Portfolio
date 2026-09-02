@@ -1409,10 +1409,13 @@ html.is-theme-transitioning *::after {
   color: var(--color-btn-primary-text);
 }
 
-/* Ghost, not outline: flat and borderless, identified by its label. */
+/* Borderless, and RAISED at rest unlike --primary/--ember: those carry a solid
+   fill as their affordance, this has neither fill nor border, so it takes the
+   small-control neu depth the archive pills use. Mirror of buttons.css. */
 .c-btn--outline {
-  background: rgba(var(--color-primary-rgb), 0.1);
+  background: var(--neu-bg);
   color: var(--color-text);
+  box-shadow: var(--neu-shadow-raised-sm);
 }
 
 /* Press. Primary recesses into its own fill (--neu-shadow-inset-fill tints
