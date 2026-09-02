@@ -7,6 +7,63 @@ const config = {
   // Minimum time the contact button stays in its "Sending…" pulse, so the
   // processing beat is felt even when the network responds near-instantly.
   contactSubmitMinVisible: 1500, // ms
+  // Live-region clear delay. The region is emptied and refilled after a real
+  // time gap so an identical repeated message (e.g. resubmitting without
+  // fixing anything) still registers as a change and is re-announced.
+  announceClearMs: 120,
+  scroll: {
+    // Backstop for the rAF-driven scroll update: rAF does not fire in
+    // background or stalled renderers, so a plain timer runs the same update.
+    frameFallbackMs: 80,
+    // Bounded: stop chasing a #hash landing once the page has had time to
+    // settle, so nothing can re-anchor minutes later if something resizes.
+    hashSettleMaxMs: 4000,
+    // A section is active once its top has crossed the upper 30% of the
+    // viewport.
+    activeSectionThreshold: 0.3,
+    // Slack when testing whether the page is scrolled to the very bottom, so
+    // the last section latches despite sub-pixel/rounding differences.
+    bottomTolerancePx: 20,
+  },
+  nav: {
+    // How long after the last resize event the navbar keeps `.is-resizing`,
+    // which suppresses the mobile sheet's open/close transition.
+    resizeSettleMs: 150,
+    // Safety net for browsers without `scrollend`. MUST outlast any smooth
+    // scroll (a full-page jump measured ~1.5s) or it releases mid-scroll and
+    // the scroll-spy drags the active latch through intermediate sections.
+    linkClickFallbackMs: 3000,
+  },
+  hero: {
+    // How long after the last resize event the hero keeps `.is-resizing`, so
+    // its proof surface can ease between the desktop card and the flat mobile
+    // band as the layout crosses the two-column breakpoint.
+    resizeSettleMs: 200,
+  },
+  distiller: {
+    // RUN must stay >= the sequence length in components/skills.css, or the
+    // rest beat starts while the tail of the sequence is still playing.
+    runMs: 3400,
+    restMs: 4000,
+  },
+  dockedHeaders: {
+    // Debounce before re-measuring docked header geometry after a resize.
+    remeasureDebounceMs: 200,
+  },
+  brandCollapse: {
+    // Debounce before rebuilding the observer with fresh geometry after a
+    // resize.
+    remeasureDebounceMs: 200,
+  },
+  workArchive: {
+    // Rows shown for a single selected type before "see more".
+    limit: 20,
+    // Cap on how many newly-arrived rows play the arrival ping at once.
+    flashRows: 12,
+    // Drop the arrival class once the animation is spent, so a later expand
+    // can re-run it.
+    arrivalClearMs: 2600,
+  },
   breakpoints: {
     md: { cssVar: '--breakpoint-md', fallbackRem: 48 },
     lg: { cssVar: '--breakpoint-lg', fallbackRem: 64 },
@@ -90,7 +147,7 @@ function handleScroll() {
     };
 
     window.requestAnimationFrame(update);
-    window.setTimeout(update, 80);
+    window.setTimeout(update, config.scroll.frameFallbackMs);
     ticking = true;
   }
 }
@@ -205,7 +262,7 @@ function initializeHashLanding() {
   }
   // Bounded: stop chasing once the page has had time to settle, so nothing can
   // re-anchor minutes later if something resizes.
-  window.setTimeout(release, 4000);
+  window.setTimeout(release, config.scroll.hashSettleMaxMs);
 
   settle();
   document.fonts?.ready?.then(settle).catch(() => {});
@@ -412,7 +469,7 @@ function initializeNavigation() {
         window.clearTimeout(navResizeSettle);
         navResizeSettle = window.setTimeout(() => {
           navbar.classList.remove('is-resizing');
-        }, 150);
+        }, config.nav.resizeSettleMs);
       },
       { passive: true },
     );
@@ -433,7 +490,7 @@ function initializeNavigation() {
         window.clearTimeout(heroResizeSettle);
         heroResizeSettle = window.setTimeout(() => {
           hero.classList.remove('is-resizing');
-        }, 200);
+        }, config.hero.resizeSettleMs);
       },
       { passive: true },
     );
@@ -456,7 +513,10 @@ function initializeNavigation() {
       // scroll (a full-page jump measured ~1.5s) to avoid releasing mid-scroll.
       navLinkClickLock = true;
       if (navLinkClickFallbackId) clearTimeout(navLinkClickFallbackId);
-      navLinkClickFallbackId = window.setTimeout(releaseNavLinkClickLock, 3000);
+      navLinkClickFallbackId = window.setTimeout(
+        releaseNavLinkClickLock,
+        config.nav.linkClickFallbackMs,
+      );
 
       if (hamburger && navMenu) {
         closeNav();
@@ -517,13 +577,14 @@ function updateActiveNavLink() {
   if (sections.length === 0) return;
 
   const atBottom =
-    window.innerHeight + scrollY >= document.documentElement.scrollHeight - 20;
+    window.innerHeight + scrollY >=
+    document.documentElement.scrollHeight - config.scroll.bottomTolerancePx;
 
   if (atBottom) {
     currentSectionId = sections[sections.length - 1].id;
   } else {
     // A section is active if its top has crossed the upper 30% of the viewport
-    const threshold = window.innerHeight * 0.3;
+    const threshold = window.innerHeight * config.scroll.activeSectionThreshold;
 
     for (const section of sections) {
       const rect = section.getBoundingClientRect();
@@ -586,11 +647,6 @@ function initializeScrollAnimations() {
 // explicit number. Between runs nothing animates at all — the graphic sits on
 // its finished frame — so this is cheaper than the nine perpetual loops the
 // old distiller ran.
-//
-// RUN must stay >= the sequence length in components/skills.css, or the rest
-// beat starts while the tail of the sequence is still playing.
-const DISTILLER_RUN_MS = 3400;
-const DISTILLER_REST_MS = 4000;
 
 function initializeDistillerLoop() {
   const distiller = document.querySelector('.c-distiller');
@@ -622,8 +678,8 @@ function initializeDistillerLoop() {
     timer = setTimeout(() => {
       // Dropping the class rests on the finished frame (the static rules).
       distiller.classList.remove('is-running');
-      timer = setTimeout(play, DISTILLER_REST_MS);
-    }, DISTILLER_RUN_MS);
+      timer = setTimeout(play, config.distiller.restMs);
+    }, config.distiller.runMs);
   };
 
   watchViewportPresence(distiller, (isVisible) => {
@@ -744,7 +800,10 @@ function initializeDockedSectionHeaders() {
     'resize',
     () => {
       window.clearTimeout(resizeId);
-      resizeId = window.setTimeout(remeasure, 200);
+      resizeId = window.setTimeout(
+        remeasure,
+        config.dockedHeaders.remeasureDebounceMs,
+      );
     },
     { passive: true },
   );
@@ -787,7 +846,10 @@ function initializeBrandCollapse() {
     'resize',
     () => {
       window.clearTimeout(resizeId);
-      resizeId = window.setTimeout(observe, 200);
+      resizeId = window.setTimeout(
+        observe,
+        config.brandCollapse.remeasureDebounceMs,
+      );
     },
     { passive: true },
   );
@@ -920,7 +982,6 @@ function initializeWorkArchive() {
   const frameEl = root.querySelector('[data-archive-frame]');
   if (!tabs.length) return;
 
-  const LIMIT = 20; // rows shown for a single selected type before "see more"
   const SAMPLE_PER_TYPE = siteContent.archiveUi.samplePerType; // rows shown per type in the "All" view before "see more"
   // The first tab is "All" (data-type-tab="all"), so both filters default to All.
   let activeType = tabs[0].dataset.typeTab;
@@ -986,7 +1047,6 @@ function initializeWorkArchive() {
   // reader actually sees land. Marking all ~227 meant that many simultaneous
   // animations, which is what made the flash judder — and the rows past the
   // first screenful would have finished long before anyone scrolled to them.
-  const FLASH_ROWS = 12;
   let arrivalTimer = 0;
   const clearArrivals = () => {
     rows.forEach((row) => {
@@ -1000,12 +1060,15 @@ function initializeWorkArchive() {
     clearArrivals();
     window.clearTimeout(arrivalTimer);
     if (!arrivals.length) return;
-    arrivals.slice(0, FLASH_ROWS).forEach((row, index) => {
+    arrivals.slice(0, config.workArchive.flashRows).forEach((row, index) => {
       row.style.setProperty('--arrive-i', String(index));
       row.classList.add('is-new');
     });
     // Drop the class once the animation is spent so a later expand can re-run it.
-    arrivalTimer = window.setTimeout(clearArrivals, 2600);
+    arrivalTimer = window.setTimeout(
+      clearArrivals,
+      config.workArchive.arrivalClearMs,
+    );
   };
 
   const restoreOrder = () => {
@@ -1020,7 +1083,7 @@ function initializeWorkArchive() {
     let matched = 0; // rows matching the active type + industry
     let collapsedShown = 0; // how many WOULD show in the capped (collapsed) view
     // In the All view the cap is per type (a few from each); for a single
-    // selected type it is a flat LIMIT. Rows are pre-sorted type → industry →
+    // selected type it is a flat limit. Rows are pre-sorted type → industry →
     // newest, so "first N" reads as the newest few of each type.
     const perTypeShown = {};
     rows.forEach((row) => {
@@ -1039,7 +1102,7 @@ function initializeWorkArchive() {
         inCollapsed = n < SAMPLE_PER_TYPE;
         if (inCollapsed) perTypeShown[t] = n + 1;
       } else {
-        inCollapsed = matched <= LIMIT;
+        inCollapsed = matched <= config.workArchive.limit;
       }
       if (inCollapsed) collapsedShown += 1;
       row.toggleAttribute('hidden', !(expanded || inCollapsed));
@@ -1299,7 +1362,7 @@ function announce(region, message) {
   region.textContent = '';
   setTimeout(() => {
     region.textContent = message;
-  }, 120);
+  }, config.announceClearMs);
 }
 
 // Wait out the remainder of the minimum in-flight window so the pulse is
