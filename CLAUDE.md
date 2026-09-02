@@ -11,7 +11,25 @@ Personal portfolio + blog, deployed on Vercel at https://jerryjames.me.
   (`archiveUi`, with `{count}`-style placeholders filled by JS), testimonials,
   experience, blog section/index copy + empty states, beta banner copy,
   contact panel/info, Web3Forms config incl. form labels + toast messages,
-  Calendly config. Edit content there, not in component markup.
+  Calendly config. Edit content there, not in component markup. It also holds
+  the archive's ordering config — `archiveUi.industryOrder`,
+  `archiveUi.assetTypeOrder` and `archiveUi.samplePerType` (the last is read by
+  BOTH `PortfolioSection.astro` and `work-archive.js`, so the server-rendered
+  first paint and the JS default cannot disagree).
+- **Home page markup** is one component per section in
+  `src/components/sections/*.astro`; `HomeBody.astro` only orders them and
+  passes the blog `<slot>`. Pure derivation logic (gantt model, archive
+  ranking/sorting/sampling, services CTA HTML, testimonial columns) lives in
+  `src/lib/*.js` so it can be read and tested apart from markup.
+- **Home page behaviour** is one module per feature in
+  `src/scripts/features/*.js` over four shared cores in `src/scripts/core/`
+  (`config.js` — every tuning constant with the rationale that justifies it;
+  `dom.js`; `scroll.js` — the single rAF-batched scroll dispatch plus its
+  callback registry; `viewport.js`). `src/main.js` is a bootstrap only: imports
+  plus the `DOMContentLoaded` handler, whose **call order is load-bearing**
+  (`initializeHashLanding` must stay last). The scroll-spy registers itself at
+  module scope in `navigation.js` so it keeps running before the docked
+  headers, as it did when it was called directly.
 - `astro.config.mjs` derives the site URL from `siteContent.profile.canonicalUrl` —
   don't redefine it. Homepage sitemap `lastmod` is the `homepageLastmod` constant there.
 - Blog posts: `src/content/blog/*.mdx` (editable via Pages CMS, `.pages.yml`).
@@ -19,7 +37,7 @@ Personal portfolio + blog, deployed on Vercel at https://jerryjames.me.
 - Section kickers ("01 / About") are auto-numbered with a CSS counter
   (`.c-section__kicker` in `src/styles/components/section.css`) — write only
   the label text in markup.
-- Footer markup is `src/components/SiteFooter.astro` only (HomeBody includes it).
+- Footer markup is `src/components/SiteFooter.astro` only (HomeBody renders it).
 - `vercel.json` holds all deploy-time HTTP config: apex/vanity-host redirects,
   `Cache-Control` per asset dir (30d for `/images` + `/logos` + `/brand`, 1yr
   `immutable` for content-hashed `/_astro`), and the security headers in the
@@ -84,15 +102,22 @@ Personal portfolio + blog, deployed on Vercel at https://jerryjames.me.
   changes with `npm run build` then `npm run preview` (restart preview after
   each build).
 - `npm run build` gates on `prettier --check`, `eslint .`, then the
-  `check:critical`, `check:bemit`, `check:theme`, `check:charts`, and
-  `check:breakpoints` scripts
+  `check:critical`, `check:bemit`, `check:theme`, `check:charts`,
+  `check:breakpoints`, and `check:content-coverage` scripts
   before building, and `check:seo` (`scripts/check-seo.mjs`) **after** the
   build, against the emitted `dist/` —
   format with `npm run format` and lint with `npm run lint` first. The
   pre-commit hook enforces format + lint only; the `check:*` gates run on
   build/CI (run them standalone with `npm run check:bemit` / `check:critical` /
-  `check:theme` / `check:charts` / `check:breakpoints` / `check:seo` — note
+  `check:theme` / `check:charts` / `check:breakpoints` /
+  `check:content-coverage` / `check:seo` — note
   `check:seo` reads `dist/`, so build first or it checks a stale tree).
+  `check:content-coverage` (`scripts/check-content-coverage.mjs`) asserts every
+  `industry` and `assetType` in `work-data.js` is listed in
+  `archiveUi.industryOrder` / `archiveUi.assetTypeOrder` and has an entry in
+  `assetTypeLabels` — the archive's rank helpers return 99 for anything they
+  don't recognise, so an unlisted value silently sinks to the bottom with
+  nothing failing, and a missing label renders an undefined filter tab.
   `check:breakpoints` (`scripts/check-breakpoints.mjs`) reads the
   `--breakpoint-*` tokens in `settings.css` and fails on any **width** media
   query in `src/styles/` that isn't one of them (or its `.01rem` step twin) —
@@ -115,16 +140,19 @@ Personal portfolio + blog, deployed on Vercel at https://jerryjames.me.
   through `markdown.processor: unified({...})` (from `@astrojs/markdown-remark`);
   `rehypePlugins` on `mdx({...})` is deprecated and **silently ignored** — the
   blog's external-link `target="_blank"`/`noopener` plugin breaks if moved back.
-- The contact email in HomeBody markup is a decoy (`jerry@placeholder.com`);
-  `src/main.js` swaps in a reveal button using `siteContent.contactInfo.email`
-  (split user/domain for scrape resistance).
+- The contact email in `ContactSection.astro` markup is a decoy
+  (`jerry@placeholder.com`); `scripts/features/contact-info.js` swaps in a
+  reveal button using `siteContent.contactInfo.email` (split user/domain for
+  scrape resistance).
 - The contact form posts to Web3Forms; endpoint/key/subject come from
   `siteContent.contactForm` (the access key is public by design).
-- `src/main.js` only runs on the home page; `SiteNav.astro` carries a small
-  inline copy of the nav toggle logic for blog/404 pages — keep them in sync
-  when changing nav behavior.
-- Experience entries use `period: 'MM/YYYY - MM/YYYY'` (or `- Present`); the
-  Gantt chart in HomeBody parses that exact format.
+- The `src/scripts/` bundle only runs on the home page; `SiteNav.astro`
+  carries a small inline copy of the nav toggle logic for blog/404 pages —
+  keep them in sync when changing nav behavior.
+- Experience entries use `period: 'MM/YYYY - MM/YYYY'` (or `- Present`);
+  `src/lib/gantt.js` parses that exact format. An entry ending in `Present`
+  resolves to `new Date()`, so the bar percentages move in real time — two
+  builds minutes apart legitimately emit slightly different widths.
 - **The enforcing CSP in `vercel.json` is hash-based and can silently break
   scripts on deploy.** A static site can't use nonces, so `script-src` lists a
   SHA-256 hash of each inline script. One of them — the deferred-stylesheet loader
