@@ -2,8 +2,6 @@
 /* Above-the-fold rules that also exist in critical-home.css must be
    changed in both places. */
 
-/* Sections */
-
 .c-section {
   padding-block: var(--section-padding);
   position: relative;

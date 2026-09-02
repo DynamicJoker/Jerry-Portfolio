@@ -235,8 +235,6 @@
   }
 }
 
-/* Responsive adjustments for Gantt Chart */
-
 @media (max-width: 48rem) {
   .c-gantt__timeline {
     display: none;

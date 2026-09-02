@@ -2,8 +2,6 @@
 /* Above-the-fold rules that also exist in critical-home.css must be
    changed in both places. */
 
-/* Navigation */
-
 /* .c-nav is now only the fixed positioning frame — it paints nothing. All the
    chrome moved to .c-nav__container, which is the island. There is no
    is-scrolled state any more: the island is a physical object that is simply

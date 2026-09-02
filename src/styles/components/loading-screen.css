@@ -2,10 +2,6 @@
 /* Above-the-fold rules that also exist in critical-home.css must be
    changed in both places. */
 
-/* --- PORTFOLIO SPECIFIC STYLES --- */
-
-/* Loading Screen */
-
 .c-loading-screen {
   position: fixed;
   top: 0;

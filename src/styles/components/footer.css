@@ -1,8 +1,6 @@
 /* Component: footer */
 /* Below the fold, so no rules here are duplicated in critical-home.css. */
 
-/* Footer */
-
 .c-footer {
   background: transparent;
   padding: var(--space-20) 0;

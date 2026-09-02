@@ -76,8 +76,15 @@
   font-weight: var(--font-weight-medium);
 }
 
-/* Experience Section */
-
+/* These two belong in components/gantt.css by name, and they are deliberately
+   NOT there. `opacity: 0` below is overridden by the
+   @media (prefers-reduced-motion: reduce) block in components/section.css,
+   which targets `#gantt-chart-container` at the same ID specificity — so
+   SOURCE ORDER is what makes the override win, and common.css is imported
+   before section.css in global.css while gantt.css is imported after it.
+   Moving these into gantt.css would put `opacity: 0` last and leave the chart
+   permanently invisible for anyone who prefers reduced motion. Move them only
+   together with that override. */
 #gantt-chart-container {
   width: 100%;
   margin: 0 auto;

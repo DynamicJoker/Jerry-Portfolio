@@ -1,6 +1,12 @@
 /* Component: testimonials */
 /* Below the fold, so no rules here are duplicated in critical-home.css. */
 
+/* Positioning context for the section. Nothing else targets this id, so its
+   place in the cascade is not load-bearing. */
+#testimonials {
+  position: relative;
+}
+
 .c-testimonials-scroller {
   display: flex;
   gap: var(--space-24);
