@@ -1,0 +1,45 @@
+---
+import { siteContent } from '../../content.js';
+import { buildEngagementRows } from '../../lib/services.js';
+
+const engagementRows = buildEngagementRows(siteContent.services);
+const sections = siteContent.sections;
+---
+
+<section id="services" class="c-section">
+  <div class="c-section__header">
+    <div class="o-container c-section__header-inner">
+      <span class="c-section__kicker"
+        ><span class="c-section__kicker-label">{sections.services.kicker}</span
+        ></span
+      >
+      <h2 class="c-section__title">{sections.services.title}</h2>
+    </div>
+  </div>
+  <div class="o-container">
+    <div class="c-engagements">
+      <span class="c-engagements__tag">{siteContent.services.tag}</span>
+      <p class="c-engagements__lede">{siteContent.services.lede}</p>
+      <ul class="c-engagements__list">
+        {
+          engagementRows.map((engagement) => (
+            <li class="c-engagement">
+              <div class="c-engagement__body">
+                <h3 class="c-engagement__name">{engagement.name}</h3>
+                <a
+                  class="c-engagement__verb"
+                  href={siteContent.services.ctaHref}
+                  set:html={engagement.verbHtml}
+                />
+                <p class="c-engagement__description">
+                  {engagement.description}
+                </p>
+              </div>
+              <span class="c-engagement__meta">{engagement.meta}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,232 @@
+---
+import { siteContent } from '../../content.js';
+const profile = siteContent.profile;
+const sections = siteContent.sections;
+---
+
+<section id="contact" class="c-section">
+  <div class="c-section__header">
+    <div class="o-container c-section__header-inner">
+      <span class="c-section__kicker"
+        ><span class="c-section__kicker-label">{sections.contact.kicker}</span
+        ></span
+      >
+      <h2 class="c-section__title">{sections.contact.title}</h2>
+    </div>
+  </div>
+  <div class="o-container">
+    <!-- Booking CTA Block -->
+    <div class="c-booking-cta" id="schedule" data-calendly-booking>
+      <div class="c-booking-cta__bar">
+        <div class="c-booking-cta__message">
+          <span class="c-availability-dot c-booking-cta__dot" aria-hidden="true"
+          ></span>
+          <span>{profile.bookingCta.text}</span>
+        </div>
+        <a
+          class="c-btn c-btn--ember c-booking-cta__button"
+          href={profile.bookingCta.url}
+          target="_blank"
+          rel="noopener"
+          data-calendly-open
+          aria-expanded="false"
+          aria-controls="calendly-booking-panel"
+          aria-label={profile.bookingCta.buttonLabel}
+        >
+          <span class="c-booking-cta__labels" aria-hidden="true">
+            <span class="c-booking-cta__label c-booking-cta__label--open"
+              >{profile.bookingCta.buttonLabel}</span
+            >
+            <span class="c-booking-cta__label c-booking-cta__label--close"
+              >{profile.bookingCta.closeLabel}</span
+            >
+          </span>
+        </a>
+      </div>
+      <div class="c-calendly-panel" id="calendly-booking-panel" hidden>
+        <div class="c-calendly-panel__inner">
+          <div class="c-calendly-panel__header">
+            <div>
+              <h3 class="c-calendly-panel__title">
+                {profile.bookingCta.expandedTitle}
+              </h3>
+              <p class="c-calendly-panel__helper">
+                {profile.bookingCta.helperText}
+              </p>
+            </div>
+          </div>
+          <div class="c-calendly-panel__booked" data-calendly-booked hidden>
+            {profile.bookingCta.bookedText}
+          </div>
+          <div class="c-calendly-panel__stage">
+            <div class="c-calendly-panel__loading" data-calendly-loading>
+              <span class="c-calendly-panel__loading-dot" aria-hidden="true"
+              ></span>
+              <span class="c-calendly-panel__loading-label">
+                {profile.bookingCta.loadingText}
+              </span>
+            </div>
+            <div class="c-calendly-panel__host" data-calendly-container></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="c-contact__content">
+      <div class="c-contact__info">
+        <h3>{siteContent.contactPanel.title}</h3>
+        <p>{siteContent.contactPanel.text}</p>
+        <div class="c-contact__details">
+          <div class="c-contact__item">
+            <div class="c-contact__icon" aria-hidden="true">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="1em"
+                height="1em"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path
+                  d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"
+                ></path>
+              </svg>
+            </div>
+            <div class="c-contact__text" id="contact-email">
+              <span class="u-sr-only">Email: </span>jerry@placeholder.com
+            </div>
+          </div>
+
+          <div class="c-contact__item">
+            <div class="c-contact__icon" aria-hidden="true">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="1em"
+                height="1em"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path
+                  d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.761 0 5-2.239 5-5v-14c0-2.761-2.239-5-5-5zm-11 19h-3v-10h3v10zm-1.5-11.268c-.966 0-1.75-.784-1.75-1.75s.784-1.75 1.75-1.75 1.75.784 1.75 1.75-.784 1.75-1.75 1.75zm13.5 11.268h-3v-5.604c0-1.337-.026-3.063-1.868-3.063-1.868 0-2.154 1.459-2.154 2.967v5.7h-3v-10h2.881v1.367h.041c.401-.761 1.379-1.563 2.838-1.563 3.036 0 3.599 2 3.599 4.594v5.602z"
+                ></path>
+              </svg>
+            </div>
+            <div class="c-contact__text">
+              <a
+                href={siteContent.contactInfo.linkedin.url}
+                id="contact-linkedin"
+                target="_blank"
+                rel="noopener">{siteContent.contactInfo.linkedin.label}</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="c-contact__form-container">
+        <form
+          class="c-contact-form"
+          id="contact-form"
+          action={siteContent.contactForm.endpoint}
+          method="POST"
+          novalidate
+        >
+          <input
+            type="hidden"
+            name="access_key"
+            value={siteContent.contactForm.accessKey}
+          />
+          <input
+            type="hidden"
+            name="subject"
+            value={siteContent.contactForm.subject}
+          />
+          {
+            /* Labels are sr-only: the deep-well pills carry their own name
+               via placeholder (the soft-UI form look), while screen readers
+               keep the real <label> association. Placeholder and label share
+               one string in siteContent.contactForm.labels. */
+          }
+          <div class="c-form-group">
+            <label for="name" class="u-sr-only">
+              {siteContent.contactForm.labels.name}
+            </label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              class="c-form-control"
+              placeholder={siteContent.contactForm.labels.name}
+              autocomplete="name"
+              required
+              aria-describedby="name-error"
+            />
+            <p class="c-form-error" id="name-error" data-form-error></p>
+          </div>
+          <div class="c-form-group">
+            <label for="email" class="u-sr-only">
+              {siteContent.contactForm.labels.email}
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              class="c-form-control"
+              placeholder={siteContent.contactForm.labels.email}
+              autocomplete="email"
+              required
+              aria-describedby="email-error"
+            />
+            <p class="c-form-error" id="email-error" data-form-error></p>
+          </div>
+          <div class="c-form-group">
+            <label for="company" class="u-sr-only">
+              {siteContent.contactForm.labels.company}
+            </label>
+            <input
+              type="text"
+              id="company"
+              name="company"
+              class="c-form-control"
+              placeholder={siteContent.contactForm.labels.company}
+              autocomplete="organization"
+            />
+          </div>
+          <div class="c-form-group">
+            <label for="message" class="u-sr-only">
+              {siteContent.contactForm.labels.message}
+            </label>
+            <textarea
+              id="message"
+              name="message"
+              rows="5"
+              class="c-form-control"
+              placeholder={siteContent.contactForm.labels.message}
+              required
+              aria-describedby="message-error"></textarea>
+            <p class="c-form-error" id="message-error" data-form-error></p>
+          </div>
+
+          <!-- Honeypot: Web3Forms rejects the submission if a bot checks this hidden field -->
+          <input type="checkbox" name="botcheck" class="u-hidden" />
+
+          <p
+            class="c-form-error c-form-error--summary"
+            id="form-error"
+            data-form-error
+            role="alert"
+          >
+          </p>
+          <!-- Screen-reader-only summary of validation errors on submit -->
+          <p class="u-sr-only" id="form-status" role="status"></p>
+          <button
+            type="submit"
+            class="c-btn c-btn--primary c-btn--full-width c-contact-form__submit"
+            >{siteContent.contactForm.submitLabel}</button
+          >
+        </form>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,74 @@
+---
+import { siteContent } from '../../content.js';
+import { buildTestimonialColumns } from '../../lib/testimonials.js';
+
+const testimonialColumns = buildTestimonialColumns(
+  siteContent.testimonials,
+  siteContent.testimonialColumns,
+);
+const ui = siteContent.ui;
+const sections = siteContent.sections;
+---
+
+<section id="testimonials" class="c-section">
+  <div class="c-section__header">
+    <div class="o-container c-section__header-inner">
+      <span class="c-section__kicker"
+        ><span class="c-section__kicker-label"
+          >{sections.testimonials.kicker}</span
+        ></span
+      >
+      <h2 class="c-section__title">{sections.testimonials.title}</h2>
+    </div>
+  </div>
+  <div class="o-container">
+    <div class="c-testimonials-controls">
+      <button
+        type="button"
+        class="c-btn c-btn--outline c-testimonials-controls__pause-button"
+        aria-pressed="false"
+        aria-controls="testimonials-container"
+        data-testimonials-pause
+      >
+        <span class="c-testimonials-controls__label--pause"
+          >{ui.testimonials.pause}</span
+        >
+        <span class="c-testimonials-controls__label--resume"
+          >{ui.testimonials.resume}</span
+        >
+      </button>
+    </div>
+    <div id="testimonials-container" class="c-testimonials-scroller">
+      {
+        testimonialColumns.map((column) => (
+          <div class="c-testimonials-scroller__column">
+            <div class="c-testimonials-scroller__inner">
+              {column.map((testimonial) => (
+                <div class="c-testimonial">
+                  <div class="c-testimonial__header">
+                    <span class="c-testimonial__avatar" aria-hidden="true">
+                      {testimonial.name
+                        .split(' ')
+                        .map((part) => part[0])
+                        .slice(0, 2)
+                        .join('')}
+                    </span>
+                    <div class="c-testimonial__author-info">
+                      <p class="c-testimonial__author">{testimonial.name}</p>
+                      <p class="c-testimonial__title">
+                        {testimonial.title}, {testimonial.company}
+                      </p>
+                    </div>
+                  </div>
+                  <p class="c-testimonial__quote">
+                    &ldquo;{testimonial.quote}&rdquo;
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

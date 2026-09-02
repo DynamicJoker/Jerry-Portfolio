@@ -1,0 +1,495 @@
+---
+import { siteContent } from '../../content.js';
+
+// Skills thesis: the emphasised segments are brand blue by default; a segment
+// marked `accent: 'ember'` (the "market" half) takes the ember ink instead, the
+// same tech → impact split as the hero headline. Precomputed here so the <b>
+// stays on one line in the markup — wrapped, Astro 7 pads the emphasis with
+// whitespace ("> market <"), the same trap that makes compressHTML load-bearing.
+const thesisSegments = siteContent.skills.feature.thesis.map((segment) => ({
+  ...segment,
+  emberClass:
+    segment.accent === 'ember'
+      ? 'c-capability__thesis-accent--ember'
+      : undefined,
+}));
+import ToolLogo from '../ToolLogo.astro';
+const sections = siteContent.sections;
+---
+
+<section id="skills" class="c-section">
+  <div class="c-section__header">
+    <div class="o-container c-section__header-inner">
+      <span class="c-section__kicker"
+        ><span class="c-section__kicker-label">{sections.skills.kicker}</span
+        ></span
+      >
+      <h2 class="c-section__title">{sections.skills.title}</h2>
+    </div>
+  </div>
+  <div class="o-container">
+    <div class="c-capabilities">
+      <div class="c-capability c-capability--feature">
+        <div class="c-capability__lead">
+          <span class="c-capability__tag">{siteContent.skills.feature.tag}</span
+          >
+          <p class="c-capability__thesis">
+            {
+              thesisSegments.map((segment) =>
+                segment.emphasis ? (
+                  <b class={segment.emberClass}>{segment.text}</b>
+                ) : (
+                  segment.text
+                ),
+              )
+            }
+          </p>
+          <div class="c-capability__meta">
+            <a
+              class="c-capability__cta"
+              href={siteContent.skills.feature.cta.href}
+            >
+              {siteContent.skills.feature.cta.label}
+            </a>
+          </div>
+        </div>
+        {
+          /* Distiller: the raw material on the left is two textures, not
+               one — indented, ragged `code` rows above a hairline, and a
+               `spec` table of label/value pairs below. It stays put and gives
+               up its essence: each row emits a drip that travels right and
+               converges on one of the three campaign rows, which grow as the
+               drips land. Decorative; the sequence (skills.css,
+               .c-distiller__*) runs ONCE when the section scrolls into view
+               and rests on the final frame — the same frame reduced-motion
+               and perf-lite visitors get, so all three states agree.
+               These SVG coordinates are referenced by that animation's
+               keyframe offsets and by the per-drip translate targets —
+               keep them in sync. */
+        }
+        <div class="c-distiller" aria-hidden="true">
+          <svg
+            class="c-distiller__svg"
+            viewBox="0 0 320 160"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <g class="c-distiller__code">
+              <rect
+                class="c-distiller__row c-distiller__row--kw"
+                x="0"
+                y="6"
+                width="20"
+                height="5"
+                rx="1.2"></rect>
+              <rect
+                class="c-distiller__row"
+                x="24"
+                y="6"
+                width="34"
+                height="5"
+                rx="1.2"></rect>
+              <rect
+                class="c-distiller__row"
+                x="62"
+                y="6"
+                width="16"
+                height="5"
+                rx="1.2"></rect>
+              <rect
+                class="c-distiller__row c-distiller__row--kw"
+                x="8"
+                y="18"
+                width="15"
+                height="5"
+                rx="1.2"></rect>
+              <rect
+                class="c-distiller__row"
+                x="27"
+                y="18"
+                width="30"
+                height="5"
+                rx="1.2"></rect>
+              <rect
+                class="c-distiller__row"
+                x="61"
+                y="18"
+                width="44"
+                height="5"
+                rx="1.2"></rect>
+              <rect
+                class="c-distiller__row"
+                x="8"
+                y="30"
+                width="24"
+                height="5"
+                rx="1.2"></rect>
+              <rect
+                class="c-distiller__row c-distiller__row--kw"
+                x="36"
+                y="30"
+                width="12"
+                height="5"
+                rx="1.2"></rect>
+              <rect
+                class="c-distiller__row"
+                x="52"
+                y="30"
+                width="38"
+                height="5"
+                rx="1.2"></rect>
+              <rect
+                class="c-distiller__row"
+                x="16"
+                y="42"
+                width="18"
+                height="5"
+                rx="1.2"></rect>
+              <rect
+                class="c-distiller__row"
+                x="38"
+                y="42"
+                width="52"
+                height="5"
+                rx="1.2"></rect>
+              <rect
+                class="c-distiller__row"
+                x="8"
+                y="54"
+                width="26"
+                height="5"
+                rx="1.2"></rect>
+              <rect
+                class="c-distiller__row"
+                x="38"
+                y="54"
+                width="40"
+                height="5"
+                rx="1.2"></rect>
+              <rect
+                class="c-distiller__row"
+                x="0"
+                y="66"
+                width="7"
+                height="5"
+                rx="1.2"></rect>
+            </g>
+            <rect
+              class="c-distiller__rule"
+              x="0"
+              y="84"
+              width="130"
+              height="1"
+              rx="0.5"></rect>
+            <g class="c-distiller__spec">
+              <rect
+                class="c-distiller__row"
+                x="0"
+                y="98"
+                width="40"
+                height="5"
+                rx="1.2"></rect>
+              <rect
+                class="c-distiller__row"
+                x="104"
+                y="98"
+                width="26"
+                height="5"
+                rx="1.2"></rect>
+              <rect
+                class="c-distiller__row"
+                x="0"
+                y="112"
+                width="30"
+                height="5"
+                rx="1.2"></rect>
+              <rect
+                class="c-distiller__row"
+                x="96"
+                y="112"
+                width="34"
+                height="5"
+                rx="1.2"></rect>
+              <rect
+                class="c-distiller__row"
+                x="0"
+                y="126"
+                width="46"
+                height="5"
+                rx="1.2"></rect>
+              <rect
+                class="c-distiller__row"
+                x="110"
+                y="126"
+                width="20"
+                height="5"
+                rx="1.2"></rect>
+              <rect
+                class="c-distiller__row"
+                x="0"
+                y="140"
+                width="34"
+                height="5"
+                rx="1.2"></rect>
+              <rect
+                class="c-distiller__row"
+                x="100"
+                y="140"
+                width="30"
+                height="5"
+                rx="1.2"></rect>
+            </g>
+            <g class="c-distiller__drips">
+              <circle class="c-distiller__drip" cx="134" cy="8.5" r="2.4"
+              ></circle>
+              <circle
+                class="c-distiller__drip c-distiller__drip--2"
+                cx="134"
+                cy="44.5"
+                r="2.4"></circle>
+              <circle
+                class="c-distiller__drip c-distiller__drip--3"
+                cx="134"
+                cy="68.5"
+                r="2.4"></circle>
+              <circle
+                class="c-distiller__drip c-distiller__drip--4"
+                cx="134"
+                cy="100.5"
+                r="2.4"></circle>
+              <circle
+                class="c-distiller__drip c-distiller__drip--5"
+                cx="134"
+                cy="128.5"
+                r="2.4"></circle>
+              <circle
+                class="c-distiller__drip c-distiller__drip--6"
+                cx="134"
+                cy="142.5"
+                r="2.4"></circle>
+            </g>
+            <g class="c-distiller__campaign">
+              <circle class="c-distiller__dot" cx="196" cy="26.5" r="4"
+              ></circle>
+              <g
+                class="c-distiller__deliverable c-distiller__deliverable--landing"
+              >
+                <path class="c-distiller__out-hair" d="M200 26.5 H206"></path>
+                <rect
+                  class="c-distiller__out-frame"
+                  x="206"
+                  y="6.5"
+                  width="34"
+                  height="40"
+                  rx="2.5"></rect>
+                <path class="c-distiller__out-hair" d="M206 13 H240"></path>
+                <circle class="c-distiller__out-fill" cx="211" cy="10.0" r="1.1"
+                ></circle>
+                <circle class="c-distiller__out-fill" cx="215" cy="10.0" r="1.1"
+                ></circle>
+                <circle class="c-distiller__out-fill" cx="219" cy="10.0" r="1.1"
+                ></circle>
+                <rect
+                  class="c-distiller__out-fill"
+                  x="210"
+                  y="17.5"
+                  width="26"
+                  height="9"
+                  rx="1.5"></rect>
+                <rect
+                  class="c-distiller__out-line"
+                  x="210"
+                  y="29.5"
+                  width="18"
+                  height="2.2"
+                  rx="1.1"></rect>
+                <rect
+                  class="c-distiller__out-line"
+                  x="210"
+                  y="34.0"
+                  width="22"
+                  height="2.2"
+                  rx="1.1"></rect>
+                <rect
+                  class="c-distiller__out-fill"
+                  x="210"
+                  y="39.0"
+                  width="12"
+                  height="5"
+                  rx="2.5"></rect>
+              </g>
+            </g>
+            <g class="c-distiller__campaign c-distiller__campaign--2">
+              <circle class="c-distiller__dot" cx="196" cy="80.5" r="4"
+              ></circle>
+              <g
+                class="c-distiller__deliverable c-distiller__deliverable--article"
+              >
+                <path class="c-distiller__out-hair" d="M200 80.5 H206"></path>
+                <rect
+                  class="c-distiller__out-frame"
+                  x="206"
+                  y="60.5"
+                  width="30"
+                  height="40"
+                  rx="2.5"></rect>
+                <rect
+                  class="c-distiller__out-fill"
+                  x="210"
+                  y="66.5"
+                  width="22"
+                  height="3.4"
+                  rx="1.5"></rect>
+                <rect
+                  class="c-distiller__out-line"
+                  x="210"
+                  y="73.5"
+                  width="22"
+                  height="2.2"
+                  rx="1.1"></rect>
+                <rect
+                  class="c-distiller__out-line"
+                  x="210"
+                  y="78.5"
+                  width="19"
+                  height="2.2"
+                  rx="1.1"></rect>
+                <rect
+                  class="c-distiller__out-line"
+                  x="210"
+                  y="83.5"
+                  width="22"
+                  height="2.2"
+                  rx="1.1"></rect>
+                <rect
+                  class="c-distiller__out-line"
+                  x="210"
+                  y="88.5"
+                  width="13"
+                  height="2.2"
+                  rx="1.1"></rect>
+              </g>
+            </g>
+            <g class="c-distiller__campaign c-distiller__campaign--3">
+              <circle class="c-distiller__dot" cx="196" cy="134.5" r="4"
+              ></circle>
+              <g
+                class="c-distiller__deliverable c-distiller__deliverable--casestudy"
+              >
+                <path class="c-distiller__out-hair" d="M200 134.5 H206"></path>
+                <rect
+                  class="c-distiller__out-frame"
+                  x="206"
+                  y="114.5"
+                  width="30"
+                  height="40"
+                  rx="2.5"></rect>
+                <rect
+                  class="c-distiller__out-fill"
+                  x="210"
+                  y="120.5"
+                  width="15"
+                  height="3"
+                  rx="1.5"></rect>
+                <rect
+                  class="c-distiller__out-line"
+                  x="210"
+                  y="126.5"
+                  width="22"
+                  height="2"
+                  rx="1"></rect>
+                <rect
+                  class="c-distiller__out-fill"
+                  x="211"
+                  y="141.5"
+                  width="3"
+                  height="8"
+                  rx="0.6"
+                  fill-opacity="1.0"></rect>
+                <rect
+                  class="c-distiller__out-fill"
+                  x="216"
+                  y="136.5"
+                  width="3"
+                  height="13"
+                  rx="0.6"
+                  fill-opacity="0.88"></rect>
+                <rect
+                  class="c-distiller__out-fill"
+                  x="221"
+                  y="143.5"
+                  width="3"
+                  height="6"
+                  rx="0.6"
+                  fill-opacity="0.76"></rect>
+                <rect
+                  class="c-distiller__out-fill"
+                  x="226"
+                  y="138.5"
+                  width="3"
+                  height="11"
+                  rx="0.6"
+                  fill-opacity="0.64"></rect>
+              </g>
+            </g>
+          </svg>
+          <div class="c-distiller__ends">
+            <span class="c-distiller__end c-distiller__end--in"
+              >{siteContent.skills.feature.distiller.inputLabel}</span
+            >
+            <span class="c-distiller__end c-distiller__end--out"
+              >{siteContent.skills.feature.distiller.outputLabel}</span
+            >
+          </div>
+        </div>
+      </div>
+
+      {
+        /* Disciplines as editorial rows: no cards, no 01/02/03 numbering —
+           the name anchors each row and the skills read as inline tags,
+           divided by hairlines. The feature cell above and the tool stack
+           below (still a native <details> accordion on mobile) keep their
+           card treatment. */
+      }
+      <ul class="c-disciplines">
+        {
+          siteContent.skills.disciplines.map((discipline) => (
+            <li class="c-discipline">
+              <div class="c-discipline__head">
+                <h3 class="c-discipline__name">{discipline.name}</h3>
+                <span class="c-discipline__note">{discipline.note}</span>
+              </div>
+              <ul class="c-discipline__tags">
+                {discipline.skills.map((skill) => (
+                  <li class="c-discipline__tag">{skill}</li>
+                ))}
+              </ul>
+            </li>
+          ))
+        }
+      </ul>
+
+      {
+        /* The stack is a materials list, not a fourth discipline — no
+           numeric index (numbering it once split the three disciplines 2/1),
+           just the mono slug + name over a strip of tool logos. Each glyph is
+           inlined by ToolLogo so it inherits currentColor; the tool names
+           stay the accessible labels (glyphs are decorative). */
+      }
+      <div class="c-capability c-capability--tools">
+        <span class="c-capability__tag">{siteContent.skills.tools.slug}</span>
+        <h3 class="c-capability__name">{siteContent.skills.tools.name}</h3>
+        <ul class="c-stack">
+          {
+            siteContent.skills.tools.items.map((item) => (
+              <li class="c-stack__item">
+                <ToolLogo name={item} />
+                <span class="c-stack__name">{item}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,95 @@
+---
+import { siteContent } from '../../content.js';
+const profile = siteContent.profile;
+const ui = siteContent.ui;
+---
+
+<section id="hero" class="c-hero">
+  <div class="c-hero__background" aria-hidden="true">
+    <div class="c-hero__grid"></div>
+  </div>
+  <div class="c-hero__inner">
+    <div class="c-hero__lead">
+      <p class="c-hero__eyebrow">
+        <span class="c-hero__eyebrow-role">{profile.jobTitle}</span>
+        <a
+          class="c-hero__status"
+          href="#schedule"
+          aria-label={`${profile.availability.status}, go to scheduling section`}
+        >
+          <span class="c-availability-dot c-hero__status-dot" aria-hidden="true"
+          ></span>
+          <span>{profile.availability.status}</span>
+        </a>
+      </p>
+      <h1 class="c-hero__name">{profile.name}</h1>
+      <p class="c-hero__headline">
+        {profile.heroHeadline.pre}<span class="c-hero__headline-accent"
+          >{profile.heroHeadline.accent}</span
+        >{profile.heroHeadline.mid}<span
+          class="c-hero__headline-accent c-hero__headline-accent--ember"
+          >{profile.heroHeadline.accentEmber}</span
+        >{profile.heroHeadline.post}
+      </p>
+      <p class="c-hero__lede">{profile.heroLede}</p>
+      <div class="c-hero__buttons">
+        {
+          profile.heroCtas.map((cta) => (
+            <a href={cta.href} class={`c-btn c-btn--${cta.variant} c-btn--lg`}>
+              {cta.label}
+            </a>
+          ))
+        }
+      </div>
+      <ul class="c-hero__meta">
+        <li class="c-hero__meta-item">
+          <span id="years-experience"
+            >{new Date().getFullYear() - profile.experienceStartYear}</span
+          >+ yrs
+        </li>
+        <li class="c-hero__meta-item">
+          {profile.location.city}, {profile.location.country}
+        </li>
+        <li class="c-hero__meta-item">{profile.heroFocus}</li>
+      </ul>
+    </div>
+    <div class="c-hero__panel">
+      <div class="c-hero__portrait">
+        <img
+          src={profile.portraitImage}
+          alt={profile.portraitAlt}
+          class="c-hero__portrait-img"
+          width="300"
+          height="300"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+        />
+      </div>
+      <div class="c-hero__proof">
+        <span class="c-hero__proof-tag" aria-hidden="true">proof</span>
+        <dl class="c-hero__metrics">
+          {
+            profile.heroStats.map((stat) => (
+              <div class="c-hero__metric">
+                <dt class="c-hero__metric-value">{stat.value}</dt>
+                <dd class="c-hero__metric-label">{stat.label}</dd>
+              </div>
+            ))
+          }
+        </dl>
+        <ul class="c-hero__proof-context">
+          {
+            profile.heroProofContext.map((domain) => (
+              <li class="c-hero__proof-context-item">{domain}</li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+  <a href="#about" class="c-scroll-indicator" aria-label={ui.hero.scrollToNext}>
+    <span class="c-scroll-indicator__label">{ui.hero.scrollLabel}</span>
+    <span class="c-scroll-indicator__rule" aria-hidden="true"></span>
+  </a>
+</section>

@@ -1,0 +1,21 @@
+---
+import { siteContent } from '../../content.js';
+import LogoMark from '../LogoMark.astro';
+---
+
+<section id="logos" class="c-logo-bar">
+  <div class="c-logo-bar__wrapper">
+    <div class="c-logo-bar__bar">
+      <div class="c-logo-bar__label">{siteContent.logoBar.label}</div>
+      <div class="c-logo-bar__set">
+        {
+          siteContent.clientLogos.map((logo) => (
+            <div class="c-logo-bar__item">
+              <LogoMark name={logo.name} label={logo.alt} />
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>

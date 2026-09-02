@@ -1,0 +1,93 @@
+---
+import { siteContent } from '../../content.js';
+import { buildGanttModel, getGanttDurationText } from '../../lib/gantt.js';
+
+const { jobs, firstDate, totalDuration, ganttYears } = buildGanttModel(
+  siteContent.experience,
+);
+import Icon from '../Icon.astro';
+const sections = siteContent.sections;
+---
+
+<section id="experience" class="c-section">
+  <div class="c-section__header">
+    <div class="o-container c-section__header-inner">
+      <span class="c-section__kicker"
+        ><span class="c-section__kicker-label"
+          >{sections.experience.kicker}</span
+        ></span
+      >
+      <h2 class="c-section__title">{sections.experience.title}</h2>
+    </div>
+  </div>
+  <div class="o-container">
+    <div id="gantt-chart-container">
+      <div class="c-gantt__timeline">
+        {ganttYears.map((year) => <span>{year}</span>)}
+      </div>
+      {
+        jobs.map((job, index) => {
+          const offset =
+            ((job.startDate.getTime() - firstDate.getTime()) / totalDuration) *
+            100;
+          const width =
+            ((job.endDate.getTime() - job.startDate.getTime()) /
+              totalDuration) *
+            100;
+          const durationText = getGanttDurationText(job.startDate, job.endDate);
+          const delay = index * 100; // ms, staggers the bar reveal
+          const isPresent = job.period.toLowerCase().includes('present');
+
+          return (
+            <div class="c-gantt__row">
+              <div class="c-gantt__label">
+                {/* The "now" dot leads the role title on current roles —
+                     decorative, so aria-hidden; the period text already says
+                     "Present" to assistive tech. */}
+                <h3>
+                  {isPresent && (
+                    <span class="c-gantt__now" aria-hidden="true" />
+                  )}
+                  {job.title}
+                </h3>
+                <p>{job.company}</p>
+                <div class="c-gantt__meta">
+                  <span class="c-gantt__period">{job.period}</span>
+                  <span class="c-gantt__duration">{durationText}</span>
+                </div>
+              </div>
+              <div
+                class="c-gantt__bar-area"
+                tabindex="0"
+                role="button"
+                aria-expanded="false"
+                aria-label={`Show details for ${job.title} at ${job.company}, ${job.period}`}
+              >
+                <div
+                  class={`c-gantt__bar ${isPresent ? 'is-present' : ''}`}
+                  style={`margin-left:${offset.toFixed(2)}%;width:${width.toFixed(2)}%;--anim-delay:${delay}ms`}
+                />
+                <div class="c-gantt__tooltip">
+                  <div class="c-gantt__tooltip-period">{job.period}</div>
+                  <ul class="c-gantt__tooltip-achievements">
+                    {job.achievements.map((a) => (
+                      <li>
+                        <span
+                          class="c-gantt__achievement-icon"
+                          aria-hidden="true"
+                        >
+                          <Icon name={a.icon} />
+                        </span>
+                        <span set:html={a.text} />
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          );
+        })
+      }
+    </div>
+  </div>
+</section>

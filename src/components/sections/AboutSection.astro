@@ -1,0 +1,53 @@
+---
+import { siteContent } from '../../content.js';
+const sections = siteContent.sections;
+---
+
+<section id="about" class="c-section">
+  <div class="c-section__header">
+    <div class="o-container c-section__header-inner">
+      <span class="c-section__kicker"
+        ><span class="c-section__kicker-label">{sections.about.kicker}</span
+        ></span
+      >
+      <h2 class="c-section__title">{sections.about.title}</h2>
+    </div>
+  </div>
+  <div class="o-container">
+    <div class="c-about">
+      <div class="c-about__prose">
+        <p class="c-about__lede">
+          <span class="c-about__tag" aria-hidden="true"
+            >{siteContent.about.tag}</span
+          >
+          {siteContent.about.lede}
+        </p>
+        {
+          siteContent.about.bio.map((para) => (
+            <p class="c-about__p" set:html={para} />
+          ))
+        }
+      </div>
+
+      <ol class="c-ledger">
+        {
+          siteContent.about.ledger.map((entry, i) => (
+            <li
+              class:list={['c-ledger__step', { 'is-now': entry.current }]}
+              style={`--i: ${i}; --n: ${siteContent.about.ledger.length - 1}`}
+            >
+              <span class="c-ledger__head">
+                {entry.current && (
+                  <span class="c-ledger__dot" aria-hidden="true" />
+                )}
+                <span class="c-ledger__year">{entry.year}</span>
+                <span class="c-ledger__role">{entry.role}</span>
+              </span>
+              <p class="c-ledger__note">{entry.note}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </div>
+</section>

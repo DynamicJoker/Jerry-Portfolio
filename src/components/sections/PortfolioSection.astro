@@ -1,0 +1,338 @@
+---
+import { siteContent } from '../../content.js';
+import Icon from '../Icon.astro';
+import { buildArchiveModel } from '../../lib/work-archive.js';
+
+const ui = siteContent.ui;
+const sections = siteContent.sections;
+
+// Featured work: flagship spotlights + a filterable archive of the full body of
+// work. The archive is grouped category -> campaign -> rows; an industry filter
+// narrows it. Each row's `status` drives its badge + link via `workStatusMeta`.
+const featuredCampaigns = siteContent.featuredCampaigns;
+const workArchive = siteContent.workArchive;
+const archiveUi = siteContent.archiveUi;
+const assetTypeLabels = siteContent.assetTypeLabels;
+const workTypeMeta = siteContent.workTypeMeta;
+const workStatusMeta = siteContent.workStatusMeta;
+// Aliased short so the chip's markup fits on one line at its indent depth.
+// Wrapped across lines, Astro 7 keeps the newlines as whitespace INSIDE the
+// chip (`> Interview <` instead of `>Interview<`), padding it visually — the
+// same JSX-whitespace trap that makes compressHTML load-bearing.
+const interviewTag = siteContent.ui.work.interviewTag;
+const {
+  archiveIndustries,
+  assetTypes,
+  archiveRows,
+  archiveInitialShow,
+  archiveHasLink,
+} = buildArchiveModel(workArchive, archiveUi);
+---
+
+<section id="portfolio" class="c-section">
+  <div class="c-section__header">
+    <div class="o-container c-section__header-inner">
+      <span class="c-section__kicker"
+        ><span class="c-section__kicker-label">{sections.portfolio.kicker}</span
+        ></span
+      >
+      <h2 class="c-section__title">{sections.portfolio.title}</h2>
+    </div>
+  </div>
+  <div class="o-container">
+    <!-- Featured: one flagship at a time as an editorial spread (image left,
+         story right). Only the active slide is in flow; the rest carry
+         [hidden] so the pre-stylesheet page height stays honest. -->
+    <div
+      class="c-featured"
+      data-featured
+      role="region"
+      aria-roledescription="carousel"
+      aria-label={ui.work.featuredRegion}
+    >
+      <div class="c-featured__stage" data-featured-stage>
+        {
+          featuredCampaigns.map((campaign, si) => {
+            const alt = campaign.screenshotAlt ?? campaign.name;
+            return (
+              <article
+                class="c-spotlight"
+                data-featured-slide
+                hidden={si !== 0}
+                role="group"
+                aria-roledescription="slide"
+                aria-label={`${si + 1} of ${featuredCampaigns.length}: ${campaign.name}`}
+              >
+                <button
+                  type="button"
+                  class="c-work-card__media c-spotlight__media"
+                  data-work-screenshot={campaign.screenshot}
+                  data-work-alt={alt}
+                  data-work-title={campaign.name}
+                  data-work-campaign={`${campaign.industry} · ${campaign.year}`}
+                  aria-label={`Enlarge visual for ${campaign.name}`}
+                >
+                  <img
+                    class="c-work-card__img"
+                    src={campaign.screenshot}
+                    alt={alt}
+                    loading={si === 0 ? 'eager' : 'lazy'}
+                    decoding="async"
+                    draggable="false"
+                    width="1200"
+                    height="750"
+                  />
+                </button>
+                <div class="c-spotlight__body">
+                  <p class="c-spotlight__meta">
+                    {campaign.industry} <span aria-hidden="true">·</span>{' '}
+                    <b>{campaign.year}</b>
+                  </p>
+                  <h3 class="c-spotlight__title">{campaign.name}</h3>
+                  <p class="c-spotlight__blurb">{campaign.blurb}</p>
+                  <ul class="c-spotlight__links">
+                    {campaign.items.map((item) => {
+                      const meta = workTypeMeta[item.type] ?? {};
+                      const isLive = item.access === 'live' && item.url;
+                      return (
+                        <li class="c-spotlight__deliverable">
+                          <span class="c-spotlight__status">
+                            {isLive ? meta.label : 'Gated'}
+                          </span>
+                          {isLive ? (
+                            <a
+                              class="c-spotlight__link"
+                              href={item.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {item.title}
+                              <Icon name="external-link" />
+                            </a>
+                          ) : (
+                            <span class="c-spotlight__link c-spotlight__link--gated">
+                              {item.title}
+                            </span>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              </article>
+            );
+          })
+        }
+      </div>
+      <div class="c-featured__controls">
+        <p class="c-featured__counter" aria-hidden="true">
+          <b data-featured-current>01</b> / {
+            String(featuredCampaigns.length).padStart(2, '0')
+          }
+        </p>
+        <div class="c-featured__nav">
+          <button
+            type="button"
+            class="c-featured__btn"
+            data-featured-prev
+            aria-label={ui.work.previousItem}
+          >
+            <Icon name="chevron-left" />
+          </button>
+          <button
+            type="button"
+            class="c-featured__btn"
+            data-featured-next
+            aria-label={ui.work.nextItem}
+          >
+            <Icon name="chevron-right" />
+          </button>
+        </div>
+        <span
+          class="u-sr-only"
+          data-featured-status
+          role="status"
+          aria-live="polite"></span>
+      </div>
+    </div>
+
+    <!-- Archive: full body of work -->
+    <div class="c-archive" data-archive>
+      {
+        /* Heading + both filter rows sit in a sticky bar so they stay
+           reachable while the list scrolls (inside its own frame) and while
+           the page scrolls through the section. */
+      }
+      <div class="c-archive__controls">
+        <div class="c-archive__head">
+          <div class="c-archive__heading-group">
+            <h3 class="c-archive__heading">{archiveUi.heading}</h3>
+            <span
+              class="c-archive__count"
+              data-archive-status
+              role="status"
+              aria-live="polite"
+            >
+              {
+                archiveUi.countInitial.replace(
+                  '{total}',
+                  String(workArchive.length),
+                )
+              }
+            </span>
+          </div>
+        </div>
+
+        <!-- Asset-type chip-tabs (single-select; "All" is the default) -->
+        <p class="c-archive__filter-label" aria-hidden="true">
+          {archiveUi.typeFilterLabel}
+        </p>
+        <div
+          class="c-archive__tabs"
+          role="group"
+          aria-label={ui.work.filterByType}
+        >
+          <button
+            type="button"
+            class="c-archive__tab is-active"
+            data-type-tab="all"
+            aria-pressed="true"
+          >
+            All
+            <span class="c-archive__tab-count" data-tab-count>
+              {workArchive.length}
+            </span>
+          </button>
+          {
+            assetTypes.map((t) => (
+              <button
+                type="button"
+                class="c-archive__tab"
+                data-type-tab={t.assetType}
+                aria-pressed="false"
+              >
+                {assetTypeLabels[t.assetType] ?? t.assetType}
+                <span class="c-archive__tab-count" data-tab-count>
+                  {t.count}
+                </span>
+              </button>
+            ))
+          }
+        </div>
+
+        <!-- Industry sub-filter -->
+        <p class="c-archive__filter-label" aria-hidden="true">
+          {archiveUi.industryFilterLabel}
+        </p>
+        <div
+          class="c-archive__filters"
+          role="group"
+          aria-label={ui.work.filterByIndustry}
+        >
+          <button
+            type="button"
+            class="c-archive__filter is-active"
+            data-industry-filter="all"
+            aria-pressed="true"
+          >
+            All
+          </button>
+          {
+            archiveIndustries.map((industry) => (
+              <button
+                type="button"
+                class="c-archive__filter"
+                data-industry-filter={industry}
+                aria-pressed="false"
+              >
+                {industry}
+              </button>
+            ))
+          }
+        </div>
+      </div>
+
+      {
+        /* Wrapper anchors the "more below" fade: it has to stay put while the
+           list scrolls underneath it, so it can't live on the scroller. */
+      }
+      <div class="c-archive__frame" data-archive-frame>
+        <ul class="c-archive__list" data-archive-list>
+          {
+            archiveRows.map((row) => {
+              const sm = workStatusMeta[row.status] ?? {};
+              const linkable = archiveHasLink(row.status) && row.url;
+              const Wrapper = linkable ? 'a' : 'div';
+              const wrapperProps = linkable
+                ? {
+                    href: row.url,
+                    target: '_blank',
+                    rel: 'noopener noreferrer',
+                  }
+                : {};
+              return (
+                <li
+                  class="c-archive__row"
+                  data-archive-row
+                  data-asset-type={row.assetType}
+                  data-industry={row.industry}
+                  hidden={!archiveInitialShow.has(row)}
+                >
+                  <Wrapper
+                    class={`c-archive__row-link${linkable ? '' : ' c-archive__row-link--static'}`}
+                    {...wrapperProps}
+                  >
+                    <span class="c-archive__row-main">
+                      <span class="c-archive__row-head">
+                        <span class="c-archive__row-title">{row.title}</span>
+                        {row.interview && (
+                          <span class="c-archive__tag">{interviewTag}</span>
+                        )}
+                      </span>
+                      <span class="c-archive__row-meta">
+                        <span class="c-archive__row-year">{row.year}</span>
+                        {row.campaign}
+                      </span>
+                    </span>
+                    <span class:list={['c-status', `c-status--${sm.tone}`]}>
+                      <Icon name={sm.icon} />
+                      {sm.label}
+                    </span>
+                  </Wrapper>
+                </li>
+              );
+            })
+          }
+        </ul>
+      </div>
+      <div class="c-archive__more-wrap">
+        <button
+          type="button"
+          class="c-btn c-btn--outline"
+          data-archive-more
+          hidden></button>
+      </div>
+      <p class="c-archive__empty" data-archive-empty hidden>
+        {archiveUi.emptyMessage}
+      </p>
+    </div>
+  </div>
+</section>
+
+<dialog class="c-lightbox" data-lightbox aria-label={ui.work.lightboxRegion}>
+  <figure class="c-lightbox__figure">
+    <button
+      type="button"
+      class="c-lightbox__close"
+      data-lightbox-close
+      aria-label={ui.work.lightboxClose}
+    >
+      <Icon name="x" />
+    </button>
+    <img class="c-lightbox__img" data-lightbox-img src="" alt="" />
+    <figcaption class="c-lightbox__caption">
+      <span class="c-lightbox__title" data-lightbox-title></span>
+      <span class="c-lightbox__campaign" data-lightbox-campaign></span>
+    </figcaption>
+  </figure>
+</dialog>
