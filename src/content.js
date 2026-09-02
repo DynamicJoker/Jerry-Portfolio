@@ -350,6 +350,30 @@ export const siteContent = {
     showAllLabel: 'Show all {count}',
     countStatus: '{shown} of {total} pieces',
     countInitial: '{total} pieces',
+    // Rows shown per asset type in the default "All" view before "see more".
+    // Read by BOTH HomeBody.astro (server-rendered first paint + no-JS
+    // fallback) and main.js (initializeWorkArchive). Single-sourced here
+    // because it was previously declared in both, kept in step only by a
+    // comment — so changing one silently desynced the first paint from the
+    // JS default.
+    samplePerType: 3,
+    // Display order for the archive's two filter rails and its row sort.
+    // Values MUST match the `industry` / `assetType` strings in work-data.js
+    // exactly: the rank helpers return 99 for anything they don't recognise,
+    // so a value missing here silently sinks to the bottom of the archive
+    // with no error anywhere. Kept beside the data they order rather than in
+    // the component that consumes them.
+    industryOrder: ['PC Hardware', 'Cybersecurity', 'Cloud', 'Software / SaaS'],
+    assetTypeOrder: [
+      'Product Launch',
+      'Case studies & Customer stories',
+      'Reviews',
+      'Guides & Explainers',
+      'Landing pages & Web copy',
+      'Blogs & Articles',
+      'Press & PR',
+      'Other',
+    ],
     // Visible rail labels for the two filter rows. The groups already carry
     // the longer ui.work.filterBy* strings as their accessible names, so these
     // are aria-hidden — they exist so a sighted user can tell the two rows
@@ -727,6 +751,16 @@ export const siteContent = {
       'Nothing here yet. Turns out writing about writing takes a while.',
   },
 
+  // Footer CTA on individual blog posts (src/pages/blog/[slug].astro).
+  articleCta: {
+    text: 'Need technical content that makes complex products easier to buy?',
+    ctaLabel: 'Start a conversation',
+    href: '/#contact',
+  },
+
+  // Number of masonry columns the testimonials are dealt across (HomeBody).
+  testimonialColumns: 3,
+
   testimonials: [
     {
       name: 'Alex Glawion',
@@ -906,6 +940,9 @@ export const siteContent = {
       // Replaces the pause/resume name when the control is disabled because
       // the OS asked for reduced motion (main.js). Not shown visually.
       reducedMotion: 'Testimonials paused because reduced motion is enabled',
+      // Per-column region name, applied by main.js only under reduced motion,
+      // when the columns become focusable regions. `{index}` is 1-based.
+      columnLabel: 'Testimonials list {index}',
     },
     footer: {
       rights: 'All rights reserved.',

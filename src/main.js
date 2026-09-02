@@ -921,7 +921,7 @@ function initializeWorkArchive() {
   if (!tabs.length) return;
 
   const LIMIT = 20; // rows shown for a single selected type before "see more"
-  const SAMPLE_PER_TYPE = 3; // rows shown per type in the "All" view before "see more"
+  const SAMPLE_PER_TYPE = siteContent.archiveUi.samplePerType; // rows shown per type in the "All" view before "see more"
   // The first tab is "All" (data-type-tab="all"), so both filters default to All.
   let activeType = tabs[0].dataset.typeTab;
   let activeIndustry = 'all';
@@ -1684,7 +1684,13 @@ function initializeInfiniteScroller() {
       .forEach((column, index) => {
         column.setAttribute('tabindex', '0');
         column.setAttribute('role', 'region');
-        column.setAttribute('aria-label', `Testimonials list ${index + 1}`);
+        column.setAttribute(
+          'aria-label',
+          siteContent.ui.testimonials.columnLabel.replace(
+            '{index}',
+            String(index + 1),
+          ),
+        );
       });
   }
 

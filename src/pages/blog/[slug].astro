@@ -150,8 +150,9 @@ const breadcrumbJsonLd = {
       </div>
 
       <footer class="c-article__cta">
-        <p>Need technical content that makes complex products easier to buy?</p>
-        <a href="/#contact" class="c-btn c-btn--primary">Start a conversation</a
+        <p>{siteContent.articleCta.text}</p>
+        <a href={siteContent.articleCta.href} class="c-btn c-btn--primary"
+          >{siteContent.articleCta.ctaLabel}</a
         >
       </footer>
     </article>

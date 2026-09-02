@@ -92,12 +92,7 @@ const interviewTag = siteContent.ui.work.interviewTag;
 const workTypeMeta = siteContent.workTypeMeta;
 const workStatusMeta = siteContent.workStatusMeta;
 const workArchive = siteContent.workArchive;
-const industryOrder = [
-  'PC Hardware',
-  'Cybersecurity',
-  'Cloud',
-  'Software / SaaS',
-];
+const industryOrder = archiveUi.industryOrder;
 const industryRank = (x) => {
   const i = industryOrder.indexOf(x);
   return i === -1 ? 99 : i;
@@ -106,16 +101,7 @@ const archiveIndustries = [...new Set(workArchive.map((p) => p.industry))].sort(
   (a, b) => industryRank(a) - industryRank(b),
 );
 const assetTypeLabels = siteContent.assetTypeLabels;
-const assetTypeOrder = [
-  'Product Launch',
-  'Case studies & Customer stories',
-  'Reviews',
-  'Guides & Explainers',
-  'Landing pages & Web copy',
-  'Blogs & Articles',
-  'Press & PR',
-  'Other',
-];
+const assetTypeOrder = archiveUi.assetTypeOrder;
 const assetRank = (x) => {
   const i = assetTypeOrder.indexOf(x);
   return i === -1 ? 99 : i;
@@ -139,9 +125,8 @@ const archiveRows = [...workArchive].sort((a, b) => {
 });
 // Default view is All types · All industries, showing the first few of each
 // type; "see more" (JS) then reveals everything. Precompute that sample so the
-// first paint and the no-JS fallback match the JS default (must stay in sync
-// with SAMPLE_PER_TYPE in main.js's initializeWorkArchive).
-const SAMPLE_PER_TYPE = 3;
+// first paint and the no-JS fallback match the JS default.
+const SAMPLE_PER_TYPE = archiveUi.samplePerType;
 const archiveSampleCount = {};
 const archiveInitialShow = new Set();
 for (const row of archiveRows) {
@@ -154,7 +139,7 @@ for (const row of archiveRows) {
 const archiveHasLink = (status) =>
   status === 'live' || status === 'press' || status === 'archived';
 
-const numColumns = 3;
+const numColumns = siteContent.testimonialColumns;
 const testimonialColumns = Array.from({ length: numColumns }, () => []);
 siteContent.testimonials.forEach((testimonial, index) => {
   testimonialColumns[index % numColumns].push(testimonial);
