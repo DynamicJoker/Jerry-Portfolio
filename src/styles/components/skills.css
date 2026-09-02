@@ -700,6 +700,13 @@
   }
 }
 
+/* A second `max-width: 48rem` block, deliberately NOT merged with the one
+   higher up this file. Each mobile block sits directly after the base rules it
+   overrides — the ones below override .c-capability--feature, .c-capability__lead
+   and .c-stack, all defined between the two blocks. Hoisting these up to join
+   the first block would put the overrides BEFORE their base rules at equal
+   specificity, so the base rules would win and the mobile layout would stop
+   collapsing. Two blocks is the correct shape here, not a wart. */
 @media (max-width: 48rem) {
   /* One stacked column with a gap between the three bands (feature card,
      disciplines, stack card). */

@@ -766,6 +766,13 @@
   }
 }
 
+/* A second `max-width: 48rem` block, deliberately NOT merged with the one
+   higher up this file. Each mobile block sits directly after the base rules it
+   overrides — the ones below override .c-archive__controls and
+   .c-archive__list, both defined between the two blocks. Hoisting these up to
+   join the first block would put the overrides BEFORE their base rules at equal
+   specificity, so the base rules would win. Two blocks is the correct shape
+   here, not a wart. */
 @media (max-width: 48rem) {
   /* Flow naturally on phones: no fixed-height box (a small window holding the
      expanded ~250-row list is worse than the page's own scroll), and the
