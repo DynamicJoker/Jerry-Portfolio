@@ -696,8 +696,8 @@
      more" reveals all ~250 rows without stretching the page. The wheel/touch
      scrolls the list first and, once it hits the top or bottom, chains back to
      the page (default overscroll — deliberately NOT `contain`, so the page
-     keeps scrolling as usual the moment the list bottoms out). Mobile drops the
-     cap below and flows in the page instead. */
+     keeps scrolling as usual the moment the list bottoms out). Mobile keeps the
+     frame too, at its own clamp — see the mobile block below. */
   max-height: clamp(28rem, 60vh, 44rem);
   overflow-y: auto;
   /* Reserve the gutter so revealing/hiding the scrollbar can't reflow the rows. */
@@ -774,28 +774,28 @@
    specificity, so the base rules would win. Two blocks is the correct shape
    here, not a wart. */
 @media (max-width: 48rem) {
-  /* Flow naturally on phones: no fixed-height box (a small window holding the
-     expanded ~250-row list is worse than the page's own scroll), and the
-     controls stop being sticky so they don't eat vertical space. */
+  /* The controls stop being sticky so they don't eat vertical space. */
   .c-archive__controls {
     position: static;
     padding-bottom: 0;
   }
 
-  .c-archive__list {
-    max-height: none;
-    overflow: visible;
-    scrollbar-gutter: auto;
-  }
+  /* Phones keep the scroll frame, same as desktop. This reverses an earlier
+     decision that let the list flow at full height here, on the reasoning that
+     "a small window over ~250 rows is worse than the page's own scroll". What
+     changed: unframed, the section never bottoms out on a phone, so the reader
+     cannot scroll past the archive to reach the next section at all. A capped
+     frame gives the page a real end again, and the list chains back to the page
+     the moment it hits its own bottom.
 
-  /* The list flows in the page here, so far-offscreen rows are worth skipping.
-     Inside the desktop scroll frame this is deliberately NOT set: the frame
-     already clips painting, and letting each row swap its estimated height for
-     its real one mid-scroll grows scrollHeight under the scrollbar thumb, which
-     makes dragging it stutter. */
-  .c-archive__row {
-    content-visibility: auto;
-    contain-intrinsic-size: auto 4rem;
+     `dvh`, not the desktop rule's `vh`: on a phone the URL bar collapses mid
+     scroll, and `vh` would leave the frame sized to the taller viewport. The
+     clamp floor keeps it usable on short screens, the ceiling stops it eating
+     a very tall one whole — it is set high enough that 60dvh is what actually
+     governs on ordinary phone heights, rather than the ceiling clipping it. */
+  .c-archive__list {
+    max-height: clamp(18rem, 60dvh, 34rem);
+    scrollbar-gutter: auto;
   }
 }
 
