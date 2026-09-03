@@ -164,91 +164,131 @@ const {
            the page scrolls through the section. */
       }
       <div class="c-archive__controls">
-        <div class="c-archive__head">
-          <div class="c-archive__heading-group">
-            <h3 class="c-archive__heading">{archiveUi.heading}</h3>
-            <span
-              class="c-archive__count"
-              data-archive-status
-              role="status"
-              aria-live="polite"
-            >
-              {
-                archiveUi.countInitial.replace(
-                  '{total}',
-                  String(workArchive.length),
-                )
-              }
-            </span>
+        {
+          /* Phone-only slim rail. It carries the count and a disclosure for
+             the filter panel below; desktop hides it and keeps the head.
+             The panel ships OPEN and the button ships hidden, so with no JS
+             the filters stay exactly as they are today — initializeWorkArchive
+             reverses both. The archive sits far below the fold, so collapsing
+             it on DOMContentLoaded is never seen. */
+        }
+        <div class="c-archive__rail">
+          <span
+            class="c-archive__count c-archive__count--rail"
+            data-archive-status
+            role="status"
+            aria-live="polite"
+          >
+            {
+              archiveUi.countInitial.replace(
+                '{total}',
+                String(workArchive.length),
+              )
+            }
+          </span>
+          <button
+            type="button"
+            class="c-archive__disclosure"
+            data-archive-filters
+            aria-expanded="true"
+            aria-controls="archive-filter-panel"
+            hidden
+          >
+            {archiveUi.filtersToggleLabel}
+          </button>
+        </div>
+
+        <div
+          class="c-archive__panel is-open"
+          id="archive-filter-panel"
+          data-archive-panel
+        >
+          <div class="c-archive__head">
+            <div class="c-archive__heading-group">
+              <h3 class="c-archive__heading">{archiveUi.heading}</h3>
+              <span
+                class="c-archive__count"
+                data-archive-status
+                role="status"
+                aria-live="polite"
+              >
+                {
+                  archiveUi.countInitial.replace(
+                    '{total}',
+                    String(workArchive.length),
+                  )
+                }
+              </span>
+            </div>
           </div>
-        </div>
 
-        <!-- Asset-type chip-tabs (single-select; "All" is the default) -->
-        <p class="c-archive__filter-label" aria-hidden="true">
-          {archiveUi.typeFilterLabel}
-        </p>
-        <div
-          class="c-archive__tabs"
-          role="group"
-          aria-label={ui.work.filterByType}
-        >
-          <button
-            type="button"
-            class="c-archive__tab is-active"
-            data-type-tab="all"
-            aria-pressed="true"
+          <!-- Asset-type chip-tabs (single-select; "All" is the default) -->
+          <p class="c-archive__filter-label" aria-hidden="true">
+            {archiveUi.typeFilterLabel}
+          </p>
+          <div
+            class="c-archive__tabs"
+            role="group"
+            aria-label={ui.work.filterByType}
           >
-            All
-            <span class="c-archive__tab-count" data-tab-count>
-              {workArchive.length}
-            </span>
-          </button>
-          {
-            assetTypes.map((t) => (
-              <button
-                type="button"
-                class="c-archive__tab"
-                data-type-tab={t.assetType}
-                aria-pressed="false"
-              >
-                {assetTypeLabels[t.assetType] ?? t.assetType}
-                <span class="c-archive__tab-count" data-tab-count>
-                  {t.count}
-                </span>
-              </button>
-            ))
-          }
-        </div>
+            <button
+              type="button"
+              class="c-archive__tab is-active"
+              data-type-tab="all"
+              aria-pressed="true"
+            >
+              All
+              <span class="c-archive__tab-count" data-tab-count>
+                {workArchive.length}
+              </span>
+            </button>
+            {
+              assetTypes.map((t) => (
+                <button
+                  type="button"
+                  class="c-archive__tab"
+                  data-type-tab={t.assetType}
+                  aria-pressed="false"
+                >
+                  {assetTypeLabels[t.assetType] ?? t.assetType}
+                  <span class="c-archive__tab-count" data-tab-count>
+                    {t.count}
+                  </span>
+                </button>
+              ))
+            }
+          </div>
 
-        <!-- Industry sub-filter -->
-        <p class="c-archive__filter-label" aria-hidden="true">
-          {archiveUi.industryFilterLabel}
-        </p>
-        <div
-          class="c-archive__filters"
-          role="group"
-          aria-label={ui.work.filterByIndustry}
-        >
-          <button
-            type="button"
-            class="c-archive__filter is-active"
-            data-industry-filter="all"
-            aria-pressed="true"
+          <!-- Industry sub-filter -->
+          <p class="c-archive__filter-label" aria-hidden="true">
+            {archiveUi.industryFilterLabel}
+          </p>
+          <div
+            class="c-archive__filters"
+            role="group"
+            aria-label={ui.work.filterByIndustry}
           >
-            All
-          </button>
-          {
-            archiveIndustries.map((industry) => (
-              <button
-                type="button"
-                class="c-archive__filter"
-                data-industry-filter={industry}
-                aria-pressed="false"
-              >
-                {industry}
-              </button>
-            ))
-          }
+            <button
+              type="button"
+              class="c-archive__filter is-active"
+              data-industry-filter="all"
+              aria-pressed="true"
+            >
+              All
+            </button>
+            {
+              archiveIndustries.map((industry) => (
+                <button
+                  type="button"
+                  class="c-archive__filter"
+                  data-industry-filter={industry}
+                  aria-pressed="false"
+                >
+                  {industry}
+                </button>
+              ))
+            }
+          </div>
         </div>
       </div>
 

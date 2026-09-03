@@ -7,7 +7,10 @@ export function initializeWorkArchive() {
   const tabs = [...root.querySelectorAll('[data-type-tab]')];
   const chips = [...root.querySelectorAll('[data-industry-filter]')];
   const rows = [...root.querySelectorAll('[data-archive-row]')];
-  const statusEl = root.querySelector('[data-archive-status]');
+  // Two of these: the head's (desktop) and the rail's (phones). Only one is
+  // ever displayed, so only one ever announces — but both must carry the count,
+  // because which one is visible depends purely on the breakpoint.
+  const statusEls = [...root.querySelectorAll('[data-archive-status]')];
   const emptyEl = root.querySelector('[data-archive-empty]');
   const moreBtn = root.querySelector('[data-archive-more]');
   const listEl = root.querySelector('[data-archive-list]');
@@ -153,10 +156,12 @@ export function initializeWorkArchive() {
       tab.classList.toggle('is-empty', count === 0);
     });
     if (emptyEl) emptyEl.toggleAttribute('hidden', matched !== 0);
-    if (statusEl)
-      statusEl.textContent = siteContent.archiveUi.countStatus
-        .replace('{shown}', String(matched))
-        .replace('{total}', String(rows.length));
+    const countText = siteContent.archiveUi.countStatus
+      .replace('{shown}', String(matched))
+      .replace('{total}', String(rows.length));
+    statusEls.forEach((el) => {
+      el.textContent = countText;
+    });
     if (moreBtn) {
       moreBtn.hidden = matched <= collapsedShown;
       moreBtn.textContent = expanded
@@ -184,6 +189,24 @@ export function initializeWorkArchive() {
     // Land at the top of the freshly filtered set inside the scroll frame.
     if (listEl) listEl.scrollTop = 0;
   };
+
+  // Phone-only filter disclosure. The markup ships the panel open and this
+  // button hidden, so with no JS the filters stay visible exactly as they are
+  // today; taking over means reversing both. Removing `is-open` is a no-op on
+  // desktop — only the mobile block reads it — so this needs no breakpoint test.
+  const filtersBtn = root.querySelector('[data-archive-filters]');
+  const panelEl = root.querySelector('[data-archive-panel]');
+  if (filtersBtn && panelEl) {
+    const setPanel = (open) => {
+      panelEl.classList.toggle('is-open', open);
+      filtersBtn.setAttribute('aria-expanded', String(open));
+    };
+    filtersBtn.hidden = false;
+    setPanel(false);
+    filtersBtn.addEventListener('click', () =>
+      setPanel(!panelEl.classList.contains('is-open')),
+    );
+  }
 
   tabs.forEach((tab) =>
     tab.addEventListener('click', () =>

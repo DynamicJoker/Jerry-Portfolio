@@ -481,6 +481,43 @@
   color: var(--color-text-muted);
 }
 
+/* Phone-only slim rail: the count on the left, a Filters disclosure on the
+   right. Hidden here and switched on in the mobile block below, so desktop
+   keeps the head it has always had and this costs it nothing. */
+.c-archive__rail {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-8);
+}
+
+.c-archive__disclosure {
+  min-height: var(--nav-touch-target);
+  padding: var(--space-8) var(--space-16);
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  background: var(--neu-bg);
+  border: 1px solid transparent;
+  border-radius: var(--radius-full);
+  box-shadow: var(--neu-shadow-raised-sm);
+  cursor: pointer;
+  white-space: nowrap;
+  touch-action: manipulation;
+}
+
+.c-archive__disclosure[aria-expanded='true'] {
+  box-shadow: var(--neu-shadow-inset-sm);
+  color: var(--color-primary);
+}
+
+/* An author `display` would beat the UA's [hidden] rule, and this button ships
+   hidden for the no-JS case, so state it. */
+.c-archive__disclosure[hidden] {
+  display: none;
+}
+
 /* Asset-type chip-tabs (single-select) above the industry chips. */
 /* Rail label above each filter row. The two rows are different axes — asset
    type, then industry — and nothing on screen said so; they read as one
@@ -774,10 +811,54 @@
    specificity, so the base rules would win. Two blocks is the correct shape
    here, not a wart. */
 @media (max-width: 48rem) {
-  /* The controls stop being sticky so they don't eat vertical space. */
+  /* The controls are sticky again here (the base rule), which they could not
+     afford while they were ~250px of chrome: the rail below folds them down to
+     a single line, so the count and the way back to the filters stay on screen
+     however deep the list is scrolled.
+
+     But they have to clear the docked section tab, which pins at
+     navbar + banner - tuck and stands --dock-bar-height tall. The base offset
+     (navbar + space-12) puts the rail UNDER that tab: harmless on desktop,
+     where the tab lands on the head row's text, but here the rail is a single
+     line with a control on it and the tab sits squarely on the Filters button.
+     The tab is `pointer-events: none`, so the button still works — this is
+     purely visual, and it is why the collision went unnoticed on desktop.
+     Repeating the navbar+banner calc rather than reaching for a token is
+     deliberate: --beta-banner-offset is overridden on body, so it has to
+     resolve here, on an element inside it. */
   .c-archive__controls {
-    position: static;
-    padding-bottom: 0;
+    /* Pinned to the dock line itself — the same expression the docked header
+       uses — and then padded past the tab. Offsetting `top` instead would put
+       the rail in the right place but leave the band between the navbar and it
+       transparent, with list rows visibly sliding through the gap; the padding
+       keeps the controls' own opaque background covering that band. The tab
+       outranks it on z-index (100 vs 2), so it still paints over the padding,
+       which is exactly what it should do. */
+    top: calc(
+      var(--navbar-height) + var(--beta-banner-offset, 0rem) - var(--dock-tuck)
+    );
+    padding-top: calc(var(--dock-bar-height) + var(--space-8));
+  }
+
+  .c-archive__rail {
+    display: flex;
+  }
+
+  .c-archive__head {
+    display: none;
+  }
+
+  .c-archive__panel {
+    display: none;
+  }
+
+  /* Capped so an open panel can never crowd out the list behind it - the two
+     filter rails are 14 chips at full touch height and wrap to ~300px. */
+  .c-archive__panel.is-open {
+    display: block;
+    max-height: 50dvh;
+    overflow-y: auto;
+    margin-top: var(--space-8);
   }
 
   /* Phones keep the scroll frame, same as desktop. This reverses an earlier

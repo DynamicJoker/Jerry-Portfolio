@@ -350,6 +350,11 @@ export const siteContent = {
     showAllLabel: 'Show all {count}',
     countStatus: '{shown} of {total} pieces',
     countInitial: '{total} pieces',
+    // Label for the phone-only disclosure that opens the filter panel. Under
+    // 48rem the two filter rails are ~250px of chrome above a list that now
+    // scrolls in its own frame, so they fold behind this button and the rail
+    // keeps just the count. Desktop never shows it.
+    filtersToggleLabel: 'Filters',
     // Rows shown per asset type in the default "All" view before "see more".
     // Read by BOTH HomeBody.astro (server-rendered first paint + no-JS
     // fallback) and main.js (initializeWorkArchive). Single-sourced here
