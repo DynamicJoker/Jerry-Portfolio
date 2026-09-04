@@ -90,6 +90,33 @@ export function initializeWorkArchive() {
     });
   };
 
+  // Scrolls the PAGE so the frame's top sits just beneath the pinned controls.
+  // scrollRowToFrameTop aligns a row to the frame's own top edge — but when the
+  // reader has scrolled the page down into the archive, that edge is behind the
+  // sticky controls, so the row we just jumped to lands hidden under the
+  // filters. This lifts the frame out from under them; paired with the in-frame
+  // jump, the target row becomes the first thing visible below the controls.
+  // The two scrolls are independent containers, so they animate together
+  // without fighting. Centering the frame instead would push its top back up
+  // behind the controls (it is taller than the space beneath them), which is
+  // exactly the occlusion we are removing.
+  const revealFrameBelowControls = () => {
+    if (!frameEl) return;
+    const controls = root.querySelector('.c-archive__controls');
+    const stickyTop = controls
+      ? Number.parseFloat(getComputedStyle(controls).top) || 0
+      : 0;
+    const controlsHeight = controls
+      ? controls.getBoundingClientRect().height
+      : 0;
+    const frameTopAbsolute =
+      window.scrollY + frameEl.getBoundingClientRect().top;
+    window.scrollTo({
+      top: Math.max(0, frameTopAbsolute - stickyTop - controlsHeight),
+      behavior: prefersReducedMotion ? 'auto' : 'smooth',
+    });
+  };
+
   // Arrival flash. Capped at roughly one frame's worth of rows: the frame
   // scrolls so the first arrival sits at its top, so these are the ones the
   // reader actually sees land. Marking all ~227 meant that many simultaneous
@@ -415,7 +442,10 @@ export function initializeWorkArchive() {
       // in the CSS), so the rows are already marked when the scroll lands and
       // then fade, rather than flashing at a viewport nobody is looking at.
       markArrivals(arrivals);
-      if (arrivals.length && isFramed()) scrollRowToFrameTop(arrivals[0]);
+      if (arrivals.length && isFramed()) {
+        scrollRowToFrameTop(arrivals[0]);
+        revealFrameBelowControls();
+      }
     });
   }
 
