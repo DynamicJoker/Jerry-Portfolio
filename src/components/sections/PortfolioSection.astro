@@ -173,8 +173,25 @@ const {
              it on DOMContentLoaded is never seen. */
         }
         <div class="c-archive__rail">
+          {
+            /* The gauge is a status readout, not a control: an inset well that
+               fills with a raised bar as the list scrolls beneath it. Its text
+               changes every scroll frame, so it is deliberately NOT a live
+               region — the sr-only status below it is what announces filter
+               changes, and it carries the same copy the desktop head shows. */
+          }
+          <span class="c-archive__gauge" data-archive-gauge>
+            <span class="c-archive__gauge-fill" aria-hidden="true"></span>
+            <span class="c-archive__gauge-count" data-archive-gauge-count>
+              {
+                archiveUi.gaugeStatus
+                  .replace('{shown}', '0')
+                  .replace('{total}', String(workArchive.length))
+              }
+            </span>
+          </span>
           <span
-            class="c-archive__count c-archive__count--rail"
+            class="u-sr-only"
             data-archive-status
             role="status"
             aria-live="polite"
@@ -186,6 +203,14 @@ const {
               )
             }
           </span>
+          <button
+            type="button"
+            class="c-archive__reset"
+            data-archive-reset
+            hidden
+          >
+            {archiveUi.resetLabel}
+          </button>
           <button
             type="button"
             class="c-archive__disclosure"

@@ -355,6 +355,18 @@ export const siteContent = {
     // scrolls in its own frame, so they fold behind this button and the rail
     // keeps just the count. Desktop never shows it.
     filtersToggleLabel: 'Filters',
+    // The phone rail's gauge number: the RANGE of pieces currently in the frame,
+    // of the number that match the active filter — a list-pager readout that
+    // says where you are, not how much exists. `gaugeRange` is the normal
+    // two-ended form; `gaugeStatus` is the collapsed form for when a single
+    // item spans the whole frame (and for the empty state). The fill bar behind
+    // it tracks scroll position. Not itself a live region; the sr-only
+    // countStatus beside it announces filter changes.
+    gaugeStatus: '{shown} of {total}',
+    gaugeRange: '{first}–{last} of {total}',
+    resetLabel: 'Reset',
+    resetAnnouncement:
+      'Filters cleared. Showing all {total} pieces from the top.',
     // Rows shown per asset type in the default "All" view before "see more".
     // Read by BOTH HomeBody.astro (server-rendered first paint + no-JS
     // fallback) and main.js (initializeWorkArchive). Single-sourced here

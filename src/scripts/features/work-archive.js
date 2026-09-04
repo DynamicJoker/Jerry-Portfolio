@@ -1,5 +1,6 @@
 import { siteContent } from '../../content.js';
 import { config, prefersReducedMotion } from '../core/config.js';
+import { getBreakpointPx } from '../core/dom.js';
 
 export function initializeWorkArchive() {
   const root = document.querySelector('[data-archive]');
@@ -15,6 +16,9 @@ export function initializeWorkArchive() {
   const moreBtn = root.querySelector('[data-archive-more]');
   const listEl = root.querySelector('[data-archive-list]');
   const frameEl = root.querySelector('[data-archive-frame]');
+  const gaugeEl = root.querySelector('[data-archive-gauge]');
+  const gaugeCountEl = root.querySelector('[data-archive-gauge-count]');
+  const resetBtn = root.querySelector('[data-archive-reset]');
   if (!tabs.length) return;
 
   const SAMPLE_PER_TYPE = siteContent.archiveUi.samplePerType; // rows shown per type in the "All" view before "see more"
@@ -48,6 +52,15 @@ export function initializeWorkArchive() {
     const overflow = getComputedStyle(listEl).overflowY;
     return overflow === 'auto' || overflow === 'scroll';
   };
+
+  // Phones only. Deliberately NOT the computed-style probe isFramed uses: the
+  // archive's CSS is in the deferred stylesheet, so at DOMContentLoaded the
+  // rail is still an unstyled `display: block` div — the probe read "compact"
+  // on desktop and expanded all 251 rows. getBreakpointPx reads the
+  // --breakpoint-md token and falls back to 48rem, so it is right either way.
+  // (isFramed keeps its probe: since the mobile frame landed both sizes are
+  // framed, and its only consumers are cosmetic.)
+  const isCompact = () => window.innerWidth <= getBreakpointPx('md');
 
   const distanceToBottom = () =>
     listEl ? listEl.scrollHeight - listEl.scrollTop - listEl.clientHeight : 0;
@@ -106,6 +119,91 @@ export function initializeWorkArchive() {
     );
   };
 
+  // Row tops in the list's own scroll coordinates, cached once per apply.
+  // Measured from live rects rather than offsetTop for the same reason
+  // scrollRowToFrameTop does: offsetTop is relative to whichever ancestor
+  // happens to be positioned. Rows are not a uniform height — titles wrap — so
+  // these have to be read, not assumed.
+  let rowTops = [];
+  const measureRows = () => {
+    if (!listEl || !isCompact()) {
+      rowTops = [];
+      return;
+    }
+    const base = listEl.getBoundingClientRect().top - listEl.scrollTop;
+    rowTops = rows
+      .filter((row) => !row.hidden)
+      .map((row) => row.getBoundingClientRect().top - base);
+  };
+
+  const isDirty = () =>
+    activeType !== tabs[0].dataset.typeTab ||
+    activeIndustry !== 'all' ||
+    (!!listEl && listEl.scrollTop > 0);
+
+  // How far the reader has actually travelled: the last row to reach the
+  // frame's bottom edge, binary-searched so this stays cheap at 251 rows on
+  // every scroll frame. Derived from scrollTop each time — never incremented —
+  // so scrolling back up empties it exactly as it filled.
+  // Count of rows whose cached top sits strictly above `edge`. rowTops is
+  // ascending, so this is a binary search — cheap enough to run twice on every
+  // scroll frame at 251 rows.
+  const rowsAbove = (edge) => {
+    let lo = 0;
+    let hi = rowTops.length;
+    while (lo < hi) {
+      const mid = (lo + hi) >> 1;
+      if (rowTops[mid] < edge) lo = mid + 1;
+      else hi = mid;
+    }
+    return lo;
+  };
+
+  const updateGauge = () => {
+    if (!gaugeEl || !listEl) return;
+    if (resetBtn) resetBtn.hidden = !isDirty();
+    const matched = rowTops.length;
+
+    // The NUMBER is the RANGE of items in the frame: the row touching the top
+    // edge through the last row to reach the bottom edge, of the matched count.
+    // A list-pager reading — "47–53 of 251" — that says where you are and
+    // updates as you scroll. It reads correctly at both ends: "1–6" at the top,
+    // "…–251 of 251" at the bottom. Collapses to a single number when one item
+    // spans the whole frame, and for the empty state.
+    const top = listEl.scrollTop;
+    const first = matched ? Math.max(1, rowsAbove(top)) : 0;
+    const last = matched
+      ? Math.max(first, rowsAbove(top + listEl.clientHeight))
+      : 0;
+    if (gaugeCountEl) {
+      const ui = siteContent.archiveUi;
+      gaugeCountEl.textContent =
+        first === last
+          ? ui.gaugeStatus
+              .replace('{shown}', String(first))
+              .replace('{total}', String(matched))
+          : ui.gaugeRange
+              .replace('{first}', String(first))
+              .replace('{last}', String(last))
+              .replace('{total}', String(matched));
+    }
+
+    // The BAR is true scroll position — empty at the top, full at the bottom —
+    // derived from scrollTop each frame, never incremented, so it empties as
+    // truthfully as it fills. Hidden (not just zero-width) at the very top so
+    // its raised shadow doesn't sit in the well as a smudge.
+    const maxScroll = listEl.scrollHeight - listEl.clientHeight;
+    const fraction = maxScroll > 0 ? Math.min(1, top / maxScroll) : 0;
+    gaugeEl.style.setProperty(
+      '--archive-progress',
+      `${(fraction * 100).toFixed(2)}%`,
+    );
+    gaugeEl.style.setProperty(
+      '--archive-progress-shown',
+      fraction > 0 ? '1' : '0',
+    );
+  };
+
   const restoreOrder = () => {
     if (!reordered || !listEl) return;
     const frag = document.createDocumentFragment();
@@ -121,6 +219,11 @@ export function initializeWorkArchive() {
     // selected type it is a flat limit. Rows are pre-sorted type → industry →
     // newest, so "first N" reads as the newest few of each type.
     const perTypeShown = {};
+    // Phones have no expand/collapse: the frame is a fixed window, so showing
+    // everything costs no page height and there is nothing for a "see more" to
+    // reveal. Desktop keeps the capped view and its button.
+    const compact = isCompact();
+    const showAll = expanded || compact;
     rows.forEach((row) => {
       const typeMatch =
         activeType === 'all' || row.dataset.assetType === activeType;
@@ -140,7 +243,7 @@ export function initializeWorkArchive() {
         inCollapsed = matched <= config.workArchive.limit;
       }
       if (inCollapsed) collapsedShown += 1;
-      row.toggleAttribute('hidden', !(expanded || inCollapsed));
+      row.toggleAttribute('hidden', !(showAll || inCollapsed));
     });
     // Each tab's count reflects the active industry filter (the All tab counts
     // every type); dim empty tabs.
@@ -163,7 +266,7 @@ export function initializeWorkArchive() {
       el.textContent = countText;
     });
     if (moreBtn) {
-      moreBtn.hidden = matched <= collapsedShown;
+      moreBtn.hidden = compact || matched <= collapsedShown;
       moreBtn.textContent = expanded
         ? siteContent.archiveUi.showFewerLabel
         : siteContent.archiveUi.showAllLabel.replace(
@@ -172,22 +275,31 @@ export function initializeWorkArchive() {
           );
     }
     updateScrollAffordance();
+    measureRows();
+    updateGauge();
   };
 
-  const select = (items, chosen, attr, value) => {
+  const mark = (items, chosen) => {
     items.forEach((item) => {
       const on = item === chosen;
       item.classList.toggle('is-active', on);
       item.setAttribute('aria-pressed', String(on));
     });
+  };
+
+  const select = (items, chosen, attr, value) => {
+    mark(items, chosen);
     if (attr === 'type') activeType = value;
     else activeIndustry = value;
     expanded = false; // collapse back to the capped view on any filter change
     clearArrivals();
     restoreOrder();
-    apply();
-    // Land at the top of the freshly filtered set inside the scroll frame.
+    // Land at the top of the freshly filtered set BEFORE apply() runs, because
+    // apply() measures the gauge — measuring first and resetting after left the
+    // fill bar inheriting the pre-filter scroll position (filter while scrolled
+    // deep, and the bar showed full over the new short list).
     if (listEl) listEl.scrollTop = 0;
+    apply();
   };
 
   // Phone-only filter disclosure. The markup ships the panel open and this
@@ -206,6 +318,31 @@ export function initializeWorkArchive() {
     filtersBtn.addEventListener('click', () =>
       setPanel(!panelEl.classList.contains('is-open')),
     );
+  }
+
+  // Reset: both axes back to All, list back to the top, panel closed. It
+  // replaces "show fewer" on phones, where there is no collapsed state left to
+  // return to — everything matched is already shown, so the only thing worth
+  // undoing is the filtering and the travel.
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      mark(tabs, tabs[0]);
+      mark(chips, chips[0]);
+      activeType = tabs[0].dataset.typeTab;
+      activeIndustry = 'all';
+      expanded = false;
+      clearArrivals();
+      restoreOrder();
+      apply();
+      if (listEl) listEl.scrollTop = 0;
+      updateGauge();
+      statusEls.forEach((el) => {
+        el.textContent = siteContent.archiveUi.resetAnnouncement.replace(
+          '{total}',
+          String(rows.length),
+        );
+      });
+    });
   }
 
   tabs.forEach((tab) =>
@@ -283,11 +420,50 @@ export function initializeWorkArchive() {
   }
 
   if (listEl) {
-    listEl.addEventListener('scroll', updateScrollAffordance, {
-      passive: true,
-    });
+    // One rAF-batched fill-bar update per scroll frame (updateGauge only moves
+    // the bar here — the number is filter-driven). The affordance stays
+    // unbatched — it was already cheap and already correct.
+    let gaugeTick = false;
+    listEl.addEventListener(
+      'scroll',
+      () => {
+        updateScrollAffordance();
+        if (gaugeTick) return;
+        gaugeTick = true;
+        requestAnimationFrame(() => {
+          updateGauge();
+          gaugeTick = false;
+        });
+      },
+      { passive: true },
+    );
   }
-  window.addEventListener('resize', updateScrollAffordance, { passive: true });
+
+  // Crossing 48rem flips whether every matched row is shown, so the rows have
+  // to be re-applied — but only on the crossing, never on every resize event:
+  // apply() walks all 251 rows and measureRows() reads 251 rects. Within a
+  // size, a debounced re-measure is enough, because row heights change with
+  // width as titles rewrap.
+  let wasCompact = isCompact();
+  let measureTimer = 0;
+  window.addEventListener(
+    'resize',
+    () => {
+      updateScrollAffordance();
+      const compact = isCompact();
+      if (compact !== wasCompact) {
+        wasCompact = compact;
+        apply();
+        return;
+      }
+      window.clearTimeout(measureTimer);
+      measureTimer = window.setTimeout(() => {
+        measureRows();
+        updateGauge();
+      }, config.workArchive.remeasureMs);
+    },
+    { passive: true },
+  );
 
   apply();
 }

@@ -518,6 +518,88 @@
   display: none;
 }
 
+/* Reset: clears both filters and returns the list to the top. Shown only when
+   there is something to undo, so it costs nothing in the default state. */
+.c-archive__reset {
+  min-height: var(--nav-touch-target);
+  padding: var(--space-8) var(--space-12);
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-primary);
+  background: var(--neu-bg);
+  border: 1px solid transparent;
+  border-radius: var(--radius-full);
+  box-shadow: var(--neu-shadow-raised-sm);
+  cursor: pointer;
+  white-space: nowrap;
+  touch-action: manipulation;
+}
+
+.c-archive__reset[hidden] {
+  display: none;
+}
+
+/* The scroll gauge. Depth carries the reading: the track is an inset well and
+   the distance travelled is a raised bar growing out of it, so progress is the
+   list rising out of its own groove. These are two elements on purpose —
+   box-shadow cannot be animated or interpolated between `inset` and outset, so
+   one morphing shadow was never available.
+
+   --archive-progress is DERIVED from the list's scrollTop on every scroll
+   frame, never accumulated, which is what lets it empty as truthfully as it
+   fills. It measures travel through the whole filtered set, not through what
+   happens to be on screen. */
+.c-archive__gauge {
+  position: relative;
+  isolation: isolate;
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  min-height: var(--space-32);
+  padding-inline: var(--space-16);
+  border-radius: var(--radius-full);
+  background: var(--neu-bg);
+  box-shadow: var(--neu-shadow-inset-sm);
+}
+
+.c-archive__gauge-fill {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  z-index: 0;
+  width: var(--archive-progress, 0%);
+  /* Hidden at zero width rather than merely empty: a 0-wide box still paints
+     its raised shadow, which would sit in the well as a permanent smudge. */
+  opacity: var(--archive-progress-shown, 0);
+  border-radius: var(--radius-full);
+  background-color: var(--neu-bg);
+  background-image: linear-gradient(
+    rgba(var(--color-primary-rgb), 0.16),
+    rgba(var(--color-primary-rgb), 0.16)
+  );
+  box-shadow: var(--neu-shadow-raised-sm);
+  transition: width var(--duration-fast) linear;
+}
+
+.c-archive__gauge-count {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c-archive__gauge-fill {
+    transition: none;
+  }
+}
+
 /* Asset-type chip-tabs (single-select) above the industry chips. */
 /* Rail label above each filter row. The two rows are different axes — asset
    type, then industry — and nothing on screen said so; they read as one

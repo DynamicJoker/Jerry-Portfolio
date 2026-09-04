@@ -64,6 +64,13 @@ export const config = {
     // Drop the arrival class once the animation is spent, so a later expand
     // can re-run it.
     arrivalClearMs: 2600,
+    // Debounce before re-measuring row offsets after a resize that did NOT
+    // cross the phone breakpoint. Row heights change with width (titles
+    // rewrap), so the scroll gauge's cached offsets do go stale — but the
+    // measurement reads a rect per row, so it must not run per resize event.
+    // Long enough to sit out a drag-resize, short enough that the gauge is
+    // right again before anyone scrolls after letting go.
+    remeasureMs: 160,
   },
   breakpoints: {
     md: { cssVar: '--breakpoint-md', fallbackRem: 48 },
